@@ -1,0 +1,66 @@
+#ifndef UNICODE_H
+# define UNICODE_H
+
+#include <cstddef>
+# include <stdlib.h>
+
+
+/**
+ * @brief Non-owning string slice
+ */
+typedef struct s_string_view
+{
+	const char	*s;
+	size_t		len;
+}	t_string_view;
+
+/**
+ * @brief Utf-8 iterator
+ */
+typedef struct s_u8_iterator
+{
+	/**
+	 * @brief Iterated string
+	 */
+	t_string_view	sv;
+	/**
+	 * @brief Byte position in the string
+	 */
+	size_t			byte_pos;
+	/**
+	 * @brief Position in codepoints
+	 */
+	size_t			cp_pos;
+	/**
+	 * @brief Length in bytes of codepoint under cursor
+	 *
+	 * > 0: Actual length
+	 * = 0: End of string
+	 * < 0: Malformed utf-8
+	 */
+	ssize_t			cp_len;
+}	t_u8_iterator;
+
+/**
+ * @brief Constructs unicode iterator from NULL-terminated string
+ *
+ * @param s NULL-terminated string
+ */
+t_u8_iterator
+iterator_new(const char *s);
+
+/**
+ * @brief Advances the iterator, returning the current codepoint
+ */
+t_string_view
+iterator_next(t_u8_iterator *it);
+
+/**
+ * @brief Gets byte length of the current codepoint in the string
+ *
+ * @param s Current utf-8 iterator
+ */
+ssize_t	u8_codelen(const char *s)
+
+
+#endif // UNICODE_H
