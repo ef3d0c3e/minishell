@@ -1,61 +1,66 @@
 #include "unicode.h"
-#include <sys/types.h>
+
+#include <util/util.h>
 
 /* Codepoint length in bytes */
 static inline ssize_t
-	cp_len(t_string_view s)
+	cp_len(const char *s, const size_t len)
 {
-	if (!s.len)
+	if (!len)
 		return (0);
-	if (~(s.s[0]) & 0x80) 
+	if (~(s[0]) & 0x80)
 		return (1);
-	else if (~(s.s[0] & 0xE0) & 0x20)
+	else if (~(s[0] & 0xE0) & 0x20)
 	{
-		if (s.len < 1)
+		if (len < 1)
 			return (0);
-		else if (~(s.s[1] & 0xB0) & 0x40)
+		else if (~(s[1] & 0xB0) & 0x40)
 			return (2);
 		else
 			return (-1);
 	}
-	else if (~(s.s[0] & 0xF0) & 0x10)
+	else if (~(s[0] & 0xF0) & 0x10)
 	{
-		if (s.len < 2)
+		if (len < 2)
 			return (0);
-		else if ((~(s.s[1] & 0xB0) & 0x40) && (~(s.s[2] & 0xB0) & 0x40))
+		else if ((~(s[1] & 0xB0) & 0x40) && (~(s[2] & 0xB0) & 0x40))
 			return (3);
 		else
 			return (-1);
 	}
-	else if (~(s.s[0] & 0xF8) & 0x08)
+	else if (~(s[0] & 0xF8) & 0x08)
 	{
-		if (s.len < 3)
+		if (len < 3)
 			return (0);
-		else if ((~(s.s[1] & 0xB0) & 0x40) && ( ~(s.s[2] & 0xB0) & 0x40) && (~(s.s[3] & 0xB0) & 0x40))
+		else if ((~(s[1] & 0xB0) & 0x40) && (~(s[2] & 0xB0) & 0x40) && (~(s[3] & 0xB0) & 0x40))
 			return (4);
 		else
 			return (-1);
 	}
+	return (-1);
 }
 
 t_u8_iterator
-	iterator_new(const char *s)
+	iterator_new(t_string_view sv)
 {
-	const t_string_view	sv = {
-		.s = s,
-		.len = ft_strlen(s),
-	};
-
 	return ((t_u8_iterator){
 		.sv = sv,
 		.byte_pos = 0,
 		.cp_pos = 0,
-		.cp_len = cp_len(sv),
+		.cp_len = cp_len(sv.s, sv.len),
 	});
 }
 
 t_string_view
 	iterator_next(t_u8_iterator *it)
 {
+	const t_string_view	result = {
+		.s = it->sv.s + it->byte_pos,
+		.len = it->cp_len,
+	};
 
+	++it->cp_pos;
+	it->byte_pos += it->cp_len;
+	it->cp_len = cp_len(it->sv.s + it->byte_pos, it->sv.len - it->byte_pos);
+	return (result);
 }

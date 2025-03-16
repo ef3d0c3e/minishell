@@ -1,18 +1,8 @@
 #ifndef UNICODE_H
 # define UNICODE_H
 
-#include <cstddef>
 # include <stdlib.h>
-
-
-/**
- * @brief Non-owning string slice
- */
-typedef struct s_string_view
-{
-	const char	*s;
-	size_t		len;
-}	t_string_view;
+# include <util/util.h>
 
 /**
  * @brief Utf-8 iterator
@@ -47,7 +37,7 @@ typedef struct s_u8_iterator
  * @param s NULL-terminated string
  */
 t_u8_iterator
-iterator_new(const char *s);
+iterator_new(t_string_view sv);
 
 /**
  * @brief Advances the iterator, returning the current codepoint
@@ -60,7 +50,7 @@ iterator_next(t_u8_iterator *it);
  *
  * @param s Current utf-8 iterator
  */
-ssize_t	u8_codelen(const char *s)
+ssize_t	u8_codelen(const char *s);
 
 
 #endif // UNICODE_H
