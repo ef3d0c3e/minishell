@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token.h                                            :+:      :+:    :+:   */
+/*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,14 +9,32 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef TOKEN_H
-# define TOKEN_H
+#ifndef PARSER_H
+# define PARSER_H
 
-# include <util/util.h>
-# include <syntax/parser.h>
+#include <util/util.h>
 
+/**
+ * @brief State of the parser
+ */
+typedef struct s_parser_state
+{
+	/**
+	 * @brief Iterator
+	 */
+	t_u8_iterator	it;
+	/**
+	 * @brief Current word token
+	 */
+	t_string_view	word;
+	/**
+	 * @brief Quoting character
+	 */
+	t_string_view	quote;
+	/**
+	 * @brief Escape length
+	 */
+	size_t			escape_len;
+}	t_parser_state;
 
-int
-token_seperator(t_parser_state *s, t_string_view codepoint);
-
-#endif // TOKEN_H
+#endif // PARSER_H

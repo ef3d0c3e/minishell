@@ -23,3 +23,11 @@ int
 		return (-token[i]);
 	return (sv.s[i] - token[i]);
 }
+
+int
+sv_whitespace(t_string_view sv)
+{
+	if (sv.len == 1)
+		return ((sv.s[0] == '\r' && sv.s[0] <= '\r') || sv.s[0] == ' ');
+	return (0);
+}

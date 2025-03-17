@@ -12,6 +12,7 @@
 #ifndef UTIL_H
 # define UTIL_H
 
+# include "unicode.h"
 # include "string_view.h"
 
 size_t
