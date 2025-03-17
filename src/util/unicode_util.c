@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   string.c                                           :+:      :+:    :+:   */
+/*   unicode_util.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,15 +11,20 @@
 /* ************************************************************************** */
 #include "util.h"
 
-int
-	str_cmp(t_string sv, const char *token)
+size_t
+	u8_length(char c)
 {
-	size_t	i;
-
-	i = 0;
-	while (i < sv.len && token[i] && sv.str[i] == token[i])
-		++i;
-	if (i == sv.len)
-		return (-token[i]);
-	return (sv.str[i] - token[i]);
+	if ((c & 0x80) == 0)
+		return (1);
+	else if ((c & 0xE0) == 0xC0)
+		return (2);
+	else if ((c & 0xF0) == 0xE0)
+		return (3);
+	else if ((c & 0xF8) == 0xF0)
+		return (4);
+	else if ((c & 0xFC) == 0xF8)
+		return (5);
+	else if ((c & 0xFE) == 0xFC)
+		return (6);
+	return (0);
 }

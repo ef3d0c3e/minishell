@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   string.c                                           :+:      :+:    :+:   */
+/*   xmalloc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,15 +11,21 @@
 /* ************************************************************************** */
 #include "util.h"
 
-int
-	str_cmp(t_string sv, const char *token)
+void
+	*xmalloc(size_t size)
 {
-	size_t	i;
+	void	*ptr;
 
-	i = 0;
-	while (i < sv.len && token[i] && sv.str[i] == token[i])
-		++i;
-	if (i == sv.len)
-		return (-token[i]);
-	return (sv.str[i] - token[i]);
+	if (!size)
+	{
+		write(2, "malloc() error\n", 15);
+		exit(1);
+	}
+	ptr = malloc(size);
+	if (!ptr)
+	{
+		write(2, "malloc() error\n", 15);
+		exit(1);
+	}
+	return (ptr);
 }

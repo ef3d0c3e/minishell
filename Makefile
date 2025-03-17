@@ -5,12 +5,16 @@ IFLAGS := -I./src
 LFLAGS := 
 
 SOURCES := \
+src/syntax/tokenize.c\
 src/syntax/parser.c\
 src/syntax/token.c\
+src/util/unicode_util.c\
 src/util/realloc.c\
 src/util/string_buffer.c\
 src/util/strlen.c\
 src/util/memcpy_unaligned.c\
+src/util/unicode.c\
+src/util/xmalloc.c\
 src/util/memcpy_aligned.c\
 src/util/string.c\
 

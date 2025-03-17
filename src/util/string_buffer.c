@@ -10,29 +10,31 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "util.h"
+#include <uchar.h>
 
-t_string_buffer
-	stringbuf_new(void)
+void
+	stringbuf_init(t_string_buffer *buf, size_t initial_capacity)
 {
-	return ((t_string_buffer){.s = NULL, .len = 0, .capacity = 0});
+	buf->str = xmalloc(initial_capacity);
+	buf->capacity = initial_capacity;
 }
 
 void
 	stringbuf_free(t_string_buffer *s)
 {
-	free(s->s);
+	free(s->str);
 }
 
 void
-	stringbuf_append(t_string_buffer *s, t_string cp)
+	stringbuf_append(t_string_buffer *s, t_string str)
 {
 	size_t	new_cap;
 
 	new_cap = s->capacity + !s->capacity * 256;
-	while (new_cap < s->len + cp.len)
+	while (new_cap < s->len + str.len)
 		new_cap *= 2;
-	s->s = ft_realloc(s->s, s->capacity, new_cap);
+	s->str = ft_realloc(s->str, s->capacity, new_cap);
 	s->capacity = new_cap;
-	ft_memcpy(s->s + s->len, cp.s, cp.len);
-	s->len += cp.len;
+	ft_memcpy(s->str + s->len, str.str, str.len);
+	s->len += str.len;
 }

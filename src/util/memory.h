@@ -9,9 +9,12 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef UTIL_INTERNAL
-# error "Include <util/util.h> instead."
-#endif // UTIL_INTERNAL
+#ifndef MEMORY_H
+# define MEMORY_H
+
+# ifndef UTIL_INTERNAL
+#  error "Include <util/util.h> instead."
+# endif // UTIL_INTERNAL
 
 /**
  * @file Memory manipulation utility
@@ -69,3 +72,5 @@ void
  */
 void
 *ft_realloc(void *ptr, size_t original_size, size_t new_size);
+
+#endif // MEMORY_H
