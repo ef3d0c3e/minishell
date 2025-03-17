@@ -9,10 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "mem.h"
+#include "util.h"
 
 void
-*ft_realloc(void *ptr, size_t original_size, size_t new_size)
+	*ft_realloc(void *ptr, size_t original_size, size_t new_size)
 {
 	void	*new_ptr;
 

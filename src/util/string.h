@@ -9,37 +9,69 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef STRING_H
-# define STRING_H
+#ifndef UTIL_INTERNAL
+# error "Include <util/util.h> instead."
+#endif // UTIL_INTERNAL
 
-# include "util/string_view.h"
+#include <stdlib.h>
+
+/* ************************************************************************** */
+/* String wrappers                                                            */
+/* ************************************************************************** */
+
+/**
+ * @brief Non-owning string slice
+ */
+typedef struct s_string
+{
+	const char	*s;
+	size_t		len;
+}	t_string;
+
+/**
+ * @brief Performs string comparisons
+ *
+ * @param sv String to compare with
+ * @param token Token to compare to (NUL Terminated)
+ *
+ * @returns
+ *  * =0 If equal
+ *  * >0 If `sv` > `token`
+ *  * <0 If `sv` < `token`
+ */
+int
+str_cmp(t_string sv, const char *token);
 
 /**
  * @brief Owning string
  */
-typedef struct s_string
+typedef struct s_string_buffer
 {
 	char	*s;
 	size_t	len;
 	size_t	capacity;
-}	t_string;
+}	t_string_buffer;
 
 /**
  * @brief Creates a new empty string
  */
-t_string
-string_new(void);
+t_string_buffer
+stringbuf_new(void);
 
 /**
  * @brief Frees a string
  */
 void
-string_free(t_string *s);
+stringbuf_free(t_string_buffer *buf);
 
 /**
- * @brief Pushes `cp` to the string's end
+ * @brief Appends to the string buffer
  */
 void
-string_push(t_string *s, t_string_view cp);
+stringbuf_append(t_string_buffer *buf, t_string cp);
 
-#endif // STRING_H
+/* ************************************************************************** */
+/* Unicode utilities                                                          */
+/* ************************************************************************** */
+
+

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mem.h                                              :+:      :+:    :+:   */
+/*   memory.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,14 +9,16 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef MEM_H
-# define MEM_H
+#ifndef UTIL_INTERNAL
+# error "Include <util/util.h> instead."
+#endif // UTIL_INTERNAL
 
 /**
  * @file Memory manipulation utility
  */
 
 # include <stdlib.h>
+# include <stdint.h>
 
 # ifdef __clang__
 
@@ -54,7 +56,6 @@ void
  */
 void
 *ft_memcpy(void *dest, const void *src, size_t n);
-
 /**
  * @brief Reallocates `ptr` for fit at least `new_size`
  *
@@ -68,5 +69,3 @@ void
  */
 void
 *ft_realloc(void *ptr, size_t original_size, size_t new_size);
-
-#endif // MEM_H

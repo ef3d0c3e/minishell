@@ -12,10 +12,10 @@
 #ifndef UTIL_H
 # define UTIL_H
 
-# include "unicode.h"
-# include "string_view.h"
-# include "mem.h"
-
+# define UTIL_INTERNAL
+#  include "string.h"
+#  include "memory.h"
+# undef UTIL_INTERNAL
 
 size_t
 ft_strlen(const char *s);

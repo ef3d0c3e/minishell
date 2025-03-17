@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "mem.h"
-
-#include <stdint.h>
+#include "util.h"
 
 static inline void	*memcpy_4(char *dest, const char *src, size_t n)
 {

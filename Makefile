@@ -5,10 +5,14 @@ IFLAGS := -I./src
 LFLAGS := 
 
 SOURCES := \
-src/syntax/parser.c \
-src/util/strlen.c \
-src/util/string_view.c \
-src/util/unicode.c \
+src/syntax/parser.c\
+src/syntax/token.c\
+src/util/realloc.c\
+src/util/string_buffer.c\
+src/util/strlen.c\
+src/util/memcpy_unaligned.c\
+src/util/memcpy_aligned.c\
+src/util/string.c\
 
 # Objects
 OBJECTS := $(addprefix build/,$(SOURCES:.c=.o))
@@ -30,6 +34,11 @@ $(NAME): $(LIB_PRINTF) $(OBJECTS)
 $(LIB_PRINTF):
 	echo "Building libprintf..."
 	$(MAKE) -C $(dir $(LIB_PRINTF))
+
+# Create compile commands
+compile_commands.json:
+	@mkdir -p build
+	cd build && cmake .. && cp compile_commands.json ..
 
 .PHONY: all
 all: $(NAME)
