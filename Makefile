@@ -6,17 +6,17 @@ LFLAGS :=
 
 SOURCES := \
 src/syntax/parser.c \
-src/syntax/unicode.c \
 src/util/strlen.c \
-src/util/string_view.c
+src/util/string_view.c \
+src/util/unicode.c \
 
 # Objects
-OBJECTS := $(addprefix objs/,$(SOURCES:.c=.o))
+OBJECTS := $(addprefix build/,$(SOURCES:.c=.o))
 # Libraries
 LIB_PRINTF := ./libs/ft_printf/libftprintf.a
 
-objs/%.o: IFLAGS += -I$(dir $(LIB_PRINTF))/includes/
-objs/%.o: %.c
+build/%.o: IFLAGS += -I$(dir $(LIB_PRINTF))/includes/
+build/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
 
@@ -36,7 +36,7 @@ all: $(NAME)
 
 .PHONY: clean
 clean:
-	$(RM) $(OBJECTS)
+	$(RM) -r build/
 
 .PHONY: lclean
 lclean:

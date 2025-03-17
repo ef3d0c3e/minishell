@@ -1,9 +1,4 @@
 #include "token.h"
-#include "unicode.h"
-
-
-#include <unistd.h>
-#include <string.h>
 
 void ast_free(t_ast_leaf *head)
 {
@@ -28,6 +23,7 @@ t_ast_leaf ms_parse(const t_string_view sv)
 	cp = iterator_next(&it);
 	while (cp.len > 0)
 	{
+		
 	}
 	return (t_ast_leaf){};
 }
@@ -38,7 +34,7 @@ int main(int argc, char **argv)
 
 	t_string_view tok = {
 		.s = s,
-		.len = strlen(s),
+		.len = ft_strlen(s),
 	};
 
 	t_ast_leaf head = ms_parse(tok);

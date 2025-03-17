@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   string_view.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
+/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef STRING_VIEW_H
 # define STRING_VIEW_H
 
@@ -18,7 +29,10 @@ typedef struct s_string_view
  * @param sv String to compare with
  * @param token Token to compare to (NUL Terminated)
  *
- * @returns 0 If equal
+ * @returns 
+ *  * =0 If equal
+ *  * >0 If `sv` > `token`
+ *  * <0 If `sv` < `token`
  */
 int
 sv_cmp(t_string_view sv, const char *token);

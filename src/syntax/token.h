@@ -1,7 +1,7 @@
 #ifndef TOKEN_H
 # define TOKEN_H
 
-# include "unicode.h"
+# include <util/unicode.h>
 
 typedef struct s_ast_leaf	t_ast_leaf;
 
