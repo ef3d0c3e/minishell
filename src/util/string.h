@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   string.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,39 +9,37 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef PARSER_H
-# define PARSER_H
+#ifndef STRING_H
+# define STRING_H
 
-#include "util/string_view.h"
-# include <util/util.h>
+# include "util/string_view.h"
 
 /**
- * @brief State of the parser
+ * @brief Owning string
  */
-typedef struct s_parser_state
+typedef struct s_string
 {
-	/**
-	 * @brief Iterator
-	 */
-	t_u8_iterator	it;
-	/**
-	 * @brief Current word token
-	 */
-	t_string_view	word;
-	/**
-	 * @brief Quoting character
-	 */
-	t_string_view	quote;
-	/**
-	 * @brief Escape length
-	 */
-	size_t			escape_len;
-}	t_parser_state;
+	char	*s;
+	size_t	len;
+	size_t	capacity;
+}	t_string;
 
 /**
- * @brief Initializes parser stater
+ * @brief Creates a new empty string
+ */
+t_string
+string_new(void);
+
+/**
+ * @brief Frees a string
  */
 void
-parser_state_init(t_parser_state *state, t_string_view prompt);
+string_free(t_string *s);
 
-#endif // PARSER_H
+/**
+ * @brief Pushes `cp` to the string's end
+ */
+void
+string_push(t_string *s, t_string_view cp);
+
+#endif // STRING_H

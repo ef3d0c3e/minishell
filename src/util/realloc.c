@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   realloc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,39 +9,17 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef PARSER_H
-# define PARSER_H
+#include "mem.h"
 
-#include "util/string_view.h"
-# include <util/util.h>
-
-/**
- * @brief State of the parser
- */
-typedef struct s_parser_state
-{
-	/**
-	 * @brief Iterator
-	 */
-	t_u8_iterator	it;
-	/**
-	 * @brief Current word token
-	 */
-	t_string_view	word;
-	/**
-	 * @brief Quoting character
-	 */
-	t_string_view	quote;
-	/**
-	 * @brief Escape length
-	 */
-	size_t			escape_len;
-}	t_parser_state;
-
-/**
- * @brief Initializes parser stater
- */
 void
-parser_state_init(t_parser_state *state, t_string_view prompt);
+*ft_realloc(void *ptr, size_t original_size, size_t new_size)
+{
+	void	*new_ptr;
 
-#endif // PARSER_H
+	if (new_size <= original_size)
+		return (ptr);
+	new_ptr = malloc(new_size);
+	ft_memcpy_aligned(new_ptr, ptr, original_size);
+	free(ptr);
+	return (new_ptr);
+}

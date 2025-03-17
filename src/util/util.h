@@ -14,6 +14,8 @@
 
 # include "unicode.h"
 # include "string_view.h"
+# include "mem.h"
+
 
 size_t
 ft_strlen(const char *s);
