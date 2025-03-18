@@ -5,6 +5,7 @@
 
 typedef struct s_ast_leaf	t_ast_leaf;
 
+/*
 typedef struct s_unary_operator
 {
 }	t_unary_operator;
@@ -36,6 +37,7 @@ typedef struct s_ast_leaf
 }	t_ast_leaf;
 
 void ast_free(t_ast_leaf *head);
+*/
 
 /*
 `echo a | cat`:

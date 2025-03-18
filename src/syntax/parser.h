@@ -12,36 +12,6 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-#include "util/string_view.h"
 # include <util/util.h>
-
-/**
- * @brief State of the parser
- */
-typedef struct s_parser_state
-{
-	/**
-	 * @brief Iterator
-	 */
-	t_u8_iterator	it;
-	/**
-	 * @brief Current word token
-	 */
-	t_string_view	word;
-	/**
-	 * @brief Quoting character
-	 */
-	t_string_view	quote;
-	/**
-	 * @brief Escape length
-	 */
-	size_t			escape_len;
-}	t_parser_state;
-
-/**
- * @brief Initializes parser stater
- */
-void
-parser_state_init(t_parser_state *state, t_string_view prompt);
 
 #endif // PARSER_H

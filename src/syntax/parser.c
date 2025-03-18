@@ -1,10 +1,9 @@
 # include "parser.h"
 
 # include "syntax.h"
-#include "util/string_view.h"
-#include "util/unicode.h"
 
 
+/*
 void
 parser_state_init(t_parser_state *state, t_string_view prompt)
 {
@@ -73,16 +72,4 @@ t_ast_leaf ms_parse(const t_string_view sv)
 	}
 	return (t_ast_leaf){};
 }
-
-int main(int argc, char **argv)
-{
-	const char *s = argv[1];
-
-	t_string_view tok = {
-		.s = s,
-		.len = ft_strlen(s),
-	};
-
-	t_ast_leaf head = ms_parse(tok);
-	asm("int $3");
-}
+*/

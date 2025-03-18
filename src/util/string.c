@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "util.h"
+#include <stddef.h>
 
 int
 	str_cmp(t_string sv, const char *token)
@@ -22,4 +23,19 @@ int
 	if (i == sv.len)
 		return (-token[i]);
 	return (sv.str[i] - token[i]);
+}
+
+const char
+	*str_alternatives(t_string str, const char **alternatives)
+{
+	size_t	i;
+
+	i = 0;
+	while (alternatives[i])
+	{
+		if (!str_cmp(str, alternatives[i]))
+			return (alternatives[i]);
+		++i;
+	}
+	return (NULL);
 }

@@ -12,21 +12,19 @@
 #ifndef STRING_H
 # define STRING_H
 
-#include <stddef.h>
 # ifndef UTIL_INTERNAL
 #  error "Include <util/util.h> instead."
 # endif // UTIL_INTERNAL
 
 # include <stdlib.h>
 # include <stdint.h>
+# include <stddef.h>
 
 /* ************************************************************************** */
 /* String wrappers                                                            */
 /* ************************************************************************** */
 
-/**
- * @brief Non-owning string slice
- */
+/** @brief Non-owning string slice */
 typedef struct s_string
 {
 	const char	*str;
@@ -48,8 +46,17 @@ int
 str_cmp(t_string sv, const char *token);
 
 /**
- * @brief String buffer, for performing string operations
+ * @brief Finds if `alternatives` contains `str`
+ *
+ * @param str String to find alternative of
+ * @param alternatives Alternatives to search for (NULL-terminated)
+ *
+ * @returns The member of `alternatives` equal to `str`
  */
+const char
+*str_alternatives(t_string str, const char **alternatives);
+
+/** @brief String buffer, for performing string operations */
 typedef struct s_string_buffer
 {
 	char	*str;
@@ -66,15 +73,11 @@ typedef struct s_string_buffer
 void
 stringbuf_init(t_string_buffer *buf, size_t initial_capacity);
 
-/**
- * @brief Frees a string
- */
+/** @brief Frees a string */
 void
 stringbuf_free(t_string_buffer *buf);
 
-/**
- * @brief Appends to the string buffer
- */
+/** @brief Appends to the string buffer */
 void
 stringbuf_append(t_string_buffer *buf, t_string str);
 
@@ -82,9 +85,7 @@ stringbuf_append(t_string_buffer *buf, t_string str);
 /* Unicode utilities                                                          */
 /* ************************************************************************** */
 
-/**
- * @brief Unicode iterator
- */
+/** @brief Unicode iterator */
 typedef struct u8_iterator
 {
 	/** @brief String iterated over */
@@ -106,20 +107,45 @@ it_new(t_string str);
  * @brief Returns the next codepoint in the iterated UTF-8 string
  *
  * @param it Iterator over UTF-8 string
+ *
  * @return The next codepoint, or an empty string if the content is invalid
  */
 t_string
 it_next(t_u8_iterator *it);
 
 /**
- * @brief Peeks the next codepoint in the iterator
+ * @brief Advances the iterator by `num` bytes
  *
  * @param it Iterator over UTF-8 string
- * @return The next codepoint (empty string if invalid), without advancing
- * the iterator.
+ * @param num Number of bytes to advace `it` by
+ */
+void
+it_advance(t_u8_iterator *it, size_t num);
+
+/**
+ * @brief Reads until a delimiter
+ *
+ * @param it Iterator over UTF-8 string
+ * @param delim Delimiter to stop reading at
+ *
+ *
+ * @return The content until the delimiter (delimiter included)
+ * An empty string is returned if the delimiter cannot be found
  */
 t_string
-it_peek(const t_u8_iterator *it);
+it_until(t_u8_iterator *it, const char *delim);
+
+/**
+ * @brief Gets the iterator's leftover content
+ *
+ * @param it The iterator
+ * @param len The maximum length
+ *
+ * @returns The content from `[str + it->byte_pos;
+ * str + min(it->byte_pos + len, str.len)]`
+ */
+t_string
+it_substr(const t_u8_iterator *it, size_t len);
 
 /**
  * @brief Gets length of the utf-8 codepoint after this character

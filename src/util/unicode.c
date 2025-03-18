@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "util.h"
+#include <stddef.h>
 
 t_u8_iterator
 	it_new(t_string str)
@@ -22,7 +23,6 @@ t_u8_iterator
 		.cp_pos = 0,
 	});
 }
-
 
 t_string
 	it_next(t_u8_iterator *it)
@@ -42,18 +42,46 @@ t_string
 	return (it->codepoint);
 }
 
-t_string
-	it_peek(const t_u8_iterator *it)
+void
+	it_advance(t_u8_iterator *it, size_t num)
 {
-	t_string	codepoint;
+	t_string		cp;
+	const size_t	start = it->byte_pos;
 
-	if (it->byte_next >= it->str.len)
+	cp.len = 1;
+	while (cp.len && it->byte_pos < start + num)
+		cp = it_next(it);
+}
+
+t_string
+	it_until(t_u8_iterator *it, const char *delim)
+{
+	const size_t	len = ft_strlen(delim);
+	const size_t	start = it->byte_pos;
+	t_string		current;
+
+	current = it_substr(it, len);
+	while (str_cmp(current, delim))
 	{
-		return ((t_string){.str = NULL, .len = 0});
+		if (!it_next(it).len)
+			return ((t_string){.str = NULL, .len = 0});
+		current = it_substr(it, len);
 	}
-	codepoint.str = it->str.str + it->byte_next;
-	codepoint.len = u8_length(codepoint.str[0]);
-	if (codepoint.len == 0)
-		return ((t_string){.str = NULL, .len = 0});
-	return (codepoint);
+	return ((t_string){.str = it->str.str + start, .len = it->byte_pos - start});
+}
+
+t_string
+	it_substr(const t_u8_iterator *it, size_t len)
+{
+	if (it->byte_pos + len > it->str.len)
+	{
+		return ((t_string){
+			.str = it->str.str + it->byte_pos,
+			.len = it->str.len - it->byte_pos
+		});
+	}
+	return ((t_string){
+		.str = it->str.str + it->byte_pos,
+		.len = len,
+	});
 }

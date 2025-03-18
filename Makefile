@@ -40,7 +40,8 @@ $(LIB_PRINTF):
 	$(MAKE) -C $(dir $(LIB_PRINTF))
 
 # Create compile commands
-compile_commands.json:
+.PHONY: clangd
+clangd:
 	@mkdir -p build
 	cd build && cmake .. && cp compile_commands.json ..
 
