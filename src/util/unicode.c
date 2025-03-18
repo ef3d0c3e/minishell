@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "util.h"
-#include <stddef.h>
 
 t_u8_iterator
 	it_new(t_string str)
@@ -30,7 +29,9 @@ t_string
 	if (it->byte_next >= it->str.len)
 	{
 		it->byte_pos = it->byte_next;
-		return ((t_string){.str = NULL, .len = 0});
+		it->codepoint.str = NULL;
+		it->codepoint.len = 0;
+		return (it->codepoint);
 	}
 	it->byte_pos = it->byte_next;
 	it->codepoint.str = it->str.str + it->byte_pos;

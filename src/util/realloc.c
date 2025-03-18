@@ -18,7 +18,7 @@ void
 
 	if (new_size <= original_size)
 		return (ptr);
-	new_ptr = malloc(new_size);
+	new_ptr = xmalloc(new_size);
 	ft_memcpy_aligned(new_ptr, ptr, original_size);
 	free(ptr);
 	return (new_ptr);

@@ -17,6 +17,7 @@
 
 enum e_token_type
 {
+	TOK_WORD,
 	TOK_SINGLE_QUOTED,
 	TOK_DOUBLE_QUOTED,
 

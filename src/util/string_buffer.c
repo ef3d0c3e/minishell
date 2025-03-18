@@ -16,6 +16,7 @@ void
 	stringbuf_init(t_string_buffer *buf, size_t initial_capacity)
 {
 	buf->str = xmalloc(initial_capacity);
+	buf->len = 0;
 	buf->capacity = initial_capacity;
 }
 
