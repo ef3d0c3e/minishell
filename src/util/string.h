@@ -24,11 +24,11 @@
 /* String wrappers                                                            */
 /* ************************************************************************** */
 
-/** @brief (Maybe) owning string slice */
+/** @brief A non-owning string slice */
 typedef struct s_string
 {
-	char	*str;
-	size_t	len;
+	const char	*str;
+	size_t		len;
 }	t_string;
 
 /**

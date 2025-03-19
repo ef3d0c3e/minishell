@@ -5,7 +5,12 @@ IFLAGS := -I./src
 LFLAGS := 
 
 SOURCES := \
+src/syntax/token_digit.c\
 src/syntax/tokenize.c\
+src/syntax/token_list.c\
+src/syntax/token_redir.c\
+src/syntax/token_error.c\
+src/syntax/token_meta.c\
 src/syntax/parser.c\
 src/syntax/token.c\
 src/util/unicode_util.c\

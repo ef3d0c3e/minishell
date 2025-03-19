@@ -1,72 +1,20 @@
-#include "token.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
+/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+#include "tokenizer.h"
 #include "util/util.h"
-#include <endian.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <uchar.h>
 
-void
-token_print_debug(int fd, const t_token *token)
-{
-	static const char	*names[] = {
-	[TOK_IDENT] = "Identifier",
-	[TOK_WORD] = "Word",
-	[TOK_SINGLE_QUOTED] = "Single Quoted",
-	[TOK_DOUBLE_QUOTED] = "Double Quoted",
-	[TOK_PARAM] = "Param",
-	[TOK_PARAM_BRACE] = "Paramb",
-	[TOK_EVAL_PAR] = "Evalp",
-	[TOK_ARITH] = "Arith",
-	[TOK_REDIR] = "Redir",
-	[TOK_OPERATOR] = "Operator",
-	[TOK_NEWLINE] = "Newline",
-	[TOK_COMMENT] = "Comment",
-	[TOK_HEREDOC] = "Heredoc",
-	[TOK_HERESTRING] = "Herestring",
-	[TOK_EOF] = "Eof",
-	[TOK_ERROR] = "Error",
-	};
-
-	dprintf(2, "(%s, %zu, `%.*s`)",
-			names[token->token],
-			token->pos,
-			(int)token->str.len,
-			token->str.str);
-}
-
-void	error_token(t_token_list *list, size_t pos, const char *msg)
-{
-	token_list_push(list, (t_token){
-		.token = TOK_ERROR,
-		.str = (t_string){.str = msg, .len = ft_strlen(msg)},
-		.pos = pos,
-	});
-}
-
-void
-	token_list_push(t_token_list *list, t_token token)
-{
-	if (list->size >= list->capacity)
-	{
-		list->capacity = ((list->capacity + !list->capacity) * 2);
-		list->tokens = ft_realloc(list->tokens, list->size * sizeof(t_token),
-			list->capacity * sizeof(t_token));
-	}
-	list->tokens[list->size++] = token;
-}
-
-void
-	token_free(t_token *token)
-{
-	if (token->token == TOK_SINGLE_QUOTED)
-		free(token->str.str);
-	if (token->token == TOK_DOUBLE_QUOTED)
-		free(token->str.str);
-	if (token->token == TOK_WORD)
-		free(token->str.str);
-	// TODO
-}
-
+/*
 static inline int	token_isspace(t_string codepoint)
 {
 	return codepoint.str[0] == ' ';
@@ -371,9 +319,11 @@ static void read_word(t_token_list *list, t_u8_iterator *it)
 		.pos = start,
 	});
 }
+*/
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
+	/*
 	static int(*tokenizers[])(t_token_list *, t_u8_iterator *) = {
 		token_newline,
 		token_comment,
@@ -385,47 +335,75 @@ int main(int argc, char **argv)
 		token_dollar,
 		token_quoted,
 	};
-	t_string input = {
+
+	*/
+	t_tokenizer	t;
+
+	const t_string input = {
 		.str = argv[1],
 		.len = ft_strlen(argv[1]),
 	};
-	t_token_list list = {
-		.tokens = xmalloc(16 * sizeof(t_token)),
-		.size = 0,
-		.capacity = 16,
-	};
-	size_t i;
+	tokenizer_init(&t);
 	printf("prompt=`%s`\n", argv[1]);
 
-	t_u8_iterator iter = it_new(input);
-	it_next(&iter);
-	while (iter.codepoint.len)
+	t_token_list list = tokenizer_tokenize(&t, input);
+	size_t i = 0;
+	while (i < list.size)
 	{
-		if (token_isspace(iter.codepoint))
-		{
-			it_next(&iter);
-			continue;
-		}
+		token_print_debug(2, input, &list.tokens[i]);
+		++i;
+	}
+	token_list_free(&list);
+	tokenizer_free(&t);
+}
 
+int	token_space(t_token_list *list, t_u8_iterator *it);
+int	token_newline(t_token_list *list, t_u8_iterator *it);
+int	token_redir(t_token_list *list, t_u8_iterator *it);
+
+void
+	tokenizer_init(t_tokenizer *t)
+{
+	t->munchers = malloc(sizeof(t_tokenizer_fn) * 8);
+	t->munchers[0] = token_space;
+	t->munchers[1] = token_newline;
+	t->munchers[2] = token_redir;
+	t->munchers[3] = NULL;
+}
+
+void
+	tokenizer_free(t_tokenizer *t)
+{
+	free(t->munchers);
+}
+
+t_token_list
+	tokenizer_tokenize(const t_tokenizer *t, t_string prompt)
+{
+	t_token_list	list;
+	t_u8_iterator	it;
+	size_t			i;
+
+	list.tokens = xmalloc(16 * sizeof(t_token));
+	list.size = 0;
+	list.capacity = 16;
+	it = it_new(prompt);
+	it_next(&it);
+	while (it.codepoint.len)
+	{
 		i = 0;
-		while (i < sizeof(tokenizers) / sizeof(tokenizers[0]))
+		while (t->munchers[i])
 		{
-			if (tokenizers[i](&list, &iter))
+			if (t->munchers[i](&list, &it))
 			{
 				i = 0;
-				break;
+				break ;
 			}
 			++i;
 		}
 		if (i)
-			read_word(&list, &iter);
+		{
+		}
 	}
-	i = 0;
-	while (i < list.size)
-	{
-		token_print_debug(2, &list.tokens[i]);
-		token_free(&list.tokens[i]);
-		++i;
-	}
-	free(list.tokens);
+	return (list);
 }
