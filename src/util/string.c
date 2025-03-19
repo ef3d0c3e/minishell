@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "util.h"
 #include <stddef.h>
+#include <stdlib.h>
 
 int
 	str_cmp(t_string sv, const char *token)
@@ -29,11 +30,15 @@ const char
 	*str_alternatives(t_string str, const char **alternatives)
 {
 	size_t	i;
+	size_t	j;
 
 	i = 0;
 	while (alternatives[i])
 	{
-		if (!str_cmp(str, alternatives[i]))
+		j = 0;
+		while (j < str.len && str.str[j] == alternatives[i][j] && alternatives[i][j])
+			++j;
+		if (alternatives[i][j] == 0)
 			return (alternatives[i]);
 		++i;
 	}

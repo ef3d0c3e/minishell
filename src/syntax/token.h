@@ -25,8 +25,10 @@ enum e_token_type
 	TOK_IDENT,
 	/** @brief Token for variable expansion: `${VAR}` */
 	TOK_PARAM,
-	TOK_COMMAND,
+	/** @brief Arithmetic: `$((a+b))` */
 	TOK_ARITH,
+	/** @brief Parenthesis evaluation: `$(cmd)` */
+	TOK_EVAL_PAR,
 
 	TOK_REDIR,
 	TOK_OPERATOR,

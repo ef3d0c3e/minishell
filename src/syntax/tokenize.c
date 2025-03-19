@@ -14,7 +14,7 @@ token_print_debug(int fd, const t_token *token)
 	[TOK_SINGLE_QUOTED] = "Single Quoted",
 	[TOK_DOUBLE_QUOTED] = "Double Quoted",
 	[TOK_PARAM] = "Param",
-	[TOK_COMMAND] = "Command",
+	[TOK_EVAL_PAR] = "Evalp",
 	[TOK_ARITH] = "Arith",
 	[TOK_REDIR] = "Redir",
 	[TOK_OPERATOR] = "Operator",
@@ -45,7 +45,6 @@ void	error_token(t_token_list *list, size_t pos, const char *msg)
 void
 	token_list_push(t_token_list *list, t_token token)
 {
-	token_print_debug(2, &token);
 	if (list->size >= list->capacity)
 	{
 		list->capacity = ((list->capacity + !list->capacity) * 2);
@@ -179,7 +178,7 @@ static inline int	read_matching(t_u8_iterator *it, const char *delim)
 	next = it_next(it);
 	while (next.len)
 	{
-		if (str_cmp(it_substr(it, delim_len), delim))
+		if (!str_cmp(it_substr(it, delim_len), delim))
 			return (1);
 		if (next.str[0] == '(' && !read_matching(it, ")"))
 			return (0);
@@ -215,13 +214,12 @@ static inline int	token_dollar(t_token_list *list, t_u8_iterator *it)
 
 	if (it->codepoint.str[0] != '$')
 		return (0);
-	it_advance(it, 1);
-	next = it_substr(it, 2);
+	next = it_substr(it, 3);
 	if (!next.len)
 		return (error_token(list, it->byte_pos, "Unexpected EOF after '$'"), 1);
-	if (!str_cmp(next, "(("))
+	if (!str_cmp(next, "$(("))
 	{
-		it_advance(it, 2);
+		it_advance(it, 3);
 		if (!read_matching(it, "))"))
 		{
 			error_token(list, start + 1, "Unclosed '((' delimiter");
@@ -230,14 +228,14 @@ static inline int	token_dollar(t_token_list *list, t_u8_iterator *it)
 		}
 		token_list_push(list, (t_token){
 			.token = TOK_ARITH,
-			.str = {.str = it->str.str + start + 3, .len = it->byte_pos - start + 1},
-			.pos = it->byte_pos,
+			.str = {.str = it->str.str + start + 3, .len = it->byte_pos - start - 3},
+			.pos = start,
 		});
 		it_advance(it, 2);
 	}
-	if (!str_cmp(next, "("))
+	else if (!str_cmp(next, "$("))
 	{
-		it_advance(it, 1);
+		it_advance(it, 2);
 		if (!read_matching(it, ")"))
 		{
 			error_token(list, start + 1, "Unclosed '(' delimiter");
@@ -245,13 +243,13 @@ static inline int	token_dollar(t_token_list *list, t_u8_iterator *it)
 			return (1);
 		}
 		token_list_push(list, (t_token){
-			.token = TOK_ARITH,
+			.token = TOK_EVAL_PAR,
 			.str = {.str = it->str.str + start + 2, .len = it->byte_pos - start + 2},
 			.pos = it->byte_pos,
 		});
 		it_advance(it, 1);
 	}
-	if (!str_cmp(next, "{"))
+	else if (!str_cmp(next, "${"))
 	{
 		it_advance(it, 1);
 		if (!read_matching(it, "}"))
@@ -291,9 +289,9 @@ static inline int	token_quoted(t_token_list *list, t_u8_iterator *it)
 	t_string		next;
 	t_string_buffer content;
 
-	stringbuf_init(&content, 16);
 	if (quote != '\'' && quote != '"')
 		return (0);
+	stringbuf_init(&content, 16);
 	next = it_next(it);
 	while (next.len)
 	{
@@ -328,7 +326,7 @@ static void read_word(t_token_list *list, t_u8_iterator *it)
 	char			ch;
 	t_string_buffer	content;
 
-	stringbuf_init(&content, 256);
+	stringbuf_init(&content, 16);
 	while (it->codepoint.len)
 	{
 		ch = it->codepoint.str[0];
@@ -362,7 +360,6 @@ static void read_word(t_token_list *list, t_u8_iterator *it)
 			}
 			break;
 		}
-		printf("Adding: %.*s %d\n", it->codepoint.len, it->codepoint.str, it->codepoint.len);
 		stringbuf_append(&content, it->codepoint);
 		it_next(it);
 	}
@@ -424,6 +421,7 @@ int main(int argc, char **argv)
 	i = 0;
 	while (i < list.size)
 	{
+		token_print_debug(2, &list.tokens[i]);
 		token_free(&list.tokens[i]);
 		++i;
 	}
