@@ -14,6 +14,7 @@ token_print_debug(int fd, const t_token *token)
 	[TOK_SINGLE_QUOTED] = "Single Quoted",
 	[TOK_DOUBLE_QUOTED] = "Double Quoted",
 	[TOK_PARAM] = "Param",
+	[TOK_PARAM_BRACE] = "Paramb",
 	[TOK_EVAL_PAR] = "Evalp",
 	[TOK_ARITH] = "Arith",
 	[TOK_REDIR] = "Redir",
@@ -175,7 +176,7 @@ static inline int	read_matching(t_u8_iterator *it, const char *delim)
 	t_string		next;
 	const size_t	delim_len = ft_strlen(delim);
 
-	next = it_next(it);
+	next = it->codepoint;
 	while (next.len)
 	{
 		if (!str_cmp(it_substr(it, delim_len), delim))
@@ -215,9 +216,9 @@ static inline int	token_dollar(t_token_list *list, t_u8_iterator *it)
 	if (it->codepoint.str[0] != '$')
 		return (0);
 	next = it_substr(it, 3);
-	if (!next.len)
-		return (error_token(list, it->byte_pos, "Unexpected EOF after '$'"), 1);
-	if (!str_cmp(next, "$(("))
+	if (next.len <= 1)
+		return (it_advance(it, 1), error_token(list, it->byte_pos, "Unexpected EOF after '$'"), 1);
+	if (str_starts_with(next, "$(("))
 	{
 		it_advance(it, 3);
 		if (!read_matching(it, "))"))
@@ -233,7 +234,7 @@ static inline int	token_dollar(t_token_list *list, t_u8_iterator *it)
 		});
 		it_advance(it, 2);
 	}
-	else if (!str_cmp(next, "$("))
+	else if (str_starts_with(next, "$("))
 	{
 		it_advance(it, 2);
 		if (!read_matching(it, ")"))
@@ -244,14 +245,15 @@ static inline int	token_dollar(t_token_list *list, t_u8_iterator *it)
 		}
 		token_list_push(list, (t_token){
 			.token = TOK_EVAL_PAR,
-			.str = {.str = it->str.str + start + 2, .len = it->byte_pos - start + 2},
+			.str = {.str = it->str.str + start + 2, .len = it->byte_pos - start - 2},
 			.pos = it->byte_pos,
 		});
 		it_advance(it, 1);
 	}
-	else if (!str_cmp(next, "${"))
+	else if (str_starts_with(next, "${"))
 	{
-		it_advance(it, 1);
+		it_advance(it, 2);
+		printf("HERE\n");
 		if (!read_matching(it, "}"))
 		{
 			error_token(list, start + 1, "Unclosed '{' delimiter");
@@ -260,7 +262,7 @@ static inline int	token_dollar(t_token_list *list, t_u8_iterator *it)
 		}
 		token_list_push(list, (t_token){
 			.token = TOK_PARAM,
-			.str = {.str = it->str.str + start + 2, .len = it->byte_pos - start + 2},
+			.str = {.str = it->str.str + start + 2, .len = it->byte_pos - start - 2},
 			.pos = it->byte_pos,
 		});
 		it_advance(it, 1);

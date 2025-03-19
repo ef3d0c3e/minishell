@@ -45,6 +45,9 @@ typedef struct s_string
 int
 str_cmp(t_string sv, const char *token);
 
+int
+str_starts_with(t_string str, const char *token);
+
 /**
  * @brief Finds if `alternatives` contains `str`
  *

@@ -26,6 +26,19 @@ int
 	return (sv.str[i] - token[i]);
 }
 
+int
+	str_starts_with(t_string str, const char *token)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < str.len && token[i] && str.str[i] == token[i])
+		++i;
+	if (i == str.len || !token[i])
+		return (1);
+	return 0;
+}
+
 const char
 	*str_alternatives(t_string str, const char **alternatives)
 {
