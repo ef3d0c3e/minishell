@@ -4,24 +4,9 @@ CFLAGS := -Wall -Wextra -pedantic -ggdb -fsanitize=address
 IFLAGS := -I./src
 LFLAGS := 
 
-SOURCES := \
-src/syntax/token_digit.c\
-src/syntax/tokenize.c\
-src/syntax/token_list.c\
-src/syntax/token_redir.c\
-src/syntax/token_error.c\
-src/syntax/token_meta.c\
-src/syntax/parser.c\
-src/syntax/token.c\
-src/util/unicode_util.c\
-src/util/realloc.c\
-src/util/string_buffer.c\
-src/util/strlen.c\
-src/util/memcpy_unaligned.c\
-src/util/unicode.c\
-src/util/xmalloc.c\
-src/util/memcpy_aligned.c\
-src/util/string.c\
+SOURCES := $(wildcard src/*.c) \
+	$(wildcard src/util/*.c) \
+	$(wildcard src/syntax/*.c)
 
 # Objects
 OBJECTS := $(addprefix build/,$(SOURCES:.c=.o))

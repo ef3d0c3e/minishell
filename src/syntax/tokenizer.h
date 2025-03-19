@@ -12,8 +12,10 @@
 #ifndef TOKENIZER_H
 # define TOKENIZER_H
 
-#include <stddef.h>
 # include <util/util.h>
+
+// TEMP
+#include <stdio.h>
 
 /* ************************************************************************** */
 /* Token definition                                                           */
@@ -26,27 +28,34 @@ enum e_token_type
 {
 	TOK_SPACE,
 	TOK_DIGIT,
-
-	TOK_WORD,
-	TOK_SINGLE_QUOTED,
-	TOK_DOUBLE_QUOTED,
-
-	/** @brief Identifier for variables */
-	TOK_IDENT,
-	/** @brief Token for variable expansion: `$VAR` */
-	TOK_PARAM,
-	/** @brief Token for brace variable expansion: `${VAR}` */
-	TOK_PARAM_BRACE,
-	/** @brief Arithmetic: `$((a+b))` */
-	TOK_ARITH,
-	/** @brief Parenthesis evaluation: `$(cmd)` */
-	TOK_EVAL_PAR,
-
-	TOK_REDIR,
-	TOK_OPERATOR,
+	/** @brief Newline token: `\n` */
 	TOK_NEWLINE,
-	TOK_COMMENT,
 
+	/** @brief Grouping character, one of `{, (, }, )` */
+	TOK_GROUPING,
+
+	/**
+	 * @brief Pipeline token, one of `|`, `|&`
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Pipelines
+	 */
+	TOK_PIPELINE,
+
+	/**
+	 * @brief Sequence separator tokens
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Simple-Commands
+	 */
+	TOK_SEQUENCE,
+
+	/**
+	 * @brief Redirection tokens, e.g `<` `>`
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Redirections
+	 */
+	TOK_REDIR,
+
+	TOK_COMMENT,
 	TOK_HEREDOC,
 	TOK_HERESTRING,
 
@@ -56,12 +65,6 @@ enum e_token_type
 	TOK_ERROR,
 	/** @brief Error message that needs to be `free`d */
 	TOK_ERROR_CUSTOM,
-};
-
-/** @brief Integer token [0, INT_MAX] */
-struct s_token_digit
-{
-	int	value;
 };
 
 /** @brief String data for tokens */
@@ -94,8 +97,13 @@ typedef struct s_token
 	size_t				end;
 
 	union {
-		struct s_token_digit 	digit;
+		/** @brief Digit token */
+		int						digit;
+		/** @brief Redirection token data */
 		struct s_token_redir	redir;
+		/** @brief Reserved name for token, e.g keyword name, grouping char */
+		const char				*reserved_word;
+		/** @brief Error message */
 		t_string				err;
 	};
 }	t_token;

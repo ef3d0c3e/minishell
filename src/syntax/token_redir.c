@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 #include "tokenizer.h"
 
-// https://www.gnu.org/software/bash/manual/bash.html#Redirections
-
 int
 	token_redir(t_token_list *list, t_u8_iterator *it)
 {

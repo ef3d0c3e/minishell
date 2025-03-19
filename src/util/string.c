@@ -36,7 +36,7 @@ int
 		++i;
 	if (i == str.len || !token[i])
 		return (1);
-	return 0;
+	return (0);
 }
 
 const char
@@ -49,7 +49,8 @@ const char
 	while (alternatives[i])
 	{
 		j = 0;
-		while (j < str.len && str.str[j] == alternatives[i][j] && alternatives[i][j])
+		while (j < str.len && str.str[j] == alternatives[i][j]
+				&& alternatives[i][j])
 			++j;
 		if (alternatives[i][j] == 0)
 			return (alternatives[i]);
