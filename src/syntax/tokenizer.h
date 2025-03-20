@@ -241,14 +241,6 @@ void
 tokenizer_init(t_tokenizer *t);
 
 /**
- * @brief Frees a tokenizer
- *
- * @param t Tokenizer to free
- */
-void
-tokenizer_free(t_tokenizer *t);
-
-/**
  * @brief Tokenize a prompt
  *
  * @param t Tokenizer to use for tokenization
