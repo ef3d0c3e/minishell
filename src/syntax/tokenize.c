@@ -14,6 +14,8 @@
 #include "util/util.h"
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
 
 enum e_node_type
 {
@@ -30,10 +32,15 @@ typedef struct s_ast_node	t_ast_node;
 /** @brief Command name and arguments */
 struct s_node_cmd
 {
-	// argv
-	t_token	*args;
-	// argc
-	size_t	nargs;
+	/** @brief Program arguments */
+	t_string_buffer	*args;
+	/** @brief Number of arguments */
+	size_t			nargs;
+	/**
+	 * @brief Redirections, only the last redirection is actually populated,
+	 * other files are populated according to clobbering rules
+	 */
+	t_token_list	redirs;
 };
 
 struct s_logic_node
@@ -78,6 +85,7 @@ parser_error(t_parser *parser, t_string_buffer msg)
 {
 	size_t	new_cap;
 
+	dprintf(2, "ERROR: %.*s\n", (int)msg.len, msg.str);
 	new_cap = parser->errors_cap + !parser->errors_cap * 16;
 	while (new_cap < parser->errors_size + 1)
 		new_cap *= 2;
@@ -93,17 +101,29 @@ t_ast_node	*parse_cmd(t_parser *parser, size_t start, size_t end)
 	const t_token		*tok;
 	struct s_node_cmd	cmd;
 	t_ast_node			*node;
-	size_t				i;
 
-	cmd.nargs = end - start;
-	cmd.args = xmalloc(sizeof(t_token) * cmd.nargs);
-	i = 0;
-	while (i != cmd.nargs)
+	cmd.redirs.size = 0;
+	cmd.redirs.capacity = 0;
+	cmd.nargs = 0;
+	cmd.args = xmalloc(sizeof(t_string_buffer) * (end - start));
+	stringbuf_init(&cmd.args[0], 16);
+	while (start != end)
 	{
-		tok = &parser->list.tokens[start + i];
-		cmd.args[i] = *tok;
-		++i;
+		tok = &parser->list.tokens[start];
+		if (token_wordcontent(&cmd.args[cmd.nargs], tok))
+		{
+
+		}
+		else if (tok->type == TOK_SPACE)
+			stringbuf_init(&cmd.args[++cmd.nargs], 16);
+		else if (tok->type == TOK_REDIR)
+			token_list_push(&cmd.redirs, *tok);
+		else
+			parser_error(parser, stringbuf_from("Unhandled token type during "
+				"command parsing"));
+		++start;
 	}
+	++cmd.nargs;
 	node = xmalloc(sizeof(t_ast_node));
 	node->type = NODE_COMMAND;
 	node->cmd = cmd;
@@ -120,7 +140,7 @@ next_operator(t_parser *parser, size_t start, size_t end)
 	while (i < end)
 	{
 		tok = &parser->list.tokens[i];
-		if (tok->type == TOK_PIPELINE || tok->type == TOK_REDIR)
+		if (tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE)
 			return (i);
 		++i;
 	}
@@ -130,7 +150,6 @@ next_operator(t_parser *parser, size_t start, size_t end)
 t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 {
 	t_ast_node		*node;
-	const t_token	*tok;
 	size_t			i;
 	size_t			next;
 
@@ -138,7 +157,6 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 	while (i < end)
 	{
 		next = next_operator(parser, i, end);
-		printf("next = %zu\n\n", next);
 		if (next == (size_t)-1)
 		{
 			node = parse_cmd(parser, i, end);
@@ -172,6 +190,8 @@ void ast_free(t_ast_node *head)
 	}
 	else if (head->type == NODE_COMMAND)
 	{
+		for (size_t i = 0; i < head->cmd.nargs; ++i)
+			stringbuf_free(&head->cmd.args[i]);
 		free(head->cmd.args);
 	}
 	free(head);
@@ -191,7 +211,7 @@ void ast_print_debug(t_string input, t_ast_node *head, size_t depth)
 	{
 		dprintf(2, "COMMAND [%zu]: ", head->cmd.nargs);
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
-			token_print_debug(2, input, &head->cmd.args[i]);
+			dprintf(2, "`%.*s` ", head->cmd.args[i].len, head->cmd.args[i].str);
 		dprintf(2, "\n");
 	}
 	else if (head->type == NODE_LOGIC)

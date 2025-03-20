@@ -38,3 +38,27 @@ size_t
 	}
 	return ((size_t)-1);
 }
+
+int
+	token_isword(enum e_token_type type)
+{
+	// TODO
+	return (type == TOK_WORD
+		|| type == TOK_SINGLE_QUOTE
+		|| type == TOK_DOUBLE_QUOTE);
+}
+
+int
+	token_wordcontent(t_string_buffer *buf, const t_token *tok)
+{
+	// TODO
+	if (tok->type == TOK_WORD
+		|| tok->type == TOK_SINGLE_QUOTE
+		|| tok->type == TOK_DOUBLE_QUOTE)
+	{
+		stringbuf_append(buf, (t_string){.str = tok->word.str,
+				.len = tok->word.len });
+		return (1);
+	}
+	return 0;
+}

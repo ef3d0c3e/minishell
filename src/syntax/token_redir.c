@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "tokenizer.h"
 
+// TODO: This function should handle `[n]>` syntax
 int
 	token_redir(t_token_list *list, t_u8_iterator *it)
 {

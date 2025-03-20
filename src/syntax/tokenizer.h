@@ -17,9 +17,46 @@
 // TEMP
 #include <stdio.h>
 
+
 /* ************************************************************************** */
 /* Token definition                                                           */
 /* ************************************************************************** */
+
+typedef struct s_token	t_token;
+
+/**
+ * @brief Frees a token
+ *
+ * Most token do not own thir data, but strings/words do
+ *
+ * @param token Token to free
+ */
+void
+token_free(t_token *token);
+
+typedef struct s_token_list
+{
+	t_token	*tokens;
+	size_t	size;
+	size_t	capacity;
+}	t_token_list;
+
+/**
+ * @brief Push `token` to the end of `list`
+ *
+ * @param list List to push `token` to
+ * @param token Token to push to `list`
+ */
+void
+token_list_push(t_token_list *list, t_token token);
+
+/**
+ * @brief Frees the token list (and the contained tokens)
+ *
+ * @param list Token list to free
+ */
+void
+token_list_free(t_token_list *list);
 
 /**
  * @brief Token types definitions
@@ -139,10 +176,6 @@ struct s_token_redir
 	int	append_flag;
 };
 
-struct s_token_expansion
-{
-};
-
 typedef struct s_token
 {
 	/** @brief Token type */
@@ -163,46 +196,14 @@ typedef struct s_token
 		t_string_buffer			word;
 		/** @brief Error message */
 		t_string				err;
+		/** @brief Expansion result */
+		t_token_list			expansion;
 	};
 }	t_token;
 
 /** @brief Displays token */
 void
 token_print_debug(int fd, t_string prompt, const t_token *token);
-
-/**
- * @brief Frees a token
- *
- * Most token do not own thir data, but strings/words do
- *
- * @param token Token to free
- */
-void
-token_free(t_token *token);
-
-typedef struct s_token_list
-{
-	t_token	*tokens;
-	size_t	size;
-	size_t	capacity;
-}	t_token_list;
-
-/**
- * @brief Push `token` to the end of `list`
- *
- * @param list List to push `token` to
- * @param token Token to push to `list`
- */
-void
-token_list_push(t_token_list *list, t_token token);
-
-/**
- * @brief Frees the token list (and the contained tokens)
- *
- * @param list Token list to free
- */
-void
-token_list_free(t_token_list *list);
 
 /* ************************************************************************** */
 /* Tokenizer                                                                  */
@@ -281,6 +282,20 @@ int	token_param_simple(t_token_list *list, t_u8_iterator *it);
 int	token_param(t_token_list *list, t_u8_iterator *it);
 
 /** @brief Checks if token is word-like */
-int	token_isword(enum e_token_type type);
+int
+token_isword(enum e_token_type type);
+
+/**
+ * @brief Appends string word content of token to buffer
+ *
+ * In the token is not word-like, this function will return 0 and do nothing
+ *
+ * @param buf Buffer to append to
+ * @param tok Token to append
+ *
+ * @returns 1 if `tok` is a word, 0 otherwise
+ */
+int
+token_wordcontent(t_string_buffer *buf, const t_token *tok);
 
 #endif // TOKENIZER_H
