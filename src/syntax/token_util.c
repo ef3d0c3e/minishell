@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "tokenizer.h"
 
-/** @brief Finds the next unescaped instance of `token` in `input` */
 size_t
 	find_unsecaped(t_string input, const char *token)
 {

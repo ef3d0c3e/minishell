@@ -23,12 +23,12 @@ int
 	{
 		if (it->codepoint.str[0] == '\'')
 		{
-			it_advance(it, 1);
 			token_list_push(list, (t_token){
 				.type = TOK_SINGLE_QUOTE,
 				.start = start + 1,
 				.end = it->byte_pos,
 			});
+			it_advance(it, 1);
 			return (1);
 		}
 		it_next(it);

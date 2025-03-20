@@ -26,10 +26,12 @@
  */
 enum e_token_type
 {
+	/** @brief Whitespace (non newline) character */
 	TOK_SPACE,
-	TOK_DIGIT,
 	/** @brief Newline token: `\n` */
 	TOK_NEWLINE,
+
+	TOK_DIGIT,
 
 	/** @brief Grouping character, one of `{, (, }, )` */
 	TOK_GROUPING,
@@ -54,6 +56,36 @@ enum e_token_type
 	 * https://www.gnu.org/software/bash/manual/bash.html#Reserved-Words
 	 */
 	TOK_KEYWORD,
+
+	/**
+	 * @brief Command substitution token: `$(cmd)`
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Process-Substitution
+	 */
+	TOK_CMD_SUB,
+
+	/**
+	 * @brief Arithmetic token: `$((cmd))`
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Arithmetic-Expansion
+	 */
+	TOK_ARITH,
+
+	/**
+	 * @brief Variable expansion token: `$VAR`
+	 *
+	 * Var is matched from `[a-zA-Z0-9_]`
+	 */
+	TOK_PARAM_SIMPLE,
+
+	/**
+	 * @brief Variable expansion token: `${VAR}`
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-
+	 * Expansion
+	 */
+	TOK_PARAM,
+
 	/**
 	 * @brief Single quoted text
 	 *
@@ -66,6 +98,9 @@ enum e_token_type
 	 * https://www.gnu.org/software/bash/manual/bash.html#Double-Quotes
 	 */
 	TOK_DOUBLE_QUOTE,
+
+	/** @brief Leftover content from tokenization */
+	TOK_WORD,
 
 	/**
 	 * @brief Redirection tokens, e.g `<` `>`
@@ -82,8 +117,6 @@ enum e_token_type
 	TOK_EOF,
 	/** @brief Error message */
 	TOK_ERROR,
-	/** @brief Error message that needs to be `free`d */
-	TOK_ERROR_CUSTOM,
 };
 
 /** @brief String data for tokens */
@@ -122,6 +155,8 @@ typedef struct s_token
 		struct s_token_redir	redir;
 		/** @brief Reserved name for token, e.g keyword name, grouping char */
 		const char				*reserved_word;
+		/** @brief String content */
+		t_string_buffer			word;
 		/** @brief Error message */
 		t_string				err;
 	};

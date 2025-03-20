@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_digit.c                                      :+:      :+:    :+:   */
+/*   token_param_simple.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,34 +10,48 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
+
+static inline int
+	is_ident(t_string codepoint)
+{
+	return (codepoint.str[0] == '_' || codepoint.str[0] == '-'
+		|| (codepoint.str[0] >= 'A' && codepoint.str[0] <= 'Z')
+		|| (codepoint.str[0] >= 'a' && codepoint.str[0] <= 'z'));
+}
 
 int
-	token_digit(t_token_list *list, t_u8_iterator *it)
+	token_param_simple(t_token_list *list, t_u8_iterator *it)
 {
 	const size_t	start = it->byte_pos;
-	int				p;
-	int				digit;
+	t_u8_iterator	cpy;
+	t_string_buffer	buf;
 
-	// FIXME: Does not handle sign
-	if (it->codepoint.str[0] < '0' || it->codepoint.str[0] > '9')
+
+	if (it->codepoint.str[0] != '$')
 		return (0);
-	digit = 0;
-	p = 0;
-	while (it->codepoint.len
-		&& it->codepoint.str[0] >= '0' && it->codepoint.str[0] <= '9')
+	cpy = *it;
+	it_advance(&cpy, 1);
+	while (cpy.codepoint.len && is_ident(cpy.codepoint))
+		it_next(&cpy);
+	if (cpy.byte_pos == it->byte_pos + 1)
 	{
-		digit = digit * 10 + (it->codepoint.str[0] - '0');
-		if (digit < p)
-			p = -1;
-		if (p >= 0)
-			p = digit;
-		it_next(it);
+		stringbuf_init(&buf, 8);
+		stringbuf_append(&buf, it->codepoint);
+		token_list_push(list, (t_token){
+				.type = TOK_WORD,
+				.start = start,
+				.end = start + 1,
+				.word = buf,
+		});
 	}
-	if (p < 0)
-		token_error(list, start, it->byte_pos, "Number > 2**31 - 1");
 	else
 		token_list_push(list, (t_token){
-			.type = TOK_DIGIT, .start = start, .end = it->byte_pos,
-			.digit = digit});
+			.type = TOK_PARAM_SIMPLE,
+			.start = start + 1,
+			.end = cpy.byte_pos,
+		});
+	*it = cpy;
 	return (1);
 }
+

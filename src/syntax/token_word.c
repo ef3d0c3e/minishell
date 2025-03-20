@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_meta.c                                       :+:      :+:    :+:   */
+/*   token_word.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,38 +10,29 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-
-// https://www.gnu.org/software/bash/manual/bash.html#index-metacharacter
+#include "util/util.h"
 
 int
-	token_space(t_token_list *list, t_u8_iterator *it)
+	token_word(t_token_list *list, t_u8_iterator *it)
 {
-	if (it->codepoint.str[0] != ' ' && it->codepoint.str[0] != '\t')
-		return (0);
-	if (!list->size || list->tokens[list->size - 1].type != TOK_SPACE)
+	t_string_buffer	buf;
+
+	if (!list->size || list->tokens[list->size - 1].type != TOK_WORD)
 	{
+		stringbuf_init(&buf, 8);
+		stringbuf_append(&buf, it->codepoint);
 		token_list_push(list, (t_token){
-			.type = TOK_SPACE,
+			.type = TOK_WORD,
 			.start = it->byte_pos,
 			.end = it->byte_pos + it->codepoint.len,
+			.word = buf
 		});
 	}
 	else
+	{
+		stringbuf_append(&list->tokens[list->size - 1].word, it->codepoint);
 		list->tokens[list->size - 1].end += it->codepoint.len;
-	it_advance(it, it->codepoint.len);
-	return (1);
-}
-
-int
-	token_newline(t_token_list *list, t_u8_iterator *it)
-{
-	if (it->codepoint.str[0] != '\n')
-		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_NEWLINE,
-		.start = it->byte_pos,
-		.end = it->byte_pos + it->codepoint.len,
-	});
+	}
 	it_advance(it, it->codepoint.len);
 	return (1);
 }

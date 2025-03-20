@@ -30,9 +30,13 @@ void
 	[TOK_HERESTRING] = "HERESTRING",
 	[TOK_SINGLE_QUOTE] = "SINGLE QUOTE",
 	[TOK_DOUBLE_QUOTE] = "DOUBLE QUOTE",
+	[TOK_CMD_SUB] = "COMMAND SUB",
+	[TOK_PARAM_SIMPLE] = "PARAM_SIMPLE",
+	[TOK_PARAM] = "PARAM",
+	[TOK_ARITH] = "ARITH",
+	[TOK_WORD] = "WORD",
 	[TOK_EOF] = "EOF",
 	[TOK_ERROR] = "ERROR",
-	[TOK_ERROR_CUSTOM] = "ERROR_CUSTOM",
 	};
 	const t_string	literal = {.str = prompt.str + token->start,
 		.len = token->end - token->start };
@@ -46,5 +50,7 @@ void
 void
 	token_free(t_token *token)
 {
+	if (token->type == TOK_WORD)
+		stringbuf_free(&token->word);
 	// TODO
 }

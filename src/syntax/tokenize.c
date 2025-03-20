@@ -45,6 +45,11 @@ int	token_pipeline(t_token_list *list, t_u8_iterator *it);
 int	token_keyword(t_token_list *list, t_u8_iterator *it);
 int	token_double_quote(t_token_list *list, t_u8_iterator *it);
 int	token_single_quote(t_token_list *list, t_u8_iterator *it);
+int	token_word(t_token_list *list, t_u8_iterator *it);
+int	token_arith(t_token_list *list, t_u8_iterator *it);
+int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
+int	token_param_simple(t_token_list *list, t_u8_iterator *it);
+int	token_param(t_token_list *list, t_u8_iterator *it);
 
 void
 	tokenizer_init(t_tokenizer *t)
@@ -60,6 +65,11 @@ void
 		token_keyword,
 		token_double_quote,
 		token_single_quote,
+		token_arith,
+		token_cmd_sub,
+		token_param,
+		token_param_simple,
+		token_word,
 		NULL,
 	};
 

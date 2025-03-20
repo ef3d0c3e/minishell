@@ -74,13 +74,11 @@ t_string
 t_string
 	it_substr(const t_u8_iterator *it, size_t len)
 {
-	if (it->byte_pos + len > it->str.len)
-	{
+	if (len == (size_t)-1 || it->byte_pos + len > it->str.len)
 		return ((t_string){
 			.str = it->str.str + it->byte_pos,
 			.len = it->str.len - it->byte_pos
 		});
-	}
 	return ((t_string){
 		.str = it->str.str + it->byte_pos,
 		.len = len,

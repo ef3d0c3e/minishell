@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_meta.c                                       :+:      :+:    :+:   */
+/*   token_param.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,37 +11,26 @@
 /* ************************************************************************** */
 #include "tokenizer.h"
 
-// https://www.gnu.org/software/bash/manual/bash.html#index-metacharacter
-
 int
-	token_space(t_token_list *list, t_u8_iterator *it)
+	token_param(t_token_list *list, t_u8_iterator *it)
 {
-	if (it->codepoint.str[0] != ' ' && it->codepoint.str[0] != '\t')
+	size_t	end;
+
+	if (str_cmp(it_substr(it, 2), "${"))
 		return (0);
-	if (!list->size || list->tokens[list->size - 1].type != TOK_SPACE)
+	it_advance(it, 2);
+	end = find_unsecaped(it_substr(it, -1), "}");
+	if (end == (size_t)-1)
 	{
-		token_list_push(list, (t_token){
-			.type = TOK_SPACE,
-			.start = it->byte_pos,
-			.end = it->byte_pos + it->codepoint.len,
-		});
+		token_error(list, it->byte_pos - 2, it->byte_pos, "Unterminated `${` token");
+		return (1);
 	}
-	else
-		list->tokens[list->size - 1].end += it->codepoint.len;
-	it_advance(it, it->codepoint.len);
+	token_list_push(list, (t_token){
+		.type = TOK_PARAM,
+		.start = it->byte_pos,
+		.end = it->byte_pos + end,
+	});
+	it_advance(it, end + 1);
 	return (1);
 }
 
-int
-	token_newline(t_token_list *list, t_u8_iterator *it)
-{
-	if (it->codepoint.str[0] != '\n')
-		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_NEWLINE,
-		.start = it->byte_pos,
-		.end = it->byte_pos + it->codepoint.len,
-	});
-	it_advance(it, it->codepoint.len);
-	return (1);
-}
