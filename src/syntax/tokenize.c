@@ -42,11 +42,14 @@ int	token_digit(t_token_list *list, t_u8_iterator *it);
 int	token_grouping(t_token_list *list, t_u8_iterator *it);
 int	token_sequence(t_token_list *list, t_u8_iterator *it);
 int	token_pipeline(t_token_list *list, t_u8_iterator *it);
+int	token_keyword(t_token_list *list, t_u8_iterator *it);
+int	token_double_quote(t_token_list *list, t_u8_iterator *it);
+int	token_single_quote(t_token_list *list, t_u8_iterator *it);
 
 void
 	tokenizer_init(t_tokenizer *t)
 {
-	static t_tokenizer_fn	munchers[] = {
+	static const t_tokenizer_fn	munchers[] = {
 		token_space,
 		token_newline,
 		token_digit,
@@ -54,6 +57,9 @@ void
 		token_sequence,
 		token_pipeline,
 		token_grouping,
+		token_keyword,
+		token_double_quote,
+		token_single_quote,
 		NULL,
 	};
 

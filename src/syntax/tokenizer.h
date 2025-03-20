@@ -49,6 +49,25 @@ enum e_token_type
 	TOK_SEQUENCE,
 
 	/**
+	 * @brief Keyword token
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Reserved-Words
+	 */
+	TOK_KEYWORD,
+	/**
+	 * @brief Single quoted text
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Single-Quotes
+	 */
+	TOK_SINGLE_QUOTE,
+	/**
+	 * @brief Double quoted text
+	 *
+	 * https://www.gnu.org/software/bash/manual/bash.html#Double-Quotes
+	 */
+	TOK_DOUBLE_QUOTE,
+
+	/**
 	 * @brief Redirection tokens, e.g `<` `>`
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Redirections
@@ -161,15 +180,16 @@ token_list_free(t_token_list *list);
 void
 token_error(t_token_list *list, size_t start, size_t end, const char *msg);
 
-typedef int	(*t_tokenizer_fn)(t_token_list *, t_u8_iterator *it);
+typedef struct s_tokenizer t_tokenizer;
+
+typedef int	(*t_tokenizer_fn)(t_token_list *list, t_u8_iterator *it);
 
 /**
  * @brief Tokenizer
  */
 typedef struct s_tokenizer
 {
-	t_tokenizer_fn	*munchers;
-
+	const t_tokenizer_fn	*munchers;
 }	t_tokenizer;
 
 /**
@@ -196,5 +216,14 @@ tokenizer_free(t_tokenizer *t);
  */
 t_token_list
 tokenizer_tokenize(const t_tokenizer *t, t_string prompt);
+
+/* ************************************************************************** */
+/* Tokenizer                                                                  */
+/* ************************************************************************** */
+
+/** @brief Finds the next unescaped instance of `token` in `input` */
+size_t
+find_unsecaped(t_string input, const char *token);
+
 
 #endif // TOKENIZER_H
