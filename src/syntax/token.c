@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-#include "util/util.h"
 #include <stdio.h>
 
 void

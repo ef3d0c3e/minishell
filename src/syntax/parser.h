@@ -13,10 +13,14 @@
 # define PARSER_H
 
 # include "tokenizer.h"
+#include "util/util.h"
+#include <stdlib.h>
 
 /* ************************************************************************** */
 /* The AST                                                                    */
 /* ************************************************************************** */
+
+typedef struct s_ast_node	t_ast_node;
 
 /** @brief Type for nodes */
 enum e_node_type
@@ -29,7 +33,21 @@ enum e_node_type
 	NODE_UNARY,
 };
 
-typedef struct s_ast_node	t_ast_node;
+/** 
+ * @brief Redirection data, can be part of all nodes, all files need to be
+ * created before executing the nodes, only the last redirection is actually
+ * used, other are left as empty files. `clobbering` may apply,
+ * see: 3.6.2 Redirecting Output
+ */
+typedef struct s_redir_data
+{
+	/** @brief Redirection token */
+	t_token			redir;
+	/** @brief Redirection word */
+	t_string_buffer	to;
+	/** @brief FD to redirect */
+	int				fd;
+}	t_redir_data;
 
 /** @brief Command name and arguments */
 struct s_node_cmd
@@ -38,11 +56,12 @@ struct s_node_cmd
 	t_string_buffer	*args;
 	/** @brief Number of arguments */
 	size_t			nargs;
-	/**
-	 * @brief Redirections, only the last redirection is actually populated,
-	 * other files are populated according to clobbering rules
-	 */
-	t_token_list	redirs;
+	/** @brief Redirections */
+	t_redir_data	*redirs;
+	/** @brief Number of redirections */
+	size_t			redirs_size;
+	/** @brief Redirections capacity */
+	size_t			redirs_capacity;
 };
 
 /** @brief Data for logic (binary) nodes */
@@ -56,7 +75,9 @@ struct s_logic_node
 /** @brief AST Node type */
 typedef struct s_ast_node
 {
+	/** @brief Node type */
 	enum e_node_type		type;
+	/** @brief Node-specific data */
 	union {
 		struct s_node_cmd	cmd;
 		struct s_logic_node	logic;

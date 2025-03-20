@@ -18,8 +18,8 @@ t_ast_node
 	struct s_node_cmd	cmd;
 	t_ast_node			*node;
 
-	cmd.redirs.size = 0;
-	cmd.redirs.capacity = 0;
+	cmd.redirs_size = 0;
+	cmd.redirs_capacity = 0;
 	cmd.nargs = 0;
 	cmd.args = xmalloc(sizeof(t_string_buffer) * (end - start));
 	stringbuf_init(&cmd.args[0], 16);
