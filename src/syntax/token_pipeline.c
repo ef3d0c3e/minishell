@@ -14,7 +14,7 @@
 int
 	token_pipeline(t_token_list *list, t_u8_iterator *it)
 {
-	static const char	*pipelines[] = {"|", "|&", NULL};
+	static const char	*pipelines[] = {"|&", "|", NULL};
 	const char			*pipeline;
 
 	if (it->codepoint.str[0] != '|')

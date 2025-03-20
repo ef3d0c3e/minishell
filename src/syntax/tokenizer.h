@@ -139,6 +139,10 @@ struct s_token_redir
 	int	append_flag;
 };
 
+struct s_token_expansion
+{
+};
+
 typedef struct s_token
 {
 	/** @brief Token type */
@@ -275,5 +279,8 @@ int	token_arith(t_token_list *list, t_u8_iterator *it);
 int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
 int	token_param_simple(t_token_list *list, t_u8_iterator *it);
 int	token_param(t_token_list *list, t_u8_iterator *it);
+
+/** @brief Checks if token is word-like */
+int	token_isword(enum e_token_type type);
 
 #endif // TOKENIZER_H

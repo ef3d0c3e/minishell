@@ -164,10 +164,7 @@ void ast_free(t_ast_node *head)
 	if (head->type == NODE_LOGIC)
 	{
 		ast_free(head->logic.left);
-		free(head->logic.left);
 		ast_free(head->logic.right);
-		free(head->logic.right);
-		free(head);
 	}
 	else if (head->type == NODE_UNARY)
 	{
@@ -177,6 +174,7 @@ void ast_free(t_ast_node *head)
 	{
 		free(head->cmd.args);
 	}
+	free(head);
 }
 
 void
@@ -185,8 +183,10 @@ parser_free(t_parser *parser)
 	free(parser->errors);
 }
 
-void ast_print(t_string input, t_ast_node *head, size_t depth)
+void ast_print_debug(t_string input, t_ast_node *head, size_t depth)
 {
+	for (size_t i = 0; i < depth; ++i)
+		write(2, "\t", 1);
 	if (head->type == NODE_COMMAND)
 	{
 		dprintf(2, "COMMAND [%zu]: ", head->cmd.nargs);
@@ -197,8 +197,8 @@ void ast_print(t_string input, t_ast_node *head, size_t depth)
 	else if (head->type == NODE_LOGIC)
 	{
 		dprintf(2, "LOGIC `%s`\n", head->logic.token.reserved_word);
-		ast_print(input, head->logic.left, depth + 1);
-		ast_print(input, head->logic.right, depth + 1);
+		ast_print_debug(input, head->logic.left, depth + 1);
+		ast_print_debug(input, head->logic.right, depth + 1);
 	}
 }
 
@@ -226,7 +226,7 @@ int	main(int argc, char **argv)
 	t_ast_node *head = parse(&parser, 0, list.size);
 
 	// Print AST
-	ast_print(input, head, 0);
+	ast_print_debug(input, head, 0);
 
 	parser_free(&parser);
 	ast_free(head);
