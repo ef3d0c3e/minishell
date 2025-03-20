@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-#include "util/util.h"
 
 int
 	token_double_quote(t_token_list *list, t_u8_iterator *it)
 {
-	size_t	end;
+	t_string_buffer	buf;
+	size_t			end;
 
 	if (it->codepoint.str[0] != '"')
 		return (0);
@@ -26,10 +26,13 @@ int
 		token_error(list, it->byte_pos-1, it->byte_pos, "Unterminated `\"` token");
 		return (1);
 	}
+	stringbuf_init(&buf, end);
+	stringbuf_append(&buf, it_substr(it, end));
 	token_list_push(list, (t_token){
 		.type = TOK_DOUBLE_QUOTE,
 		.start = it->byte_pos,
 		.end = it->byte_pos + end,
+		.word = buf,
 	});
 	it_advance(it, end + 1);
 	return (1);

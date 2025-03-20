@@ -50,7 +50,7 @@ void
 void
 	token_free(t_token *token)
 {
-	if (token->type == TOK_WORD)
+	if (token_isword(token->type))
 		stringbuf_free(&token->word);
 	// TODO
 }
