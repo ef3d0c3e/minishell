@@ -76,6 +76,16 @@ typedef struct s_string_buffer
 void
 stringbuf_init(t_string_buffer *buf, size_t initial_capacity);
 
+/**
+ * @brief Creates a new string buffer from a literal
+ *
+ * @param msg Literal message for the stringbuf
+ *
+ * @returns A `t_string_buffer` containing a copy of `msg`
+ */
+t_string_buffer
+stringbuf_from(const char *msg);
+
 /** @brief Frees a string */
 void
 stringbuf_free(t_string_buffer *buf);

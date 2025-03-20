@@ -260,5 +260,20 @@ tokenizer_tokenize(const t_tokenizer *t, t_string prompt);
 size_t
 find_unsecaped(t_string input, const char *token);
 
+int	token_space(t_token_list *list, t_u8_iterator *it);
+int	token_newline(t_token_list *list, t_u8_iterator *it);
+int	token_redir(t_token_list *list, t_u8_iterator *it);
+int	token_digit(t_token_list *list, t_u8_iterator *it);
+int	token_grouping(t_token_list *list, t_u8_iterator *it);
+int	token_sequence(t_token_list *list, t_u8_iterator *it);
+int	token_pipeline(t_token_list *list, t_u8_iterator *it);
+int	token_keyword(t_token_list *list, t_u8_iterator *it);
+int	token_double_quote(t_token_list *list, t_u8_iterator *it);
+int	token_single_quote(t_token_list *list, t_u8_iterator *it);
+int	token_word(t_token_list *list, t_u8_iterator *it);
+int	token_arith(t_token_list *list, t_u8_iterator *it);
+int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
+int	token_param_simple(t_token_list *list, t_u8_iterator *it);
+int	token_param(t_token_list *list, t_u8_iterator *it);
 
 #endif // TOKENIZER_H

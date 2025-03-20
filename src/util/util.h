@@ -22,7 +22,8 @@
 size_t
 ft_strlen(const char *s);
 /**
- * @brief Allocates memory by calling to malloc, `exit(1)` if malloc returns NULL
+ * @brief Allocates memory by calling to malloc, `exit(1)` if malloc returns
+ * NULL
  *
  * @param size Bytes to allocate
  */

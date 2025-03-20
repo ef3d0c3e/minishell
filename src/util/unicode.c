@@ -68,7 +68,8 @@ t_string
 			return ((t_string){.str = NULL, .len = 0});
 		current = it_substr(it, len);
 	}
-	return ((t_string){.str = it->str.str + start, .len = it->byte_pos - start});
+	return ((t_string){.str = it->str.str + start,
+		.len = it->byte_pos - start});
 }
 
 t_string

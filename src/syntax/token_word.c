@@ -17,6 +17,8 @@ int
 {
 	t_string_buffer	buf;
 
+	if (it->codepoint.str[0] == '\\')
+		it_next(it);
 	if (!list->size || list->tokens[list->size - 1].type != TOK_WORD)
 	{
 		stringbuf_init(&buf, 8);

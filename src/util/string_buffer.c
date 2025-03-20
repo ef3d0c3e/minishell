@@ -20,6 +20,17 @@ void
 	buf->capacity = initial_capacity;
 }
 
+t_string_buffer
+	stringbuf_from(const char *msg)
+{
+	t_string_buffer	buffer;
+
+	buffer.capacity = ft_strlen(msg);
+	buffer.len = buffer.capacity;
+	buffer.str = ft_memcpy(xmalloc(buffer.capacity), msg, buffer.len);
+	return (buffer);
+}
+
 void
 	stringbuf_free(t_string_buffer *s)
 {
