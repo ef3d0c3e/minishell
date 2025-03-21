@@ -33,7 +33,7 @@ enum e_node_type
 	NODE_UNARY,
 };
 
-/** 
+/**
  * @brief Redirection data, can be part of all nodes, all files need to be
  * created before executing the nodes, only the last redirection is actually
  * used, other are left as empty files. `clobbering` may apply,
@@ -41,12 +41,12 @@ enum e_node_type
  */
 typedef struct s_redir_data
 {
-	/** @brief Redirection token */
-	t_token			redir;
-	/** @brief Redirection word */
-	t_string_buffer	to;
 	/** @brief FD to redirect */
-	int				fd;
+	int					fd;
+	/** @brief Redirection token */
+	//enum e_redir_type	redir_type;
+	/** @brief Redirection word */
+	t_string_buffer	redir_to;
 }	t_redir_data;
 
 /** @brief Command name and arguments */
@@ -125,5 +125,23 @@ parser_next_operator(t_parser *parser, size_t start, size_t end);
 
 /** @brief Command parser */
 t_ast_node	*parse_cmd(t_parser *parser, size_t start, size_t end);
+
+
+
+/**
+ * @brief Parses next word in input
+ *
+ * @param parser Token source
+ * @param start token
+ * @param end end token
+ * @param buf Output buffer
+ *
+ * @returns The number of consumed token, 0 if no token was comnsumed
+ */
+size_t	parse_word(
+	t_parser *parser,
+	size_t start,
+	size_t end,
+	t_string_buffer *buf);
 
 #endif // PARSER_H

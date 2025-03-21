@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_digit.c                                      :+:      :+:    :+:   */
+/*   parse_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,34 +9,29 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
+#include "parser.h"
+#include "syntax/tokenizer.h"
+#include "util/util.h"
+#include <stddef.h>
 
-int
-	token_digit(t_token_list *list, t_u8_iterator *it)
+size_t	parse_word(
+	t_parser *parser,
+	size_t start,
+	size_t end,
+	t_string_buffer *buf)
 {
-	const size_t	start = it->byte_pos;
-	int				p;
-	int				digit;
+	size_t	i;
 
-	if (it->codepoint.str[0] < '0' || it->codepoint.str[0] > '9')
-		return (0);
-	digit = 0;
-	p = 0;
-	while (it->codepoint.len
-		&& it->codepoint.str[0] >= '0' && it->codepoint.str[0] <= '9')
+	i = 0;
+	buf->len = 0;
+	buf->capacity = 0;
+	buf->str = NULL;
+	while (token_isword(parser->list.tokens[start + i].type) && start + i < end)
 	{
-		digit = digit * 10 + (it->codepoint.str[0] - '0');
-		if (digit < p)
-			p = -1;
-		if (p >= 0)
-			p = digit;
-		it_next(it);
+		if (buf->str)
+			stringbuf_init(buf, 16);
+		token_wordcontent(buf, &parser->list.tokens[start + i]);
+		++i;
 	}
-	if (p < 0)
-		token_error(list, start, it->byte_pos, "Number > 2**31 - 1");
-	else
-		token_list_push(list, (t_token){
-			.type = TOK_DIGIT, .start = start, .end = it->byte_pos,
-			.digit = digit});
-	return (1);
+	return (i);
 }

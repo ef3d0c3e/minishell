@@ -68,6 +68,7 @@ enum e_token_type
 	/** @brief Newline token: `\n` */
 	TOK_NEWLINE,
 
+	/** @brief A positive number between [0, INT_MAX] */
 	TOK_DIGIT,
 
 	/** @brief Grouping character, one of `{, (, }, )` */
@@ -165,18 +166,41 @@ struct s_token_string
 	t_string_buffer	string;
 };
 
+/** @brief Redirection type */
+enum e_redir_type
+{
+	/** @brief "<" */
+	REDIR_INPUT,
+	/** @brief ">" */
+	REDIR_OUTPUT,
+	/** @brief ">>" */
+	REDIR_APPEND,
+	/** @brief "&>", "&>>" */
+	REDIR_OUTPUT_AND_ERR,
+	/** @brief "<<", "<<-" */
+	REDIR_HEREDOC,
+	/** @brief "<<<" */
+	REDIR_HERESTRING,
+	/** @brief "<&" */
+	REDIR_DUP_IN,
+	/** @brief ">&" */
+	REDIR_DUP_OUT,
+	/** @brief "<>" */
+	REDIR_READWRITE,
+};
+
 struct s_token_redir
 {
-	/** @brief Input flag */
-	int	input;
-	/** @brief Output flag */
-	int	output;
+	enum e_redir_type	type;
 	/** @brief Output even if the file already exists and the `noclobber`
-	 * option is set:
-	 * https://www.gnu.org/software/bash/manual/bash.html#Redirecting-Output */
-	int	bypass_noclobber;
-	/** @brief Append flag for output */
-	int	append_flag;
+	 * option is set, see 3.6.2 Redirecting Output */
+	int	clobber;
+	/** @brief Moves the content of \1 to \2, then close \2,
+	 * see 3.6.9 Moving File Descriptors */
+	int	move;
+	/** @brief Duplicates the content of \1,
+	 * see 3.6.8 Duplicating File Descriptors */
+	int	duplicate;
 };
 
 typedef struct s_token
