@@ -26,7 +26,7 @@ size_t	parse_word(
 	buf->len = 0;
 	buf->capacity = 0;
 	buf->str = NULL;
-	while (token_isword(parser->list.tokens[start + i].type) && start + i < end)
+	while (start + i < end && token_isword(parser->list.tokens[start + i].type))
 	{
 		if (buf->str)
 			stringbuf_init(buf, 16);

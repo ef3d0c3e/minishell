@@ -70,9 +70,9 @@ size_t	parse_redir(
 	size_t			skipped;
 
 	// TODO: When `dup`licating, try to parse word as digit first, otherwise parse as file
-	if (parser->list.tokens[start].type == TOK_DIGIT && start + 1 < end)
+	if (start + 1 < end && parser->list.tokens[start].type == TOK_DIGIT)
 	{
-		if (parser->list.tokens[start + 1].type != TOK_REDIR)
+		if (parser->list.tokens[start + 1].type != TOK_REDIR || parser->list.tokens[start].redir.duplicate)
 			return (0);
 		skipped = parse_word(parser, start + 2, end, &word);
 		if (!skipped)
@@ -80,6 +80,7 @@ size_t	parse_redir(
 			parser_error(parser, stringbuf_from("Unexpected EOF after redirection token"));
 			return (2);
 		}
+		add_redir(cmd, parser->list.tokens[start + 1], parser->list.tokens[start].digit, word);
 		return (skipped + 2);
 	}
 	else if (parser->list.tokens[start].type == TOK_REDIR && !parser->list.tokens[start].redir.duplicate)
@@ -111,9 +112,11 @@ size_t	parse_redir_repeat(
 	while (1)
 	{
 		spaces = 0;
-		while (parser->list.tokens[start + skipped + spaces].type == TOK_SPACE
-			&& start + skipped < end)
+		while (start + skipped < end
+			&& parser->list.tokens[start + skipped + spaces].type == TOK_SPACE)
 			++spaces;
+		if (start + skipped + spaces >= end)
+			break;
 		result = parse_redir(parser, start + skipped + spaces, end, cmd);
 		skipped += result;
 		if (!result || start + skipped >= end)
