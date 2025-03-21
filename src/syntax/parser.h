@@ -43,10 +43,10 @@ typedef struct s_redir_data
 {
 	/** @brief Associated redirection token */
 	t_token				token;
-	/** @brief FD to redirect (defaults to 1) */
-	int					from;
-	/** @brief File to redirect to */
-	t_string_buffer		to;
+	/** @brief FD to redirect from/to (defaults to 1) */
+	int					fd;
+	/** @brief File to redirect from/to */
+	t_string_buffer		word;
 }	t_redir_data;
 
 /** @brief Command name and arguments */
@@ -157,6 +157,22 @@ size_t	parse_word(
  * @returns The number of consumed token, 0 if no tokens were consumed
  */
 size_t	parse_redir(
+	t_parser *parser,
+	size_t start,
+	size_t end,
+	struct s_node_cmd *cmd);
+
+/**
+ * @brief Parses redirections repeatedly, into commands
+ *
+ * @param parser Token sourcer
+ * @param start Start token
+ * @param end End token
+ * @param cmd Command to parse into
+ *
+ * @returns The number of consumed token, 0 if no tokens were consumed
+ */
+size_t	parse_redir_repeat(
 	t_parser *parser,
 	size_t start,
 	size_t end,

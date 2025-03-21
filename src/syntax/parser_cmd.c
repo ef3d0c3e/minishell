@@ -19,28 +19,34 @@ t_ast_node
 	struct s_node_cmd	cmd;
 	t_ast_node			*node;
 
+	cmd.redirs = NULL;
 	cmd.redirs_size = 0;
 	cmd.redirs_capacity = 0;
 	cmd.nargs = 0;
 	cmd.args = xmalloc(sizeof(t_string_buffer) * (end - start));
 	stringbuf_init(&cmd.args[0], 16);
+	node = xmalloc(sizeof(t_ast_node));
+	node->type = NODE_COMMAND;
+	node->cmd = cmd;
 	while (start != end)
 	{
+		start += parse_redir_repeat(parser, start, end, &node->cmd);
+		if (start >= end)
+			break;
 		tok = &parser->list.tokens[start];
-		if (token_wordcontent(&cmd.args[cmd.nargs], tok))
+		if (token_wordcontent(&node->cmd.args[node->cmd.nargs], tok))
 		{
 
 		}
 		else if (tok->type == TOK_SPACE)
-			stringbuf_init(&cmd.args[++cmd.nargs], 16);
+			stringbuf_init(&node->cmd.args[++node->cmd.nargs], 16);
 		else
+		{
 			parser_error(parser, stringbuf_from("Unhandled token type during "
-				"command parsing"));
+						"command parsing"));
+		}
 		++start;
 	}
-	++cmd.nargs;
-	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_COMMAND;
-	node->cmd = cmd;
+	++node->cmd.nargs;
 	return (node);
 }

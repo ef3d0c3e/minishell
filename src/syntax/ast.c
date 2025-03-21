@@ -32,6 +32,9 @@ void
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
 			stringbuf_free(&head->cmd.args[i]);
 		free(head->cmd.args);
+		for (size_t i = 0; i < head->cmd.redirs_size; ++i)
+			stringbuf_free(&head->cmd.redirs[i].word);
+		free(head->cmd.redirs);
 	}
 	free(head);
 }
@@ -42,7 +45,7 @@ void
 	if (!head)
 		return ;
 	for (size_t i = 0; i < depth; ++i)
-		write(2, "\t", 1);
+		write(2, " | ", 3);
 	if (head->type == NODE_COMMAND)
 	{
 		dprintf(2, "COMMAND [%zu]: ", head->cmd.nargs);
@@ -50,10 +53,13 @@ void
 			dprintf(2, "`%.*s` ", head->cmd.args[i].len, head->cmd.args[i].str);
 		if (head->cmd.redirs)
 		{
-			dprintf(2, "\nREDIRS: ");
+			dprintf(2, "\n");
+			for (size_t i = 0; i < depth; ++i)
+				write(2, " | ", 3);
+			dprintf(2, " + REDIRS: ");
 			for (size_t i = 0; i < head->cmd.redirs_size; ++i)
 			{
-				dprintf(2, "%d -> '%.*s' ",  head->cmd.redirs[i].from, (int)head->cmd.redirs[i].to.len, head->cmd.redirs[i].to.str);
+				dprintf(2, "%d:'%.*s' ",  head->cmd.redirs[i].fd, (int)head->cmd.redirs[i].word.len, head->cmd.redirs[i].word.str);
 			}
 		}
 		dprintf(2, "\n");

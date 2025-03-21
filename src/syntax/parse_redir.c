@@ -12,6 +12,7 @@
 #include "parser.h"
 #include "syntax/tokenizer.h"
 #include "util/util.h"
+#include <stdlib.h>
 
 /** @brief Adds a redirection to command */
 static inline void
@@ -32,11 +33,12 @@ static inline void
 	cmd->redirs_capacity = new_cap;
 	cmd->redirs[cmd->redirs_size++] = (t_redir_data){
 		.token = token,
-		.from = fd_from,
-		.to = file_to,
+		.fd = fd_from,
+		.word = file_to,
 	};
 }
 
+// TODO: Handle other redirections
 /*
  [N]>[|]WORD
  [N]>>WORD
@@ -67,7 +69,7 @@ size_t	parse_redir(
 	t_string_buffer	word;
 	size_t			skipped;
 
-	// TODO: When clone, try to parse word as digit first, otherwise parse as file
+	// TODO: When `dup`licating, try to parse word as digit first, otherwise parse as file
 	if (parser->list.tokens[start].type == TOK_DIGIT && start + 1 < end)
 	{
 		if (parser->list.tokens[start + 1].type != TOK_REDIR)
@@ -80,15 +82,44 @@ size_t	parse_redir(
 		}
 		return (skipped + 2);
 	}
-	if (parser->list.tokens[start].type == TOK_REDIR)
+	else if (parser->list.tokens[start].type == TOK_REDIR && !parser->list.tokens[start].redir.duplicate)
 	{
 		skipped = parse_word(parser, start + 1, end, &word);
+		printf("SKIPPED: %zu\n", skipped);
 		if (!skipped)
 		{
 			parser_error(parser, stringbuf_from("Unexpected EOF after redirection token"));
 			return (1);
 		}
+		add_redir(cmd, parser->list.tokens[start], 1, word);
 		return (skipped + 1);
 	}
 	return (0);
+}
+
+size_t	parse_redir_repeat(
+	t_parser *parser,
+	size_t start,
+	size_t end,
+	struct s_node_cmd *cmd)
+{
+	size_t	skipped;
+	size_t	result;
+	size_t	spaces;
+
+	skipped = 0;
+	while (1)
+	{
+		spaces = 0;
+		while (parser->list.tokens[start + skipped + spaces].type == TOK_SPACE
+			&& start + skipped < end)
+			++spaces;
+		result = parse_redir(parser, start + skipped + spaces, end, cmd);
+		skipped += result;
+		if (!result || start + skipped >= end)
+			break;
+		skipped += spaces;
+
+	}
+	return (skipped);
 }

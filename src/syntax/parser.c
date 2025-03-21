@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
+#include <stdlib.h>
 
 t_parser
 	parser_init(t_token_list list)
@@ -43,5 +44,10 @@ void
 void
 	parser_free(t_parser *parser)
 {
+	size_t	i;
+
+	i = 0;
+	while (i < parser->errors_size)
+		stringbuf_free(&parser->errors[i++]);
 	free(parser->errors);
 }
