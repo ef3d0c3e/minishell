@@ -38,6 +38,8 @@ void
 void
 	ast_print_debug(t_string input, t_ast_node *head, size_t depth)
 {
+	if (!head)
+		return ;
 	for (size_t i = 0; i < depth; ++i)
 		write(2, "\t", 1);
 	if (head->type == NODE_COMMAND)

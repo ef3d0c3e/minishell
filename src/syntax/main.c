@@ -7,6 +7,7 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 	size_t			i;
 	size_t			next;
 
+	node = NULL;
 	i = start;
 	while (i < end)
 	{

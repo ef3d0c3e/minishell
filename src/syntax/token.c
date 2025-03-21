@@ -33,6 +33,7 @@ void
 	[TOK_PARAM_SIMPLE] = "PARAM_SIMPLE",
 	[TOK_PARAM] = "PARAM",
 	[TOK_ARITH] = "ARITH",
+	[TOK_SPECIAL] = "SPECIAL",
 	[TOK_WORD] = "WORD",
 	[TOK_EOF] = "EOF",
 	[TOK_ERROR] = "ERROR",
@@ -49,7 +50,9 @@ void
 void
 	token_free(t_token *token)
 {
-	if (token_isword(token->type))
+	if (token->type == TOK_WORD
+		|| token->type == TOK_SINGLE_QUOTE
+		|| token->type == TOK_DOUBLE_QUOTE)
 		stringbuf_free(&token->word);
 	// TODO
 }

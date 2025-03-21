@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
+#include "syntax/tokenizer.h"
 
 t_ast_node
 	*parse_cmd(t_parser *parser, size_t start, size_t end)
@@ -32,8 +33,6 @@ t_ast_node
 		}
 		else if (tok->type == TOK_SPACE)
 			stringbuf_init(&cmd.args[++cmd.nargs], 16);
-		else if (tok->type == TOK_REDIR)
-			token_list_push(&cmd.redirs, *tok);
 		else
 			parser_error(parser, stringbuf_from("Unhandled token type during "
 				"command parsing"));

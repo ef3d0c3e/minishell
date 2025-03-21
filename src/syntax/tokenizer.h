@@ -146,6 +146,9 @@ enum e_token_type
 	 */
 	TOK_REDIR,
 
+	/**  @brief Special character: `-` */
+	TOK_SPECIAL,
+
 	TOK_COMMENT,
 	TOK_HEREDOC,
 	TOK_HERESTRING,
@@ -272,6 +275,7 @@ int	token_arith(t_token_list *list, t_u8_iterator *it);
 int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
 int	token_param_simple(t_token_list *list, t_u8_iterator *it);
 int	token_param(t_token_list *list, t_u8_iterator *it);
+int	token_special(t_token_list *list, t_u8_iterator *it);
 
 /** @brief Checks if token is word-like */
 int

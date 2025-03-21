@@ -9,13 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "syntax/syntax.h"
 #include "tokenizer.h"
-#include "util/util.h"
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
 
 void
 	tokenizer_init(t_tokenizer *t)
@@ -23,7 +17,7 @@ void
 	static const t_tokenizer_fn	munchers[] = {
 		token_space,
 		token_newline,
-		//token_digit,
+		token_digit,
 		token_redir,
 		token_sequence,
 		token_pipeline,
@@ -35,6 +29,7 @@ void
 		token_cmd_sub,
 		token_param,
 		token_param_simple,
+		token_special,
 		token_word,
 		NULL,
 	};

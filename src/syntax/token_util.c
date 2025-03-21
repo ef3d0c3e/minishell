@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
 
 size_t
 	find_unsecaped(t_string input, const char *token)
@@ -45,7 +46,10 @@ int
 	// TODO
 	return (type == TOK_WORD
 		|| type == TOK_SINGLE_QUOTE
-		|| type == TOK_DOUBLE_QUOTE);
+		|| type == TOK_DOUBLE_QUOTE
+		|| type == TOK_DIGIT
+		|| type == TOK_SPECIAL
+		|| type == TOK_KEYWORD);
 }
 
 int
@@ -58,6 +62,16 @@ int
 	{
 		stringbuf_append(buf, (t_string){.str = tok->word.str,
 				.len = tok->word.len });
+		return (1);
+	}
+	else if (tok->type == TOK_DIGIT)
+	{
+		// TODO
+	}
+	else if (tok->type == TOK_KEYWORD || tok->type == TOK_SPECIAL)
+	{
+		stringbuf_append(buf, (t_string){.str = tok->reserved_word,
+				.len = ft_strlen(tok->reserved_word) });
 		return (1);
 	}
 	return 0;
