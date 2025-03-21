@@ -10,30 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-#include "util/util.h"
-/*
- <
- >|
- >>
- &>
- >&
- <&
- <<-
- <<
- <<<
- [N]<WORD
- [N]>[|]WORD
- [N]>>WORD
- &>WORD
- >&WORD
- >WORD 2>&1
- &>>WORD
- [N]<<[-]WORD
-		HERE-DOCUMENT
- [N]<<< WORD
- [N]<&WORD
- [N]>&WORD
-*/
 
 int
 	match_simple(
