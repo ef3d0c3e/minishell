@@ -41,12 +41,12 @@ enum e_node_type
  */
 typedef struct s_redir_data
 {
-	/** @brief FD to redirect */
-	int					fd;
-	/** @brief Redirection token */
-	//enum e_redir_type	redir_type;
-	/** @brief Redirection word */
-	t_string_buffer	redir_to;
+	/** @brief Associated redirection token */
+	t_token				token;
+	/** @brief FD to redirect (defaults to 1) */
+	int					from;
+	/** @brief File to redirect to */
+	t_string_buffer		to;
 }	t_redir_data;
 
 /** @brief Command name and arguments */
@@ -117,6 +117,10 @@ parser_error(t_parser *parser, t_string_buffer msg);
 void
 parser_free(t_parser *parser);
 
+/* ************************************************************************** */
+/* Individual parsers                                                         */
+/* ************************************************************************** */
+
 /**
  * @brief Utility function to get the next logic (binary) operator in the list
  */
@@ -126,8 +130,6 @@ parser_next_operator(t_parser *parser, size_t start, size_t end);
 /** @brief Command parser */
 t_ast_node	*parse_cmd(t_parser *parser, size_t start, size_t end);
 
-
-
 /**
  * @brief Parses next word in input
  *
@@ -136,12 +138,28 @@ t_ast_node	*parse_cmd(t_parser *parser, size_t start, size_t end);
  * @param end end token
  * @param buf Output buffer
  *
- * @returns The number of consumed token, 0 if no token was comnsumed
+ * @returns The number of consumed token, 0 if no tokens were consumed
  */
 size_t	parse_word(
 	t_parser *parser,
 	size_t start,
 	size_t end,
 	t_string_buffer *buf);
+
+/**
+ * @brief Parses redirections into command
+ *
+ * @param parser Token sourcer
+ * @param start Start token
+ * @param end End token
+ * @param cmd Command to parse into
+ *
+ * @returns The number of consumed token, 0 if no tokens were consumed
+ */
+size_t	parse_redir(
+	t_parser *parser,
+	size_t start,
+	size_t end,
+	struct s_node_cmd *cmd);
 
 #endif // PARSER_H

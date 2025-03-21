@@ -28,6 +28,7 @@ void
 {
 	size_t	new_cap;
 
+	// FIXME
 	dprintf(2, "ERROR: %.*s\n", (int)msg.len, msg.str);
 	new_cap = parser->errors_cap + !parser->errors_cap * 16;
 	while (new_cap < parser->errors_size + 1)

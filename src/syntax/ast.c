@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
+#include <stdio.h>
 
 
 void
@@ -47,6 +48,14 @@ void
 		dprintf(2, "COMMAND [%zu]: ", head->cmd.nargs);
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
 			dprintf(2, "`%.*s` ", head->cmd.args[i].len, head->cmd.args[i].str);
+		if (head->cmd.redirs)
+		{
+			dprintf(2, "\nREDIRS: ");
+			for (size_t i = 0; i < head->cmd.redirs_size; ++i)
+			{
+				dprintf(2, "%d -> '%.*s' ",  head->cmd.redirs[i].from, (int)head->cmd.redirs[i].to.len, head->cmd.redirs[i].to.str);
+			}
+		}
 		dprintf(2, "\n");
 	}
 	else if (head->type == NODE_LOGIC)
