@@ -35,6 +35,12 @@ clangd:
 	@mkdir -p build
 	cd build && cmake .. && cp compile_commands.json ..
 
+# Build doxygen
+.PHONY: docs
+docs:
+	@mkdir -p docs
+	doxygen doxygen
+
 .PHONY: all
 all: $(NAME)
 
