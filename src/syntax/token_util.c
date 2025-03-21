@@ -48,7 +48,6 @@ int
 		|| type == TOK_SINGLE_QUOTE
 		|| type == TOK_DOUBLE_QUOTE
 		|| type == TOK_DIGIT
-		|| type == TOK_SPECIAL
 		|| type == TOK_KEYWORD);
 }
 
@@ -68,7 +67,7 @@ int
 	{
 		// TODO
 	}
-	else if (tok->type == TOK_KEYWORD || tok->type == TOK_SPECIAL)
+	else if (tok->type == TOK_KEYWORD)
 	{
 		stringbuf_append(buf, (t_string){.str = tok->reserved_word,
 				.len = ft_strlen(tok->reserved_word) });

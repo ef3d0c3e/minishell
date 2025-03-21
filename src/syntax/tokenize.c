@@ -29,7 +29,6 @@ void
 		token_cmd_sub,
 		token_param,
 		token_param_simple,
-		token_special,
 		token_word,
 		NULL,
 	};

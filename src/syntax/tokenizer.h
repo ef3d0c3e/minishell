@@ -147,9 +147,6 @@ enum e_token_type
 	 */
 	TOK_REDIR,
 
-	/**  @brief Special character: `-` */
-	TOK_SPECIAL,
-
 	TOK_COMMENT,
 	TOK_HEREDOC,
 	TOK_HERESTRING,
@@ -169,22 +166,16 @@ struct s_token_string
 /** @brief Redirection type */
 enum e_redir_type
 {
-	/** @brief "<" */
+	/** @brief "<", "<&" */
 	REDIR_INPUT,
-	/** @brief ">" */
+	/** @brief ">", ">>", ">&" */
 	REDIR_OUTPUT,
-	/** @brief ">>" */
-	REDIR_APPEND,
 	/** @brief "&>", "&>>" */
 	REDIR_OUTPUT_AND_ERR,
 	/** @brief "<<", "<<-" */
 	REDIR_HEREDOC,
 	/** @brief "<<<" */
 	REDIR_HERESTRING,
-	/** @brief "<&" */
-	REDIR_DUP_IN,
-	/** @brief ">&" */
-	REDIR_DUP_OUT,
 	/** @brief "<>" */
 	REDIR_READWRITE,
 };
@@ -192,6 +183,8 @@ enum e_redir_type
 struct s_token_redir
 {
 	enum e_redir_type	type;
+	/** @brief Append to target FD flag */
+	int	append;
 	/** @brief Output even if the file already exists and the `noclobber`
 	 * option is set, see 3.6.2 Redirecting Output */
 	int	clobber;
@@ -299,7 +292,6 @@ int	token_arith(t_token_list *list, t_u8_iterator *it);
 int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
 int	token_param_simple(t_token_list *list, t_u8_iterator *it);
 int	token_param(t_token_list *list, t_u8_iterator *it);
-int	token_special(t_token_list *list, t_u8_iterator *it);
 
 /** @brief Checks if token is word-like */
 int
