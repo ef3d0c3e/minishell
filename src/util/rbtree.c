@@ -89,10 +89,9 @@ int main()
 		(void*)free);
 
 	rb_insert(&env, strdup("Hello"), strdup("World"));
-	rb_insert(&env, strdup("Another"), strdup("Var"));
-	rb_insert(&env, strdup("Int"), strdup("Tewst"));
-	rb_insert(&env, strdup("Z"), strdup("Last"));
+	//rb_insert(&env, strdup("Another"), strdup("Var"));
+	//rb_insert(&env, strdup("Int"), strdup("Tewst"));
+	//rb_insert(&env, strdup("Z"), strdup("Last"));
 	rb_apply(&env, print_fn);
-	printf("HERE\n");
 	rb_free(&env);
 }

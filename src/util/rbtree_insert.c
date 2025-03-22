@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "util.h"
+#include <stdio.h>
 
 void	rotate_left(t_rbtree *rbt, t_rbnode *x);
 void	rotate_right(t_rbtree *rbt, t_rbnode *x);
