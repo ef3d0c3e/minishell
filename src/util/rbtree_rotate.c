@@ -11,48 +11,44 @@
 /* ************************************************************************** */
 #include "util.h"
 
-void	rotate_left(t_rbtree *rbt, t_rbnode *x)
+void	rotate_left(t_rbtree *tree, t_rbnode *x)
 {
-	t_rbnode *y;
+    t_rbnode *y = x->right;  /* y is x's right child */
 
-	y = x->right; /* child */
-
-	/* tree x */
-	x->right = y->left;
-	if (x->right != NULL)
-		x->right->parent = x;
-
-	/* tree y */
-	y->parent = x->parent;
-	if (x == x->parent->left)
-		x->parent->left = y;
-	else
-		x->parent->right = y;
-
-	/* assemble tree x and tree y */
-	y->left = x;
-	x->parent = y;
+    /* turn y's left subtree into x's right subtree */
+    x->right = y->left;
+    if (y->left != NULL)
+        y->left->parent = x;
+    /* link x's parent to y */
+    y->parent = x->parent;
+    if (x->parent == NULL)
+        tree->root = y;  /* x was root */
+    else if (x == x->parent->left)
+        x->parent->left = y;
+    else
+        x->parent->right = y;
+    /* put x on y's left */
+    y->left = x;
+    x->parent = y;
 }
 
-void	rotate_right(t_rbtree *rbt, t_rbnode *x)
+void	rotate_right(t_rbtree *tree, t_rbnode *x)
 {
-	t_rbnode *y;
+    t_rbnode *y = x->left;  /* y is x's left child */
 
-	y = x->left; /* child */
-
-	/* tree x */
-	x->left = y->right;
-	if (x->left != NULL)
-		x->left->parent = x;
-
-	/* tree y */
-	y->parent = x->parent;
-	if (x == x->parent->left)
-		x->parent->left = y;
-	else
-		x->parent->right = y;
-
-	/* assemble tree x and tree y */
-	y->right = x;
-	x->parent = y;
+    /* turn y's right subtree into x's left subtree */
+    x->left = y->right;
+    if (y->right != NULL)
+        y->right->parent = x;
+    /* link x's parent to y */
+    y->parent = x->parent;
+    if (x->parent == NULL)
+        tree->root = y;  /* x was root */
+    else if (x == x->parent->left)
+        x->parent->left = y;
+    else
+        x->parent->right = y;
+    /* put x on y's right */
+    y->right = x;
+    x->parent = y;
 }

@@ -23,13 +23,13 @@ t_rbtree
 	tree.key_destroy = key_destroy;
 	tree.data_destroy = data_destroy;
 
-	tree.root = xmalloc(sizeof(t_rbnode));
-	tree.root->parent = NULL;
-	tree.root->left = NULL;
-	tree.root->right = NULL;
-	tree.root->color = 1;
-	tree.root->key = NULL;
-	tree.root->data = NULL;
+	tree.root = NULL;
+	//tree.root->parent = NULL;
+	//tree.root->left = NULL;
+	//tree.root->right = NULL;
+	//tree.root->color = 1;
+	//tree.root->key = NULL;
+	//tree.root->data = NULL;
 
 	return (tree);
 }
@@ -88,10 +88,12 @@ int main()
 		(void*)free,
 		(void*)free);
 
-	rb_insert(&env, strdup("Hello"), strdup("World"));
-	//rb_insert(&env, strdup("Another"), strdup("Var"));
-	//rb_insert(&env, strdup("Int"), strdup("Tewst"));
-	//rb_insert(&env, strdup("Z"), strdup("Last"));
+	rb_insert(&env, strdup("A"), strdup("Var"));
+	rb_insert(&env, strdup("B"), strdup("World"));
+	rb_insert(&env, strdup("C"), strdup("Test"));
+	rb_insert(&env, strdup("D"), strdup("Test"));
+	rb_insert(&env, strdup("E"), strdup("Test"));
+	rb_insert(&env, strdup("Z"), strdup("Last"));
 	rb_apply(&env, print_fn);
 	rb_free(&env);
 }
