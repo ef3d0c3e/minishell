@@ -86,7 +86,6 @@ size_t	parse_redir(
 	else if (parser->list.tokens[start].type == TOK_REDIR && !parser->list.tokens[start].redir.duplicate)
 	{
 		skipped = parse_word(parser, start + 1, end, &word);
-		printf("SKIPPED: %zu\n", skipped);
 		if (!skipped)
 		{
 			parser_error(parser, stringbuf_from("Unexpected EOF after redirection token"));

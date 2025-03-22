@@ -13,8 +13,6 @@
 # define PARSER_H
 
 # include "tokenizer.h"
-#include "util/util.h"
-#include <stdlib.h>
 
 /* ************************************************************************** */
 /* The AST                                                                    */
@@ -45,8 +43,18 @@ typedef struct s_redir_data
 	t_token				token;
 	/** @brief FD to redirect from/to (defaults to 1) */
 	int					fd;
+	/** @brief FD to redirect from/to (defaults to 2) */
+	int					fd2;
 	/** @brief File to redirect from/to */
 	t_string_buffer		word;
+	/**
+	 * @brief Moves the content of \1 to \2, then close \2,
+	 * see 3.6.9 Moving File Descriptors.
+	 *
+	 * This can only be used in combination
+	 * with `fd2`
+	 */
+	int	move;
 }	t_redir_data;
 
 /** @brief Command name and arguments */

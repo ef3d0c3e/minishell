@@ -188,9 +188,6 @@ struct s_token_redir
 	/** @brief Output even if the file already exists and the `noclobber`
 	 * option is set, see 3.6.2 Redirecting Output */
 	int	clobber;
-	/** @brief Moves the content of \1 to \2, then close \2,
-	 * see 3.6.9 Moving File Descriptors */
-	int	move;
 	/** @brief Duplicates the content of \1,
 	 * see 3.6.8 Duplicating File Descriptors */
 	int	duplicate;
@@ -242,6 +239,7 @@ token_error(t_token_list *list, size_t start, size_t end, const char *msg);
 
 typedef struct s_tokenizer t_tokenizer;
 
+/** @brief Tokenizer function, returns 1 and advances it on match */
 typedef int	(*t_tokenizer_fn)(t_token_list *list, t_u8_iterator *it);
 
 /**
@@ -277,6 +275,23 @@ tokenizer_tokenize(const t_tokenizer *t, t_string prompt);
 size_t
 find_unsecaped(t_string input, const char *token);
 
+/** @brief Checks if token is word-like */
+int
+token_isword(enum e_token_type type);
+
+/**
+ * @brief Appends string word content of token to buffer
+ *
+ * If the token is not word-like, this function will return 0 and do nothing
+ *
+ * @param buf Buffer to append to
+ * @param tok Token to append
+ *
+ * @returns 1 if `tok` is a word, 0 otherwise
+ */
+int
+token_wordcontent(t_string_buffer *buf, const t_token *tok);
+
 int	token_space(t_token_list *list, t_u8_iterator *it);
 int	token_newline(t_token_list *list, t_u8_iterator *it);
 int	token_redir(t_token_list *list, t_u8_iterator *it);
@@ -292,22 +307,5 @@ int	token_arith(t_token_list *list, t_u8_iterator *it);
 int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
 int	token_param_simple(t_token_list *list, t_u8_iterator *it);
 int	token_param(t_token_list *list, t_u8_iterator *it);
-
-/** @brief Checks if token is word-like */
-int
-token_isword(enum e_token_type type);
-
-/**
- * @brief Appends string word content of token to buffer
- *
- * In the token is not word-like, this function will return 0 and do nothing
- *
- * @param buf Buffer to append to
- * @param tok Token to append
- *
- * @returns 1 if `tok` is a word, 0 otherwise
- */
-int
-token_wordcontent(t_string_buffer *buf, const t_token *tok);
 
 #endif // TOKENIZER_H

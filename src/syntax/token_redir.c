@@ -63,7 +63,6 @@ int
 		return (0);
 	data.append = 0;
 	data.clobber = 0;
-	data.move = 0;
 	data.duplicate = 0;
 	// TODO: Heredoc/herestrings
 	match_simple(list, it, &data);
