@@ -15,7 +15,7 @@
 # define UTIL_INTERNAL
 # include "string.h"
 # include "memory.h"
-# include "btreemap.h"
+# include "rbtree.h"
 # undef UTIL_INTERNAL
 
 # include <unistd.h>

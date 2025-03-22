@@ -31,6 +31,7 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 }
 
 
+/*
 int	main(int argc, char **argv)
 {
 	t_tokenizer	t;
@@ -69,3 +70,4 @@ int	main(int argc, char **argv)
 
 	token_list_free(&list);
 }
+*/
