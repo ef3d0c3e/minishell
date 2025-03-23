@@ -16,9 +16,11 @@
 #  error "Include <util/util.h> instead."
 # endif // UTIL_INTERNAL
 
-# include <stdlib.h>
-# include <stdint.h>
-# include <stddef.h>
+# include "../includes.h"
+
+/**
+ * @file String utilities
+ */
 
 /* ************************************************************************** */
 /* String wrappers                                                            */
@@ -171,5 +173,19 @@ it_substr(const t_u8_iterator *it, size_t len);
  */
 size_t
 u8_length(char c);
+
+/* ************************************************************************** */
+/* String utilities                                                           */
+/* ************************************************************************** */
+
+/**
+ * @brief Strlen function
+ *
+ * @param s String to get length of
+ *
+ * @returns Number of bytes until a `0x0` is encountered in `s`
+ */
+size_t
+ft_strlen(const char *s);
 
 #endif // STRING_H

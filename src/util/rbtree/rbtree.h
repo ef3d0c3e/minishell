@@ -16,8 +16,11 @@
 #  error "Include <util/util.h> instead."
 # endif // UTIL_INTERNAL
 
-# include <stdint.h>
-# include <stdlib.h>
+# include "../includes.h"
+
+/**
+ * @file Red-black tree map implementation
+ */
 
 /**
  * @brief Red-Black tree implementation
@@ -87,6 +90,28 @@ t_rbnode
 *rb_insert(t_rbtree *tree, void *key, void *data);
 
 /**
+ * @brief Tries to find node by key
+ *
+ * @param tree Tree to search
+ * @param key Key to search in tree
+ *
+ * @returns The associated node, NULL if not found
+ */
+t_rbnode
+*rb_find_node(t_rbtree *tree, const void *key);
+
+/**
+ * @brief Tries to value by key
+ *
+ * @param tree Tree to search
+ * @param key Key to search in tree
+ *
+ * @returns The value associated with key, NULL if not found
+ */
+void
+*rb_find(t_rbtree *tree, const void *key);
+
+/**
  * @brief Applies function to tree
  *
  * The tree is traversed in DFS order
@@ -102,7 +127,6 @@ rb_apply(
 	t_rbtree *tree,
 	void (*fn)(size_t depth, t_rbnode *node, void *data),
 	void *data);
-
 
 /* ************************************************************************** */
 /* Internal                                                                   */

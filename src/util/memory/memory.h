@@ -16,12 +16,11 @@
 #  error "Include <util/util.h> instead."
 # endif // UTIL_INTERNAL
 
+# include "../includes.h"
+
 /**
  * @file Memory manipulation utility
  */
-
-# include <stdlib.h>
-# include <stdint.h>
 
 # ifdef __clang__
 
@@ -72,5 +71,13 @@ void
  */
 void
 *ft_realloc(void *ptr, size_t original_size, size_t new_size);
+/**
+ * @brief Allocates memory by calling to malloc, `exit(1)` if malloc returns
+ * NULL
+ *
+ * @param size Bytes to allocate
+ */
+void
+*xmalloc(size_t size);
 
 #endif // MEMORY_H

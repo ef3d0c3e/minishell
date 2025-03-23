@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xmalloc.c                                          :+:      :+:    :+:   */
+/*   includes.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,23 +9,17 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util.h"
+#ifndef INCLUDES_H
+# define INCLUDES_H
 
-void
-	*xmalloc(size_t size)
-{
-	void	*ptr;
+# ifndef UTIL_INTERNAL
+#  error "Include <util/util.h> instead."
+# endif // UTIL_INTERNAL
 
-	if (!size)
-	{
-		write(2, "malloc() error\n", 15);
-		exit(1);
-	}
-	ptr = malloc(size);
-	if (!ptr)
-	{
-		write(2, "malloc() error\n", 15);
-		exit(1);
-	}
-	return (ptr);
-}
+
+# include <stdlib.h>
+# include <stdint.h>
+# include <stddef.h>
+# include <unistd.h>
+
+#endif // INCLUDES_H

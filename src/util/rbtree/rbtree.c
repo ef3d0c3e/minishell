@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util.h"
+#include "../util.h"
 
 t_rbtree
 	rb_new(
@@ -92,9 +92,10 @@ int main()
 	rb_insert(&env, strdup("C"), strdup("Test"));
 	rb_insert(&env, strdup("D"), strdup("Test"));
 	rb_insert(&env, strdup("E"), strdup("Test"));
-	rb_insert(&env, strdup("F"), strdup("Last"));
+	rb_insert(&env, strdup("F"), strdup("TE"));
 	rb_insert(&env, strdup("G"), strdup("Last"));
 	rb_insert(&env, strdup("H"), strdup("Last"));
-	rb_apply(&env, print_fn, NULL);
+	printf("found=%s\n", rb_find(&env, "B"));
+	//rb_apply(&env, print_fn, NULL);
 	rb_free(&env);
 }

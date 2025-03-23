@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   strlen.c                                           :+:      :+:    :+:   */
+/*   memcpy_unaligned.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,15 +9,21 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util.h"
+#include "../util.h"
 
-size_t
-	ft_strlen(const char *s)
+void
+	*ft_memcpy(void *dest, const void *src, size_t len)
 {
-	size_t	i;
+	char		*d;
+	const char	*s = (const char *)src;
 
-	i = 0;
-	while (s[i])
-		++i;
-	return (i);
+	d = (char *)dest;
+	while (len > 0)
+	{
+		*d = *s;
+		++d;
+		++s;
+		--len;
+	}
+	return (dest);
 }

@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util.h"
+#include "../util.h"
 
 void	rb_rotate_left(t_rbtree *tree, t_rbnode *x)
 {

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memcpy_unaligned.c                                 :+:      :+:    :+:   */
+/*   realloc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,21 +9,17 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util.h"
+#include "../util.h"
 
 void
-	*ft_memcpy(void *dest, const void *src, size_t len)
+	*ft_realloc(void *ptr, size_t original_size, size_t new_size)
 {
-	char		*d;
-	const char	*s = (const char *)src;
+	void	*new_ptr;
 
-	d = (char *)dest;
-	while (len > 0)
-	{
-		*d = *s;
-		++d;
-		++s;
-		--len;
-	}
-	return (dest);
+	if (new_size <= original_size)
+		return (ptr);
+	new_ptr = xmalloc(new_size);
+	ft_memcpy_aligned(new_ptr, ptr, original_size);
+	free(ptr);
+	return (new_ptr);
 }

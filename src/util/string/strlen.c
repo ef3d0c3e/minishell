@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util.h                                             :+:      :+:    :+:   */
+/*   strlen.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,13 +9,15 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef UTIL_H
-# define UTIL_H
+#include "../util.h"
 
-# define UTIL_INTERNAL
-# include "string/string.h"
-# include "memory/memory.h"
-# include "rbtree/rbtree.h"
-# undef UTIL_INTERNAL
+size_t
+	ft_strlen(const char *s)
+{
+	size_t	i;
 
-#endif // UTIL_H
+	i = 0;
+	while (s[i])
+		++i;
+	return (i);
+}

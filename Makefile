@@ -4,8 +4,11 @@ CFLAGS := -Wall -Wextra -pedantic -ggdb -fsanitize=address
 IFLAGS := -I./src
 LFLAGS := 
 
+# :^] `.!find src -name "*.c" -exec echo "{} \\" \;`
 SOURCES := $(wildcard src/*.c) \
-	$(wildcard src/util/*.c) \
+	$(wildcard src/util/memory/*.c) \
+	$(wildcard src/util/rbtree/*.c) \
+	$(wildcard src/util/string/*.c) \
 	$(wildcard src/syntax/*.c)
 
 # Objects
