@@ -184,13 +184,13 @@ struct s_token_redir
 {
 	enum e_redir_type	type;
 	/** @brief Append to target FD flag */
-	int	append;
+	int					append;
 	/** @brief Output even if the file already exists and the `noclobber`
 	 * option is set, see 3.6.2 Redirecting Output */
-	int	clobber;
+	int					clobber;
 	/** @brief Duplicates the content of \1,
 	 * see 3.6.8 Duplicating File Descriptors */
-	int	duplicate;
+	int					duplicate;
 };
 
 typedef struct s_token

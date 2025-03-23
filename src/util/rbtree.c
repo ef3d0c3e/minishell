@@ -13,7 +13,7 @@
 
 t_rbtree
 	rb_new(
-	int	(*key_cmp)(const void *lhs, const void *rhs),
+	int (*key_cmp)(const void *lhs, const void *rhs),
 	void (*key_destroy)(void *key),
 	void (*data_destroy)(void *data))
 {
@@ -22,15 +22,7 @@ t_rbtree
 	tree.key_cmp = key_cmp;
 	tree.key_destroy = key_destroy;
 	tree.data_destroy = data_destroy;
-
 	tree.root = NULL;
-	//tree.root->parent = NULL;
-	//tree.root->left = NULL;
-	//tree.root->right = NULL;
-	//tree.root->color = 1;
-	//tree.root->key = NULL;
-	//tree.root->data = NULL;
-
 	return (tree);
 }
 
@@ -52,48 +44,57 @@ void
 	free_node(tree, tree->root);
 }
 
-void
-	rb_apply_impl(t_rbtree *tree, t_rbnode *root, void(*fn)(size_t depth, t_rbnode *node), size_t depth)
+static inline void
+	rb_apply_impl(
+	size_t depth,
+	t_rbnode *root,
+	void (*fn)(size_t depth, t_rbnode *node, void *data),
+	void *data)
 {
-	fn(depth, root);
-	if (root->left)
-		rb_apply_impl(tree, root->left, fn, depth + 1);
-	if (root->right)
-		rb_apply_impl(tree, root->right, fn, depth + 1);
+	if (!root)
+		return ;
+	fn(depth, root, data);
+	rb_apply_impl(depth + 1, root->left, fn, data);
+	rb_apply_impl(depth + 1, root->right, fn, data);
 }
 
 void
-	rb_apply(t_rbtree *tree, void(*fn)(size_t depth, t_rbnode *node))
+	rb_apply(
+	t_rbtree *tree,
+	void (*fn)(size_t depth, t_rbnode *node, void *data),
+	void *data)
 {
-	rb_apply_impl(tree, tree->root, fn, 0);
+	rb_apply_impl(0, tree->root, fn, data);
 }
-
 
 
 #include <string.h>
 #include <stdio.h>
 
-void	print_fn(size_t depth, t_rbnode *node)
+void	print_fn(size_t depth, t_rbnode *node, void* cookie)
 {
 	for (size_t i = 0; i < depth; ++i)
 		printf(" | ");
 	printf("%s: %s\n", node->key, node->data);
 }
+
 int main()
 {
 	t_rbtree	env;
 
 	env = rb_new(
-		(void*)strcmp,
-		(void*)free,
-		(void*)free);
+		(int(*)(const void *a, const void *b))strcmp,
+		free,
+		free);
 
 	rb_insert(&env, strdup("A"), strdup("Var"));
 	rb_insert(&env, strdup("B"), strdup("World"));
 	rb_insert(&env, strdup("C"), strdup("Test"));
 	rb_insert(&env, strdup("D"), strdup("Test"));
 	rb_insert(&env, strdup("E"), strdup("Test"));
-	rb_insert(&env, strdup("Z"), strdup("Last"));
-	rb_apply(&env, print_fn);
+	rb_insert(&env, strdup("F"), strdup("Last"));
+	rb_insert(&env, strdup("G"), strdup("Last"));
+	rb_insert(&env, strdup("H"), strdup("Last"));
+	rb_apply(&env, print_fn, NULL);
 	rb_free(&env);
 }

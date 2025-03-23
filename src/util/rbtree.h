@@ -12,10 +12,12 @@
 #ifndef RBTREE_H
 # define RBTREE_H
 
-#include <stdint.h>
 # ifndef UTIL_INTERNAL
 #  error "Include <util/util.h> instead."
 # endif // UTIL_INTERNAL
+
+# include <stdint.h>
+# include <stdlib.h>
 
 /**
  * @brief Red-Black tree implementation
@@ -44,11 +46,11 @@ typedef struct s_rbnode
 typedef struct s_rbtree
 {
 	/** @brief Key comparison function */
-	int	(*key_cmp)(const void *lhs, const void *rhs);
+	int			(*key_cmp)(const void *lhs, const void *rhs);
 	/** @brief Key destroy function */
-	void (*key_destroy)(void *key);
+	void		(*key_destroy)(void *key);
 	/** @brief Data destroy function */
-	void (*data_destroy)(void *data);
+	void		(*data_destroy)(void *data);
 	/** @brief Tree root node */
 	t_rbnode	*root;
 }	t_rbtree;
@@ -64,7 +66,7 @@ typedef struct s_rbtree
  */
 t_rbtree
 rb_new(
-	int	(*key_cmp)(const void *lhs, const void *rhs),
+	int (*key_cmp)(const void *lhs, const void *rhs),
 	void (*key_destroy)(void *key),
 	void (*data_destroy)(void *data));
 
@@ -72,11 +74,43 @@ rb_new(
 void
 rb_free(t_rbtree *tree);
 
+/**
+ * @brief Inserts new key/value pair into the tree
+ *
+ * @param tree Tree to insert into
+ * @param key Key
+ * @param data Value
+ *
+ * @return The inserted key/value pair's resulting node
+ */
 t_rbnode
 *rb_insert(t_rbtree *tree, void *key, void *data);
+
+/**
+ * @brief Applies function to tree
+ *
+ * The tree is traversed in DFS order
+ *
+ * @param tree Tree to apply function TODO
+ * @param fn Function to apply on every node
+ * @param depth Node's depth
+ * @param node Node
+ * @param data Caller-provided data
+ */
+void
+rb_apply(
+	t_rbtree *tree,
+	void (*fn)(size_t depth, t_rbnode *node, void *data),
+	void *data);
+
 
 /* ************************************************************************** */
 /* Internal                                                                   */
 /* ************************************************************************** */
+
+void
+rb_rotate_left(t_rbtree *rbt, t_rbnode *x);
+void
+rb_rotate_right(t_rbtree *rbt, t_rbnode *x);
 
 #endif // BTREE_H
