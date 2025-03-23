@@ -95,7 +95,8 @@ int main()
 	rb_insert(&env, strdup("F"), strdup("TE"));
 	rb_insert(&env, strdup("G"), strdup("Last"));
 	rb_insert(&env, strdup("H"), strdup("Last"));
-	printf("found=%s\n", rb_find(&env, "B"));
-	//rb_apply(&env, print_fn, NULL);
+	//printf("found=%s\n", rb_find(&env, "B"));
+	rb_delete(&env, "E");
+	rb_apply(&env, print_fn, NULL);
 	rb_free(&env);
 }

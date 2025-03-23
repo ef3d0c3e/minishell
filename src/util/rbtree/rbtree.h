@@ -90,6 +90,17 @@ t_rbnode
 *rb_insert(t_rbtree *tree, void *key, void *data);
 
 /**
+ * @brief Deletes a key/value pair by calling the destroy functions
+ *
+ * @param tree Tree to delete into
+ * @param key Key to delete
+ *
+ * @return 1 If value was deleted, 0 otherwise
+ */
+int
+rb_delete(t_rbtree *tree, const void *key);
+
+/**
  * @brief Tries to find node by key
  *
  * @param tree Tree to search
