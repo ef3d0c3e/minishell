@@ -84,7 +84,7 @@ enum e_token_type
 	/**
 	 * @brief Sequence separator tokens
 	 *
-	 * https://www.gnu.org/software/bash/manual/bash.html#Simple-Commands
+	 * https://www.gnu.org/software/bash/manual/bash.html#Lists
 	 */
 	TOK_SEQUENCE,
 
@@ -291,6 +291,21 @@ token_isword(enum e_token_type type);
  */
 int
 token_wordcontent(t_string_buffer *buf, const t_token *tok);
+
+/**
+ * @brief Gets the precedence of an operator token
+ *
+ * @note There are currently 4 precedence levels:
+ *  - 0 For pipes
+ *  - 1 For `;` and `&`
+ *  - 2 For `&&` and `||`
+ *  - 3 For subexpression, e.g `$(cmd)`
+ *
+ * @param tok Token to get precedence software
+ * @return The precedence of `tok`, -1 if `tok` is not an operator
+ */
+int
+token_precedence(const t_token *tok);
 
 int	token_space(t_token_list *list, t_u8_iterator *it);
 int	token_newline(t_token_list *list, t_u8_iterator *it);

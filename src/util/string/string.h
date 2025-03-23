@@ -188,4 +188,17 @@ u8_length(char c);
 size_t
 ft_strlen(const char *s);
 
+/**
+ * @brief Strcmp function
+ *
+ * @param first First parameter
+ * @param second Second parameter
+ * @return The following value is returned by this function:
+ * 	- 0 if `first == second`,
+ *  - >0 if `first > second`
+ *  - <0 if `first < second`
+ */
+int
+ft_strcmp(const char *first, const char *second);
+
 #endif // STRING_H

@@ -10,14 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
-#include <stdlib.h>
 
 t_parser
-	parser_init(t_token_list list)
+	parser_init()
 {
-
 	return ((t_parser){
-		.list = list,
 		.errors = xmalloc(sizeof(t_string_buffer) * 16),
 		.errors_size = 0,
 		.errors_cap = 16,

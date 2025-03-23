@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_util.c                                      :+:      :+:    :+:   */
+/*   strcmp.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,28 +9,15 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "../util.h"
 
-#include "parser.h"
-#include "syntax/tokenizer.h"
-
-size_t
-	parser_next_operator(
-		struct s_node_stream stream,
-		t_token_list *list,
-		size_t start,
-		size_t end
-			)
+int
+	ft_strcmp(const char *first, const char *second)
 {
-	const t_token	*tok;
-	size_t			i;
+	size_t	i;
 
-	i = start;
-	while (i < end)
-	{
-		tok = &parser->list.tokens[i];
-		if (tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE)
-			return (i);
+	i = 0;
+	while (first[i] && first[i] == second[i])
 		++i;
-	}
-	return ((size_t)-1);
+	return (first[i] - second[i]);
 }

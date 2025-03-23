@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
+#include "syntax/tokenizer.h"
 #include <stdio.h>
 
 
@@ -40,17 +41,29 @@ void
 }
 
 void
-	ast_print_debug(t_string input, t_ast_node *head, size_t depth)
+	ast_print_debug(
+		t_string input,
+		t_token_list stream,
+		t_ast_node *head,
+		size_t depth
+			)
 {
 	if (!head)
 		return ;
 	for (size_t i = 0; i < depth; ++i)
 		write(2, " | ", 3);
-	if (head->type == NODE_COMMAND)
+	if (head->type == NODE_TOKENSTREAM)
+	{
+		dprintf(2, "STREAM ");
+		for (size_t i = head->stream.start; i < head->stream.end; ++i)
+			token_print_debug(2, input, &stream.tokens[i]);
+		dprintf(2, "\n");
+	}
+	else if (head->type == NODE_COMMAND)
 	{
 		dprintf(2, "COMMAND [%zu]: ", head->cmd.nargs);
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
-			dprintf(2, "`%.*s` ", head->cmd.args[i].len, head->cmd.args[i].str);
+			dprintf(2, "`%.*s` ", (int)head->cmd.args[i].len, head->cmd.args[i].str);
 		if (head->cmd.redirs)
 		{
 			dprintf(2, "\n");
@@ -67,7 +80,7 @@ void
 	else if (head->type == NODE_LOGIC)
 	{
 		dprintf(2, "LOGIC `%s`\n", head->logic.token.reserved_word);
-		ast_print_debug(input, head->logic.left, depth + 1);
-		ast_print_debug(input, head->logic.right, depth + 1);
+		ast_print_debug(input, stream, head->logic.left, depth + 1);
+		ast_print_debug(input, stream, head->logic.right, depth + 1);
 	}
 }

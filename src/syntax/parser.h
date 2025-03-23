@@ -13,6 +13,8 @@
 # define PARSER_H
 
 # include "tokenizer.h"
+#include <stddef.h>
+#include <string.h>
 
 /* ************************************************************************** */
 /* The AST                                                                    */
@@ -23,7 +25,9 @@ typedef struct s_ast_node	t_ast_node;
 /** @brief Type for nodes */
 enum e_node_type
 {
-	/** @brief Command */
+	/** @brief Token stream node, not present in the final AST */
+	NODE_TOKENSTREAM,
+	/** @brief Command (atom) */
 	NODE_COMMAND,
 	/** @brief Binary logic operator, e.g `||`, `|&`, `>` */
 	NODE_LOGIC,
@@ -57,6 +61,14 @@ typedef struct s_redir_data
 	int	move;
 }	t_redir_data;
 
+/** @brief Tokenstream node */
+struct s_node_stream
+{
+	t_token_list	list;
+	size_t			start;
+	size_t			end;
+};
+
 /** @brief Command name and arguments */
 struct s_node_cmd
 {
@@ -84,11 +96,12 @@ struct s_logic_node
 typedef struct s_ast_node
 {
 	/** @brief Node type */
-	enum e_node_type		type;
+	enum e_node_type			type;
 	/** @brief Node-specific data */
 	union {
-		struct s_node_cmd	cmd;
-		struct s_logic_node	logic;
+		struct s_node_stream	stream;
+		struct s_node_cmd		cmd;
+		struct s_logic_node		logic;
 	};
 }	t_ast_node;
 
@@ -98,7 +111,11 @@ ast_free(t_ast_node *head);
 
 /** @brief Prints debug info for the AST */
 void
-ast_print_debug(t_string input, t_ast_node *head, size_t depth);
+ast_print_debug(
+	t_string input,
+	t_token_list stream,
+	t_ast_node *head,
+	size_t depth);
 
 /* ************************************************************************** */
 /* The parser                                                                 */
@@ -107,15 +124,14 @@ ast_print_debug(t_string input, t_ast_node *head, size_t depth);
 /** @brief The parser */
 typedef struct s_parser
 {
-	t_token_list	list;
 	t_string_buffer	*errors;
 	size_t			errors_size;
 	size_t			errors_cap;
 }	t_parser;
 
-/** @brief Initializes a new parser from the given token list */
+/** @brief Initializes a new parser */
 t_parser
-parser_init(t_token_list list);
+parser_init();
 
 /** @brief Appends error to parser */
 void
@@ -136,7 +152,8 @@ size_t
 parser_next_operator(t_parser *parser, size_t start, size_t end);
 
 /** @brief Command parser */
-t_ast_node	*parse_cmd(t_parser *parser, size_t start, size_t end);
+t_ast_node
+*parse_cmd(t_parser *parser, size_t start, size_t end);
 
 /**
  * @brief Parses next word in input
@@ -148,7 +165,8 @@ t_ast_node	*parse_cmd(t_parser *parser, size_t start, size_t end);
  *
  * @returns The number of consumed token, 0 if no tokens were consumed
  */
-size_t	parse_word(
+size_t
+parse_word(
 	t_parser *parser,
 	size_t start,
 	size_t end,
@@ -164,7 +182,8 @@ size_t	parse_word(
  *
  * @returns The number of consumed token, 0 if no tokens were consumed
  */
-size_t	parse_redir(
+size_t
+parse_redir(
 	t_parser *parser,
 	size_t start,
 	size_t end,
@@ -180,7 +199,8 @@ size_t	parse_redir(
  *
  * @returns The number of consumed token, 0 if no tokens were consumed
  */
-size_t	parse_redir_repeat(
+size_t
+parse_redir_repeat(
 	t_parser *parser,
 	size_t start,
 	size_t end,

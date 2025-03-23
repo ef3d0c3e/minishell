@@ -75,3 +75,20 @@ int
 	}
 	return 0;
 }
+
+int
+	token_precedence(const t_token *tok)
+{
+	if (tok->type == TOK_PIPELINE)
+		return (0);
+	else if (tok->type == TOK_SEQUENCE)
+	{
+		if (!ft_strcmp("&&", tok->reserved_word)
+			|| !ft_strcmp("||", tok->reserved_word))
+			return (2);
+		return (1);
+	}
+	else if (tok->type == TOK_CMD_SUB || tok->type == TOK_ARITH)
+		return (3);
+	return (-1);
+}
