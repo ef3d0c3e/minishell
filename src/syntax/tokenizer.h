@@ -273,7 +273,23 @@ tokenizer_tokenize(const t_tokenizer *t, t_string prompt);
 
 /** @brief Finds the next unescaped instance of `token` in `input` */
 size_t
-find_unsecaped(t_string input, const char *token);
+find_unescaped(t_string input, const char *token);
+
+/**
+ * @brief Finds the matching delimiter
+ *
+ * This function will try to find the next matching instance of `closing`.
+ * For instance, finding parenthesis in `(a (b\)))` will return the last `)`
+ * of the sequence.
+ *
+ * @param input Input string
+ * @param opening Opening delimiter
+ * @param closing Closing delimiter
+ * @return Finds the matching delimiter while handling escapes and nested
+ * delimiters
+ */
+size_t
+find_matching(t_string input, const char *opening, const char *closing);
 
 /** @brief Checks if token is word-like */
 int

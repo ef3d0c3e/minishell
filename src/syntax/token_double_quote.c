@@ -20,7 +20,7 @@ int
 	if (it->codepoint.str[0] != '"')
 		return (0);
 	it_advance(it, 1);
-	end = find_unsecaped(it_substr(it, -1), "\"");
+	end = find_unescaped(it_substr(it, -1), "\"");
 	if (end == (size_t)-1)
 	{
 		token_error(list, it->byte_pos-1, it->byte_pos, "Unterminated `\"` token");

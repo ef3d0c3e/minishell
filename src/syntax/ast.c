@@ -33,6 +33,11 @@ void
 		stringbuf_free(&head->atom);
 		return ;
 	}
+	else if (head->type == NODE_SUBEXPR)
+	{
+		stringbuf_free(&head->atom);
+		return ;
+	}
 	else if (head->type == NODE_COMMAND)
 	{
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
@@ -57,6 +62,8 @@ void
 		write(2, " | ", 3);
 	if (head->type == NODE_ATOM)
 		dprintf(2, "ATOM(`%.*s`)\n", (int)head->atom.len, head->atom.str);
+	else if (head->type == NODE_SUBEXPR)
+		dprintf(2, "SUBEXPR(`%.*s`)\n", (int)head->atom.len, head->atom.str);
 	else if (head->type == NODE_COMMAND)
 	{
 		dprintf(2, "COMMAND [%zu]\n", head->cmd.nargs);

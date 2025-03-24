@@ -96,6 +96,17 @@ stringbuf_free(t_string_buffer *buf);
 void
 stringbuf_append(t_string_buffer *buf, t_string str);
 
+/**
+ * @brief Creates a stringbuffer from a string
+ *
+ * @param buf The stringbuf to create a substring from
+ * @param start Start offset in `buf`
+ * @param end End offset in `buf`
+ * @return A stringubffer created from [start, end] in `buf`
+ */
+t_string_buffer
+stringbuf_substr(t_string str, size_t start, size_t end);
+
 /* ************************************************************************** */
 /* Unicode utilities                                                          */
 /* ************************************************************************** */

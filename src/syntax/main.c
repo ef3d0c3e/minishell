@@ -57,7 +57,7 @@ int	main(int argc, char **argv)
 		++i;
 	}
 	printf("\n-- Parsing --\n");
-	t_parser parser = parser_init(list);
+	t_parser parser = parser_init(input, list);
 
 	t_ast_node *head = parse(&parser, 0, parser.list.size);
 	// Print AST

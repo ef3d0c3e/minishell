@@ -19,7 +19,7 @@ int
 	if (str_cmp(it_substr(it, 2), "$("))
 		return (0);
 	it_advance(it, 2);
-	end = find_unsecaped(it_substr(it, -1), ")");
+	end = find_matching(it_substr(it, -1), "(", ")");
 	if (end == (size_t)-1)
 	{
 		token_error(list, it->byte_pos - 2, it->byte_pos, "Unterminated `$(` token");

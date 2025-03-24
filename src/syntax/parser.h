@@ -118,6 +118,7 @@ ast_print_debug(
 /** @brief The parser */
 typedef struct s_parser
 {
+	t_string		input;
 	t_token_list	list;
 	t_string_buffer	*errors;
 	size_t			errors_size;
@@ -126,7 +127,7 @@ typedef struct s_parser
 
 /** @brief Initializes a new parser */
 t_parser
-parser_init(t_token_list list);
+parser_init(t_string input, t_token_list list);
 
 /** @brief Appends error to parser */
 void

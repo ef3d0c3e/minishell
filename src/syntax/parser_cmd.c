@@ -33,6 +33,7 @@ t_string_buffer	cmd_word(t_parser *parser, size_t *start, size_t end)
 t_ast_node
 	*parse_cmd(t_parser *parser, size_t start, size_t end)
 {
+	const t_token		*tok;
 	struct s_node_cmd	cmd;
 	t_ast_node			*node;
 	t_string_buffer		buf;
@@ -56,6 +57,14 @@ t_ast_node
 			node->cmd.args[node->cmd.nargs].type = NODE_ATOM;
 			node->cmd.args[node->cmd.nargs++].atom = buf;
 			buf = (t_string_buffer){.str = NULL, .len = 0, .capacity = 0};
+			continue;
+		}
+		tok = &parser->list.tokens[start];
+		if (tok->type == TOK_CMD_SUB)
+		{
+			node->cmd.args[node->cmd.nargs].type = NODE_SUBEXPR;
+			node->cmd.args[node->cmd.nargs++].atom
+				= stringbuf_substr(parser->input, tok->start, tok->end);
 		}
 		else
 		{

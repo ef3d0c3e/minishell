@@ -50,3 +50,15 @@ void
 	ft_memcpy(s->str + s->len, str.str, str.len);
 	s->len += str.len;
 }
+
+t_string_buffer
+	stringbuf_substr(t_string str, size_t start, size_t end)
+{
+	t_string_buffer	sub;
+
+	sub.len = end - start;
+	sub.capacity = sub.len;
+	sub.str = xmalloc(sub.len);
+	ft_memcpy(sub.str, str.str + start, sub.len);
+	return (sub);
+}
