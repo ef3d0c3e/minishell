@@ -1,9 +1,8 @@
 #include "parser.h"
 #include "expansion.h"
 
-t_ast_node	*parse(t_parser *parser, struct s_node_stream stream, int stage)
+t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 {
-	/*
 	t_ast_node		*node;
 	size_t			i;
 	size_t			next;
@@ -28,7 +27,7 @@ t_ast_node	*parse(t_parser *parser, struct s_node_stream stream, int stage)
 			i = end;
 		}
 	}
-	return (node);*/
+	return (node);
 }
 
 int	main(int argc, char **argv)
@@ -58,18 +57,14 @@ int	main(int argc, char **argv)
 		++i;
 	}
 	printf("\n-- Parsing --\n");
-	t_parser parser = parser_init();
-	struct s_node_stream stream = {
-		.list = list,
-		.start = 0,
-		.end = list.size,
-	};
+	t_parser parser = parser_init(list);
 
+	t_ast_node *head = parse(&parser, 0, parser.list.size);
 	// Print AST
-	//ast_print_debug(input, head, 0);
+	ast_print_debug(input, head, 0);
 
-	//parser_free(&parser);
-	//ast_free(head);
+	parser_free(&parser);
+	ast_free(head);
 
 	token_list_free(&list);
 }

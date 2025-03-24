@@ -15,8 +15,7 @@
 
 size_t
 	parser_next_operator(
-		struct s_node_stream stream,
-		t_token_list *list,
+		t_parser *parser,
 		size_t start,
 		size_t end
 			)

@@ -11,20 +11,37 @@
 /* ************************************************************************** */
 #include "parser.h"
 #include "syntax/tokenizer.h"
+#include "util/util.h"
+#include <sys/types.h>
+
+t_string_buffer	cmd_word(t_parser *parser, size_t *start, size_t end)
+{
+	t_string_buffer	buf;
+
+	buf.str = NULL;
+	buf.capacity = 0;
+	buf.len = 0;
+	while (*start != end)
+	{
+		if (!token_wordcontent(&buf, &parser->list.tokens[*start]))
+			break ;
+		++(*start);
+	}
+	return (buf);
+}
 
 t_ast_node
 	*parse_cmd(t_parser *parser, size_t start, size_t end)
 {
-	const t_token		*tok;
 	struct s_node_cmd	cmd;
 	t_ast_node			*node;
+	t_string_buffer		buf;
 
 	cmd.redirs = NULL;
 	cmd.redirs_size = 0;
 	cmd.redirs_capacity = 0;
 	cmd.nargs = 0;
-	cmd.args = xmalloc(sizeof(t_string_buffer) * (end - start));
-	stringbuf_init(&cmd.args[0], 16);
+	cmd.args = xmalloc(sizeof(t_ast_node) * (end - start));
 	node = xmalloc(sizeof(t_ast_node));
 	node->type = NODE_COMMAND;
 	node->cmd = cmd;
@@ -33,13 +50,13 @@ t_ast_node
 		start += parse_redir_repeat(parser, start, end, &node->cmd);
 		if (start >= end)
 			break;
-		tok = &parser->list.tokens[start];
-		if (token_wordcontent(&node->cmd.args[node->cmd.nargs], tok))
+		buf = cmd_word(parser, &start, end);
+		if (buf.len)
 		{
-
+			node->cmd.args[node->cmd.nargs].type = NODE_ATOM;
+			node->cmd.args[node->cmd.nargs++].atom = buf;
+			buf = (t_string_buffer){.str = NULL, .len = 0, .capacity = 0};
 		}
-		else if (tok->type == TOK_SPACE)
-			stringbuf_init(&node->cmd.args[++node->cmd.nargs], 16);
 		else
 		{
 			parser_error(parser, stringbuf_from("Unhandled token type during "
@@ -47,6 +64,5 @@ t_ast_node
 		}
 		++start;
 	}
-	++node->cmd.nargs;
 	return (node);
 }

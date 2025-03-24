@@ -12,9 +12,10 @@
 #include "parser.h"
 
 t_parser
-	parser_init()
+	parser_init(t_token_list list)
 {
 	return ((t_parser){
+		.list = list,
 		.errors = xmalloc(sizeof(t_string_buffer) * 16),
 		.errors_size = 0,
 		.errors_cap = 16,

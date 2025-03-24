@@ -13,6 +13,7 @@
 # define PARSER_H
 
 # include "tokenizer.h"
+#include "util/util.h"
 #include <stddef.h>
 #include <string.h>
 
@@ -25,10 +26,12 @@ typedef struct s_ast_node	t_ast_node;
 /** @brief Type for nodes */
 enum e_node_type
 {
-	/** @brief Token stream node, not present in the final AST */
-	NODE_TOKENSTREAM,
+	/** @brief Expression that should run in a sub-shell */
+	NODE_SUBEXPR,
 	/** @brief Command (atom) */
 	NODE_COMMAND,
+	/** @brief Atom, i.e text */
+	NODE_ATOM,
 	/** @brief Binary logic operator, e.g `||`, `|&`, `>` */
 	NODE_LOGIC,
 	/** @brief Unary operator (unhandled currently) e.g: `&`, `!` */
@@ -61,19 +64,11 @@ typedef struct s_redir_data
 	int	move;
 }	t_redir_data;
 
-/** @brief Tokenstream node */
-struct s_node_stream
-{
-	t_token_list	list;
-	size_t			start;
-	size_t			end;
-};
-
 /** @brief Command name and arguments */
 struct s_node_cmd
 {
 	/** @brief Program arguments */
-	t_string_buffer	*args;
+	t_ast_node		*args;
 	/** @brief Number of arguments */
 	size_t			nargs;
 	/** @brief Redirections */
@@ -99,9 +94,9 @@ typedef struct s_ast_node
 	enum e_node_type			type;
 	/** @brief Node-specific data */
 	union {
-		struct s_node_stream	stream;
-		struct s_node_cmd		cmd;
-		struct s_logic_node		logic;
+		t_string_buffer		atom;
+		struct s_node_cmd	cmd;
+		struct s_logic_node	logic;
 	};
 }	t_ast_node;
 
@@ -113,7 +108,6 @@ ast_free(t_ast_node *head);
 void
 ast_print_debug(
 	t_string input,
-	t_token_list stream,
 	t_ast_node *head,
 	size_t depth);
 
@@ -124,6 +118,7 @@ ast_print_debug(
 /** @brief The parser */
 typedef struct s_parser
 {
+	t_token_list	list;
 	t_string_buffer	*errors;
 	size_t			errors_size;
 	size_t			errors_cap;
@@ -131,7 +126,7 @@ typedef struct s_parser
 
 /** @brief Initializes a new parser */
 t_parser
-parser_init();
+parser_init(t_token_list list);
 
 /** @brief Appends error to parser */
 void

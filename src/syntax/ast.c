@@ -28,10 +28,15 @@ void
 	{
 		// TODO
 	}
+	else if (head->type == NODE_ATOM)
+	{
+		stringbuf_free(&head->atom);
+		return ;
+	}
 	else if (head->type == NODE_COMMAND)
 	{
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
-			stringbuf_free(&head->cmd.args[i]);
+			ast_free(&head->cmd.args[i]);
 		free(head->cmd.args);
 		for (size_t i = 0; i < head->cmd.redirs_size; ++i)
 			stringbuf_free(&head->cmd.redirs[i].word);
@@ -43,27 +48,20 @@ void
 void
 	ast_print_debug(
 		t_string input,
-		t_token_list stream,
 		t_ast_node *head,
-		size_t depth
-			)
+		size_t depth)
 {
 	if (!head)
 		return ;
 	for (size_t i = 0; i < depth; ++i)
 		write(2, " | ", 3);
-	if (head->type == NODE_TOKENSTREAM)
-	{
-		dprintf(2, "STREAM ");
-		for (size_t i = head->stream.start; i < head->stream.end; ++i)
-			token_print_debug(2, input, &stream.tokens[i]);
-		dprintf(2, "\n");
-	}
+	if (head->type == NODE_ATOM)
+		dprintf(2, "ATOM(`%.*s`)\n", (int)head->atom.len, head->atom.str);
 	else if (head->type == NODE_COMMAND)
 	{
-		dprintf(2, "COMMAND [%zu]: ", head->cmd.nargs);
+		dprintf(2, "COMMAND [%zu]\n", head->cmd.nargs);
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
-			dprintf(2, "`%.*s` ", (int)head->cmd.args[i].len, head->cmd.args[i].str);
+			ast_print_debug(input, &head->cmd.args[i], depth + 1);
 		if (head->cmd.redirs)
 		{
 			dprintf(2, "\n");
@@ -75,12 +73,11 @@ void
 				dprintf(2, "%d:'%.*s' ",  head->cmd.redirs[i].fd, (int)head->cmd.redirs[i].word.len, head->cmd.redirs[i].word.str);
 			}
 		}
-		dprintf(2, "\n");
 	}
 	else if (head->type == NODE_LOGIC)
 	{
 		dprintf(2, "LOGIC `%s`\n", head->logic.token.reserved_word);
-		ast_print_debug(input, stream, head->logic.left, depth + 1);
-		ast_print_debug(input, stream, head->logic.right, depth + 1);
+		ast_print_debug(input, head->logic.left, depth + 1);
+		ast_print_debug(input, head->logic.right, depth + 1);
 	}
 }
