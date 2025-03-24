@@ -64,6 +64,14 @@ typedef struct s_redir_data
 	int	move;
 }	t_redir_data;
 
+/** @brief Sub expression data */
+struct s_node_expr
+{
+	/** @brief Expression substring */
+	t_string	input;
+	t_ast_node	*head;
+};
+
 /** @brief Command name and arguments */
 struct s_node_cmd
 {
@@ -95,7 +103,11 @@ typedef struct s_ast_node
 	/** @brief Node-specific data */
 	union {
 		t_string_buffer		atom;
+		/** @brief Sub expressions AST */
+		struct s_node_expr	expr;
+		/** @brief Atom, for commands (name & parameters) */
 		struct s_node_cmd	cmd;
+		/** @brief Binary nodes, e.g `|` or `&&` */
 		struct s_logic_node	logic;
 	};
 }	t_ast_node;
@@ -137,10 +149,13 @@ parser_error(t_parser *parser, t_string_buffer msg);
 void
 parser_free(t_parser *parser);
 
+/** @brief Parser entry point */
+t_ast_node
+*parse(t_parser *parser, size_t start, size_t end);
+
 /* ************************************************************************** */
 /* Individual parsers                                                         */
 /* ************************************************************************** */
-
 /**
  * @brief Utility function to get the next logic (binary) operator in the list
  */

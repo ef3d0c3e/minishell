@@ -237,26 +237,8 @@ token_print_debug(int fd, t_string prompt, const t_token *token);
 void
 token_error(t_token_list *list, size_t start, size_t end, const char *msg);
 
-typedef struct s_tokenizer t_tokenizer;
-
 /** @brief Tokenizer function, returns 1 and advances it on match */
 typedef int	(*t_tokenizer_fn)(t_token_list *list, t_u8_iterator *it);
-
-/**
- * @brief Tokenizer
- */
-typedef struct s_tokenizer
-{
-	const t_tokenizer_fn	*munchers;
-}	t_tokenizer;
-
-/**
- * @brief Initializes a tokenizer
- *
- * @param t Tokenizer to initialize
- */
-void
-tokenizer_init(t_tokenizer *t);
 
 /**
  * @brief Tokenize a prompt
@@ -265,7 +247,7 @@ tokenizer_init(t_tokenizer *t);
  * @param prompt Prompt to tokenize
  */
 t_token_list
-tokenizer_tokenize(const t_tokenizer *t, t_string prompt);
+tokenizer_tokenize(t_string prompt);
 
 /* ************************************************************************** */
 /* Tokenizer                                                                  */

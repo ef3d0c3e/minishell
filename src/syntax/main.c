@@ -32,16 +32,14 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 
 int	main(int argc, char **argv)
 {
-	t_tokenizer	t;
 	const		t_string input = {
 		.str = argv[1],
 		.len = ft_strlen(argv[1]),
 	};
-	tokenizer_init(&t);
 	printf("prompt=`%s`\n", argv[1]);
 
 	dprintf(2, " -- Raw tokens --\n");
-	t_token_list list = tokenizer_tokenize(&t, input);
+	t_token_list list = tokenizer_tokenize(input);
 	size_t i = 0;
 	while (i < list.size)
 	{

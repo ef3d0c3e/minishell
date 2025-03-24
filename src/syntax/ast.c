@@ -35,7 +35,7 @@ void
 	}
 	else if (head->type == NODE_SUBEXPR)
 	{
-		stringbuf_free(&head->atom);
+		ast_free(head->expr.head);
 		return ;
 	}
 	else if (head->type == NODE_COMMAND)
@@ -63,7 +63,10 @@ void
 	if (head->type == NODE_ATOM)
 		dprintf(2, "ATOM(`%.*s`)\n", (int)head->atom.len, head->atom.str);
 	else if (head->type == NODE_SUBEXPR)
-		dprintf(2, "SUBEXPR(`%.*s`)\n", (int)head->atom.len, head->atom.str);
+	{
+		dprintf(2, "SUBEXPR\n");
+		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
+	}
 	else if (head->type == NODE_COMMAND)
 	{
 		dprintf(2, "COMMAND [%zu]\n", head->cmd.nargs);
@@ -71,9 +74,6 @@ void
 			ast_print_debug(input, &head->cmd.args[i], depth + 1);
 		if (head->cmd.redirs)
 		{
-			dprintf(2, "\n");
-			for (size_t i = 0; i < depth; ++i)
-				write(2, " | ", 3);
 			dprintf(2, " + REDIRS: ");
 			for (size_t i = 0; i < head->cmd.redirs_size; ++i)
 			{

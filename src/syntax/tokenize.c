@@ -11,8 +11,9 @@
 /* ************************************************************************** */
 #include "tokenizer.h"
 
-void
-	tokenizer_init(t_tokenizer *t)
+
+static inline const t_tokenizer_fn
+	*munchers(void)
 {
 	static const t_tokenizer_fn	munchers[] = {
 		token_space,
@@ -32,12 +33,12 @@ void
 		token_word,
 		NULL,
 	};
-
-	t->munchers = munchers;
+	
+	return (munchers);
 }
 
 t_token_list
-	tokenizer_tokenize(const t_tokenizer *t, t_string prompt)
+	tokenizer_tokenize(t_string prompt)
 {
 	t_token_list	list;
 	t_u8_iterator	it;
@@ -51,9 +52,9 @@ t_token_list
 	while (it.codepoint.len)
 	{
 		i = 0;
-		while (t->munchers[i])
+		while (munchers()[i])
 		{
-			if (t->munchers[i](&list, &it))
+			if (munchers()[i](&list, &it))
 			{
 				i = 0;
 				break ;

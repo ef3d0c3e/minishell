@@ -12,6 +12,7 @@
 #include "parser.h"
 #include "syntax/tokenizer.h"
 #include "util/util.h"
+#include <math.h>
 #include <sys/types.h>
 
 t_string_buffer	cmd_word(t_parser *parser, size_t *start, size_t end)
@@ -28,6 +29,31 @@ t_string_buffer	cmd_word(t_parser *parser, size_t *start, size_t end)
 		++(*start);
 	}
 	return (buf);
+}
+
+struct s_node_expr
+parse_subexpr(t_parser *parser, t_string expr)
+{
+	t_string		prev_input;
+	t_token_list	prev_list;
+	t_token_list	list;
+	t_ast_node		*head;
+
+	list = tokenizer_tokenize(expr);
+	// FIXME: Check for error tokens
+
+	prev_input = parser->input;
+	prev_list = parser->list;
+	parser->input = expr;
+	parser->list = list;
+	head = parse(parser, 0, list.size);
+	token_list_free(&list);
+	parser->list = prev_list;
+	parser->input = prev_input;
+	return ((struct s_node_expr){
+		.input = expr,
+		.head = head,
+	});
 }
 
 t_ast_node
@@ -63,10 +89,12 @@ t_ast_node
 		if (tok->type == TOK_CMD_SUB)
 		{
 			node->cmd.args[node->cmd.nargs].type = NODE_SUBEXPR;
-			node->cmd.args[node->cmd.nargs++].atom
-				= stringbuf_substr(parser->input, tok->start, tok->end);
+			node->cmd.args[node->cmd.nargs++].expr = parse_subexpr(parser,
+					(t_string){
+					.str = parser->input.str + tok->start,
+					.len = tok->end - tok->start});
 		}
-		else
+		else if (tok->type != TOK_SPACE)
 		{
 			parser_error(parser, stringbuf_from("Unhandled token type during "
 						"command parsing"));
