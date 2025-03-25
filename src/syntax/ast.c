@@ -74,11 +74,12 @@ void
 			ast_print_debug(input, &head->cmd.args[i], depth + 1);
 		if (head->cmd.redirs)
 		{
+			for (size_t i = 0; i < depth; ++i)
+				write(2, " | ", 3);
 			dprintf(2, " + REDIRS: ");
 			for (size_t i = 0; i < head->cmd.redirs_size; ++i)
-			{
 				dprintf(2, "%d:'%.*s' ",  head->cmd.redirs[i].fd, (int)head->cmd.redirs[i].word.len, head->cmd.redirs[i].word.str);
-			}
+			dprintf(2, "\n");
 		}
 	}
 	else if (head->type == NODE_LOGIC)

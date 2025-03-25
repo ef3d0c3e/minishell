@@ -13,9 +13,6 @@
 # define PARSER_H
 
 # include "tokenizer.h"
-#include "util/util.h"
-#include <stddef.h>
-#include <string.h>
 
 /* ************************************************************************** */
 /* The AST                                                                    */

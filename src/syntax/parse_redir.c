@@ -111,7 +111,7 @@ size_t	parse_redir_repeat(
 	while (1)
 	{
 		spaces = 0;
-		while (start + skipped < end
+		while (start + skipped + spaces < end
 			&& parser->list.tokens[start + skipped + spaces].type == TOK_SPACE)
 			++spaces;
 		if (start + skipped + spaces >= end)

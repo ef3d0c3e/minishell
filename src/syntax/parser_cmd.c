@@ -10,10 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
-#include "syntax/tokenizer.h"
-#include "util/util.h"
-#include <math.h>
-#include <sys/types.h>
 
 t_string_buffer	cmd_word(t_parser *parser, size_t *start, size_t end)
 {
@@ -68,7 +64,8 @@ t_ast_node
 	cmd.redirs_size = 0;
 	cmd.redirs_capacity = 0;
 	cmd.nargs = 0;
-	cmd.args = xmalloc(sizeof(t_ast_node) * (end - start));
+	if (end - start)
+		cmd.args = xmalloc(sizeof(t_ast_node) * (end - start));
 	node = xmalloc(sizeof(t_ast_node));
 	node->type = NODE_COMMAND;
 	node->cmd = cmd;
