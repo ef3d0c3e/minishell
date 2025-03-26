@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "expansion.h"
 #include "syntax/tokenizer.h"
+#include <stdio.h>
 
 /** @brief Parse an expression delimited by two operators */
 t_ast_node	*parse_expression(t_parser *parser, size_t start, size_t end)

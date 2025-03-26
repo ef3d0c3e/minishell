@@ -108,6 +108,7 @@ int
 	}
 	else if (tok->type == TOK_DIGIT)
 	{
+		return (0);
 		// TODO
 	}
 	else if (tok->type == TOK_KEYWORD)

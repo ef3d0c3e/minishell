@@ -47,10 +47,10 @@ struct s_node_expr
 		.len = tok_end->start - tok_start->end
 	};
 
-	printf("CONTENT=`%.*s`\n", input.len, input.str);
+	printf("CONTENT=`%.*s` %zu %zu\n", input.len, input.str, start, end);
 	return ((struct s_node_expr){
 		.input = input,
-		.head = parse(parser, start + 1, end - 1)
+		.head = parse(parser, start + 1, end)
 	});
 }
 
