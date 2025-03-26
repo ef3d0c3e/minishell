@@ -38,6 +38,8 @@ void
 		ast_free(head->expr.head);
 		return ;
 	}
+	else if (head->type == NODE_SUBSHELL)
+		ast_free(head->expr.head);
 	else if (head->type == NODE_COMMAND)
 	{
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
@@ -62,6 +64,11 @@ void
 		write(2, " | ", 3);
 	if (head->type == NODE_ATOM)
 		dprintf(2, "ATOM(`%.*s`)\n", (int)head->atom.len, head->atom.str);
+	else if (head->type == NODE_SUBSHELL)
+	{
+		dprintf(2, "SUBSHELL\n");
+		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
+	}
 	else if (head->type == NODE_SUBEXPR)
 	{
 		dprintf(2, "SUBEXPR\n");

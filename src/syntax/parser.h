@@ -23,8 +23,11 @@ typedef struct s_ast_node	t_ast_node;
 /** @brief Type for nodes */
 enum e_node_type
 {
-	/** @brief Expression that should run in a sub-shell */
+	/** @brief Expression that should run in a sub-shell, whose result is 
+	 * expanded in-place */
 	NODE_SUBEXPR,
+	/** @brief Expression that should run in a sub-shell */
+	NODE_SUBSHELL,
 	/** @brief Command (atom) */
 	NODE_COMMAND,
 	/** @brief Atom, i.e text */
@@ -162,6 +165,10 @@ parser_next_operator(t_parser *parser, size_t start, size_t end);
 /** @brief Command parser */
 t_ast_node
 *parse_cmd(t_parser *parser, size_t start, size_t end);
+
+/** @brief Parses sub-shell expression: `(...)` */
+t_ast_node
+*parse_subshell(t_parser *parser, size_t start, size_t end);
 
 /**
  * @brief Parses next word in input

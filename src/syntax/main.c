@@ -1,5 +1,18 @@
 #include "parser.h"
 #include "expansion.h"
+#include "syntax/tokenizer.h"
+
+/** @brief Parse an expression delimited by two operators */
+t_ast_node	*parse_expression(t_parser *parser, size_t start, size_t end)
+{
+	const t_token	*const tok = &parser->list.tokens[start];
+
+	if (tok->type == TOK_GROUPING && tok->reserved_word[0] == '(')
+		return (parse_subshell(parser, start, end));
+	else
+		return (parse_cmd(parser, start, end));
+}
+
 
 t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 {
@@ -14,7 +27,7 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 		next = parser_next_operator(parser, i, end);
 		if (next == (size_t)-1)
 		{
-			node = parse_cmd(parser, i, end);
+			node = parse_expression(parser, i, end);
 			i = end;
 		}
 		else
@@ -22,7 +35,7 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 			node = xmalloc(sizeof(t_ast_node));
 			node->type = NODE_LOGIC;
 			node->logic.token = parser->list.tokens[next];
-			node->logic.left = parse_cmd(parser, start, next);
+			node->logic.left = parse_expression(parser, start, next);
 			node->logic.right = parse(parser, next + 1, end);
 			i = end;
 		}

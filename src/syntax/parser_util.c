@@ -12,6 +12,7 @@
 
 #include "parser.h"
 #include "syntax/tokenizer.h"
+#include <stdlib.h>
 
 size_t
 	parser_next_operator(
@@ -22,12 +23,20 @@ size_t
 {
 	const t_token	*tok;
 	size_t			i;
+	size_t			balance[2];
 
 	i = start;
+	balance[0] = 0;
+	balance[1] = 0;
+	// TODO: `{}` balance
 	while (i < end)
 	{
 		tok = &parser->list.tokens[i];
-		if (tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE)
+		if (tok->type == TOK_GROUPING && tok->reserved_word[0] == '(')
+			++balance[0];
+		else if (tok->type == TOK_GROUPING && tok->reserved_word[0] == ')')
+			--balance[0];
+		if ((tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE) && balance[0] == 0)
 			return (i);
 		++i;
 	}

@@ -12,6 +12,7 @@
 #include "tokenizer.h"
 #include "util/util.h"
 #include <stddef.h>
+#include <stdlib.h>
 
 size_t
 	find_unescaped(t_string input, const char *token)
