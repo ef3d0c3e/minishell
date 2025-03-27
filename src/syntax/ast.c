@@ -73,6 +73,15 @@ void
 	{
 		dprintf(2, "SUBSHELL\n");
 		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
+		if (head->cmd.redirs.redirs)
+		{
+			for (size_t i = 0; i < depth; ++i)
+				write(2, " | ", 3);
+			dprintf(2, " + REDIRS: ");
+			for (size_t i = 0; i < head->expr.redirs.redirs_size; ++i)
+				dprintf(2, "%d:'%.*s' ",  head->expr.redirs.redirs[i].fd, (int)head->expr.redirs.redirs[i].word.len, head->expr.redirs.redirs[i].word.str);
+			dprintf(2, "\n");
+		}
 	}
 	else if (head->type == NODE_SUBEXPR)
 	{

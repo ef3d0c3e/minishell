@@ -13,6 +13,7 @@
 #include "parser.h"
 #include "syntax/tokenizer.h"
 #include "util/util.h"
+#include <stddef.h>
 #include <stdio.h>
 
 /* Finds closing ')' */
@@ -50,7 +51,12 @@ struct s_node_expr
 	printf("CONTENT=`%.*s` %zu %zu\n", input.len, input.str, start, end);
 	return ((struct s_node_expr){
 		.input = input,
-		.head = parse(parser, start + 1, end)
+		.head = parse(parser, start + 1, end),
+		.redirs = {
+			.redirs = NULL,
+			.redirs_capacity = 0,
+			.redirs_size = 0,
+		}
 	});
 }
 
@@ -59,13 +65,17 @@ t_ast_node
 {
 	t_ast_node		*node;
 	const size_t	delim = find_delim(&parser->list, start + 1, end);
+	size_t			redirlen;
 
+	node = xmalloc(sizeof(t_ast_node));
 	if (delim == (size_t)-1)
 		parser_error(parser, stringbuf_from("Unterminated `(` delimiter"));
-	if (delim + 1 != end)
-		parser_error(parser, stringbuf_from("Leftover tokens after `)`"));
-	node = xmalloc(sizeof(t_ast_node));
 	node->type = NODE_SUBSHELL;
-	node->expr = parse_delimited(parser, start, end - 1);
+	node->expr = parse_delimited(parser, start, delim);
+	redirlen = 0;
+	if (delim != (size_t)-1)
+		redirlen = parse_redir_repeat(parser, delim + 1, end, &node->expr.redirs);
+	if (delim + redirlen + 1 != end)
+		parser_error(parser, stringbuf_from("Leftover tokens after `)`"));
 	return (node);
 }
