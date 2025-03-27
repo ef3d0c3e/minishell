@@ -39,15 +39,20 @@ void
 		return ;
 	}
 	else if (head->type == NODE_SUBSHELL)
+	{
 		ast_free(head->expr.head);
+		for (size_t i = 0; i < head->expr.redirs.redirs_size; ++i)
+			stringbuf_free(&head->expr.redirs.redirs[i].word);
+		free(head->expr.redirs.redirs);
+	}
 	else if (head->type == NODE_COMMAND)
 	{
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
 			ast_free(&head->cmd.args[i]);
 		free(head->cmd.args);
-		for (size_t i = 0; i < head->cmd.redirs_size; ++i)
-			stringbuf_free(&head->cmd.redirs[i].word);
-		free(head->cmd.redirs);
+		for (size_t i = 0; i < head->cmd.redirs.redirs_size; ++i)
+			stringbuf_free(&head->cmd.redirs.redirs[i].word);
+		free(head->cmd.redirs.redirs);
 	}
 	free(head);
 }
@@ -79,13 +84,13 @@ void
 		dprintf(2, "COMMAND [%zu]\n", head->cmd.nargs);
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
 			ast_print_debug(input, &head->cmd.args[i], depth + 1);
-		if (head->cmd.redirs)
+		if (head->cmd.redirs.redirs)
 		{
 			for (size_t i = 0; i < depth; ++i)
 				write(2, " | ", 3);
 			dprintf(2, " + REDIRS: ");
-			for (size_t i = 0; i < head->cmd.redirs_size; ++i)
-				dprintf(2, "%d:'%.*s' ",  head->cmd.redirs[i].fd, (int)head->cmd.redirs[i].word.len, head->cmd.redirs[i].word.str);
+			for (size_t i = 0; i < head->cmd.redirs.redirs_size; ++i)
+				dprintf(2, "%d:'%.*s' ",  head->cmd.redirs.redirs[i].fd, (int)head->cmd.redirs.redirs[i].word.len, head->cmd.redirs.redirs[i].word.str);
 			dprintf(2, "\n");
 		}
 	}

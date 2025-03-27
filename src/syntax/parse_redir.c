@@ -17,21 +17,21 @@
 /** @brief Adds a redirection to command */
 static inline void
 	add_redir(
-			struct s_node_cmd *cmd,
+			t_redirections *redirs,
 			t_token token,
 			int fd_from,
 			t_string_buffer file_to)
 {
 	size_t	new_cap;
 
-	new_cap = cmd->redirs_capacity + !cmd->redirs_capacity * 16;
-	while (new_cap < cmd->redirs_size + 1)
+	new_cap = redirs->redirs_capacity + !redirs->redirs_capacity * 16;
+	while (new_cap < redirs->redirs_size + 1)
 		new_cap *= 2;
-	cmd->redirs = ft_realloc(cmd->redirs,
-			cmd->redirs_capacity * sizeof(t_redir_data),
+	redirs->redirs = ft_realloc(redirs->redirs,
+			redirs->redirs_capacity * sizeof(t_redir_data),
 			new_cap * sizeof(t_redir_data));
-	cmd->redirs_capacity = new_cap;
-	cmd->redirs[cmd->redirs_size++] = (t_redir_data){
+	redirs->redirs_capacity = new_cap;
+	redirs->redirs[redirs->redirs_size++] = (t_redir_data){
 		.token = token,
 		.fd = fd_from,
 		.word = file_to,
@@ -64,7 +64,7 @@ size_t	parse_redir(
 	t_parser *parser,
 	size_t start,
 	size_t end,
-	struct s_node_cmd *cmd)
+	t_redirections *redirs)
 {
 	t_string_buffer	word;
 	size_t			skipped;
@@ -80,7 +80,7 @@ size_t	parse_redir(
 			parser_error(parser, stringbuf_from("Unexpected EOF after redirection token"));
 			return (2);
 		}
-		add_redir(cmd, parser->list.tokens[start + 1], parser->list.tokens[start].digit, word);
+		add_redir(redirs, parser->list.tokens[start + 1], parser->list.tokens[start].digit, word);
 		return (skipped + 2);
 	}
 	else if (parser->list.tokens[start].type == TOK_REDIR && !parser->list.tokens[start].redir.duplicate)
@@ -91,7 +91,7 @@ size_t	parse_redir(
 			parser_error(parser, stringbuf_from("Unexpected EOF after redirection token"));
 			return (1);
 		}
-		add_redir(cmd, parser->list.tokens[start], 1, word);
+		add_redir(redirs, parser->list.tokens[start], 1, word);
 		return (skipped + 1);
 	}
 	return (0);
@@ -101,7 +101,7 @@ size_t	parse_redir_repeat(
 	t_parser *parser,
 	size_t start,
 	size_t end,
-	struct s_node_cmd *cmd)
+	t_redirections *redirs)
 {
 	size_t	skipped;
 	size_t	result;
@@ -116,7 +116,7 @@ size_t	parse_redir_repeat(
 			++spaces;
 		if (start + skipped + spaces >= end)
 			break;
-		result = parse_redir(parser, start + skipped + spaces, end, cmd);
+		result = parse_redir(parser, start + skipped + spaces, end, redirs);
 		skipped += result;
 		if (!result || start + skipped >= end)
 			break;

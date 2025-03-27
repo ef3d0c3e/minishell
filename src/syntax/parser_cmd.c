@@ -60,9 +60,9 @@ t_ast_node
 	t_ast_node			*node;
 	t_string_buffer		buf;
 
-	cmd.redirs = NULL;
-	cmd.redirs_size = 0;
-	cmd.redirs_capacity = 0;
+	cmd.redirs.redirs = NULL;
+	cmd.redirs.redirs_size = 0;
+	cmd.redirs.redirs_capacity = 0;
 	cmd.nargs = 0;
 	if (end - start)
 		cmd.args = xmalloc(sizeof(t_ast_node) * (end - start));
@@ -71,7 +71,7 @@ t_ast_node
 	node->cmd = cmd;
 	while (start != end)
 	{
-		start += parse_redir_repeat(parser, start, end, &node->cmd);
+		start += parse_redir_repeat(parser, start, end, &node->cmd.redirs);
 		if (start >= end)
 			break;
 		buf = cmd_word(parser, &start, end);

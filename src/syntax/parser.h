@@ -64,12 +64,25 @@ typedef struct s_redir_data
 	int	move;
 }	t_redir_data;
 
+/** @brief Stores redirections */
+typedef struct s_redirections
+{
+	/** @brief Redirections */
+	t_redir_data	*redirs;
+	/** @brief Number of redirections */
+	size_t			redirs_size;
+	/** @brief Redirections capacity */
+	size_t			redirs_capacity;
+}	t_redirections;
+
 /** @brief Sub expression data */
 struct s_node_expr
 {
 	/** @brief Expression substring */
 	t_string	input;
 	t_ast_node	*head;
+	/** @brief Redirections */
+	t_redirections	redirs;
 };
 
 /** @brief Command name and arguments */
@@ -80,11 +93,7 @@ struct s_node_cmd
 	/** @brief Number of arguments */
 	size_t			nargs;
 	/** @brief Redirections */
-	t_redir_data	*redirs;
-	/** @brief Number of redirections */
-	size_t			redirs_size;
-	/** @brief Redirections capacity */
-	size_t			redirs_capacity;
+	t_redirections	redirs;
 };
 
 /** @brief Data for logic (binary) nodes */
@@ -202,7 +211,7 @@ parse_redir(
 	t_parser *parser,
 	size_t start,
 	size_t end,
-	struct s_node_cmd *cmd);
+	t_redirections *redirs);
 
 /**
  * @brief Parses redirections repeatedly, into commands
@@ -219,6 +228,6 @@ parse_redir_repeat(
 	t_parser *parser,
 	size_t start,
 	size_t end,
-	struct s_node_cmd *cmd);
+	t_redirections *redirs);
 
 #endif // PARSER_H
