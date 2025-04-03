@@ -107,6 +107,25 @@ stringbuf_append(t_string_buffer *buf, t_string str);
 t_string_buffer
 stringbuf_substr(t_string str, size_t start, size_t end);
 
+/**
+ * @brief Internally reserve memory to hold at least `new_capacity` bytes
+ *
+ * @param buf String buffer to reserve space for
+ * @param new_capacity The requested byte capacity.
+ * In case `buf->capacity >= new_capacity` this function does nothing
+ */
+void
+stringbuf_reserve(t_string_buffer *buf, size_t new_capacity);
+
+/**
+ * @brief Appends integer value (base 10) to the string buffer
+ *
+ * @param buf String buffer to append integer to
+ * @param number Integer to append to string buffer `buf`
+ */
+void
+stringbuf_itoa(t_string_buffer *buf, int number);
+
 /* ************************************************************************** */
 /* Unicode utilities                                                          */
 /* ************************************************************************** */

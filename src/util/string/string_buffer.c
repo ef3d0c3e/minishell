@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "../util.h"
-#include <uchar.h>
 
 void
 	stringbuf_init(t_string_buffer *buf, size_t initial_capacity)

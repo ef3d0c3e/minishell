@@ -66,7 +66,7 @@ void
 {
 	rb_apply_impl(0, tree->root, fn, data);
 }
-
+/*
 #include <string.h>
 #include <stdio.h>
 
@@ -102,3 +102,4 @@ int main()
 	rb_apply(&env, print_fn, NULL);
 	rb_free(&env);
 }
+*/

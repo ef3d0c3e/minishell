@@ -75,6 +75,10 @@ void
  * @brief Allocates memory by calling to malloc, `exit(1)` if malloc returns
  * NULL
  *
+ * @note Allocating a block of size 0 will cause the function to `exit()`,
+ * unlike readline's xmalloc which will allocate a non-zero size to deal with
+ * such requests.
+ *
  * @param size Bytes to allocate
  */
 void
