@@ -147,7 +147,6 @@ void
 rb_rotate_left(t_rbtree *rbt, t_rbnode *x);
 void
 rb_rotate_right(t_rbtree *rbt, t_rbnode *x);
-
 /**
  * @brief Returns the minimum of subtree designated by `node`
  *
@@ -168,5 +167,26 @@ t_rbnode
  */
 t_rbnode
 *rb_maximum(t_rbnode *node);
+/** 
+ * @brief Replaces the subtree rooted at u with the subtree rooted at v.
+ * If u->parent is NULL, then v becomes root; otherwise
+ * v is attached to u->parent in place of u.
+ *
+ * @param tree The tree to operate in
+ * @param u First subtree
+ * @param v Second subtree
+ */
+void
+rb_transplant(t_rbtree *tree, t_rbnode *u, t_rbnode *v);
+/**
+ * @brief Rebalance after deleting a black node. We track x’s parent separately
+ * because if x is NULL, x->parent would be invalid.
+ *
+ * @param tree The tree to rebalance
+ * @param x Deleted node
+ * @param x_parent Deleted node's parent
+ * */
+void
+rb_delete_fixup(t_rbtree *tree, t_rbnode *x, t_rbnode *x_parent);
 
 #endif // BTREE_H

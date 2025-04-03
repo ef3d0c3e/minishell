@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "../util.h"
 
+/** @brief Find function implementation */
 static inline t_rbnode
 	*find_impl(t_rbtree *tree, t_rbnode *root, const void *key)
 {
@@ -22,11 +23,11 @@ static inline t_rbnode
 	{
 		if (!root->left)
 			return (NULL);
-		return find_impl(tree, root->left, key);
+		return (find_impl(tree, root->left, key));
 	}
 	if (!root->right)
 		return (NULL);
-	return find_impl(tree, root->right, key);
+	return (find_impl(tree, root->right, key));
 }
 
 t_rbnode
@@ -38,7 +39,7 @@ t_rbnode
 }
 
 void
-*rb_find(t_rbtree *tree, const void *key)
+	*rb_find(t_rbtree *tree, const void *key)
 {
 	t_rbnode	*node;
 

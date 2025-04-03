@@ -96,6 +96,9 @@ int main()
 	rb_insert(&env, strdup("H"), strdup("Last"));
 	printf("found=%s\n", rb_find(&env, "B"));
 	rb_apply(&env, print_fn, NULL);
+	rb_delete(&env, "A");
+	rb_delete(&env, "C");
+	rb_delete(&env, "B");
 	rb_apply(&env, print_fn, NULL);
 	rb_free(&env);
 }
