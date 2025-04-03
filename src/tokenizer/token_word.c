@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-#include "util/util.h"
 
 int
 	token_word(t_token_list *list, t_u8_iterator *it)

@@ -11,10 +11,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
-#include "syntax/tokenizer.h"
-#include "util/util.h"
-#include <stddef.h>
-#include <stdio.h>
 
 /* Finds closing ')' */
 static inline size_t

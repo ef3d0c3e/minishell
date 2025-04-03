@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-#include "util/util.h"
-
 
 int
 	token_isword(enum e_token_type type)

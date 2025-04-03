@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-#include "util/util.h"
 
 static inline int
 	is_ident(t_string codepoint)

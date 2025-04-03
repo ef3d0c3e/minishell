@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-#include <stdio.h>
 
 void
 	token_print_debug(int fd, t_string prompt, const t_token *token)

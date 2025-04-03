@@ -10,9 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
-#include "syntax/tokenizer.h"
-#include <stdio.h>
-
 
 void
 	ast_free(t_ast_node *head)

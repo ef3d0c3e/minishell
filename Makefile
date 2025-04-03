@@ -9,7 +9,9 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/util/memory/*.c) \
 	$(wildcard src/util/rbtree/*.c) \
 	$(wildcard src/util/string/*.c) \
-	$(wildcard src/syntax/*.c)
+	$(wildcard src/tokenizer/*.c) \
+	$(wildcard src/expansion/*.c) \
+	$(wildcard src/parser/*.c)
 
 # Objects
 OBJECTS := $(addprefix build/,$(SOURCES:.c=.o))

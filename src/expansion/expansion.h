@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_list.c                                       :+:      :+:    :+:   */
+/*   expansion.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,31 +9,13 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include <stddef.h>
+#ifndef EXPANSION_H
+# define  EXPANSION_H
 
-void
-	token_list_push(t_token_list *list, t_token token)
-{
-	if (list->size >= list->capacity)
-	{
-		list->capacity = ((list->capacity + !list->capacity) * 2);
-		list->tokens = ft_realloc(list->tokens, list->size * sizeof(t_token),
-			list->capacity * sizeof(t_token));
-	}
-	list->tokens[list->size++] = token;
-}
+# include <tokenizer/tokenizer.h>
 
-void
-	token_list_free(t_token_list *list)
-{
-	size_t	i;
+/** @brief Performs word expansion according to bash rules */
+t_token_list
+token_expand(t_token_list list);
 
-	i = 0;
-	while (i < list->size)
-	{
-		token_free(&list->tokens[i]);
-		++i;
-	}
-	free(list->tokens);
-}
+#endif // EXPANSION_H

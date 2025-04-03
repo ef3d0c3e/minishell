@@ -10,9 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
-#include "syntax/tokenizer.h"
-#include "util/util.h"
-#include <stddef.h>
 
 size_t	parse_word(
 	t_parser *parser,

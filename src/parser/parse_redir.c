@@ -10,9 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser.h"
-#include "syntax/tokenizer.h"
-#include "util/util.h"
-#include <stdlib.h>
 
 /** @brief Adds a redirection to command */
 static inline void

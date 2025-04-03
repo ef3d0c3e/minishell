@@ -19,11 +19,7 @@
 # include "../includes.h"
 
 /**
- * @file Red-black tree map implementation
- */
-
-/**
- * @brief Red-Black tree implementation
+ * @file Red-Black tree implementation
  * based on this: http://www.sgi.com/tech/stl/stl_tree.h
  * and this: https://github.com/xieqing/red-black-tree
  */
