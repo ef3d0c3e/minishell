@@ -44,6 +44,7 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 	return (node);
 }
 
+/*
 int	main(int argc, char **argv)
 {
 	const		t_string input = {
@@ -80,3 +81,4 @@ int	main(int argc, char **argv)
 
 	token_list_free(&list);
 }
+*/

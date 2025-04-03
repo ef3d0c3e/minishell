@@ -148,4 +148,25 @@ rb_rotate_left(t_rbtree *rbt, t_rbnode *x);
 void
 rb_rotate_right(t_rbtree *rbt, t_rbnode *x);
 
+/**
+ * @brief Returns the minimum of subtree designated by `node`
+ *
+ * @returns node Subtree to get the minimal value from
+ *
+ * @returns The minimal value of subtree designated by node. A.k.a the leftmost
+ * node
+ */
+t_rbnode
+*rb_minimum(t_rbnode *node);
+/**
+ * @brief Returns the maximum of subtree designated by `node`
+ *
+ * @returns node Subtree to get the maximal value from
+ *
+ * @returns The maximal value of subtree designated by node. A.k.a the leftmost
+ * node
+ */
+t_rbnode
+*rb_maximum(t_rbnode *node);
+
 #endif // BTREE_H
