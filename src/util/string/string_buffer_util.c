@@ -12,6 +12,25 @@
 #include "../util.h"
 #include <stdlib.h>
 
+t_string_buffer
+	stringbuf_from_range(const char *start, const char *end)
+{
+	t_string_buffer	buf;
+
+	stringbuf_init(&buf, end - start);
+	buf.len = end - start;
+	ft_memcpy(buf.str, start, buf.len);
+	return (buf);
+}
+
+char
+	*stringbuf_cstr(t_string_buffer *buf)
+{
+	stringbuf_reserve(buf, buf->len + 1);
+	buf->str[buf->len] = 0;
+	return (buf->str);
+}
+
 void
 	stringbuf_reserve(t_string_buffer *buf, size_t new_capacity)
 {

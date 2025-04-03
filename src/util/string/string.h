@@ -88,6 +88,27 @@ stringbuf_init(t_string_buffer *buf, size_t initial_capacity);
 t_string_buffer
 stringbuf_from(const char *msg);
 
+/**
+ * @brief Creates a new string buffer from a string range
+ *
+ * @param start Range start
+ * @param end Renge end
+ *
+ * @returns A stringbuf constructed from `[start; end]`
+ */
+t_string_buffer
+stringbuf_from_range(const char *start, const char *end);
+
+/**
+ * @brief Consumes a string buffer and returns a NULL-terminated C string
+ *
+ * @param buf Buffer to consume
+ *
+ * @returns The constructed NULL-terminated string from `buf`
+ */
+char
+*stringbuf_cstr(t_string_buffer *buf);
+
 /** @brief Frees a string */
 void
 stringbuf_free(t_string_buffer *buf);
@@ -230,5 +251,17 @@ ft_strlen(const char *s);
  */
 int
 ft_strcmp(const char *first, const char *second);
+
+/**
+ * @brief Searches for character `c` in string `s`
+ *
+ * @param s The string to search
+ * @param c The character to search in `s`
+ *
+ * @returns The substring starting from the first occurence of `c` in `s`
+ * NULL if `s` does not contain `c`.
+ */
+char
+*ft_strchr(const char *s, int c);
 
 #endif // STRING_H
