@@ -59,8 +59,8 @@ static inline void	*memcpy_32(void *dest, const void *src, size_t n)
 
 	first_d = dest;
 	last_d = (char *)dest + n - 16;
-	*((uint16_t *)first_d) = *((uint16_t *)first_s);
-	*((uint16_t *)last_d) = *((uint16_t *)last_s);
+	*((t_char16 *)first_d) = *((t_char16 *)first_s);
+	*((t_char16 *)last_d) = *((t_char16 *)last_s);
 	return (dest);
 }
 

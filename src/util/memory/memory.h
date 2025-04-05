@@ -24,9 +24,11 @@
 
 # ifdef __clang__
 
+typedef char	t_char16 __attribute__((ext_vector_type(16), aligned(1)));
 typedef char	t_char32 __attribute__((ext_vector_type(32), aligned(1)));
 # else
 
+typedef char	t_char16 __attribute__((vector_size(16), aligned(1)));
 typedef char	t_char32 __attribute__((vector_size(32), aligned(1)));
 # endif // __clang__
 

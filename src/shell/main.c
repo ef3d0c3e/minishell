@@ -33,8 +33,6 @@ int
 		return (0);
 	key = stringbuf_from_range(s, sep);
 	value = stringbuf_from(sep + 1);
-	printf("KEY=`%.*s`\n", key.len, key.str);
-	printf("VAL=`%.*s`\n", value.len, value.str);
 	rb_insert(&env->env, stringbuf_cstr(&key), stringbuf_cstr(&value));
 	return (1);
 }
@@ -58,5 +56,9 @@ int main(int ac, char **av, char **envp)
 		++env;
 	}
 	rb_apply(&environ.env, print_fn, NULL);
+
+	t_rbnode *node = rb_find_node(&environ.env, "I3SOCK");
+	print_fn(0, node, NULL);
+
 	return (0);
 }
