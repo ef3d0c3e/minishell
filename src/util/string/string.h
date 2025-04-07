@@ -295,5 +295,14 @@ ft_strncmp(const char *first, const char *second, size_t n);
  */
 char
 *ft_strchr(const char *s, int c);
+/**
+ * @brief Strdup function
+ *
+ * @param s The string to duplicate
+ *
+ * @returns A string allocated from copying s
+ */
+char
+*ft_strdup(const char *s);
 
 #endif // STRING_H

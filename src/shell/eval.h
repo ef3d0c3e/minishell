@@ -12,9 +12,13 @@
 #ifndef EVAL_H
 # define EVAL_H
 
-#include "util/util.h"
-#include <parser/parser.h>
-#include <stddef.h>
+# include <parser/parser.h>
+
+# include <ft_printf.h>
+
+# include <errno.h>
+# include <dirent.h>
+# include <sys/stat.h>
 
 typedef struct s_error	t_error;
 
@@ -23,6 +27,9 @@ typedef struct s_environ
 {
 	/** @brief Stores all environment variables */
 	t_rbtree	env;
+
+	/** @brief All programs in the path */
+	t_rbtree	path_program;
 
 	/** @brief Errors list */
 	t_error		*errors;
@@ -51,16 +58,27 @@ void
 eval(t_environ *env, t_ast_node* program);
 
 /******************************************************************************/
+/* Path handling                                                              */
+/******************************************************************************/
+
+/**
+ * @brief Populates program entry from the shell's `PATH`
+ *
+ * @param env Shell session
+ */
+void
+path_populate(t_environ *env);
+
+/******************************************************************************/
 /* Error handling                                                             */
 /******************************************************************************/
 
 typedef struct s_error
 {
-	/** @brief Error location */
-	t_string_buffer	msg;
-	
+	/** @brief Error message */
+	char		*msg;
 	/** @brief Error function */
-	const char		*function;
+	const char	*function;
 }	t_error;
 
 /**
@@ -73,6 +91,13 @@ typedef struct s_error
  */
 void
 shell_error(t_environ *env, char *msg, const char *function);
+/**
+ * @brief Displays errors on stderr and clear the error queue
+ *
+ * @param env The session
+ */
+void
+shell_error_flush(t_environ *env);
 
 
 #endif // EVAL_H

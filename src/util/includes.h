@@ -17,6 +17,7 @@
 # endif // UTIL_INTERNAL
 
 # include <stdlib.h>
+# include <ft_printf.h>
 # include <stdint.h>
 # include <stddef.h>
 # include <unistd.h>

@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../util.h"
+#include <util/util.h>
 
 int
 	ft_strcmp(const char *first, const char *second)

@@ -42,9 +42,16 @@ t_environ
 
 	env.env = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			free, free);
+	env.path_program = rb_new((int (*)(const void *, const void *))ft_strcmp,
+			free, free);
+	env.errors_capacity = 0;
+	env.errors_size = 0;
 	e = envp;
 	while (*e)
 		parse_environ(&env, *(e++));
+
+	path_populate(&env);
+	shell_error_flush(&env);
 	return (env);
 }
 
@@ -52,4 +59,5 @@ void
 	env_free(t_environ *env)
 {
 	rb_free(&env->env);
+	rb_free(&env->path_program);
 }
