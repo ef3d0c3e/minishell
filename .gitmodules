@@ -1,3 +1,0 @@
-[submodule "libs/ft_printf"]
-	path = libs/ft_printf
-	url = ssh://git@github.com/ef3d0c3e/ft_printf.git
