@@ -12,6 +12,26 @@
 #include "../util.h"
 #include <stdlib.h>
 
+void
+	stringbuf_replace(
+	t_string_buffer *buf,
+	size_t start,
+	size_t end,
+	const char *replace)
+{
+	const size_t	len = ft_strlen(replace);
+	char			*result;
+
+	buf->capacity = len + (end - start) + buf->len;
+	result = xmalloc(buf->capacity);
+	ft_memcpy(result, buf->str, start);
+	ft_memcpy(result + start, replace, len);
+	ft_memcpy(result + start + len, buf->str + end, buf->len - end);
+	free(buf->str);
+	buf->len = buf->capacity;
+	buf->str = result;
+}
+
 char
 	*stringbuf_cstr(t_string_buffer *buf)
 {

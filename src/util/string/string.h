@@ -138,6 +138,24 @@ stringbuf_append(t_string_buffer *buf, t_string str);
 t_string_buffer
 stringbuf_substr(t_string str, size_t start, size_t end);
 
+
+/**
+ * @brief Replaces range in string buffer
+ *
+ * Replaces `[start; end]` in `buf` with the content of `replace`
+ *
+ * @param buf String buffer to replacer int
+ * @param start Replace start range
+ * @param end Replace end range
+ * @param replace Content to replace with
+ */
+void
+stringbuf_replace(
+	t_string_buffer *buf,
+	size_t start,
+	size_t end,
+	const char *replace);
+
 /**
  * @brief Internally reserve memory to hold at least `new_capacity` bytes
  *

@@ -15,6 +15,7 @@
 # include <parser/parser.h>
 
 # include <ft_printf.h>
+# include <gnl.h>
 
 # include <errno.h>
 # include <dirent.h>
@@ -78,7 +79,6 @@ path_populate(t_environ *env);
 struct s_passwd_ent
 {
 	char	*username;
-	char	*group;
 	char	*homedir;
 };
 

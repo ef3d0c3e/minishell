@@ -1,7 +1,7 @@
 NAME := minishell
 CC := gcc
 CFLAGS := -Wall -Wextra -pedantic -ggdb -fsanitize=address
-IFLAGS := -I./src
+IFLAGS := -I./src -I./libs/ft_printf/includes -I./libs/ft_gnl/includes
 LFLAGS := 
 
 # :^] `.!find src -name "*.c" -exec echo "{} \\" \;`
@@ -18,6 +18,7 @@ SOURCES := $(wildcard src/*.c) \
 OBJECTS := $(addprefix build/,$(SOURCES:.c=.o))
 # Libraries
 LIB_PRINTF := ./libs/ft_printf/libftprintf.a
+LIB_GNL := ./libs/ft_gnl/libgnl.a
 
 build/%.o: IFLAGS += -I$(dir $(LIB_PRINTF))/includes/
 build/%.o: %.c
@@ -25,8 +26,8 @@ build/%.o: %.c
 	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
 
 # Default target
-$(NAME): LFLAGS += $(LIB_PRINTF)
-$(NAME): $(LIB_PRINTF) $(OBJECTS)
+$(NAME): LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
+$(NAME): $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
 
 # Libraries build
@@ -34,6 +35,11 @@ $(NAME): $(LIB_PRINTF) $(OBJECTS)
 $(LIB_PRINTF):
 	echo "Building libprintf..."
 	$(MAKE) -C $(dir $(LIB_PRINTF))
+
+# ft_gnl
+$(LIB_GNL):
+	echo "Building gnl..."
+	$(MAKE) -C $(dir $(LIB_GNL))
 
 # Create compile commands
 .PHONY: clangd
