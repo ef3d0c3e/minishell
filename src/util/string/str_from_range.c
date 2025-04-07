@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   string_buffer.c                                    :+:      :+:    :+:   */
+/*   str_from_range.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,34 +11,13 @@
 /* ************************************************************************** */
 #include "../util.h"
 
-void
-	stringbuf_free(t_string_buffer *s)
+char
+*ft_substr(const char *s, size_t start, size_t len)
 {
-	free(s->str);
-}
+	char	*str;
 
-void
-	stringbuf_append(t_string_buffer *s, t_string str)
-{
-	size_t	new_cap;
-
-	new_cap = s->capacity + !s->capacity * 256;
-	while (new_cap < s->len + str.len)
-		new_cap *= 2;
-	s->str = ft_realloc(s->str, s->capacity, new_cap);
-	s->capacity = new_cap;
-	ft_memcpy(s->str + s->len, str.str, str.len);
-	s->len += str.len;
-}
-
-t_string_buffer
-	stringbuf_substr(t_string str, size_t start, size_t end)
-{
-	t_string_buffer	sub;
-
-	sub.len = end - start;
-	sub.capacity = sub.len;
-	sub.str = xmalloc(sub.len);
-	ft_memcpy(sub.str, str.str + start, sub.len);
-	return (sub);
+	str = xmalloc(len + 1);
+	ft_memcpy(str, s + start, len);
+	str[len] = 0;
+	return (str);
 }

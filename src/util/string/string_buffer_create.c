@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   string_buffer.c                                    :+:      :+:    :+:   */
+/*   string_buffer_create.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,33 +12,42 @@
 #include "../util.h"
 
 void
-	stringbuf_free(t_string_buffer *s)
+	stringbuf_init(t_string_buffer *buf, size_t initial_capacity)
 {
-	free(s->str);
-}
-
-void
-	stringbuf_append(t_string_buffer *s, t_string str)
-{
-	size_t	new_cap;
-
-	new_cap = s->capacity + !s->capacity * 256;
-	while (new_cap < s->len + str.len)
-		new_cap *= 2;
-	s->str = ft_realloc(s->str, s->capacity, new_cap);
-	s->capacity = new_cap;
-	ft_memcpy(s->str + s->len, str.str, str.len);
-	s->len += str.len;
+	buf->str = xmalloc(initial_capacity);
+	buf->len = 0;
+	buf->capacity = initial_capacity;
 }
 
 t_string_buffer
-	stringbuf_substr(t_string str, size_t start, size_t end)
+	stringbuf_from(const char *msg)
 {
-	t_string_buffer	sub;
+	t_string_buffer	buffer;
 
-	sub.len = end - start;
-	sub.capacity = sub.len;
-	sub.str = xmalloc(sub.len);
-	ft_memcpy(sub.str, str.str + start, sub.len);
-	return (sub);
+	buffer.capacity = ft_strlen(msg);
+	buffer.len = buffer.capacity;
+	buffer.str = ft_memcpy(xmalloc(buffer.capacity), msg, buffer.len);
+	return (buffer);
+}
+
+t_string_buffer
+	stringbuf_from_owned(char *msg)
+{
+	t_string_buffer	buffer;
+
+	buffer.capacity = ft_strlen(msg) + 1;
+	buffer.len = buffer.capacity - 1;
+	buffer.str = msg;
+	return (buffer);
+}
+
+t_string_buffer
+	stringbuf_from_range(const char *start, const char *end)
+{
+	t_string_buffer	buf;
+
+	stringbuf_init(&buf, end - start);
+	buf.len = end - start;
+	ft_memcpy(buf.str, start, buf.len);
+	return (buf);
 }

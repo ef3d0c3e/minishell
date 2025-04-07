@@ -1,37 +1,5 @@
 #include <expansion/expansion.h>
 #include <shell/eval.h>
-#include <stdio.h>
-#include <util/util.h>
-
-void
-	environ_init(t_environ *env)
-{
-	env->env = rb_new((int (*)(const void *, const void *))ft_strcmp,
-			free, free);
-}
-
-/**
- * @brief Parses environment in the form of `key=value`
- *
- * @param env Environment structure
- * @param s String to parse
- *
- * @returns 1 if correctly parsed, 0 if an error happened
- */
-int
-	parse_environ(t_environ *env, const char *s)
-{
-	const char		*sep = ft_strchr(s, '=');
-	t_string_buffer	key;
-	t_string_buffer	value;
-
-	if (!sep)
-		return (0);
-	key = stringbuf_from_range(s, sep);
-	value = stringbuf_from(sep + 1);
-	rb_insert(&env->env, stringbuf_cstr(&key), stringbuf_cstr(&value));
-	return (1);
-}
 
 void	print_fn(size_t depth, t_rbnode *node, void* cookie)
 {
@@ -43,15 +11,8 @@ void	print_fn(size_t depth, t_rbnode *node, void* cookie)
 int main(int ac, char **av, char **envp)
 {
 	// BUILD Environment
-	t_environ	environ;
+	t_environ	environ = env_new(envp);
 
-	environ_init(&environ);
-	char **env = envp;
-	while (*env)
-	{
-		parse_environ(&environ, *env);
-		++env;
-	}
 	rb_apply(&environ.env, print_fn, NULL);
 
 	// Process input
@@ -84,12 +45,16 @@ int main(int ac, char **av, char **envp)
 	// Print AST
 	ast_print_debug(input, head, 0);
 	// TODO: Error checking
+	
+	// Eval
+	eval(&environ, head);
 
-	parser_free(&parser);
 	ast_free(head);
+	token_list_free(&list);
+	parser_free(&parser);
 
 	// Free environment
-	rb_free(&environ.env);
+	env_free(&environ);
 
 	return (0);
 }

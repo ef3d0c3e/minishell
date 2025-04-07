@@ -89,6 +89,16 @@ t_string_buffer
 stringbuf_from(const char *msg);
 
 /**
+ * @brief Creates a new string buffer from an owned `char*` buffer
+ *
+ * @param msg String for the stringbuf
+ *
+ * @returns A `t_string_buffer` containing `msg`
+ */
+t_string_buffer
+stringbuf_from_owned(char *msg);
+
+/**
  * @brief Creates a new string buffer from a string range
  *
  * @param start Range start
@@ -230,6 +240,17 @@ u8_length(char c);
 /* ************************************************************************** */
 
 /**
+ * @brief Creates a string from a range
+ *
+ * @param s String
+ * @param start Start position in string
+ * @param len Length of the created string
+ *
+ * @returns The created NULL-terminated string
+ */
+char
+*ft_substr(const char *s, size_t start, size_t len);
+/**
  * @brief Strlen function
  *
  * @param s String to get length of
@@ -238,20 +259,31 @@ u8_length(char c);
  */
 size_t
 ft_strlen(const char *s);
-
 /**
  * @brief Strcmp function
  *
  * @param first First parameter
  * @param second Second parameter
- * @return The following value is returned by this function:
+ * @return The following value are returned by this function:
  * 	- 0 if `first == second`,
  *  - >0 if `first > second`
  *  - <0 if `first < second`
  */
 int
 ft_strcmp(const char *first, const char *second);
-
+/**
+ * @brief Strncmp function
+ *
+ * @param first First parameter
+ * @param second Second parameter
+ * @param number of bytes to compare
+ * @return The following value are returned by this function:
+ * 	- 0 if `first == second`,
+ *  - >0 if `first > second`
+ *  - <0 if `first < second`
+ */
+int
+ft_strncmp(const char *first, const char *second, size_t n);
 /**
  * @brief Searches for character `c` in string `s`
  *

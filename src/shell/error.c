@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   string_buffer.c                                    :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,36 +9,20 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../util.h"
+#include "eval.h"
 
 void
-	stringbuf_free(t_string_buffer *s)
+	shell_error(t_environ *env, char *msg, const char *function)
 {
-	free(s->str);
-}
+	size_t	new_capacity;
 
-void
-	stringbuf_append(t_string_buffer *s, t_string str)
-{
-	size_t	new_cap;
-
-	new_cap = s->capacity + !s->capacity * 256;
-	while (new_cap < s->len + str.len)
-		new_cap *= 2;
-	s->str = ft_realloc(s->str, s->capacity, new_cap);
-	s->capacity = new_cap;
-	ft_memcpy(s->str + s->len, str.str, str.len);
-	s->len += str.len;
-}
-
-t_string_buffer
-	stringbuf_substr(t_string str, size_t start, size_t end)
-{
-	t_string_buffer	sub;
-
-	sub.len = end - start;
-	sub.capacity = sub.len;
-	sub.str = xmalloc(sub.len);
-	ft_memcpy(sub.str, str.str + start, sub.len);
-	return (sub);
+	new_capacity = env->errors_capacity + !env->errors_capacity * 8;
+	while (env->errors_size + 1 >= new_capacity)
+		new_capacity *= 2;
+	env->errors = ft_realloc(env->errors, env->errors_size * sizeof(t_error),
+			new_capacity * sizeof(t_error));
+	env->errors[env->errors_size++] = (t_error){
+		.msg = stringbuf_from_owned(msg),
+		.function = function,
+	};
 }
