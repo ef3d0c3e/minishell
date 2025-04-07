@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "eval.h"
+#include "util/util.h"
+#include <stddef.h>
 #include <sys/stat.h>
 
 /** @brief Check that a given program is executable */
@@ -19,8 +21,12 @@ static void
 	struct stat	sb;
 	char		*fullpath;
 	char		*err;
+	size_t		len;
 
-	ft_asprintf(&fullpath, "%s/%.256s", dirname, ent->d_name);
+	len = ft_strlen(dirname);
+	while (len > 0 && dirname[len - 1] == '/')
+		--len;
+	ft_asprintf(&fullpath, "%.*s/%.256s", (int)len, dirname, ent->d_name);
 	if (lstat(fullpath, &sb))
 	{
 		ft_asprintf(&err, "Failed to lstat(%s): %m", fullpath);
