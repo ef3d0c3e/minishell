@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   passwd.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,20 +9,32 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef EXPANSION_H
-# define  EXPANSION_H
+#include "ft_printf.h"
+#include <fcntl.h>
+#include <shell/eval.h>
 
-# include <tokenizer/tokenizer.h>
-# include <shell/eval.h>
+void
+	passwd_free(struct s_passwd_ent *ent)
+{
+	free(ent->username);
+	free(ent->group);
+	free(ent->homedir);
+}
 
-/**
- * @brief Performs word expansion according to bash rules 
- *
- * @param env The shell session
- * @param list Token list to expand
- * @return The expanded token list
- */
-t_token_list
-token_expand(t_environ *env, t_token_list list);
 
-#endif // EXPANSION_H
+int
+	passwd_query(t_environ *env, char *username, struct s_passwd_ent *ent)
+{
+	char	*err;
+	int		fd;
+
+	fd = open("/etc/passwd", O_RDONLY);
+	if (fd == -1)
+	{
+		ft_asprintf(&err, "Failed to open(\"/etc/passwd\"): %m");
+		shell_error(env, err, __func__);
+		return (0);
+	}
+	close(fd);
+	return (1);
+}

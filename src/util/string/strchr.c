@@ -12,16 +12,16 @@
 #include <util/util.h>
 
 char
-*ft_strchr(const char *s, int c)
+	*ft_strchr(const char *s, int c)
 {
-        const unsigned char     *mem;
+	const unsigned char	*mem;
 
-        mem = (const unsigned char *)s;
-        while (*mem != (unsigned char)c)
-        {
-                if (!*mem)
-                        return (0);
-                ++mem;
-        }
-        return ((char *)mem);
+	mem = (const unsigned char *)s;
+	while (*mem != (unsigned char)c)
+	{
+		if (!*mem)
+			return (0);
+		++mem;
+	}
+	return ((char *)mem);
 }

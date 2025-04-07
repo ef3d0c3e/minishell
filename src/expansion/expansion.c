@@ -13,7 +13,7 @@
 
 // TODO: Expansion
 t_token_list
-	token_expand(t_token_list list)
+	token_expand(t_environ *env, t_token_list list)
 {
 	t_token_list	new;
 	size_t			i;

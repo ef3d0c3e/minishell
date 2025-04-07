@@ -12,7 +12,7 @@
 #include "../util.h"
 
 char
-*ft_substr(const char *s, size_t start, size_t len)
+	*ft_substr(const char *s, size_t start, size_t len)
 {
 	char	*str;
 

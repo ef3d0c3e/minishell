@@ -10,15 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "eval.h"
+#include "util/util.h"
 
 void
 	eval(t_environ *env, t_ast_node* program)
 {
 	if (program->type == NODE_COMMAND)
 	{
-		t_string_buffer atom = program->cmd.args[0].atom;
-		//char *p = find_path(env, (t_string){atom.str, atom.len});
-		//ft_printf("Found: `%s`\n", p);
+		char *name = stringbuf_cstr(&program->cmd.args[0].atom);
+		char *p = rb_find(&env->path_program, name);
+		//free(name);
+		ft_printf("Found: `%s`\n", p);
 		//free(p);
 	}
 }

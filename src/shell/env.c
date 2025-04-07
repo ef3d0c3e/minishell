@@ -46,6 +46,7 @@ t_environ
 			free, free);
 	env.errors_capacity = 0;
 	env.errors_size = 0;
+	env.errors = NULL;
 	e = envp;
 	while (*e)
 		parse_environ(&env, *(e++));
@@ -60,4 +61,5 @@ void
 {
 	rb_free(&env->env);
 	rb_free(&env->path_program);
+	free(env->errors);
 }

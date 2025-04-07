@@ -31,7 +31,7 @@ int main(int ac, char **av, char **envp)
 		++i;
 	}
 	dprintf(2, "\n -- Post expansion --\n");
-	list = token_expand(list);
+	list = token_expand(&environ, list);
 	i = 0;
 	while (i < list.size)
 	{

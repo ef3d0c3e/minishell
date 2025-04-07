@@ -19,6 +19,7 @@
 # include <errno.h>
 # include <dirent.h>
 # include <sys/stat.h>
+# include <fcntl.h>
 
 typedef struct s_error	t_error;
 
@@ -58,16 +59,49 @@ void
 eval(t_environ *env, t_ast_node* program);
 
 /******************************************************************************/
-/* Path handling                                                              */
+/* Environment handling                                                       */
 /******************************************************************************/
 
 /**
  * @brief Populates program entry from the shell's `PATH`
  *
+ * This can be used to repopulate the `PATH` when requested.
+ *
  * @param env Shell session
  */
 void
 path_populate(t_environ *env);
+
+/**
+ * @brief Entry from `/etc/passwd`
+ */
+struct s_passwd_ent
+{
+	char	*username;
+	char	*group;
+	char	*homedir;
+};
+
+/**
+ * @brief Frees a passwd entry
+ *
+ * @param ent Entry to free
+ */
+void
+passwd_free(struct s_passwd_ent *ent);
+
+/**
+ * @brief Query from `/etc/passwd`
+ *
+ * @param username Username to query from. On success this function takes
+ * ownership of `username`.
+ * @param ent The passwd entry to store the result
+ *
+ * @returns 0 on failure, 1 on success. On success the resulting `ent` should
+ * be passed to `passwd_free`.
+ */
+int
+passwd_query(t_environ *env, char *username, struct s_passwd_ent *ent);
 
 /******************************************************************************/
 /* Error handling                                                             */

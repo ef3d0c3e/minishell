@@ -29,7 +29,7 @@ static void
 	ft_asprintf(&fullpath, "%.*s/%.256s", (int)len, dirname, ent->d_name);
 	if (lstat(fullpath, &sb))
 	{
-		ft_asprintf(&err, "Failed to lstat(%s): %m", fullpath);
+		ft_asprintf(&err, "Failed to lstat(\"%s\"): %m", fullpath);
 		shell_error(env, err, __func__);
 		free(fullpath);
 		return ;
@@ -51,7 +51,7 @@ static void
 	dir = opendir(dirname);
 	if (!dir)
 	{
-		ft_asprintf(&str, "Failed to opendir(%s): %m", dirname);
+		ft_asprintf(&str, "Failed to opendir(\"%s\"): %m", dirname);
 		shell_error(env, str, __func__);
 		return ;
 	}
@@ -61,7 +61,7 @@ static void
 		ent = readdir(dir);
 		if (errno)
 		{
-			ft_asprintf(&str, "Failed to readdir(%s): %m", dirname);
+			ft_asprintf(&str, "Failed to readdir(\"%s\"): %m", dirname);
 			shell_error(env, str, __func__);
 		}
 		if (!ent)
@@ -98,17 +98,9 @@ static void
 	}
 }
 
-static void	print_fn(size_t depth, t_rbnode *node, void* cookie)
-{
-	for (size_t i = 0; i < depth; ++i)
-		printf(" | ");
-	printf("%s: %s\n", (char *)node->key, (char *)node->data);
-}
-
 void
 	path_populate(t_environ *env)
 {
 	rb_free(&env->path_program);
 	read_path(env);
-	rb_apply(&env->path_program, print_fn, NULL);
 }
