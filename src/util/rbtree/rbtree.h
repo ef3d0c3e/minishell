@@ -52,6 +52,8 @@ typedef struct s_rbtree
 	void		(*data_destroy)(void *data);
 	/** @brief Tree root node */
 	t_rbnode	*root;
+	/** @brief Number of nodes in the tree */
+	size_t		size;
 }	t_rbtree;
 
 /**

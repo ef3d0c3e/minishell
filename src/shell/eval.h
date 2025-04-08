@@ -59,6 +59,21 @@ env_free(t_environ *env);
 void
 eval(t_environ *env, t_ast_node* program);
 
+/**
+ * @brief Evaluates command node
+ */
+void
+eval_cmd(t_environ *env, t_ast_node* cmd);
+
+/**
+ * @brief Holds data for environment tree traversal
+ */
+struct s_envp_traversal
+{
+	size_t	index;
+	char	**envp;
+};
+
 /******************************************************************************/
 /* Environment handling                                                       */
 /******************************************************************************/

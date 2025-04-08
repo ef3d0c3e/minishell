@@ -87,5 +87,6 @@ int
 	free(z);
 	if (original_color == 1 && (x != NULL || x_parent != NULL))
 		rb_delete_fixup(tree, x, x_parent);
+	++tree->size;
 	return (1);
 }

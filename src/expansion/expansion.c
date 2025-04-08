@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
 #include <expansion/expansion.h>
 
 // TODO: Optionnaly add other expanions
@@ -62,9 +61,9 @@ t_token_list
 			}
 		}
 		*/
-		if (expand_tilde(env, &list.tokens[i], &new))
+		if (expand_param(env, &list.tokens[i], &new))
 			;
-		else if (expand_param(env, &list.tokens[i], &new))
+		else if (expand_tilde(env, &list.tokens[i], &new))
 			;
 		else
 			token_list_push(&new, list.tokens[i]);

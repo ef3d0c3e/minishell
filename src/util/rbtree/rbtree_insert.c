@@ -140,5 +140,6 @@ t_rbnode	*rb_insert(t_rbtree *tree, void *key, void *data)
 		else
 			current = current->right;
 	}
+	++tree->size;
 	return (insert_new(tree, key, data, parent));
 }

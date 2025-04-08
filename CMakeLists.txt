@@ -10,6 +10,9 @@ FILE(GLOB_RECURSE SOURCES
 	"src/*.c")
 
 INCLUDE_DIRECTORIES(src)
+INCLUDE_DIRECTORIES(./libs/ft_printf/includes/)
+INCLUDE_DIRECTORIES(./libs/ft_gnl/includes/)
 ADD_EXECUTABLE(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME} ./libs/ft_printf/libftprintf.a)
+TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME} ./libs/ft_gnl/libgnl.a)

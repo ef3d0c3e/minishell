@@ -23,6 +23,7 @@ t_rbtree
 	tree.key_destroy = key_destroy;
 	tree.data_destroy = data_destroy;
 	tree.root = NULL;
+	tree.size = 0;
 	return (tree);
 }
 
