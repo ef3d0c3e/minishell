@@ -12,12 +12,12 @@
 #include "tokenizer.h"
 #include "util/util.h"
 
-static inline int
-	is_ident(t_string codepoint)
+int
+	is_param_ident(char c)
 {
-	return (codepoint.str[0] == '_' || codepoint.str[0] == '-'
-		|| (codepoint.str[0] >= 'A' && codepoint.str[0] <= 'Z')
-		|| (codepoint.str[0] >= 'a' && codepoint.str[0] <= 'z'));
+	return (c == '_' || c == '-'
+		|| (c >= 'A' && c <= 'Z')
+		|| (c >= 'a' && c <= 'z'));
 }
 
 int
@@ -32,7 +32,7 @@ int
 		return (0);
 	cpy = *it;
 	it_advance(&cpy, 1);
-	while (cpy.codepoint.len && is_ident(cpy.codepoint))
+	while (cpy.codepoint.len == 1 && is_param_ident(cpy.codepoint.str[0]))
 		it_next(&cpy);
 	if (cpy.byte_pos == it->byte_pos + 1)
 	{

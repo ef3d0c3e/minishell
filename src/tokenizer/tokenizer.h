@@ -251,8 +251,17 @@ t_token_list
 tokenizer_tokenize(t_string prompt);
 
 /* ************************************************************************** */
-/* Tokenizer                                                                  */
+/* Tokenizer utils                                                            */
 /* ************************************************************************** */
+
+/**
+ * @brief Check if a given character can be part of a parameter identifier
+ *
+ * @param c The character to check
+ * @return 1 if c is in `[a-zA-Z0-9_]`
+ */
+int
+is_param_ident(char codepoint);
 
 /** @brief Finds the next unescaped instance of `token` in `input` */
 size_t

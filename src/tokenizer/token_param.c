@@ -29,6 +29,8 @@ int
 		.type = TOK_PARAM,
 		.start = it->byte_pos,
 		.end = it->byte_pos + end,
+		.word = stringbuf_from_range(it->str.str + it->byte_pos,
+				it->str.str + it->byte_pos + end)
 	});
 	it_advance(it, end + 1);
 	return (1);
