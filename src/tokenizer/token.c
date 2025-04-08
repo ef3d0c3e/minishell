@@ -50,7 +50,9 @@ void
 {
 	if (token->type == TOK_WORD
 		|| token->type == TOK_SINGLE_QUOTE
-		|| token->type == TOK_DOUBLE_QUOTE)
+		|| token->type == TOK_DOUBLE_QUOTE
+		|| token->type == TOK_PARAM_SIMPLE
+		|| token->type == TOK_PARAM)
 		stringbuf_free(&token->word);
 	// TODO
 }

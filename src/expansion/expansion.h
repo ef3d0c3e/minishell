@@ -16,6 +16,21 @@
 # include <shell/eval.h>
 
 /**
+ * @brief Performs parameter expansion, e.g `$VAR` or `${VAR}`
+ *
+ * On failure, an error token is inserted and it's error message should be
+ * displayed by iterating through the resulting token list.
+ *
+ * @param env Shell session
+ * @param token Parameter token
+ * @param result Resulting token list
+ *
+ * @returns 1 on success, 0 on failure
+ */
+int
+expand_param(t_environ *env, t_token *token, t_token_list *result);
+
+/**
  * @brief Performs word expansion according to bash rules 
  *
  * @param env The shell session

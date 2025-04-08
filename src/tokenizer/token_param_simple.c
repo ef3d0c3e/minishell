@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
 
 static inline int
 	is_ident(t_string codepoint)
@@ -49,6 +50,8 @@ int
 			.type = TOK_PARAM_SIMPLE,
 			.start = start + 1,
 			.end = cpy.byte_pos,
+			.word = stringbuf_from_range(it->str.str + start + 1,
+					it->str.str + cpy.byte_pos)
 		});
 	*it = cpy;
 	return (1);

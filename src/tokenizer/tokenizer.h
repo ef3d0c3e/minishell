@@ -213,6 +213,7 @@ typedef struct s_token
 		t_string_buffer			word;
 		/** @brief Error message */
 		t_string				err;
+
 		/** @brief Expansion result */
 		t_token_list			expansion;
 	};

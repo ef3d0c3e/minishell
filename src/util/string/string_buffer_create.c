@@ -25,6 +25,7 @@ t_string_buffer
 	t_string_buffer	buffer;
 
 	buffer.capacity = ft_strlen(msg);
+	buffer.capacity += !buffer.capacity;
 	buffer.len = buffer.capacity;
 	buffer.str = ft_memcpy(xmalloc(buffer.capacity), msg, buffer.len);
 	return (buffer);

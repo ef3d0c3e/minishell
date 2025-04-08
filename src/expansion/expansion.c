@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <expansion/expansion.h>
 
 // TODO: Optionnaly add other expanions
@@ -17,24 +18,24 @@ int
 {
 	char	*expanded;
 
-	if (token->word.len < 1 || token->word.str[0] != '~')
+	if (token->type != TOK_WORD
+		|| token->word.len < 1 || token->word.str[0] != '~')
 		return (0);
 	expanded = rb_find(&env->env, "HOME");
 	if (expanded)
 	{
+		token->type = TOK_SINGLE_QUOTE;
 		stringbuf_replace(&token->word, 0, 1, expanded);
 	}
 	else
 	{
-		stringbuf_free(&token->word);
+		token_free(token);
 		token->type = TOK_ERROR;
 		token->err.str = "Failed to perform `~` expansion: $HOME not set";
 		token->err.len = ft_strlen(token->err.str);
 	}
 	token_list_push(result, *token);
-	return (1);
-	return (0);
-	
+	return (expanded != 0);
 }
 
 // TODO: Expansion
@@ -50,6 +51,7 @@ t_token_list
 	i = 0;
 	while (i < list.size)
 	{
+		/*
 		if (list.tokens[i].type == TOK_SPACE && i && i + 1 < list.size)
 		{
 			if (!token_isword(list.tokens[i - 1].type)
@@ -59,7 +61,10 @@ t_token_list
 				continue;
 			}
 		}
-		if (list.tokens[i].type == TOK_WORD && expand_tilde(env, &list.tokens[i], &new))
+		*/
+		if (expand_tilde(env, &list.tokens[i], &new))
+			;
+		else if (expand_param(env, &list.tokens[i], &new))
 			;
 		else
 			token_list_push(&new, list.tokens[i]);
