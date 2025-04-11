@@ -11,31 +11,6 @@
 /* ************************************************************************** */
 #include <expansion/expansion.h>
 
-// TODO: Optionnaly add other expanions
-int
-	expand_tilde(t_environ *env, t_token *token, t_token_list *result)
-{
-	char	*expanded;
-
-	if (token->type != TOK_WORD
-		|| token->word.len < 1 || token->word.str[0] != '~')
-		return (0);
-	expanded = rb_find(&env->env, "HOME");
-	if (expanded)
-	{
-		token->type = TOK_SINGLE_QUOTE;
-		stringbuf_replace(&token->word, 0, 1, expanded);
-	}
-	else
-	{
-		token_free(token);
-		token->type = TOK_ERROR;
-		token->err.str = "Failed to perform `~` expansion: $HOME not set";
-		token->err.len = ft_strlen(token->err.str);
-	}
-	token_list_push(result, *token);
-	return (expanded != 0);
-}
 
 // TODO: Expansion
 t_token_list
@@ -61,9 +36,9 @@ t_token_list
 			}
 		}
 		*/
-		if (expand_param(env, &list.tokens[i], &new))
+		if (expand_tilde(env, &list.tokens[i], &new))
 			;
-		else if (expand_tilde(env, &list.tokens[i], &new))
+		else if (expand_param(env, &list.tokens[i], &new))
 			;
 		else
 			token_list_push(&new, list.tokens[i]);
