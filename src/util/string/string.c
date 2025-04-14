@@ -26,6 +26,22 @@ int
 	return (sv.str[i] - token[i]);
 }
 
+size_t
+	str_find(t_string str, const char *token)
+{
+	const size_t	len = ft_strlen(token);
+	size_t			i;
+
+	i = 0;
+	while (i + len < str.len)
+	{
+		if (!str_cmp((t_string){.str = str.str + i, .len = len}, token))
+			return (i);
+		++i;
+	}
+	return ((size_t) - 1);
+}
+
 int
 	str_starts_with(t_string str, const char *token)
 {

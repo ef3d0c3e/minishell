@@ -21,6 +21,10 @@ int
 	NULL};
 	const char			*keyword = str_alternatives(it_substr(it, 8), keywords);
 
+	if (list->size
+			&& list->tokens[list->size - 1].type != TOK_SPACE
+			&& list->tokens[list->size - 1].type != TOK_NEWLINE)
+		return (0);
 	if (!keyword)
 		return (0);
 	token_list_push(list, (t_token){

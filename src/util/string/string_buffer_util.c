@@ -22,7 +22,7 @@ void
 	const size_t	len = ft_strlen(replace);
 	char			*result;
 
-	buf->capacity = len + (end - start) + buf->len;
+	buf->capacity = len + buf->len - (end - start);
 	result = xmalloc(buf->capacity);
 	ft_memcpy(result, buf->str, start);
 	ft_memcpy(result + start, replace, len);

@@ -28,9 +28,9 @@ static inline void
 	const char	*prev = sep;
 	size_t		count;
 
-	ent->username = username;
+	ent->username = ft_strdup(username);
 	count = 0;
-	while (sep || prev)
+	while (sep && prev)
 	{
 		if (count == 4 && sep)
 			ent->homedir = ft_substr(prev, 0, sep - prev);
@@ -56,7 +56,7 @@ static inline int
 	line = get_next_line(fd);
 	while (line)
 	{
-		if (!ft_strcmp(line, username) && line[len] == ':')
+		if (!found && !ft_strncmp(line, username, len) && line[len] == ':')
 		{
 			parse_entry(line + len + 1, username, ent);
 			found = 1;

@@ -1,11 +1,12 @@
 NAME := minishell
 CC := gcc
-CFLAGS := -Wall -Wextra -pedantic -ggdb -fsanitize=address
+CFLAGS := -Wall -Wextra -pedantic -ggdb
 IFLAGS := -I./src -I./libs/ft_printf/includes -I./libs/ft_gnl/includes
 LFLAGS := 
 
 # :^] `.!find src -name "*.c" -exec echo "{} \\" \;`
 SOURCES := $(wildcard src/*.c) \
+	$(wildcard src/util/*.c) \
 	$(wildcard src/util/memory/*.c) \
 	$(wildcard src/util/rbtree/*.c) \
 	$(wildcard src/util/string/*.c) \

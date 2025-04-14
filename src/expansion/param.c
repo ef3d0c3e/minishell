@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <expansion/expansion.h>
-#include <math.h>
 
 static inline int
 	expand_param_complex(t_environ *env, t_token *token, t_token_list *result)

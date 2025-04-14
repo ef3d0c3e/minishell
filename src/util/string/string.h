@@ -47,6 +47,16 @@ typedef struct s_string
 int
 str_cmp(t_string sv, const char *token);
 
+/**
+ * @brief Finds the first occurence of `token` in `str`
+ *
+ * @param str String to search
+ * @param token Token to find
+ * @return The position of `token` in `str`. Or `(size_t)-1` if not found
+ */
+size_t
+str_find(t_string str, const char *token);
+
 int
 str_starts_with(t_string str, const char *token);
 

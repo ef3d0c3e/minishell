@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util.h                                             :+:      :+:    :+:   */
+/*   arith.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,28 +9,12 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef UTIL_H
-# define UTIL_H
+#include "util.h"
 
-# define UTIL_INTERNAL
-# include "string/string.h"
-# include "memory/memory.h"
-# include "rbtree/rbtree.h"
-# undef UTIL_INTERNAL
-
-/* ************************************************************************** */
-/* Arithmetic utils                                                           */
-/* ************************************************************************** */
-
-/**
- * @brief Returns the minimum between x and y
- *
- * @param x First parameter
- * @param y Second parameter
- *
- * @returns x if `x <= y`, y otherwise
- */
 size_t
-min_sz(size_t x, size_t y);
-
-#endif // UTIL_H
+	min_sz(size_t x, size_t y)
+{
+	if (x <= y)
+		return (x);
+	return (y);
+}
