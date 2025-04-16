@@ -148,7 +148,6 @@ stringbuf_append(t_string_buffer *buf, t_string str);
 t_string_buffer
 stringbuf_substr(t_string str, size_t start, size_t end);
 
-
 /**
  * @brief Replaces range in string buffer
  *

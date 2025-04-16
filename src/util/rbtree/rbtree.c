@@ -54,8 +54,8 @@ static inline void
 {
 	if (!root)
 		return ;
-	fn(depth, root, data);
 	rb_apply_impl(depth + 1, root->left, fn, data);
+	fn(depth, root, data);
 	rb_apply_impl(depth + 1, root->right, fn, data);
 }
 

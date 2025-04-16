@@ -47,6 +47,7 @@ t_environ
 	env.errors_capacity = 0;
 	env.errors_size = 0;
 	env.errors = NULL;
+	env.last_status = 0;
 	e = envp;
 	while (*e)
 		parse_environ(&env, *(e++));

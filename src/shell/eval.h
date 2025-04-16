@@ -17,9 +17,10 @@
 # include <ft_printf.h>
 # include <gnl.h>
 
+# include <sys/stat.h>
+# include <sys/wait.h>
 # include <errno.h>
 # include <dirent.h>
-# include <sys/stat.h>
 # include <fcntl.h>
 
 typedef struct s_error	t_error;
@@ -39,6 +40,9 @@ typedef struct s_environ
 	size_t		errors_capacity;
 	/** @brief Number of errors */
 	size_t		errors_size;
+
+	/** @brief Exit status of the last command */
+	int			last_status;
 }	t_environ;
 
 /**
@@ -64,6 +68,11 @@ eval(t_environ *env, t_ast_node* program);
  */
 void
 eval_cmd(t_environ *env, t_ast_node* cmd);
+/**
+ * @brief Evaluates a pipeline `|` or `|&`
+ */
+void
+eval_pipeline(t_environ *env, t_ast_node* pipeline);
 
 /**
  * @brief Holds data for environment tree traversal
@@ -144,9 +153,21 @@ shell_error(t_environ *env, char *msg, const char *function);
  * @brief Displays errors on stderr and clear the error queue
  *
  * @param env The session
+ *
+ * @returns 1 If no errors were found, 0 otherwise
+ */
+int
+shell_error_flush(t_environ *env);
+/**
+ * @brief Exits the shell with the given error status
+ *
+ * This function will clean up the memory used for the shell's session
+ *
+ * @param env Shell to exit
+ * @param status Shell exit status
  */
 void
-shell_error_flush(t_environ *env);
+shell_exit(t_environ *env, int status);
 
 
 #endif // EVAL_H

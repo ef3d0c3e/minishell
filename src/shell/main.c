@@ -33,6 +33,7 @@ int main(int ac, char **av, char **envp)
 	dprintf(2, "\n -- Post expansion --\n");
 	list = token_expand(&environ, list);
 	i = 0;
+	shell_error_flush(&environ);
 	while (i < list.size)
 	{
 		token_print_debug(2, input, &list.tokens[i]);

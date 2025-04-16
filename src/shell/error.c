@@ -28,17 +28,21 @@ void
 	};
 }
 
-void
+int
 	shell_error_flush(t_environ *env)
 {
+	int		has_error;
 	size_t	i;
 
+	has_error = 0;
 	i = 0;
 	while (i < env->errors_size)
 	{
+		has_error = 1;
 		ft_dprintf(2, "Error(%s): %s\n", env->errors[i].function, env->errors[i].msg);
 		free(env->errors[i].msg);
 		++i;
 	}
 	env->errors_size = 0;
+	return (has_error == 0);
 }

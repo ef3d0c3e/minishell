@@ -9,11 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "util/util.h"
 #include <shell/eval.h>
-#include <unistd.h>
 
 char
 **cmd_to_argv(const struct s_node_cmd *cmd)
@@ -84,7 +80,7 @@ void
 		return ;
 	argv = cmd_to_argv(cmd);
 	envp = env_to_envp(env);
-	execve(path, argv, envp);
+	env->last_status = execve(path, argv, envp);
 	i = 0;
 	while (envp[i])
 		free(envp[i++]);
