@@ -35,6 +35,8 @@ expand_param(t_environ *env, t_token *token, t_token_list *result);
 
 /**
  * @brief Performs word expansion according to bash rules
+ * See https://www.gnu.org/software/bash/manual/bash.html#Shell-Expansions
+ * for more informations
  *
  * Expansion is performed in the following order:
  *  1. Brace expansion (`test_{a,b}` -> `test_a test_b`)
@@ -42,8 +44,12 @@ expand_param(t_environ *env, t_token *token, t_token_list *result);
  *  3. Parameter and variable (`${var}`, `$var`)
  *  4. Command substitution `$(cmd)` -> replace by it's `stdout`
  *  5. Arithmetic expansion
- *  6. Word splitting (TODO: rules)
- *  7. Filename expansion
+ *  6. Process substitution
+ *  7. Word splitting (TODO: rules)
+ *  8. Filename expansion
+ *
+ * @note The caller is expected to check the environment for potential errors
+ * On errors, the interpreter should stop.
  *
  * @param env The shell session
  * @param list Token list to expand

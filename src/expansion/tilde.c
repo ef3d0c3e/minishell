@@ -9,16 +9,25 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "shell/eval.h"
+#include "util/util.h"
 #include <expansion/expansion.h>
+#include <stddef.h>
 
 /** @brief Expands from the content of a variable */
 static inline int
 	expand_from_var(
+	t_environ *env,
 	t_token *token,
 	t_token_list *result,
-	size_t len,
-	const char *expanded)
+	const char	*varname)
 {
+	const size_t	len = ft_strlen(varname);
+	char			*expanded;
+	char			*err;
+
+	expanded = rb_find(&env->env, varname);
 	if (expanded)
 	{
 		token->type = TOK_SINGLE_QUOTE;
@@ -26,10 +35,9 @@ static inline int
 	}
 	else
 	{
-		token_free(token);
-		token->type = TOK_ERROR;
-		token->err.str = "Failed to perform tilde expansion: variable not set";
-		token->err.len = ft_strlen(token->err.str);
+		ft_asprintf(&err, "Failed to perform tilde expansion: variable `%s`"
+			" not set", varname);
+		shell_error(env, err, __FUNCTION__);
 	}
 	token_list_push(result, *token);
 	return (expanded != 0);
@@ -45,9 +53,10 @@ static inline int
 {
 	struct s_passwd_ent	ent;
 	t_string_buffer		username;
+	char				*err;
 
 	if (!str_cmp(str, "~"))
-		return (expand_from_var(token, result, 1, rb_find(&env->env, "HOME")));
+		return (expand_from_var(env, token, result, "HOME"));
 	username = stringbuf_from_range(str.str + 1, str.str + str.len);
 	if (passwd_query(env, stringbuf_cstr(&username), &ent))
 	{
@@ -57,10 +66,9 @@ static inline int
 	}
 	else
 	{
-		token_free(token);
-		token->type = TOK_ERROR;
-		token->err.str = "Failed to perform tilde expansion: user not found";
-		token->err.len = ft_strlen(token->err.str);
+		ft_asprintf(&err, "Failed to perform tilde expansion: user `%.*s`"
+			" not found (in /etc/passwd)", (int)username.len, username.str);
+		shell_error(env, err, __FUNCTION__);
 	}
 	token_list_push(result, *token);
 	stringbuf_free(&username);
@@ -80,9 +88,9 @@ int
 	end = min_sz(str.len, str_find(str, "/"));
 	str.len = end;
 	if (!str_cmp(str, "~-"))
-		return (expand_from_var(token, result, 2, rb_find(&env->env, "OLDPWD")));
+		return (expand_from_var(env, token, result, "OLDPWD"));
 	else if (!str_cmp(str, "~+"))
-		return (expand_from_var(token, result, 2, rb_find(&env->env, "PWD")));
+		return (expand_from_var(env, token, result, "PWD"));
 	else
 		return (expand_home(env, str, token, result));
 }

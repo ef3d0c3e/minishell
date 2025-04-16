@@ -17,17 +17,16 @@ static inline int
 	size_t			sep;
 	char			*expanded;
 	t_string_buffer	name;
+	char			*err;
 
 	sep = 0;
 	while (sep < token->word.len && is_param_ident(token->word.str[sep]))
 		++sep;
 	if (sep != token->word.len)
 	{
-		stringbuf_free(&token->word);
-		token->type = TOK_ERROR;
-		token->err.str = "Bad substitution: Unsupported parameter expansion";
-		token->err.len = ft_strlen(token->err.str);
-		token_list_push(result, *token);
+		ft_asprintf(&err, "Bad substitution: `%.*s` is not a valid"
+			" substitution", (int)token->word.len, token->word.str);
+		shell_error(env, err, __FUNCTION__);
 		return (0);
 	}
 	name = stringbuf_from_range(token->word.str, token->word.str + sep);
@@ -42,6 +41,7 @@ static inline int
 	return (1);
 }
 
+// TODO: Handle other param expansion with ${...}
 int
 	expand_param(t_environ *env, t_token *token, t_token_list *result)
 {
