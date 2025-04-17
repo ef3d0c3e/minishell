@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval.c                                             :+:      :+:    :+:   */
+/*   eval_util.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,40 +9,25 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/eval.h>
+#include <sys/types.h>
 
-void
-	shell_exit(t_environ *env, int status)
+pid_t
+	shell_fork(t_environ *env, const char *function)
 {
-	shell_error_flush(env);
-	env_free(env);
-	exit(status);
-}
-
-void
-	shell_perror(t_environ *env, int status, const char *msg, const char *func)
-{
+	pid_t	pid;
 	char	*err;
 
-	ft_asprintf(&err, "(%s) %s: %m", msg, func);
-	shell_error(env, err, func);
-	shell_exit(env, status);
-}
-
-void
-	eval(t_environ *env, t_ast_node* program)
-{
-	if (program->type == NODE_COMMAND)
+	pid = fork();
+	if (env->is_child && pid == -1)
+		shell_perror(env, EXIT_FAILURE, "fork() failed", function);
+	else if (pid == -1)
 	{
-		eval_cmd(env, program);
+		ft_asprintf(&err, "fork() failed: %m");
+		shell_error(env, err, function);
 	}
-	else if (program->type == NODE_LOGIC)
-	{
-		if (!ft_strcmp(program->logic.token.reserved_word, "||")
-			|| !ft_strcmp(program->logic.token.reserved_word, "&&"))
-			eval_sequence(env, program);
-		else if (program->logic.token.reserved_word[0] == '|')
-			eval_pipeline(env, program);
-	}
-	shell_error_flush(env);
+	if (!pid)
+		env->is_child = 1;
+	return (pid);
 }

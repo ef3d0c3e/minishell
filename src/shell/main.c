@@ -1,19 +1,10 @@
 #include <expansion/expansion.h>
 #include <shell/eval.h>
 
-void	print_fn(size_t depth, t_rbnode *node, void* cookie)
-{
-	for (size_t i = 0; i < depth; ++i)
-		printf(" | ");
-	printf("%s: %s\n", (char *)node->key, (char *)node->data);
-}
-
 int main(int ac, char **av, char **envp)
 {
 	// BUILD Environment
 	t_environ	environ = env_new(envp);
-
-	rb_apply(&environ.env, print_fn, NULL);
 
 	// Process input
 	const		t_string input = {
@@ -48,9 +39,10 @@ int main(int ac, char **av, char **envp)
 	// TODO: Error checking
 	
 	// Eval
+	environ.program = head;
 	eval(&environ, head);
 
-	ast_free(head);
+	//ast_free(head);
 	token_list_free(&list);
 	parser_free(&parser);
 

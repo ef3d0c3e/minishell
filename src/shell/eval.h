@@ -13,6 +13,7 @@
 # define EVAL_H
 
 # include <parser/parser.h>
+# include <shell/opts.h>
 
 # include <ft_printf.h>
 # include <gnl.h>
@@ -31,6 +32,11 @@ typedef struct s_environ
 	/** @brief Stores all environment variables */
 	t_rbtree	env;
 
+	/**
+	 * @brief Stores all shell options
+	 */
+	t_rbtree	opts;
+
 	/** @brief All programs in the path */
 	t_rbtree	path_program;
 
@@ -43,6 +49,12 @@ typedef struct s_environ
 
 	/** @brief Exit status of the last command */
 	int			last_status;
+
+	/** @brief Set to 1 when the session is a child session of another shell */
+	int			is_child;
+
+	/** @brief Currently executed program */
+	t_ast_node	*program;
 }	t_environ;
 
 /**
@@ -73,6 +85,11 @@ eval_cmd(t_environ *env, t_ast_node* cmd);
  */
 void
 eval_pipeline(t_environ *env, t_ast_node* pipeline);
+/**
+ * @brief Evaluates a sequence `||` or `&&`
+ */
+void
+eval_sequence(t_environ *env, t_ast_node* pipeline);
 
 /**
  * @brief Holds data for environment tree traversal
@@ -168,6 +185,31 @@ shell_error_flush(t_environ *env);
  */
 void
 shell_exit(t_environ *env, int status);
+/**
+ * @brief Exits the shell with the given error status and an error message
+ *
+ * This function will clean up the memory used for the shell's session
+ *
+ * @param env Shell to exit
+ * @param status Shell exit status
+ * @param msg Error message
+ * @param function The source function
+ */
+void
+shell_perror(t_environ *env, int status, const char *msg, const char *function);
 
+/**
+ * @brief Creates a child session
+ *
+ * The child session will have it's `is_child` attribute set to 1
+ *
+ * If forking fails and the session is a child session, this function does not
+ * return and calls `shell_perror` to handle cleanup.
+ *
+ * @param env The parent to create the child session from
+ * @param function The source function
+ */
+pid_t
+shell_fork(t_environ *env, const char *function);
 
 #endif // EVAL_H

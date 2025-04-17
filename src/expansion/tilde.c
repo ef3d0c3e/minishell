@@ -20,10 +20,9 @@ static inline int
 	expand_from_var(
 	t_environ *env,
 	t_token *token,
-	t_token_list *result,
+	size_t len,
 	const char	*varname)
 {
-	const size_t	len = ft_strlen(varname);
 	char			*expanded;
 	char			*err;
 
@@ -39,8 +38,7 @@ static inline int
 			" not set", varname);
 		shell_error(env, err, __FUNCTION__);
 	}
-	token_list_push(result, *token);
-	return (expanded != 0);
+	return (0);
 }
 
 /** @brief Expands using a user's home directory */
@@ -56,7 +54,7 @@ static inline int
 	char				*err;
 
 	if (!str_cmp(str, "~"))
-		return (expand_from_var(env, token, result, "HOME"));
+		return (expand_from_var(env, token, 1, "HOME"));
 	username = stringbuf_from_range(str.str + 1, str.str + str.len);
 	if (passwd_query(env, stringbuf_cstr(&username), &ent))
 	{
@@ -88,9 +86,9 @@ int
 	end = min_sz(str.len, str_find(str, "/"));
 	str.len = end;
 	if (!str_cmp(str, "~-"))
-		return (expand_from_var(env, token, result, "OLDPWD"));
+		return (expand_from_var(env, token, 2, "OLDPWD"));
 	else if (!str_cmp(str, "~+"))
-		return (expand_from_var(env, token, result, "PWD"));
+		return (expand_from_var(env, token, 2, "PWD"));
 	else
 		return (expand_home(env, str, token, result));
 }

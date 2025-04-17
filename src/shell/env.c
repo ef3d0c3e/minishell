@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "eval.h"
+#include "shell/opts.h"
+#include "util/util.h"
 
 /**
  * @brief Parses environment in the form of `key=value`
@@ -48,10 +50,12 @@ t_environ
 	env.errors_size = 0;
 	env.errors = NULL;
 	env.last_status = 0;
+	env.is_child = 0;
+	env.program = NULL;
 	e = envp;
 	while (*e)
 		parse_environ(&env, *(e++));
-
+	init_options(&env);
 	path_populate(&env);
 	shell_error_flush(&env);
 	return (env);
@@ -62,5 +66,7 @@ void
 {
 	rb_free(&env->env);
 	rb_free(&env->path_program);
+	rb_free(&env->opts);
+	ast_free(env->program);
 	free(env->errors);
 }

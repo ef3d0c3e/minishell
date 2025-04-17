@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/eval.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 char
 **cmd_to_argv(const struct s_node_cmd *cmd)
@@ -67,23 +69,39 @@ char
 	return (resolved);
 }
 
-void
-	eval_cmd(t_environ *env, t_ast_node* program)
+static void
+	eval_child(t_environ *env, t_ast_node *program)
 {
 	const struct s_node_cmd	*cmd = &program->cmd;
 	const char				*path = resolve_path(env, &cmd->args[0].atom);
 	char					**argv;
 	char					**envp;
-	size_t					i;
 	
 	if (!path)
-		return ;
+		shell_exit(env, 127);
 	argv = cmd_to_argv(cmd);
 	envp = env_to_envp(env);
 	env->last_status = execve(path, argv, envp);
-	i = 0;
-	while (envp[i])
-		free(envp[i++]);
-	free(envp);
-	free(argv);
+	shell_perror(env, EXIT_FAILURE, "Failed to execute program", __FUNCTION__);
+}
+
+// TODO: Program should be resolved before forking to properly call builtins
+// and functions which required a non subshell environment
+void
+	eval_cmd(t_environ *env, t_ast_node *program)
+{
+	pid_t	pid;
+	int		status;
+
+	pid = shell_fork(env, __FUNCTION__);
+	if (pid == -1)
+		return ;
+	if (pid)
+	{
+		if (waitpid(pid, &status, 0) == -1)
+			shell_perror(env, EXIT_FAILURE, "waitpid() failed", __FUNCTION__);
+		env->last_status = WEXITSTATUS(status);
+	}
+	else
+		eval_child(env, program);
 }
