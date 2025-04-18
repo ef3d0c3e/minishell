@@ -45,8 +45,8 @@ static inline int
 	read_entry(int fd, char *username, struct s_passwd_ent *ent)
 {
 	const size_t	len = ft_strlen(username);
-	const char	*line;
-	int			found;
+	const char		*line;
+	int				found;
 
 	found = 0;
 	ent->homedir = NULL;

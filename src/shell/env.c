@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "eval.h"
-#include "shell/opts.h"
-#include "util/util.h"
+#include <shell/eval.h>
 
 /**
  * @brief Parses environment in the form of `key=value`
@@ -56,6 +54,7 @@ t_environ
 	while (*e)
 		parse_environ(&env, *(e++));
 	init_options(&env);
+	init_builtin(&env);
 	path_populate(&env);
 	shell_error_flush(&env);
 	return (env);
@@ -65,8 +64,9 @@ void
 	env_free(t_environ *env)
 {
 	rb_free(&env->env);
-	rb_free(&env->path_program);
 	rb_free(&env->opts);
+	rb_free(&env->builtins);
+	rb_free(&env->path_program);
 	ast_free(env->program);
 	free(env->errors);
 }

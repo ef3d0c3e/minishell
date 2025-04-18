@@ -14,6 +14,7 @@
 
 # include <parser/parser.h>
 # include <shell/opts.h>
+# include <builtins/builtin.h>
 
 # include <ft_printf.h>
 # include <gnl.h>
@@ -37,6 +38,8 @@ typedef struct s_environ
 	 */
 	t_rbtree	opts;
 
+	/** @brief All registered builtins */
+	t_rbtree	builtins;
 	/** @brief All programs in the path */
 	t_rbtree	path_program;
 

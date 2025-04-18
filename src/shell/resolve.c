@@ -63,7 +63,7 @@ static char
 			return (NULL);
 		}
 	}
-	return (resolved);
+	return (ft_strdup(resolved));
 }
 
 int
@@ -76,6 +76,8 @@ int
 	if (!ft_strchr(name, '/'))
 	{
 		// TODO: Function then builtin resolution
+		if (rb_find(&env->builtins, name))
+			return (2);
 		*result = resolve_from_path(env, name);
 		status = get_executable_status(env, *result);
 		return (status);

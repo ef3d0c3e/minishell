@@ -9,10 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "builtins/builtin.h"
+#include "parser/parser.h"
+#include "shell/opts.h"
+#include "util/util.h"
 #include <shell/eval.h>
 
-char
-**cmd_to_argv(const struct s_node_cmd *cmd)
+static char
+**cmd_to_argv(const struct s_node_cmd *cmd, int *argc)
 {
 	char	**args;
 	size_t	i;
@@ -25,6 +29,8 @@ char
 		++i;
 	}
 	args[i] = NULL;
+	if (argc)
+		*argc = i;
 	return (args);
 }
 
@@ -39,7 +45,7 @@ static inline void
 	++t->index;
 }
 
-char
+static char
 **env_to_envp(t_environ *env)
 {
 	struct s_envp_traversal	t;
@@ -62,7 +68,7 @@ static void
 	
 	if (!path)
 		shell_exit(env, 127);
-	argv = cmd_to_argv(cmd);
+	argv = cmd_to_argv(cmd, NULL);
 	envp = env_to_envp(env);
 	env->last_status = execve(path, argv, envp);
 	i = 0;
@@ -76,8 +82,20 @@ static void
 	shell_exit(env, EXIT_FAILURE);
 }
 
-// TODO: Program should be resolved before forking to properly call builtins
-// and functions which required a non subshell environment
+static void
+	eval_builtin(t_environ *env, t_ast_node *program)
+{
+	const struct s_node_cmd	*cmd = &program->cmd;
+	const t_builtin			*builtin = rb_find(&env->builtins,
+		stringbuf_cstr(&program->cmd.args[0].atom));
+	char					**argv;
+	int						argc;
+	
+	argv = cmd_to_argv(cmd, &argc);
+	env->last_status = builtin->fn(env, argc, argv);
+	free(argv);
+}
+
 int
 	eval_cmd(t_environ *env, t_ast_node *program)
 {
@@ -87,6 +105,8 @@ int
 
 	status = resolve_executable(env, stringbuf_cstr(&program->cmd.args[0].atom),
 		&path);
+	if (status == 2)
+		return (eval_builtin(env, program), 1);
 	if (status != 0)
 	{
 		free(path);
