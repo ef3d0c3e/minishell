@@ -9,7 +9,30 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "builtins/builtin.h"
+#include "ft_printf.h"
+#include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <expansion/expansion.h>
+
+static int
+	expand_special(
+	t_environ *env,
+	const char *name,
+	t_token *token,
+	t_token_list *result)
+{
+	if (!ft_strcmp(name, "?"))
+	{
+		stringbuf_free(&token->word);
+		token->type = TOK_SINGLE_QUOTE;
+		stringbuf_init(&token->word, 16);
+		stringbuf_itoa(&token->word, env->last_status);
+		token_list_push(result, *token);
+		return (1);
+	}
+	return (0);
+}
 
 static inline int
 	expand_param_complex(t_environ *env, t_token *token, t_token_list *result)
@@ -30,6 +53,11 @@ static inline int
 		return (0);
 	}
 	name = stringbuf_from_range(token->word.str, token->word.str + sep);
+	if (expand_special(env, stringbuf_cstr(&name), token, result))
+	{
+		stringbuf_free(&name);
+		return (1);
+	}
 	expanded = rb_find(&env->env, stringbuf_cstr(&name));
 	if (!expanded)
 		expanded = "";
@@ -45,10 +73,12 @@ static inline int
 int
 	expand_param(t_environ *env, t_token *token, t_token_list *result)
 {
-	char	*expanded;
+	char		*expanded;
 
 	if (token->type == TOK_PARAM_SIMPLE)
 	{
+		if (expand_special(env, stringbuf_cstr(&token->word), token, result))
+			return (1);
 		expanded = rb_find(&env->env, stringbuf_cstr(&token->word));
 		if (!expanded)
 			expanded = "";

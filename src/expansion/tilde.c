@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <expansion/expansion.h>
 
 /** @brief Expands from the content of a variable */
@@ -77,6 +78,9 @@ int
 
 	if (token->type != TOK_WORD
 		|| token->word.len < 1 || token->word.str[0] != '~')
+		return (0);
+	if (result->size != 0 && result->tokens[result->size - 1].type != TOK_SPACE
+		&& result->tokens[result->size - 1].type != TOK_NEWLINE)
 		return (0);
 	str = (t_string){.str = token->word.str, .len = token->word.len};
 	end = min_sz(str.len, str_find(str, "/"));

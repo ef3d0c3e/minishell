@@ -9,21 +9,33 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/eval.h>
 
 static int
 	echo(t_environ *env, int argc, char **argv)
 {
-	size_t	i;
+	int	i;
+	int	start;
+	int	newline;
 
-	i = 1;
+	(void)env;
+	newline = 1;
+	start = 1;
+	if (start < argc && !ft_strcmp(argv[start], "-n"))
+	{
+		newline = 0;
+		++start;
+	}
+	i = start;
 	while (i < argc)
 	{
+		if (i != start)
+			ft_printf(" ");
 		ft_printf("%s", argv[i]);
 		++i;
 	}
-	ft_printf("\n");
+	if (newline)
+		ft_printf("\n");
 	return (0);
 }
 
