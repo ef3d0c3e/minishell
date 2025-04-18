@@ -15,6 +15,17 @@
 # include <tokenizer/tokenizer.h>
 # include <shell/eval.h>
 
+/**
+ * @brief Performs tilde (~) expansion
+ *
+ * Currently the following expansions are supported: ~ ~+ ~- ~user
+ *
+ * @param env The shell session
+ * @param token Parameter token
+ * @param result Resulting token list
+ *
+ * @returns 1 on success, 0 on failure
+ */
 int
 expand_tilde(t_environ *env, t_token *token, t_token_list *result);
 
@@ -32,6 +43,18 @@ expand_tilde(t_environ *env, t_token *token, t_token_list *result);
  */
 int
 expand_param(t_environ *env, t_token *token, t_token_list *result);
+
+/**
+ * @brief Performs filename expansion
+ *
+ * @param env Shell session
+ * @param token Parameter token
+ * @param result Resulting token list
+ *
+ * @returns 1 on success, 0 on failure
+ */
+int
+expand_filename(t_environ *env, t_token *token, t_token_list *result);
 
 /**
  * @brief Performs word expansion according to bash rules

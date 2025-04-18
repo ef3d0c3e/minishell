@@ -36,6 +36,8 @@ int main(int ac, char **av, char **envp)
 	t_ast_node *head = parse(&parser, 0, parser.list.size);
 	// Print AST
 	ast_print_debug(input, head, 0);
+	parser_free(&parser);
+	token_list_free(&list);
 	// TODO: Error checking
 	
 	// Eval
@@ -43,8 +45,6 @@ int main(int ac, char **av, char **envp)
 	eval(&environ, head);
 
 	//ast_free(head);
-	token_list_free(&list);
-	parser_free(&parser);
 
 	// Free environment
 	env_free(&environ);

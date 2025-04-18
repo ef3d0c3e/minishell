@@ -24,7 +24,7 @@ void
 {
 	char	*err;
 
-	ft_asprintf(&err, "(%s) %s: %m", msg, func);
+	ft_asprintf(&err, "%s: %m", msg);
 	shell_error(env, err, func);
 	shell_exit(env, status);
 }

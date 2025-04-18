@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.c                                        :+:      :+:    :+:   */
+/*   filename.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,43 +9,13 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <expansion/expansion.h>
 
-
-// TODO: Expansion
-t_token_list
-	token_expand(t_environ *env, t_token_list list)
+int
+expand_filename(t_environ *env, t_token *token, t_token_list *result)
 {
-	t_token_list	new;
-	size_t			i;
-
-	new.tokens = xmalloc(list.size * sizeof(t_token));
-	new.size = 0;
-	new.capacity = list.size;
-	i = 0;
-	while (i < list.size)
-	{
-		/*
-		if (list.tokens[i].type == TOK_SPACE && i && i + 1 < list.size)
-		{
-			if (!token_isword(list.tokens[i - 1].type)
-				|| !token_isword(list.tokens[i + 1].type))
-			{
-				++i;
-				continue;
-			}
-		}
-		*/
-		if (expand_tilde(env, &list.tokens[i], &new))
-			;
-		else if (expand_param(env, &list.tokens[i], &new))
-			;
-		else if (expand_filename(env, &list.tokens[i], &new))
-			;
-		else
-			token_list_push(&new, list.tokens[i]);
-		++i;
-	}
-	free(list.tokens);
-	return (new);
+	if (token->type != TOK_WORD)
+		return (0);
+	return (0);
 }

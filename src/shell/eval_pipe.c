@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/opts.h"
 #include <shell/eval.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 /** @brief Closes fds and waits for pipes execution */
 static void
@@ -51,7 +48,8 @@ static void
 		if (dup2(fds[1], STDOUT_FILENO) == -1)
 			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
 		close(fds[1]);
-		eval_cmd(env, pipeline->logic.left);
+		if (!eval_cmd(env, pipeline->logic.left))
+			shell_exit(env, EXIT_FAILURE);
 		shell_exit(env, env->last_status);
 	}
 	pids[1] = shell_fork(env, __FUNCTION__);
@@ -86,7 +84,8 @@ static void
 			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
 		close(fds[1]);
 		close(fds[3]);
-		eval_cmd(env, pipeline->logic.left);
+		if (!eval_cmd(env, pipeline->logic.left))
+			shell_exit(env, EXIT_FAILURE);
 		shell_exit(env, env->last_status);
 	}
 	pids[1] = shell_fork(env, __FUNCTION__);

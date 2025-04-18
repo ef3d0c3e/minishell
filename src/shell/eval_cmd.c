@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/eval.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 char
 **cmd_to_argv(const struct s_node_cmd *cmd)
@@ -53,49 +51,50 @@ char
 	return (t.envp);
 }
 
-char
-*resolve_path(t_environ *env, t_string_buffer *buf)
-{
-	char *const	expanded = stringbuf_cstr(buf);
-	char *const	resolved = rb_find(&env->path_program, expanded);
-	char		*msg;
-
-	if (!resolved)
-	{
-		ft_asprintf(&msg, "Failed to find executable `%s`", expanded);
-		shell_error(env, msg, __func__);
-		return (NULL);
-	}
-	return (resolved);
-}
-
 static void
-	eval_child(t_environ *env, t_ast_node *program)
+	eval_child(t_environ *env, char *path, t_ast_node *program)
 {
 	const struct s_node_cmd	*cmd = &program->cmd;
-	const char				*path = resolve_path(env, &cmd->args[0].atom);
 	char					**argv;
 	char					**envp;
+	char					*err;
+	size_t					i;
 	
 	if (!path)
 		shell_exit(env, 127);
 	argv = cmd_to_argv(cmd);
 	envp = env_to_envp(env);
 	env->last_status = execve(path, argv, envp);
-	shell_perror(env, EXIT_FAILURE, "Failed to execute program", __FUNCTION__);
+	i = 0;
+	while (envp[i])
+		free(envp[i++]);
+	free(envp);
+	free(argv);
+	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
+	free(path);
+	shell_error(env, err, __FUNCTION__);
+	shell_exit(env, EXIT_FAILURE);
 }
 
 // TODO: Program should be resolved before forking to properly call builtins
 // and functions which required a non subshell environment
-void
+int
 	eval_cmd(t_environ *env, t_ast_node *program)
 {
 	pid_t	pid;
 	int		status;
+	char	*path;
 
+	status = resolve_executable(env, stringbuf_cstr(&program->cmd.args[0].atom),
+		&path);
+	if (status != 0)
+	{
+		free(path);
+		return (0);
+	}
 	pid = shell_fork(env, __FUNCTION__);
 	if (pid == -1)
-		return ;
+		return (0);
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
@@ -103,5 +102,7 @@ void
 		env->last_status = WEXITSTATUS(status);
 	}
 	else
-		eval_child(env, program);
+		eval_child(env, path, program);
+	free(path);
+	return (1);
 }

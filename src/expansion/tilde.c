@@ -9,11 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/eval.h"
-#include "util/util.h"
 #include <expansion/expansion.h>
-#include <stddef.h>
 
 /** @brief Expands from the content of a variable */
 static inline int

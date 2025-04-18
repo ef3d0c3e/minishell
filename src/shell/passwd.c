@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/eval.h>
-#include <stddef.h>
 
 void
 	passwd_free(struct s_passwd_ent *ent)

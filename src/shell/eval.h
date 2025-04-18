@@ -77,8 +77,10 @@ eval(t_environ *env, t_ast_node* program);
 
 /**
  * @brief Evaluates command node
+ *
+ * @returns 1 On success, 0 if failed to resolve executable
  */
-void
+int
 eval_cmd(t_environ *env, t_ast_node* cmd);
 /**
  * @brief Evaluates a pipeline `|` or `|&`
@@ -211,5 +213,21 @@ shell_perror(t_environ *env, int status, const char *msg, const char *function);
  */
 pid_t
 shell_fork(t_environ *env, const char *function);
+
+/**
+ * @brief Resolves function/builtin/executable from the shell
+ *
+ * @param env The shell session
+ * @param name Executable name
+ * @param result Result of this function, will need to be freed on success
+ *
+ * @returns
+ *  - (-1) on error
+ *  - (0) if `name` refers to an executable
+ *  - (1) if `name` refers to a function
+ *  - (2) if `name` refers to a builtin
+ */
+int
+resolve_executable(t_environ *env, const char *name, char **result);
 
 #endif // EVAL_H
