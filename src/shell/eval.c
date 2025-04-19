@@ -38,11 +38,11 @@ void
 	}
 	else if (program->type == NODE_LOGIC)
 	{
-		if (!ft_strcmp(program->logic.token.reserved_word, "||")
-			|| !ft_strcmp(program->logic.token.reserved_word, "&&"))
-			eval_sequence(env, program);
-		else if (program->logic.token.reserved_word[0] == '|')
+		if (!ft_strcmp(program->logic.token.reserved_word, "|")
+			|| !ft_strcmp(program->logic.token.reserved_word, "|&"))
 			eval_pipeline(env, program);
+		else
+			eval_sequence(env, program);
 	}
 	shell_error_flush(env);
 }

@@ -45,6 +45,18 @@ int
 expand_param(t_environ *env, t_token *token, t_token_list *result);
 
 /**
+ * @brief Performs command substition, `$(expr) -> stdout of `expr`
+ *
+ * @param env Shell session
+ * @param token Parameter token
+ * @param result Resulting token list
+ *
+ * @returns 1 on success, 0 on failure
+ */
+int
+expand_cmdsub(t_environ *env, t_token *token, t_token_list *result);
+
+/**
  * @brief Performs filename expansion
  *
  * @param env Shell session

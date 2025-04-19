@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
 
 int
 	token_cmd_sub(t_token_list *list, t_u8_iterator *it)
@@ -29,6 +30,8 @@ int
 		.type = TOK_CMD_SUB,
 		.start = it->byte_pos,
 		.end = it->byte_pos + end,
+		.word = stringbuf_from_range(it->str.str + it->byte_pos,
+			it->str.str + it->byte_pos + end)
 	});
 	it_advance(it, end + 1);
 	return (1);

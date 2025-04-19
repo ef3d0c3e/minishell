@@ -41,6 +41,7 @@ int
 		.type = TOK_NEWLINE,
 		.start = it->byte_pos,
 		.end = it->byte_pos + it->codepoint.len,
+		.reserved_word = "\n",
 	});
 	it_advance(it, it->codepoint.len);
 	return (1);

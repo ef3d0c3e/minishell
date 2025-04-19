@@ -12,6 +12,7 @@
 #ifndef EVAL_H
 # define EVAL_H
 
+#include "util/util.h"
 # include <parser/parser.h>
 # include <shell/opts.h>
 # include <builtins/builtin.h>
@@ -31,33 +32,39 @@ typedef struct s_error	t_error;
 typedef struct s_environ
 {
 	/** @brief Stores all environment variables */
-	t_rbtree	env;
+	t_rbtree		env;
 
 	/**
 	 * @brief Stores all shell options
 	 */
-	t_rbtree	opts;
+	t_rbtree		opts;
 
 	/** @brief All registered builtins */
-	t_rbtree	builtins;
+	t_rbtree		builtins;
 	/** @brief All programs in the path */
-	t_rbtree	path_program;
+	t_rbtree		path_program;
 
 	/** @brief Errors list */
-	t_error		*errors;
+	t_error			*errors;
 	/** @brief Capacity of errors list */
-	size_t		errors_capacity;
+	size_t			errors_capacity;
 	/** @brief Number of errors */
-	size_t		errors_size;
+	size_t			errors_size;
 
 	/** @brief Exit status of the last command */
-	int			last_status;
+	int				last_status;
 
 	/** @brief Set to 1 when the session is a child session of another shell */
-	int			is_child;
+	int				is_child;
 
-	/** @brief Currently executed program */
-	t_ast_node	*program;
+	/** @brief Current program prompt */
+	char			*prompt;
+	/** @brief Current token list (Non-owning) */
+	t_token_list	*token_list;
+	/** @brief Current parser (Non-owning) */
+	t_parser		*parser;
+	/** @brief Currently executed program (Non-owning) */
+	t_ast_node		*program;
 }	t_environ;
 
 /**
@@ -68,7 +75,14 @@ typedef struct s_environ
 t_environ
 env_new(char **envp);
 /**
- * @brief Destroyes a session
+ * @brief Destroys parsing-related data
+ *
+ * @param env Session to delete parser-related data
+ */
+void
+env_parser_free(t_environ *env);
+/**
+ * @brief Destroys a session
  *
  * @param env Session to delete
  */
@@ -77,6 +91,18 @@ env_free(t_environ *env);
 
 void
 eval(t_environ *env, t_ast_node* program);
+
+/**
+ * @brief Tokenizes and evaluate to a string
+ *
+ * @param env Shell session
+ * @param input Prompt input
+ * @param buf Buffer to store stdout
+ *
+ * @returns The return value of the evaluated command (0 = success)
+ */
+int
+repl_to_string(t_environ *env, char *input, t_string_buffer *buf);
 
 /**
  * @brief Evaluates command node

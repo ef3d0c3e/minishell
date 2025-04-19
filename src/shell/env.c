@@ -9,6 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "builtins/builtin.h"
+#include "parser/parser.h"
+#include "tokenizer/tokenizer.h"
 #include <shell/eval.h>
 
 /**
@@ -49,6 +52,9 @@ t_environ
 	env.errors = NULL;
 	env.last_status = 0;
 	env.is_child = 0;
+	env.prompt = NULL;
+	env.token_list = NULL;
+	env.parser = NULL;
 	env.program = NULL;
 	e = envp;
 	while (*e)
@@ -61,12 +67,27 @@ t_environ
 }
 
 void
+	env_parser_free(t_environ *env)
+{
+	free(env->prompt);
+	if (env->token_list)
+		token_list_free(env->token_list);
+	if (env->parser)
+		parser_free(env->parser);
+	ast_free(env->program);
+	env->prompt = NULL;
+	env->token_list = NULL;
+	env->parser = NULL;
+	env->program = NULL;
+}
+
+void
 	env_free(t_environ *env)
 {
 	rb_free(&env->env);
 	rb_free(&env->opts);
 	rb_free(&env->builtins);
 	rb_free(&env->path_program);
-	ast_free(env->program);
+	env_parser_free(env);
 	free(env->errors);
 }

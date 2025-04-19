@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 #include <expansion/expansion.h>
 
-
-// TODO: Expansion
 t_token_list
 	token_expand(t_environ *env, t_token_list list)
 {
@@ -39,6 +37,8 @@ t_token_list
 		if (expand_tilde(env, &list.tokens[i], &new))
 			;
 		else if (expand_param(env, &list.tokens[i], &new))
+			;
+		else if (expand_cmdsub(env, &list.tokens[i], &new))
 			;
 		else if (expand_filename(env, &list.tokens[i], &new))
 			;
