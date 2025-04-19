@@ -331,4 +331,15 @@ int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
 int	token_param_simple(t_token_list *list, t_u8_iterator *it);
 int	token_param(t_token_list *list, t_u8_iterator *it);
 
+/**
+ * @brief Prints errors in token list
+ *
+ * @param input Input string that generated the token list `list`
+ * @param list The list to print errors from
+ *
+ * @returns 1 if no errors were displayed, 0 if at least one error occured
+ */
+int
+report_tokens(t_string input, const t_token_list *list);
+
 #endif // TOKENIZER_H

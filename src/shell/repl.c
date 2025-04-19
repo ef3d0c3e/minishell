@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/builtin.h"
-#include "util/util.h"
 #include <shell/eval.h>
 #include <expansion/expansion.h>
 
@@ -34,7 +32,11 @@ static void
 	close(fds[1]);
 	env->token_list = &list;
 	list = tokenizer_tokenize(input);
+	if (report_tokens(input, env->token_list))
+		shell_perror(env, EXIT_FAILURE, "tokenization failed", __func__);
 	*env->token_list = token_expand(env, *env->token_list);
+	if (report_tokens(input, env->token_list))
+		shell_perror(env, EXIT_FAILURE, "expansion failed", __func__);
 	parser = parser_init(input, list);
 	env->parser = &parser;
 	env->program = parse(&parser, 0, list.size);

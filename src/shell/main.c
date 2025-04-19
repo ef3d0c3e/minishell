@@ -1,3 +1,4 @@
+#include "ft_printf.h"
 #include "parser/parser.h"
 #include "shell/opts.h"
 #include "tokenizer/tokenizer.h"
@@ -34,6 +35,7 @@ int main(int ac, char **av, char **envp)
 
 	environ.token_list = &list;
 	*environ.token_list = tokenizer_tokenize(input);
+	report_tokens(input, environ.token_list);
 	if (option_get(&environ, "dbg_token"))
 	{
 		dprintf(2, " -- Raw tokens --\n");
@@ -41,6 +43,7 @@ int main(int ac, char **av, char **envp)
 	}
 
 	*environ.token_list = token_expand(&environ, *environ.token_list);
+	report_tokens(input, environ.token_list);
 	shell_error_flush(&environ);
 	if (option_get(&environ, "dbg_token"))
 	{
