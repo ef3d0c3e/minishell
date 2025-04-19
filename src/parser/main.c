@@ -1,10 +1,17 @@
+#include "tokenizer/tokenizer.h"
 #include <parser/parser.h>
 #include <expansion/expansion.h>
 
 /** @brief Parse an expression delimited by two operators */
 t_ast_node	*parse_expression(t_parser *parser, size_t start, size_t end)
 {
-	const t_token	*const tok = &parser->list.tokens[start];
+	t_token	*tok;
+
+	while (parser->list.tokens[start].type == TOK_SPACE)
+		++start;
+	while (parser->list.tokens[end - 1].type == TOK_SPACE)
+		--end;
+	tok = &parser->list.tokens[start];
 
 	if (tok->type == TOK_GROUPING && tok->reserved_word[0] == '(')
 		return (parse_subshell(parser, start, end));

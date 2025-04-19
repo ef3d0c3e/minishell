@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval_sequence.c                                    :+:      :+:    :+:   */
+/*   eval_subshell.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,20 +9,23 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
 #include <shell/eval.h>
 
 void
-	eval_sequence(t_environ *env, t_ast_node *program)
+	eval_subshell(t_environ *env, t_ast_node *program)
 {
-	eval(env, program->logic.left);
-	if (program->logic.token.type == TOK_NEWLINE
-		|| !ft_strcmp(program->logic.token.reserved_word, ";"))
-		eval(env, program->logic.right);
-	if (!ft_strcmp(program->logic.token.reserved_word, "&&")
-		&& !env->last_status)
-		eval(env, program->logic.right);
-	else if (!ft_strcmp(program->logic.token.reserved_word, "||")
-		&& env->last_status)
-		eval(env, program->logic.right);
+	pid_t	pid;
+	int		status;
+
+	pid = shell_fork(env, __func__);
+	if (pid == -1)
+		shell_perror(env, EXIT_FAILURE, "fork() failed", __func__);
+	if (pid)
+	{
+		if (waitpid(pid, &status, 0) == -1)
+			shell_perror(env, EXIT_FAILURE, "waitpid() failed", __func__);
+		env->last_status = WEXITSTATUS(status);
+	}
+	else
+		eval(env, program->expr.head);
 }

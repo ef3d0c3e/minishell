@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
 #include <shell/eval.h>
 
 void
@@ -43,6 +44,10 @@ void
 			eval_pipeline(env, program);
 		else
 			eval_sequence(env, program);
+	}
+	else if (program->type = NODE_SUBSHELL)
+	{
+		eval_subshell(env, program);
 	}
 	shell_error_flush(env);
 }

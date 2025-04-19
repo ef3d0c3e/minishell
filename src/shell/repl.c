@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "builtins/builtin.h"
 #include "util/util.h"
 #include <shell/eval.h>
 #include <expansion/expansion.h>
@@ -41,6 +42,23 @@ static void
 	shell_exit(env, EXIT_SUCCESS);
 }
 
+/** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
+static void
+	read_incoming(t_environ *env, int fd, t_string_buffer *buf)
+{
+	ssize_t	sz;
+
+	sz = 1;
+	while (sz > 0)
+	{
+		sz = read(fd, buf->str + buf->len, 1024);
+		if (sz < 0)
+			shell_perror(env, EXIT_FAILURE, "read() failed", __func__);
+		buf->len += sz;
+		stringbuf_reserve(buf, buf->len + 1024);
+	}
+}
+
 static int
 	repl_to_string_parent(
 	t_environ *env,
@@ -48,39 +66,19 @@ static int
 	int *fds,
 	pid_t pid)
 {
-	ssize_t	sz;
 	int		status;
 	int		waitst;
 
 	stringbuf_init(buf, 1024);
 	waitst = 0;
-	sz = 0;
 	while (waitst != pid)
 	{
-		if (!sz)
-			sz = 1;
-		while (sz > 0)
-		{
-			sz = read(fds[0], buf->str + buf->len, 1024);
-			if (sz < 0)
-				shell_perror(env, EXIT_FAILURE, "read() failed", __func__);
-			buf->len += sz;
-			stringbuf_reserve(buf, buf->len + 1024);
-		}
+		read_incoming(env, fds[0], buf);
 		waitst = waitpid(pid, &status, WNOHANG);
 		if (waitst == -1)
 			shell_perror(env, EXIT_FAILURE, "waitpid() failed", __func__);
 	}
-	if (!sz)
-		sz = 1;
-	while (sz > 0)
-	{
-		sz = read(fds[0], buf->str + buf->len, 1024);
-		if (sz < 0)
-			shell_perror(env, EXIT_FAILURE, "read() failed", __func__);
-		buf->len += sz;
-		stringbuf_reserve(buf, buf->len + 1024);
-	}
+	read_incoming(env, fds[0], buf);
 	close(fds[0]);
 	return (status);
 }

@@ -48,8 +48,7 @@ static void
 		if (dup2(fds[1], STDOUT_FILENO) == -1)
 			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
 		close(fds[1]);
-		if (!eval_cmd(env, pipeline->logic.left))
-			shell_exit(env, EXIT_FAILURE);
+		eval(env, pipeline->logic.left);
 		shell_exit(env, env->last_status);
 	}
 	pids[1] = shell_fork(env, __FUNCTION__);
@@ -84,8 +83,7 @@ static void
 			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
 		close(fds[1]);
 		close(fds[3]);
-		if (!eval_cmd(env, pipeline->logic.left))
-			shell_exit(env, EXIT_FAILURE);
+		eval(env, pipeline->logic.left);
 		shell_exit(env, env->last_status);
 	}
 	pids[1] = shell_fork(env, __FUNCTION__);

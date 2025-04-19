@@ -121,6 +121,11 @@ eval_pipeline(t_environ *env, t_ast_node* pipeline);
  */
 void
 eval_sequence(t_environ *env, t_ast_node* pipeline);
+/**
+ * @brief Evaluates a subshell `(...)`
+ */
+void
+eval_subshell(t_environ *env, t_ast_node* subshell);
 
 /**
  * @brief Holds data for environment tree traversal
