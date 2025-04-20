@@ -21,7 +21,7 @@ pid_t
 
 	pid = fork();
 	if (env->is_child && pid == -1)
-		shell_perror(env, EXIT_FAILURE, "fork() failed", function);
+		shell_perror(env, "fork() failed", function);
 	else if (pid == -1)
 	{
 		ft_asprintf(&err, "fork() failed: %m");

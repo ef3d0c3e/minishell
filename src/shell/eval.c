@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/parser.h"
 #include <shell/eval.h>
 
 void
@@ -22,13 +21,20 @@ void
 }
 
 void
-	shell_perror(t_environ *env, int status, const char *msg, const char *func)
+	shell_fail(t_environ *env, const char *msg, const char *func)
+{
+	shell_error(env, ft_strdup(msg), func);
+	shell_exit(env, EXIT_FAILURE);
+}
+
+void
+	shell_perror(t_environ *env, const char *msg, const char *func)
 {
 	char	*err;
 
 	ft_asprintf(&err, "%s: %m", msg);
 	shell_error(env, err, func);
-	shell_exit(env, status);
+	shell_exit(env, EXIT_FAILURE);
 }
 
 void

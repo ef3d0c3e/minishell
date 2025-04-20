@@ -29,15 +29,15 @@ static void
 	env->prompt = prompt;
 	close(fds[0]);
 	if (dup2(fds[1], STDOUT_FILENO) == -1)
-		shell_perror(env, EXIT_FAILURE, "dup2() failed", SRC_LOCATION);
+		shell_perror(env, "dup2() failed", SRC_LOCATION);
 	close(fds[1]);
 	env->token_list = &list;
 	list = tokenizer_tokenize(input);
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		shell_perror(env, EXIT_FAILURE, "tokenization failed", SRC_LOCATION);
+		shell_fail(env, "tokenization failed", SRC_LOCATION);
 	*env->token_list = token_expand(env, *env->token_list);
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		shell_perror(env, EXIT_FAILURE, "expansion failed", SRC_LOCATION);
+		shell_fail(env, "expansion failed", SRC_LOCATION);
 	parser = parser_init(input, list);
 	env->parser = &parser;
 	env->program = parse(&parser, 0, list.size);
@@ -58,7 +58,7 @@ static void
 	{
 		sz = read(fd, buf->str + buf->len, 1024);
 		if (sz < 0)
-			shell_perror(env, EXIT_FAILURE, "read() failed", SRC_LOCATION);
+			shell_perror(env, "read() failed", SRC_LOCATION);
 		buf->len += sz;
 		stringbuf_reserve(buf, buf->len + 1024);
 	}
@@ -81,11 +81,11 @@ int		waitst;
 		read_incoming(env, fds[0], buf);
 		waitst = waitpid(pid, &status, WNOHANG);
 		if (waitst == -1)
-			shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
+			shell_perror(env, "waitpid() failed", SRC_LOCATION);
 	}
 	read_incoming(env, fds[0], buf);
 	if (waitst != pid && waitpid(pid, &status, 0) == -1)
-		shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
+		shell_perror(env, "waitpid() failed", SRC_LOCATION);
 	env->last_status = WEXITSTATUS(status);
 	close(fds[0]);
 	return (env->last_status);

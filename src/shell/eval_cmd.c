@@ -118,7 +118,7 @@ int
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
+			shell_perror(env, "waitpid() failed", SRC_LOCATION);
 		env->last_status = WEXITSTATUS(status);
 	}
 	else

@@ -41,25 +41,29 @@ static char
 	*error_format(t_parser *parser, char *msg, size_t start, size_t end)
 {
 	const t_token	*tok_start = &parser->list.tokens[start];
-	const t_token	*tok_end = &parser->list.tokens[end];
+	size_t			end_pos;
 	size_t			i;
 	char			*indicator;
 	char			*err;
 
-	indicator = xmalloc(tok_end->end + 1);
+	if (end >= parser->list.size)
+		end_pos = parser->input.len;
+	else
+		end_pos = parser->list.tokens[end].end;
+	indicator = xmalloc(tok_start->start + 2);
 	i = 0;
-	while (i + 1 < tok_end->end)
+	while (i < tok_start->start)
 		indicator[i++] = '~';
 	indicator[i] = '^';
 	indicator[i + 1] = '\0';
 	ft_asprintf(&err, "[ Parse error ]\n%.*s%s%.*s%s%.*s\n%s %s\n",
 		(int)tok_start->start, parser->input.str,
 		"\033[0;31m",
-		(int)(tok_end->end - tok_start->start),
+		(int)(end_pos - tok_start->start),
 		parser->input.str + tok_start->start,
 		"\033[0m",
-		(int)(parser->input.len - tok_end->end),
-		parser->input.str + tok_end->end,
+		(int)(parser->input.len - end_pos),
+		parser->input.str + end_pos,
 		indicator,
 		msg);
 	free(indicator);
@@ -72,8 +76,6 @@ void
 {
 	size_t	new_cap;
 
-	// FIXME
-	//dprintf(2, "ERROR: %.*s\n", (int)msg.len, msg.str);
 	new_cap = parser->errors_cap + !parser->errors_cap * 16;
 	while (new_cap < parser->errors_size + 1)
 		new_cap *= 2;

@@ -244,12 +244,23 @@ shell_exit(t_environ *env, int status);
  * This function will clean up the memory used for the shell's session
  *
  * @param env Shell to exit
- * @param status Shell exit status
  * @param msg Error message
  * @param function The source function
  */
 void
-shell_perror(t_environ *env, int status, const char *msg, const char *function);
+shell_fail(t_environ *env, const char *msg, const char *function);
+/**
+ * @brief Exits the shell with the given error status and an error message
+ * derived from `strerror(errno)`
+ *
+ * This function will clean up the memory used for the shell's session
+ *
+ * @param env Shell to exit
+ * @param msg Error message
+ * @param function The source function
+ */
+void
+shell_perror(t_environ *env, const char *msg, const char *function);
 
 /**
  * @brief Creates a child session

@@ -63,9 +63,12 @@ t_ast_node
 	const size_t	delim = find_delim(&parser->list, start + 1, end);
 	size_t			redirlen;
 
-	node = xmalloc(sizeof(t_ast_node));
 	if (delim == (size_t)-1)
+	{
 		parser_error(parser, ft_strdup("Unterminated `(` delimiter"), start, end);
+		return (NULL);
+	}
+	node = xmalloc(sizeof(t_ast_node));
 	node->type = NODE_SUBSHELL;
 	node->expr = parse_delimited(parser, start, delim);
 	redirlen = 0;
