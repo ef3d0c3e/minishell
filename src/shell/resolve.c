@@ -79,6 +79,8 @@ int
 		if (rb_find(&env->builtins, name))
 			return (2);
 		*result = resolve_from_path(env, name);
+		if (!*result)
+			return (-1);
 		status = get_executable_status(env, *result);
 		return (status);
 	}

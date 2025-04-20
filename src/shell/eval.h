@@ -77,6 +77,12 @@ env_new(char **envp);
 /**
  * @brief Destroys parsing-related data
  *
+ * This function frees and sets to null the following members of `t_environ`
+ *  - `prompt`
+ *  - `token_list`
+ *  - `parser`
+ *  - `program`
+ *
  * @param env Session to delete parser-related data
  */
 void
@@ -93,13 +99,24 @@ void
 eval(t_environ *env, t_ast_node* program);
 
 /**
+ * @brief Tokenizes and evaluate to stdout/stderr
+ *
+ * @param env Shell session
+ * @param input Prompt input
+ *
+ * @returns The return value of the evaluated command (-1 = parse/token error)
+ */
+int
+repl(t_environ *env, char *input);
+
+/**
  * @brief Tokenizes and evaluate to a string
  *
  * @param env Shell session
  * @param input Prompt input
  * @param buf Buffer to store stdout
  *
- * @returns The return value of the evaluated command (0 = success)
+ * @returns The return value of the evaluated command
  */
 int
 repl_to_string(t_environ *env, char *input, t_string_buffer *buf);

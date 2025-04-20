@@ -2,6 +2,7 @@
 #include "parser/parser.h"
 #include "shell/opts.h"
 #include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <expansion/expansion.h>
 #include <shell/eval.h>
 #include <stdio.h>
@@ -24,6 +25,12 @@ int main(int ac, char **av, char **envp)
 {
 	// BUILD Environment
 	t_environ		environ = env_new(envp);
+
+	int status = repl(&environ, ft_strdup(av[1]));
+	printf("status = %d\n", status);
+	//env_free(&environ);
+	return (0);
+	/*
 	t_token_list	list;
 	t_parser		parser;
 	environ.prompt = ft_strdup(av[1]);
@@ -72,4 +79,5 @@ int main(int ac, char **av, char **envp)
 	env_free(&environ);
 
 	return (0);
+	*/
 }

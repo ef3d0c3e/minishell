@@ -43,6 +43,7 @@ void
 	rb_free(t_rbtree *tree)
 {
 	free_node(tree, tree->root);
+	tree->root = NULL;
 }
 
 static inline void

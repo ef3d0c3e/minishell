@@ -44,5 +44,5 @@ int
 		++i;
 	}
 	env->errors_size = 0;
-	return (has_error == 0);
+	return (!has_error);
 }
