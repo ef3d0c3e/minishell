@@ -93,8 +93,8 @@ t_ast_node
 		}
 		else if (tok->type != TOK_SPACE)
 		{
-			parser_error(parser, stringbuf_from("Unhandled token type during "
-						"command parsing"));
+			parser_error(parser, ft_strdup("Unhandled token type during "
+						"command parsing"), start, end);
 		}
 		++start;
 	}

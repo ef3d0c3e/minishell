@@ -74,7 +74,7 @@ size_t	parse_redir(
 		skipped = parse_word(parser, start + 2, end, &word);
 		if (!skipped)
 		{
-			parser_error(parser, stringbuf_from("Unexpected EOF after redirection token"));
+			parser_error(parser, ft_strdup("Unexpected EOF after redirection token"), start, end);
 			return (2);
 		}
 		add_redir(redirs, parser->list.tokens[start + 1], parser->list.tokens[start].digit, word);
@@ -85,7 +85,7 @@ size_t	parse_redir(
 		skipped = parse_word(parser, start + 1, end, &word);
 		if (!skipped)
 		{
-			parser_error(parser, stringbuf_from("Unexpected EOF after redirection token"));
+			parser_error(parser, ft_strdup("Unexpected EOF after redirection token"), start, end);
 			return (1);
 		}
 		add_redir(redirs, parser->list.tokens[start], 1, word);

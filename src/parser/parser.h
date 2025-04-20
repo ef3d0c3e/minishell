@@ -141,7 +141,7 @@ typedef struct s_parser
 {
 	t_string		input;
 	t_token_list	list;
-	t_string_buffer	*errors;
+	char			**errors;
 	size_t			errors_size;
 	size_t			errors_cap;
 }	t_parser;
@@ -150,17 +150,40 @@ typedef struct s_parser
 t_parser
 parser_init(t_string input, t_token_list list);
 
-/** @brief Appends error to parser */
-void
-parser_error(t_parser *parser, t_string_buffer msg);
-
 /** @brief Frees the parser */
 void
 parser_free(t_parser *parser);
 
-/** @brief Parser entry point */
+/**
+ * @brief Parser entry point
+ *
+ * @param parser The parser
+ * @param start Start position in token list
+ * @param end End position in token list
+ * @return The parsed node, may be NULL (e.g empty expressions)
+ */
 t_ast_node
 *parse(t_parser *parser, size_t start, size_t end);
+
+/**
+ * @brief Appends an error to the parser
+ *
+ * @param parser The parser
+ * @param msg The error message (an owned string)
+ * @param start The error's start range
+ * @param end The error's end range
+ */
+void
+parser_error(t_parser *parser, char *msg, size_t start, size_t end);
+
+/**
+ * @brief Flushes errors to stderr
+ *
+ * @param parser The parser
+ * @return 1 if the parser has no errors, 0 if at least one error occured
+ */
+int
+parser_error_flush(t_parser *parser);
 
 /* ************************************************************************** */
 /* Individual parsers                                                         */

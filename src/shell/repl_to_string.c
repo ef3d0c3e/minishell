@@ -41,7 +41,7 @@ static void
 	parser = parser_init(input, list);
 	env->parser = &parser;
 	env->program = parse(&parser, 0, list.size);
-	if (!shell_error_flush(env))
+	if (!parser_error_flush(&parser))
 		shell_exit(env, EXIT_FAILURE);
 	eval(env, env->program);
 	shell_exit(env, env->last_status);

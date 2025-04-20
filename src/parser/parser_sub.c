@@ -65,13 +65,13 @@ t_ast_node
 
 	node = xmalloc(sizeof(t_ast_node));
 	if (delim == (size_t)-1)
-		parser_error(parser, stringbuf_from("Unterminated `(` delimiter"));
+		parser_error(parser, ft_strdup("Unterminated `(` delimiter"), start, end);
 	node->type = NODE_SUBSHELL;
 	node->expr = parse_delimited(parser, start, delim);
 	redirlen = 0;
 	if (delim != (size_t)-1)
 		redirlen = parse_redir_repeat(parser, delim + 1, end, &node->expr.redirs);
 	if (delim + redirlen + 1 != end)
-		parser_error(parser, stringbuf_from("Leftover tokens after `)`"));
+		parser_error(parser, ft_strdup("Leftover tokens after `)`"), delim + redirlen + 1, end);
 	return (node);
 }
