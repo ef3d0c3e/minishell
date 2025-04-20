@@ -9,15 +9,11 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/eval.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <expansion/expansion.h>
 
 /** @brief Removes trailing newlines, according to bash's rules */
 void
-remove_trailing(t_string_buffer *buf)
+	remove_trailing(t_string_buffer *buf)
 {
 	while (buf->len && buf->str[buf->len - 1] == '\n')
 		--buf->len;
@@ -43,13 +39,18 @@ int
 		return (1);
 	}
 	remove_trailing(&buf);
-	// TODO: Perform word splitting
-	token_list_push(result, (t_token){
-		.type = TOK_SINGLE_QUOTE,
-		.start = token->start,
-		.end = token->end,
-		.word = buf
-	});
+	if (buf.len)
+	{
+		// TODO: Perform word splitting
+		token_list_push(result, (t_token){
+				.type = TOK_SINGLE_QUOTE,
+				.start = token->start,
+				.end = token->end,
+				.word = buf
+				});
+	}
+	else
+		stringbuf_free(&buf);
 	token_free(token);
 	return (1);
 }

@@ -34,7 +34,9 @@ void
 void
 	eval(t_environ *env, t_ast_node* program)
 {
-	if (program->type == NODE_COMMAND)
+	if (!program)
+		;
+	else if (program->type == NODE_COMMAND)
 	{
 		eval_cmd(env, program);
 	}
@@ -46,7 +48,7 @@ void
 		else
 			eval_sequence(env, program);
 	}
-	else if (program->type = NODE_SUBSHELL)
+	else if (program->type == NODE_SUBSHELL)
 	{
 		eval_subshell(env, program);
 	}

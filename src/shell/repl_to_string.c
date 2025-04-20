@@ -12,6 +12,7 @@
 #include <shell/eval.h>
 #include <expansion/expansion.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 static void
 	repl_to_string_child(t_environ *env, char *s, int *fds)
@@ -85,7 +86,7 @@ int		waitst;
 	read_incoming(env, fds[0], buf);
 	if (waitst != pid && waitpid(pid, &status, 0) == -1)
 		shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
-	env->last_status = status;
+	env->last_status = WEXITSTATUS(status);
 	close(fds[0]);
 	return (env->last_status);
 }
