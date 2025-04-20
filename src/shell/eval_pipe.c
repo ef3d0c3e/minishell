@@ -27,7 +27,7 @@ static void
 	if (waitpid(pids[0], &status[0], 0) == -1
 		|| waitpid(pids[1], &status[1], 0) == -1)
 		shell_perror(env, EXIT_FAILURE, "waitpid() failed", __FUNCTION__);
-	if (!status[1] && option_get(env, "pipefail"))
+	if (!status[1] && option_value(env, "pipefail"))
 		shell_exit(env, WEXITSTATUS(status[0]));
 	shell_exit(env, WEXITSTATUS(status[1]));
 }

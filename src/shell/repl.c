@@ -12,6 +12,20 @@
 #include <shell/eval.h>
 #include <expansion/expansion.h>
 
+static void
+	token_list_debug(t_string input, const t_token_list *list)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < list->size)
+	{
+		token_print_debug(2, input, &list->tokens[i]);
+		++i;
+	}
+	ft_dprintf(2, "\n");
+}
+
 int
 	repl(t_environ *env, char *s)
 {
@@ -25,9 +39,19 @@ int
 	env->prompt = s;
 	env->token_list = &list;
 	list = tokenizer_tokenize(input);
+	if (option_value(env, "dbg_token"))
+	{
+		dprintf(2, " -- Raw tokens --\n");
+		token_list_debug(input, &list);
+	}
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
 		return (env_parser_free(env), -1);
 	*env->token_list = token_expand(env, *env->token_list);
+	if (option_value(env, "dbg_token"))
+	{
+		dprintf(2, " -- Expanded tokens --\n");
+		token_list_debug(input, &list);
+	}
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
 		return (env_parser_free(env), -1);
 	parser = parser_init(input, list);
@@ -35,7 +59,7 @@ int
 	env->program = parse(&parser, 0, list.size);
 	if (!shell_error_flush(env))
 		return (env_parser_free(env), -1);
-	if (option_get(env, "dbg_ast"))
+	if (option_value(env, "dbg_ast"))
 	{
 		printf(" -- Parsing --\n");
 		ast_print_debug(input, env->program, 0);

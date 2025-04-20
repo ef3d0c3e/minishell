@@ -71,7 +71,15 @@ rb_new(
 	void (*key_destroy)(void *key),
 	void (*data_destroy)(void *data));
 
-/** @brief Frees a red-black tree */
+/**
+ * @brief Frees a red-black tree
+ *
+ * This function only frees the node-related data for the tree. Essentially
+ * clearing the tree, meaning it can be used again as an empty tree (keeping
+ * the current comparison/deletion functions).
+ *
+ * @param tree Tree to free
+ */
 void
 rb_free(t_rbtree *tree);
 

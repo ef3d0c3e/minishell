@@ -41,7 +41,7 @@ void
 }
 
 int
-	option_get(t_environ *env, const char *name)
+	option_value(t_environ *env, const char *name)
 {
 	const struct s_option	*opt = rb_find(&env->opts, (const void *)name);
 	char					*err;

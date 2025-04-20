@@ -1,4 +1,5 @@
 #include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <parser/parser.h>
 #include <expansion/expansion.h>
 
@@ -35,6 +36,11 @@ t_ast_node	*parse(t_parser *parser, size_t start, size_t end)
 		{
 			node = parse_expression(parser, i, end);
 			i = end;
+		}
+		else if (start == next)
+		{
+			parser_error(parser, stringbuf_from("Missing tokens"));
+			return (node);
 		}
 		else
 		{

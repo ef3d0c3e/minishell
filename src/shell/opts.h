@@ -41,6 +41,6 @@ init_options(t_environ *env);
  * @returns The value of the option
  */
 int
-option_get(t_environ *env, const char *name);
+option_value(t_environ *env, const char *name);
 
 #endif // OPTS_H
