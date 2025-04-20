@@ -39,7 +39,7 @@ int
 		ft_asprintf(&err, "Command substitution for `%.*s` failed: return "
 			"value=%d", (int)token->word.len, token->word.str, status);
 		token_free(token);
-		shell_error(env, err, __func__);
+		shell_error(env, err, SRC_LOCATION);
 		return (1);
 	}
 	remove_trailing(&buf);

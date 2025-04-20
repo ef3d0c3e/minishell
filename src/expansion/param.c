@@ -45,7 +45,7 @@ static inline int
 	{
 		ft_asprintf(&err, "Bad substitution: `%.*s` is not a valid"
 			" substitution", (int)token->word.len, token->word.str);
-		shell_error(env, err, __FUNCTION__);
+		shell_error(env, err, SRC_LOCATION);
 		return (0);
 	}
 	name = stringbuf_from_range(token->word.str, token->word.str + sep);

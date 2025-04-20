@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include <shell/eval.h>
 #include <expansion/expansion.h>
+#include <stdio.h>
 
 static void
 	repl_to_string_child(t_environ *env, char *s, int *fds)
@@ -27,22 +28,22 @@ static void
 	env->prompt = prompt;
 	close(fds[0]);
 	if (dup2(fds[1], STDOUT_FILENO) == -1)
-		shell_perror(env, EXIT_FAILURE, "dup2() failed", __func__);
+		shell_perror(env, EXIT_FAILURE, "dup2() failed", SRC_LOCATION);
 	close(fds[1]);
 	env->token_list = &list;
 	list = tokenizer_tokenize(input);
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		shell_perror(env, EXIT_FAILURE, "tokenization failed", __func__);
+		shell_perror(env, EXIT_FAILURE, "tokenization failed", SRC_LOCATION);
 	*env->token_list = token_expand(env, *env->token_list);
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		shell_perror(env, EXIT_FAILURE, "expansion failed", __func__);
+		shell_perror(env, EXIT_FAILURE, "expansion failed", SRC_LOCATION);
 	parser = parser_init(input, list);
 	env->parser = &parser;
 	env->program = parse(&parser, 0, list.size);
 	if (!shell_error_flush(env))
 		shell_exit(env, EXIT_FAILURE);
 	eval(env, env->program);
-	shell_exit(env, EXIT_SUCCESS);
+	shell_exit(env, env->last_status);
 }
 
 /** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
@@ -56,7 +57,7 @@ static void
 	{
 		sz = read(fd, buf->str + buf->len, 1024);
 		if (sz < 0)
-			shell_perror(env, EXIT_FAILURE, "read() failed", __func__);
+			shell_perror(env, EXIT_FAILURE, "read() failed", SRC_LOCATION);
 		buf->len += sz;
 		stringbuf_reserve(buf, buf->len + 1024);
 	}
@@ -69,8 +70,8 @@ static int
 	int *fds,
 	pid_t pid)
 {
-	int		status;
-	int		waitst;
+int		status;
+int		waitst;
 
 	stringbuf_init(buf, 1024);
 	waitst = 0;
@@ -79,11 +80,11 @@ static int
 		read_incoming(env, fds[0], buf);
 		waitst = waitpid(pid, &status, WNOHANG);
 		if (waitst == -1)
-			shell_perror(env, EXIT_FAILURE, "waitpid() failed", __func__);
+			shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
 	}
 	read_incoming(env, fds[0], buf);
-	if (waitpid(pid, &status, 0) == -1)
-		shell_perror(env, EXIT_FAILURE, "waitpid() failed", __func__);
+	if (waitst != pid && waitpid(pid, &status, 0) == -1)
+		shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
 	env->last_status = status;
 	close(fds[0]);
 	return (env->last_status);
@@ -99,14 +100,14 @@ int
 	if (pipe(fds) == -1)
 	{
 		ft_asprintf(&err, "pipe() failed: %m");
-		shell_error(env, err, __func__);
+		shell_error(env, err, SRC_LOCATION);
 		return (-1);
 	}
-	pid = shell_fork(env, __func__);
+	pid = shell_fork(env, SRC_LOCATION);
 	if (pid == -1)
 	{
 		ft_asprintf(&err, "fork() failed: %m");
-		shell_error(env, err, __func__);
+		shell_error(env, err, SRC_LOCATION);
 		return (-1);
 	}
 	if (!pid)

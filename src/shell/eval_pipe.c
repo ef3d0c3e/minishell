@@ -26,7 +26,7 @@ static void
 	}
 	if (waitpid(pids[0], &status[0], 0) == -1
 		|| waitpid(pids[1], &status[1], 0) == -1)
-		shell_perror(env, EXIT_FAILURE, "waitpid() failed", __FUNCTION__);
+		shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
 	if (!status[1] && option_value(env, "pipefail"))
 		shell_exit(env, WEXITSTATUS(status[0]));
 	shell_exit(env, WEXITSTATUS(status[1]));
@@ -40,23 +40,23 @@ static void
 	pid_t	pids[2];
 
 	if (pipe(fds) == -1)
-		shell_perror(env, EXIT_FAILURE, "pipe() failed", __FUNCTION__);
-	pids[0] = shell_fork(env, __FUNCTION__);
+		shell_perror(env, EXIT_FAILURE, "pipe() failed", SRC_LOCATION);
+	pids[0] = shell_fork(env, SRC_LOCATION);
 	if (pids[0] == 0)
 	{
 		close(fds[0]);
 		if (dup2(fds[1], STDOUT_FILENO) == -1)
-			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
+			shell_perror(env, EXIT_FAILURE, "dup2() failed", SRC_LOCATION);
 		close(fds[1]);
 		eval(env, pipeline->logic.left);
 		shell_exit(env, env->last_status);
 	}
-	pids[1] = shell_fork(env, __FUNCTION__);
+	pids[1] = shell_fork(env, SRC_LOCATION);
 	if (pids[1] == 0)
 	{
 		close(fds[1]);
 		if (dup2(fds[0], STDIN_FILENO) == -1)
-			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
+			shell_perror(env, EXIT_FAILURE, "dup2() failed", SRC_LOCATION);
 		close(fds[0]);
 		eval(env, pipeline->logic.right);
 		shell_exit(env, env->last_status);
@@ -72,28 +72,28 @@ static void
 	pid_t	pids[2];
 
 	if (pipe(fds) == -1 || pipe(fds + 2) == -1)
-		shell_perror(env, EXIT_FAILURE, "pipe() failed", __FUNCTION__);
-	pids[0] = shell_fork(env, __FUNCTION__);
+		shell_perror(env, EXIT_FAILURE, "pipe() failed", SRC_LOCATION);
+	pids[0] = shell_fork(env, SRC_LOCATION);
 	if (pids[0] == 0)
 	{
 		close(fds[0]);
 		close(fds[2]);
 		if (dup2(fds[1], STDOUT_FILENO) == -1
 			|| dup2(fds[3], STDERR_FILENO) == -1)
-			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
+			shell_perror(env, EXIT_FAILURE, "dup2() failed", SRC_LOCATION);
 		close(fds[1]);
 		close(fds[3]);
 		eval(env, pipeline->logic.left);
 		shell_exit(env, env->last_status);
 	}
-	pids[1] = shell_fork(env, __FUNCTION__);
+	pids[1] = shell_fork(env, SRC_LOCATION);
 	if (pids[1] == 0)
 	{
 		close(fds[1]);
 		close(fds[3]);
 		if (dup2(fds[0], STDIN_FILENO) == -1
 			|| dup2(fds[2], STDIN_FILENO) == -1)
-			shell_perror(env, EXIT_FAILURE, "dup2() failed", __FUNCTION__);
+			shell_perror(env, EXIT_FAILURE, "dup2() failed", SRC_LOCATION);
 		close(fds[0]);
 		close(fds[2]);
 		eval(env, pipeline->logic.right);
@@ -114,7 +114,7 @@ void
 	if (pid == -1)
 	{
 		ft_asprintf(&err, "fork() failed: %m");
-		shell_error(env, err, __FUNCTION__);
+		shell_error(env, err, SRC_LOCATION);
 		return ;
 	}
 	if (!pid)
@@ -125,6 +125,6 @@ void
 			pipe_stdout(env, pipeline);
 	}
 	if (waitpid(pid, &status, 0) == -1)
-		shell_perror(env, EXIT_FAILURE, "waitpid() failed", __FUNCTION__);
+		shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
 	env->last_status = WEXITSTATUS(status);
 }

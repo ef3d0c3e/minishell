@@ -33,7 +33,7 @@ static inline int
 	{
 		ft_asprintf(&err, "Failed to perform tilde expansion: variable `%s`"
 			" not set", varname);
-		shell_error(env, err, __FUNCTION__);
+		shell_error(env, err, SRC_LOCATION);
 	}
 	return (0);
 }
@@ -63,7 +63,7 @@ static inline int
 	{
 		ft_asprintf(&err, "Failed to perform tilde expansion: user `%.*s`"
 			" not found (in /etc/passwd)", (int)username.len, username.str);
-		shell_error(env, err, __FUNCTION__);
+		shell_error(env, err, SRC_LOCATION);
 	}
 	token_list_push(result, *token);
 	stringbuf_free(&username);

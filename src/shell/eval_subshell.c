@@ -17,13 +17,13 @@ void
 	pid_t	pid;
 	int		status;
 
-	pid = shell_fork(env, __func__);
+	pid = shell_fork(env, SRC_LOCATION);
 	if (pid == -1)
-		shell_perror(env, EXIT_FAILURE, "fork() failed", __func__);
+		shell_perror(env, EXIT_FAILURE, "fork() failed", SRC_LOCATION);
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			shell_perror(env, EXIT_FAILURE, "waitpid() failed", __func__);
+			shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
 		env->last_status = WEXITSTATUS(status);
 	}
 	else

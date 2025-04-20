@@ -30,7 +30,7 @@ static void
 	if (lstat(fullpath, &sb))
 	{
 		ft_asprintf(&err, "Failed to lstat(\"%s\"): %m", fullpath);
-		shell_error(env, err, __func__);
+		shell_error(env, err, SRC_LOCATION);
 		free(fullpath);
 		return ;
 	}
@@ -52,7 +52,7 @@ static void
 	if (!dir)
 	{
 		ft_asprintf(&str, "Failed to opendir(\"%s\"): %m", dirname);
-		shell_error(env, str, __func__);
+		shell_error(env, str, SRC_LOCATION);
 		return ;
 	}
 	while (dir)
@@ -62,7 +62,7 @@ static void
 		if (errno)
 		{
 			ft_asprintf(&str, "Failed to readdir(\"%s\"): %m", dirname);
-			shell_error(env, str, __func__);
+			shell_error(env, str, SRC_LOCATION);
 		}
 		if (!ent)
 			break ;

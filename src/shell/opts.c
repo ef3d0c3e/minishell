@@ -49,7 +49,7 @@ int
 	if (!opt)
 	{
 		ft_asprintf(&err, "Failed to find option `%s`", name);
-		shell_error(env, err, __FUNCTION__);
+		shell_error(env, err, SRC_LOCATION);
 		shell_exit(env, EXIT_FAILURE);
 	}
 	return (opt->value);

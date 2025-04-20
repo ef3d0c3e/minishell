@@ -75,7 +75,7 @@ int
 	if (fd == -1)
 	{
 		ft_asprintf(&err, "Failed to open(\"/etc/passwd\"): %m");
-		shell_error(env, err, __func__);
+		shell_error(env, err, SRC_LOCATION);
 		return (0);
 	}
 	ret = read_entry(fd, username, ent);

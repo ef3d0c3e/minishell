@@ -1,11 +1,4 @@
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "shell/opts.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
-#include <expansion/expansion.h>
 #include <shell/eval.h>
-#include <stdio.h>
 
 int main(int ac, char **av, char **envp)
 {

@@ -15,7 +15,8 @@
 void
 	shell_exit(t_environ *env, int status)
 {
-	shell_error_flush(env);
+	if (!shell_error_flush(env))
+		status = -1;
 	env_free(env);
 	exit(status);
 }
@@ -49,5 +50,4 @@ void
 	{
 		eval_subshell(env, program);
 	}
-	shell_error_flush(env);
 }

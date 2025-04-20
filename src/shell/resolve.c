@@ -32,7 +32,7 @@ static int
 			ft_asprintf(&err, "Failed to execute `%s`: No permission", pathname);
 		else
 			ft_asprintf(&err, "lstat(`%s`) failed: %m", pathname);
-		shell_error(env, err, __FUNCTION__);
+		shell_error(env, err, SRC_LOCATION);
 		return (-1);
 	}
 	return (0);
@@ -59,7 +59,7 @@ static char
 		if (!resolved)
 		{
 			ft_asprintf(&msg, "Failed to find executable `%s`", name);
-			shell_error(env, msg, __func__);
+			shell_error(env, msg, SRC_LOCATION);
 			return (NULL);
 		}
 	}
@@ -93,7 +93,7 @@ int
 	if (!cwd)
 	{
 		ft_asprintf(&err, "getcwd() failed: %m");
-		shell_error(env, err, __FUNCTION__);
+		shell_error(env, err, SRC_LOCATION);
 		return (-1);
 	}
 	ft_asprintf(result, "%s/%s", cwd, name);

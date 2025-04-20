@@ -78,7 +78,7 @@ static void
 	free(argv);
 	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
 	free(path);
-	shell_error(env, err, __FUNCTION__);
+	shell_error(env, err, SRC_LOCATION);
 	shell_exit(env, EXIT_FAILURE);
 }
 
@@ -112,13 +112,13 @@ int
 		free(path);
 		return (0);
 	}
-	pid = shell_fork(env, __FUNCTION__);
+	pid = shell_fork(env, SRC_LOCATION);
 	if (pid == -1)
 		return (0);
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			shell_perror(env, EXIT_FAILURE, "waitpid() failed", __FUNCTION__);
+			shell_perror(env, EXIT_FAILURE, "waitpid() failed", SRC_LOCATION);
 		env->last_status = WEXITSTATUS(status);
 	}
 	else
