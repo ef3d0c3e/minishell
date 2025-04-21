@@ -13,18 +13,22 @@
 		.status = __status, \
 		.envp = calloc(1, sizeof(char **)) \
 	}; \
-	i += test_run(&test); \
+	++total; \
+	passed += test_run(&test); \
 	test_free(&test); \
 }
 
 #define DO_TEST(__label, ...) \
 static int test_##__label(void) \
 { \
-	int	i; \
+	int	passed; \
+	int	total; \
 	ft_dprintf(2, "Running tests %s...\n", #__label); \
-	i = 0; \
+	passed = 0; \
+	total = 0; \
 	{ __VA_ARGS__; } \
-	return (i); \
+	ft_dprintf(2, "%s tests [%d/%d passed]\n", #__label, passed, total); \
+	return (passed); \
 }
 
 #endif // TESTS_DEF

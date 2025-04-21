@@ -1,8 +1,18 @@
-#include "ft_printf.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checker.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
+/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "tester.h"
-#include "util/util.h"
-#include <string.h>
 
+/** @brief Prints the content of a test string, replacing non printable
+ * characters with custom strings */
 static void
 	print_test_string(t_string_buffer *buf)
 {
@@ -12,36 +22,24 @@ static void
 		"^W", "^X", "^Y", "^Z", "^[", "^\\", "^]", "^^", "^_", [0x7F] = "^?"
 	};
 	size_t				i;
-	int					printing;
 
-	printing = 1;
 	i = 0;
 	while (i < buf->len)
 	{
 		if (buf->str[i] < ' ' || buf->str[i] == 0x7f)
 		{
-			if (printing)
-				write(2, "\033[0;32m", 7);
-			printing = 0;
-		}
-		else
-		{
-			if(!printing)
-				write(2, "\033[0m", 4);
-			printing = 1;
-		}
-
-		if (printing)
-			write(2, &buf->str[i], 1);
-		else
+			write(2, "\033[0;34m", 7);
 			write(2, mapping[(int)buf->str[i]],
 				ft_strlen(mapping[(int)buf->str[i]]));
+			write(2, "\033[0m", 4);
+		}
+		else
+			write(2, &buf->str[i], 1);
 		++i;
 	}
-	if (!printing)
-		write(2, "\033[0m", 4);
 }
 
+/** @brief Performs comparison and print the difference */
 static int
 	stringbuf_compare(
 	const char *label,
@@ -81,7 +79,9 @@ int
 {
 	int	success;
 
-	ft_dprintf(2, "[%.*s]: ", (int)test->expr.len, test->expr.str);
+	ft_dprintf(2, "[");
+	print_test_string(&test->expr);
+	ft_dprintf(2, "]: ");
 	success = 0;
 	if (stringbuf_compare("stdout", &test->stdout, stdout)
 		&& stringbuf_compare("stderr", &test->stderr, stderr))

@@ -14,6 +14,8 @@
 
 # include <shell/eval.h>
 
+# include <string.h>
+
 typedef struct s_eval_test
 {
 	/** @brief Expression to evaluate */
@@ -27,7 +29,7 @@ typedef struct s_eval_test
 	/** @brief Environment (empty for none) */
 	char			**envp;
 	/** @brief Expected exit status */
-	int		status;
+	int				status;
 }	t_eval_test;
 
 /**
@@ -57,7 +59,7 @@ test_run(t_eval_test *test);
  * @return 1 on success
  */
 int
-	test_check(
+test_check(
 	t_eval_test *test,
 	int status,
 	t_string_buffer *stdout,

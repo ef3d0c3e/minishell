@@ -47,7 +47,6 @@ static void
 	}
 }
 
-
 static int
 	run_test_parent(t_eval_test *test, pid_t pid, int *fds)
 {
@@ -58,11 +57,8 @@ static int
 
 	stringbuf_init(&stdout, 1024);
 	stringbuf_init(&stderr, 1024);
-	close(fds[0]);
-	close(fds[3]);
-	close(fds[5]);
-	if (test->stdin.len)
-		write(fds[1], test->stdin.str, test->stdin.len);
+	(void)(close(fds[0]) || close(fds[3]) || close(fds[5]));
+	write(fds[1], test->stdin.str, test->stdin.len);
 	close(fds[1]);
 	waitst = 0;
 	while (waitst != pid)
@@ -75,8 +71,7 @@ static int
 	}
 	read_incoming(fds[2], &stdout);
 	read_incoming(fds[4], &stderr);
-	close(fds[2]);
-	close(fds[4]);
+	(void)(close(fds[2]) || close(fds[4]));
 	if (waitst != pid)
 		waitpid(pid, &status, 0);
 	return (test_check(test, status, &stdout, &stderr));

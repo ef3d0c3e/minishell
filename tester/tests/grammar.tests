@@ -1,0 +1,21 @@
+#include "tests.def"
+
+DO_TEST(grammar,
+	SHELL_TEST("/usr/bin/true || /usr/bin/false; echo $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/true || /usr/bin/false; echo $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/false || /usr/bin/true; echo $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/false || /usr/bin/true; echo $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/true && /usr/bin/false; echo $?", "", "1\n", "", 0)
+	SHELL_TEST("/usr/bin/true && /usr/bin/false; echo $?", "", "1\n", "", 0)
+	SHELL_TEST("/usr/bin/false && /usr/bin/true; echo $?", "", "1\n", "", 0)
+	SHELL_TEST("/usr/bin/false && /usr/bin/true; echo $?", "", "1\n", "", 0)
+
+	SHELL_TEST("/usr/bin/true || /usr/bin/false\necho $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/true || /usr/bin/false\necho $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/false || /usr/bin/true\necho $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/false || /usr/bin/true\necho $?", "", "0\n", "", 0)
+	SHELL_TEST("/usr/bin/true && /usr/bin/false\necho $?", "", "1\n", "", 0)
+	SHELL_TEST("/usr/bin/true && /usr/bin/false\necho $?", "", "1\n", "", 0)
+	SHELL_TEST("/usr/bin/false && /usr/bin/true\necho $?", "", "1\n", "", 0)
+	SHELL_TEST("/usr/bin/false && /usr/bin/true\necho $?", "", "1\n", "", 0)
+)

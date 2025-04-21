@@ -53,7 +53,7 @@ int
 {
 	if (tok->type == TOK_PIPELINE)
 		return (0);
-	else if (tok->type == TOK_SEQUENCE)
+	else if (tok->type == TOK_SEQUENCE || tok->type == TOK_NEWLINE)
 	{
 		if (!ft_strcmp("&&", tok->reserved_word)
 			|| !ft_strcmp("||", tok->reserved_word))
