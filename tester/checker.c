@@ -73,7 +73,7 @@ static int
 }
 
 int
-	check_test(
+	test_check(
 	t_eval_test *test,
 	int status,
 	t_string_buffer *stdout,

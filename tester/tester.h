@@ -30,7 +30,37 @@ typedef struct s_eval_test
 	int		status;
 }	t_eval_test;
 
+/**
+ * @brief Frees test-related data
+ *
+ * @param test The test
+ */
+void
+test_free(t_eval_test *test);
+/**
+ * @brief Runs the test
+ *
+ * @param test The test
+ *
+ * @returns 1 On success
+ */
 int
-run_test(t_eval_test *test);
+test_run(t_eval_test *test);
+/**
+ * @brief Checks the test's result
+ *
+ * @param test The test
+ * @param status The exit status
+ * @param stdout Stdout buffer
+ * @param stderr Stderr buffer
+ *
+ * @return 1 on success
+ */
+int
+	test_check(
+	t_eval_test *test,
+	int status,
+	t_string_buffer *stdout,
+	t_string_buffer *stderr);
 
 #endif // TESTER_H

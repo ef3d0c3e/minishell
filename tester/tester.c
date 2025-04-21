@@ -11,20 +11,6 @@
 /* ************************************************************************** */
 #include "tester.h"
 
-static void
-	test_free(t_eval_test *test)
-{
-	size_t	i;
-
-	stringbuf_free(&test->stdin);
-	stringbuf_free(&test->stdout);
-	stringbuf_free(&test->stderr);
-	i = 0;
-	while (test->envp[i])
-		free(test->envp[i++]);
-	//free(test->envp);
-}
-
 void
 	run_test_child(t_eval_test *test, int *fds)
 {
@@ -40,7 +26,7 @@ void
 	dup2(fds[0], STDIN_FILENO);
 	close(fds[0]);
 	env = env_new(test->envp);
-	repl(&env, stringbuf_cstr(&test->expr));
+	repl(&env, ft_strdup(stringbuf_cstr(&test->expr)));
 	test_free(test);
 	shell_exit(&env, env.last_status);
 }
@@ -61,14 +47,8 @@ static void
 	}
 }
 
-int
-	check_test(
-	t_eval_test *test,
-	int status,
-	t_string_buffer *stdout,
-	t_string_buffer *stderr);
 
-int
+static int
 	run_test_parent(t_eval_test *test, pid_t pid, int *fds)
 {
 	int				waitst;
@@ -99,12 +79,11 @@ int
 	close(fds[4]);
 	if (waitst != pid)
 		waitpid(pid, &status, 0);
-	return (check_test(test, status, &stdout, &stderr));
+	return (test_check(test, status, &stdout, &stderr));
 }
 
-
 int
-	run_test(t_eval_test *test)
+	test_run(t_eval_test *test)
 {
 	pid_t	pid;
 	int		fds[6];
@@ -116,4 +95,19 @@ int
 	if (!pid)
 		run_test_child(test, fds);
 	return (run_test_parent(test, pid, fds));
+}
+
+void
+	test_free(t_eval_test *test)
+{
+	size_t	i;
+
+	stringbuf_free(&test->expr);
+	stringbuf_free(&test->stdin);
+	stringbuf_free(&test->stdout);
+	stringbuf_free(&test->stderr);
+	i = 0;
+	while (test->envp[i])
+		free(test->envp[i++]);
+	free(test->envp);
 }

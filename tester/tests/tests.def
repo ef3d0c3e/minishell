@@ -11,9 +11,10 @@
 		.stdout = stringbuf_from(__stdout), \
 		.stderr = stringbuf_from(__stderr), \
 		.status = __status, \
-		.envp = calloc(sizeof(char **), 1) \
-	};\
-	i += run_test(&test); \
+		.envp = calloc(1, sizeof(char **)) \
+	}; \
+	i += test_run(&test); \
+	test_free(&test); \
 }
 
 #define DO_TEST(__label, ...) \
