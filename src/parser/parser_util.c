@@ -16,8 +16,8 @@ size_t
 	parser_next_operator(
 		t_parser *parser,
 		size_t start,
-		size_t end
-			)
+		size_t end,
+		int min_prec)
 {
 	const t_token	*tok;
 	size_t			i;
@@ -36,7 +36,10 @@ size_t
 			--balance[0];
 		if ((tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE
 			|| tok->type == TOK_NEWLINE) && balance[0] == 0)
-			return (i);
+		{
+			if (token_precedence(tok) == min_prec)
+				return (i);
+		}
 		++i;
 	}
 	return ((size_t)-1);

@@ -173,10 +173,11 @@ parser_free(t_parser *parser);
  * @param parser The parser
  * @param start Start position in token list
  * @param end End position in token list
+ *
  * @return The parsed node, may be NULL (e.g empty expressions)
  */
 t_ast_node
-*parse(t_parser *parser, size_t start, size_t end);
+*parse(t_parser *parser, size_t start, size_t end, int min_prec);
 
 /**
  * @brief Appends an error to the parser
@@ -205,7 +206,11 @@ parser_error_flush(t_parser *parser);
  * @brief Utility function to get the next logic (binary) operator in the list
  */
 size_t
-parser_next_operator(t_parser *parser, size_t start, size_t end);
+parser_next_operator(
+	t_parser *parser,
+	size_t start,
+	size_t end,
+	int min_prec);
 
 /** @brief Command parser */
 t_ast_node

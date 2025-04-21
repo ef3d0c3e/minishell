@@ -47,7 +47,7 @@ struct s_node_expr
 	printf("CONTENT=`%.*s` %zu %zu\n", input.len, input.str, start, end);
 	return ((struct s_node_expr){
 		.input = input,
-		.head = parse(parser, start + 1, end),
+		.head = parse(parser, start + 1, end, 0),
 		.redirs = {
 			.redirs = NULL,
 			.redirs_capacity = 0,

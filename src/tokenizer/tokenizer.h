@@ -307,7 +307,6 @@ token_wordcontent(t_string_buffer *buf, const t_token *tok);
  *  - 0 For pipes
  *  - 1 For `;` and `&`
  *  - 2 For `&&` and `||`
- *  - 3 For subexpression, e.g `$(cmd)`
  *
  * @param tok Token to get precedence software
  * @return The precedence of `tok`, -1 if `tok` is not an operator

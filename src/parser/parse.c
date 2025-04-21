@@ -31,7 +31,7 @@ static t_ast_node
 
 
 t_ast_node
-	*parse(t_parser *parser, size_t start, size_t end)
+	*parse(t_parser *parser, size_t start, size_t end, int min_prec)
 {
 	t_ast_node		*node;
 	size_t			i;
@@ -41,11 +41,14 @@ t_ast_node
 	i = start;
 	while (i < end)
 	{
-		next = parser_next_operator(parser, i, end);
+		next = parser_next_operator(parser, i, end, min_prec);
 		if (next == (size_t)-1)
 		{
-			node = parse_expression(parser, i, end);
-			i = end;
+			if (min_prec == 3)
+				node = parse_expression(parser, i, end);
+			else
+				node = parse(parser, start, end, min_prec + 1);
+			break ;
 		}
 		else if (start == next)
 		{
@@ -57,9 +60,9 @@ t_ast_node
 			node = xmalloc(sizeof(t_ast_node));
 			node->type = NODE_LOGIC;
 			node->logic.token = parser->list.tokens[next];
-			node->logic.left = parse_expression(parser, start, next);
-			node->logic.right = parse(parser, next + 1, end);
-			i = end;
+			node->logic.left = parse(parser, start, next, min_prec + 1);
+			node->logic.right = parse(parser, next + 1, end, min_prec);
+			break ;
 		}
 	}
 	return (node);

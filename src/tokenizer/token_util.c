@@ -60,7 +60,5 @@ int
 			return (2);
 		return (1);
 	}
-	else if (tok->type == TOK_CMD_SUB || tok->type == TOK_ARITH)
-		return (3);
 	return (-1);
 }

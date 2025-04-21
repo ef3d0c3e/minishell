@@ -58,7 +58,7 @@ int
 	}
 	parser = parser_init(input, list);
 	env->parser = &parser;
-	env->program = parse(&parser, 0, list.size);
+	env->program = parse(&parser, 0, list.size, 0);
 	if (!parser_error_flush(&parser))
 		return (env_parser_free(env), -1);
 	if (option_value(env, "dbg_ast"))

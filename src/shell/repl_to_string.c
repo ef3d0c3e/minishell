@@ -38,7 +38,7 @@ static void
 		shell_fail(env, "expansion failed", SRC_LOCATION);
 	parser = parser_init(input, list);
 	env->parser = &parser;
-	env->program = parse(&parser, 0, list.size);
+	env->program = parse(&parser, 0, list.size, 0);
 	if (!parser_error_flush(&parser))
 		shell_exit(env, EXIT_FAILURE);
 	eval(env, env->program);
