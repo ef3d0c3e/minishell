@@ -16,8 +16,12 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/shell/*.c) \
 	$(wildcard src/parser/*.c)
 
+SOURCES_TESTER := $(filter-out %main.c,$(SOURCES))
+SOURCES_TESTER += $(wildcard tester/*.c)
+
 # Objects
 OBJECTS := $(addprefix build/,$(SOURCES:.c=.o))
+OBJECTS_TESTER := $(addprefix build/,$(SOURCES_TESTER:.c=.o))
 # Libraries
 LIB_PRINTF := ./libs/ft_printf/libftprintf.a
 LIB_GNL := ./libs/ft_gnl/libgnl.a
@@ -31,6 +35,11 @@ build/%.o: %.c
 $(NAME): LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
 $(NAME): $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
+
+# Tester
+tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
+tests: $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS_TESTER)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS_TESTER) $(LFLAGS)
 
 # Libraries build
 # ft_printf
