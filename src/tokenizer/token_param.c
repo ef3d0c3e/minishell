@@ -10,18 +10,20 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
+#include <stdio.h>
 
 /** @brief Handles special parameters that will be resolved at evaluation
  * time */
 static int
-	param_special(t_token_list *list, t_u8_iterator *it)
+	param_special(t_token_list *list, t_u8_iterator *it, size_t end)
 {
 	static const char	*special[] = {
 		"?", NULL
 	};
-	const char			*kind = str_alternatives(it_substr(it, 2), special);
+	const char			*kind = str_alternatives(it_substr(it, 1), special);
 
-	if (kind)
+	if (kind && ft_strlen(kind) == end)
 	{
 		token_list_push(list, (t_token){
 			.type = TOK_PARAM_SIMPLE,
@@ -49,7 +51,7 @@ int
 		token_error(list, it->byte_pos - 2, it->byte_pos, "Unterminated `${` token");
 		return (1);
 	}
-	if (param_special(list, it))
+	if (param_special(list, it, end))
 		return (1);
 	token_list_push(list, (t_token){
 		.type = TOK_PARAM,
