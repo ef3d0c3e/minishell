@@ -1,0 +1,29 @@
+#ifndef TESTS_DEF
+# define TESTS_DEF
+
+#include "../tester.h"
+
+#define SHELL_TEST(__expr, __stdin, __stdout, __stderr, __status) \
+{ \
+	t_eval_test test = (t_eval_test){ \
+		.expr = stringbuf_from(__expr), \
+		.stdin = stringbuf_from(__stdin), \
+		.stdout = stringbuf_from(__stdout), \
+		.stderr = stringbuf_from(__stderr), \
+		.status = __status, \
+		.envp = calloc(sizeof(char **), 1) \
+	};\
+	i += run_test(&test); \
+}
+
+#define DO_TEST(__label, ...) \
+static int test_##__label(void) \
+{ \
+	int	i; \
+	ft_dprintf(2, "Running tests %s...\n", #__label); \
+	i = 0; \
+	{ __VA_ARGS__; } \
+	return (i); \
+}
+
+#endif // TESTS_DEF

@@ -12,7 +12,6 @@
 #ifndef TESTER_H
 # define TESTER_H
 
-#include "util/util.h"
 # include <shell/eval.h>
 
 typedef struct s_eval_test
@@ -31,7 +30,7 @@ typedef struct s_eval_test
 	int		status;
 }	t_eval_test;
 
-void
+int
 run_test(t_eval_test *test);
 
 #endif // TESTER_H

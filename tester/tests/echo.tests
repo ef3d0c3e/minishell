@@ -1,0 +1,8 @@
+#include "tests.def"
+
+DO_TEST(echo,
+	SHELL_TEST("echo Hello World",    "", "Hello World\n", "", 0)
+	SHELL_TEST("echo -n Hello World", "", "Hello World",   "", 0)
+	SHELL_TEST("echo",                "", "\n",            "", 0)
+	SHELL_TEST("echo -n",             "", "",              "", 0)
+)

@@ -1,10 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tester.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
+/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "tester.h"
-#include "shell/eval.h"
-#include "shell/opts.h"
-#include "util/util.h"
-#include <stdio.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
 static void
 	test_free(t_eval_test *test)
@@ -63,7 +68,7 @@ int
 	t_string_buffer *stdout,
 	t_string_buffer *stderr);
 
-void
+int
 	run_test_parent(t_eval_test *test, pid_t pid, int *fds)
 {
 	int				waitst;
@@ -94,11 +99,11 @@ void
 	close(fds[4]);
 	if (waitst != pid)
 		waitpid(pid, &status, 0);
-	check_test(test, status, &stdout, &stderr);
+	return (check_test(test, status, &stdout, &stderr));
 }
 
 
-void
+int
 	run_test(t_eval_test *test)
 {
 	pid_t	pid;
@@ -108,22 +113,7 @@ void
 	pipe(fds + 2);
 	pipe(fds + 4);
 	pid = fork();
-	if (pid)
-		run_test_parent(test, pid, fds);
-	else
+	if (!pid)
 		run_test_child(test, fds);
-}
-
-int main(void)
-{
-	t_eval_test	test = {
-		.expr = stringbuf_from("/usr/bin/cat -"),
-		.stdin = stringbuf_from("HELLO"),
-		.stdout = stringbuf_from("HELLO"),
-		.stderr = stringbuf_from(""),
-		.envp = (char*[]){NULL},
-		.status = 0,
-	};
-	run_test(&test);
-	return (0);
+	return (run_test_parent(test, pid, fds));
 }

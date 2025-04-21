@@ -37,9 +37,11 @@ $(NAME): $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
 
 # Tester
+ITESTS := \
+	-include ./tester/tests/echo.tests
 tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
 tests: $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS_TESTER)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS_TESTER) $(LFLAGS)
+	$(CC) $(IFLAGS) $(ITESTS) $(CFLAGS) -o $@ ./tester/tests/runner.c $(OBJECTS_TESTER) $(LFLAGS)
 
 # Libraries build
 # ft_printf
@@ -79,6 +81,7 @@ lclean:
 .PHONY: fclean
 fclean: clean
 	$(RM) $(NAME)
+	$(RM) tests
 
 .PHONY: re
 re: fclean all

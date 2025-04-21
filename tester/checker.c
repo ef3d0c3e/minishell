@@ -87,7 +87,6 @@ int
 		&& stringbuf_compare("stderr", &test->stderr, stderr))
 	{
 		success = 1;
-		ft_dprintf(2, "OK\n");
 	}
 	stringbuf_free(stdout);
 	stringbuf_free(stderr);
@@ -97,5 +96,7 @@ int
 			test->status, status);
 		success = 0;
 	}
+	if (success)
+		ft_dprintf(2, "OK\n");
 	return (success);
 }
