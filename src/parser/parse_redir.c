@@ -12,28 +12,28 @@
 #include "parser.h"
 
 /** @brief Adds a redirection to command */
-static inline void
-	add_redir(
-			t_redirections *redirs,
-			t_token token,
-			int fd_from,
-			t_string_buffer file_to)
-{
-	size_t	new_cap;
-
-	new_cap = redirs->redirs_capacity + !redirs->redirs_capacity * 16;
-	while (new_cap < redirs->redirs_size + 1)
-		new_cap *= 2;
-	redirs->redirs = ft_realloc(redirs->redirs,
-			redirs->redirs_capacity * sizeof(t_redir_data),
-			new_cap * sizeof(t_redir_data));
-	redirs->redirs_capacity = new_cap;
-	redirs->redirs[redirs->redirs_size++] = (t_redir_data){
-		.token = token,
-		.fd = fd_from,
-		.word = file_to,
-	};
-}
+//static inline void
+//	add_redir(
+//			t_redirections *redirs,
+//			t_token token,
+//			int fd_from,
+//			t_string_buffer file_to)
+//{
+//	size_t	new_cap;
+//
+//	new_cap = redirs->redirs_capacity + !redirs->redirs_capacity * 16;
+//	while (new_cap < redirs->redirs_size + 1)
+//		new_cap *= 2;
+//	redirs->redirs = ft_realloc(redirs->redirs,
+//			redirs->redirs_capacity * sizeof(t_redir_data),
+//			new_cap * sizeof(t_redir_data));
+//	redirs->redirs_capacity = new_cap;
+//	redirs->redirs[redirs->redirs_size++] = (t_redir_data){
+//		.token = token,
+//		.fd = fd_from,
+//		.word = file_to,
+//	};
+//}
 
 // TODO: Handle other redirections
 /*
@@ -67,6 +67,7 @@ size_t	parse_redir(
 	size_t			skipped;
 
 	// TODO: When `dup`licating, try to parse word as digit first, otherwise parse as file
+	/*
 	if (start + 1 < end && parser->list.tokens[start].type == TOK_DIGIT)
 	{
 		if (parser->list.tokens[start + 1].type != TOK_REDIR || parser->list.tokens[start].redir.duplicate)
@@ -91,6 +92,7 @@ size_t	parse_redir(
 		add_redir(redirs, parser->list.tokens[start], 1, word);
 		return (skipped + 1);
 	}
+	*/
 	return (0);
 }
 

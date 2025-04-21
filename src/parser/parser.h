@@ -40,6 +40,14 @@ enum e_node_type
 	NODE_UNARY,
 };
 
+typedef union u_redirectee
+{
+	/** @brief Redirect to/from file descriptor */
+	int				fd;
+	/** @brief Redirect to/from file */
+	t_string_buffer	filename;
+}	t_redirectee;
+
 /**
  * @brief Redirection data, can be part of all nodes, all files need to be
  * created before executing the nodes, only the last redirection is actually
@@ -48,22 +56,8 @@ enum e_node_type
  */
 typedef struct s_redir_data
 {
-	/** @brief Associated redirection token */
-	t_token				token;
-	/** @brief FD to redirect from/to (defaults to 1) */
-	int					fd;
-	/** @brief FD to redirect from/to (defaults to 2) */
-	int					fd2;
-	/** @brief File to redirect from/to */
-	t_string_buffer		word;
-	/**
-	 * @brief Moves the content of \1 to \2, then close \2,
-	 * see 3.6.9 Moving File Descriptors.
-	 *
-	 * This can only be used in combination
-	 * with `fd2`
-	 */
-	int	move;
+	t_redirectee	from;
+	t_redirectee	to;
 }	t_redir_data;
 
 /** @brief Stores redirections */
@@ -238,7 +232,7 @@ parse_word(
 	t_string_buffer *buf);
 
 /**
- * @brief Parses redirections into command
+ * @brief Parses redirection into `redirs`
  *
  * @param parser Token sourcer
  * @param start Start token
@@ -255,7 +249,7 @@ parse_redir(
 	t_redirections *redirs);
 
 /**
- * @brief Parses redirections repeatedly, into commands
+ * @brief Parses redirections repeatedly into `redirs`
  *
  * @param parser Token sourcer
  * @param start Start token

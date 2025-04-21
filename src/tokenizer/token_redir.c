@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "tokenizer.h"
 
+/*
 int
 	match_simple(
 		t_token_list *list,
@@ -49,6 +50,7 @@ int
 		return (0);
 	return (1);
 }
+*/
 
 int
 	token_redir(t_token_list *list, t_u8_iterator *it)
@@ -56,21 +58,16 @@ int
 	static const char		*redirs[] = {"<<<", "<<-", "&>>", "<<", ">>", "&>",
 										"<>", ">&", "<&", ">|", ">", "<", NULL};
 	const char				*redir;
-	struct s_token_redir	data;
 
 	redir = str_alternatives(it_substr(it, 3), redirs);
 	if (!redir)
 		return (0);
-	data.append = 0;
-	data.clobber = 0;
-	data.duplicate = 0;
 	// TODO: Heredoc/herestrings
-	match_simple(list, it, &data);
 	token_list_push(list, (t_token){
 		.type = TOK_REDIR,
 		.start = it->byte_pos,
 		.end = it->byte_pos + ft_strlen(redir),
-		.redir = data,
+		.reserved_word = redir,
 	});
 	it_advance(it, ft_strlen(redir));
 	return (1);

@@ -38,8 +38,8 @@ void
 	else if (head->type == NODE_SUBSHELL)
 	{
 		ast_free(head->expr.head);
-		for (size_t i = 0; i < head->expr.redirs.redirs_size; ++i)
-			stringbuf_free(&head->expr.redirs.redirs[i].word);
+		//for (size_t i = 0; i < head->expr.redirs.redirs_size; ++i)
+		//	stringbuf_free(&head->expr.redirs.redirs[i].word);
 		free(head->expr.redirs.redirs);
 	}
 	else if (head->type == NODE_COMMAND)
@@ -51,8 +51,8 @@ void
 			free(head->cmd.args[i].items);
 		}
 		free(head->cmd.args);
-		for (size_t i = 0; i < head->cmd.redirs.redirs_size; ++i)
-			stringbuf_free(&head->cmd.redirs.redirs[i].word);
+		//for (size_t i = 0; i < head->cmd.redirs.redirs_size; ++i)
+		//	stringbuf_free(&head->cmd.redirs.redirs[i].word);
 		free(head->cmd.redirs.redirs);
 	}
 	free(head);
@@ -81,8 +81,8 @@ void
 			for (size_t i = 0; i < depth; ++i)
 				write(2, " | ", 3);
 			dprintf(2, " + REDIRS: ");
-			for (size_t i = 0; i < head->expr.redirs.redirs_size; ++i)
-				dprintf(2, "%d:'%.*s' ",  head->expr.redirs.redirs[i].fd, (int)head->expr.redirs.redirs[i].word.len, head->expr.redirs.redirs[i].word.str);
+			//for (size_t i = 0; i < head->expr.redirs.redirs_size; ++i)
+			//	dprintf(2, "%d:'%.*s' ",  head->expr.redirs.redirs[i].fd, (int)head->expr.redirs.redirs[i].word.len, head->expr.redirs.redirs[i].word.str);
 			dprintf(2, "\n");
 		}
 	}
@@ -107,8 +107,8 @@ void
 			for (size_t i = 0; i < depth; ++i)
 				write(2, " | ", 3);
 			dprintf(2, " + REDIRS: ");
-			for (size_t i = 0; i < head->cmd.redirs.redirs_size; ++i)
-				dprintf(2, "%d:'%.*s' ",  head->cmd.redirs.redirs[i].fd, (int)head->cmd.redirs.redirs[i].word.len, head->cmd.redirs.redirs[i].word.str);
+			//for (size_t i = 0; i < head->cmd.redirs.redirs_size; ++i)
+			//	dprintf(2, "%d:'%.*s' ",  head->cmd.redirs.redirs[i].fd, (int)head->cmd.redirs.redirs[i].word.len, head->cmd.redirs.redirs[i].word.str);
 			dprintf(2, "\n");
 		}
 	}

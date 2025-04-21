@@ -12,6 +12,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/util/string/*.c) \
 	$(wildcard src/tokenizer/*.c) \
 	$(wildcard src/expansion/*.c) \
+	$(wildcard src/builtins/*.c) \
 	$(wildcard src/shell/*.c) \
 	$(wildcard src/parser/*.c)
 

@@ -163,36 +163,6 @@ struct s_token_string
 	t_string_buffer	string;
 };
 
-/** @brief Redirection type */
-enum e_redir_type
-{
-	/** @brief "<", "<&" */
-	REDIR_INPUT,
-	/** @brief ">", ">>", ">&" */
-	REDIR_OUTPUT,
-	/** @brief "&>", "&>>" */
-	REDIR_OUTPUT_AND_ERR,
-	/** @brief "<<", "<<-" */
-	REDIR_HEREDOC,
-	/** @brief "<<<" */
-	REDIR_HERESTRING,
-	/** @brief "<>" */
-	REDIR_READWRITE,
-};
-
-struct s_token_redir
-{
-	enum e_redir_type	type;
-	/** @brief Append to target FD flag */
-	int					append;
-	/** @brief Output even if the file already exists and the `noclobber`
-	 * option is set, see 3.6.2 Redirecting Output */
-	int					clobber;
-	/** @brief Duplicates the content of \1,
-	 * see 3.6.8 Duplicating File Descriptors */
-	int					duplicate;
-};
-
 typedef struct s_token
 {
 	/** @brief Token type */
@@ -205,8 +175,6 @@ typedef struct s_token
 	union {
 		/** @brief Digit token */
 		int						digit;
-		/** @brief Redirection token data */
-		struct s_token_redir	redir;
 		/** @brief Reserved name for token, e.g keyword name, grouping char */
 		const char				*reserved_word;
 		/** @brief String content */
