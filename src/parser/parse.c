@@ -17,12 +17,9 @@ static t_ast_node
 {
 	t_token	*tok;
 
-	while (parser->list.tokens[start].type == TOK_SPACE)
-		++start;
-	while (parser->list.tokens[end - 1].type == TOK_SPACE)
-		--end;
+	if (start == end)
+		return (NULL);
 	tok = &parser->list.tokens[start];
-
 	if (tok->type == TOK_GROUPING && tok->reserved_word[0] == '(')
 		return (parse_subshell(parser, start, end));
 	else
@@ -39,31 +36,33 @@ t_ast_node
 
 	node = NULL;
 	i = start;
-	while (i < end)
+	if (i >= end)
 	{
-		next = parser_next_operator(parser, i, end, min_prec);
-		if (next == (size_t)-1)
+		parser_error(parser, ft_strdup("Expected tokens"), start - 1, end);
+		return (NULL);
+	}
+	next = parser_next_operator(parser, i, end, min_prec);
+	if (next == (size_t)-1)
+	{
+		if (min_prec == 3)
 		{
-			if (min_prec == 3)
-				node = parse_expression(parser, i, end);
-			else
-				node = parse(parser, start, end, min_prec + 1);
-			break ;
-		}
-		else if (start == next)
-		{
-			parser_error(parser, ft_strdup("Expected tokens"), start, next);
-			return (node);
+			node = parse_expression(parser, i, end);
 		}
 		else
-		{
-			node = xmalloc(sizeof(t_ast_node));
-			node->type = NODE_LOGIC;
-			node->logic.token = parser->list.tokens[next];
-			node->logic.left = parse(parser, start, next, min_prec + 1);
-			node->logic.right = parse(parser, next + 1, end, min_prec);
-			break ;
-		}
+			node = parse(parser, start, end, min_prec + 1);
+	}
+	else if (start == next)
+	{
+		parser_error(parser, ft_strdup("Expected tokens"), start, next);
+		return (node);
+	}
+	else
+	{
+		node = xmalloc(sizeof(t_ast_node));
+		node->type = NODE_LOGIC;
+		node->logic.token = parser->list.tokens[next];
+		node->logic.left = parse(parser, start, next, min_prec + 1);
+		node->logic.right = parse(parser, next + 1, end, min_prec);
 	}
 	return (node);
 }

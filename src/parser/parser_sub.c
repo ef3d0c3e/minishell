@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -10,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser.h"
+#include <parser/parser.h>
 
 /* Finds closing ')' */
 static inline size_t
@@ -44,7 +43,6 @@ struct s_node_expr
 		.len = tok_end->start - tok_start->end
 	};
 
-	printf("CONTENT=`%.*s` %zu %zu\n", input.len, input.str, start, end);
 	return ((struct s_node_expr){
 		.input = input,
 		.head = parse(parser, start + 1, end, 0),

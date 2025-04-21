@@ -21,6 +21,7 @@ void
 	ptr = malloc(size);
 	if (!ptr)
 	{
+		asm("int $3");
 		write(2, "malloc() error\n", 15);
 		exit(1);
 	}

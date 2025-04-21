@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <expansion/expansion.h>
 
 t_token_list
@@ -16,24 +17,23 @@ t_token_list
 {
 	t_token_list	new;
 	size_t			i;
+	size_t			last_pos;
 
 	new.tokens = xmalloc(list.size * sizeof(t_token));
 	new.size = 0;
 	new.capacity = list.size;
 	i = 0;
+	last_pos = 0;
 	while (i < list.size)
 	{
-		/*
-		if (list.tokens[i].type == TOK_SPACE && i && i + 1 < list.size)
+		if (list.tokens[i].type == TOK_SPACE
+			&& ((i && token_precedence(&list.tokens[i - 1]) >= 0)
+			|| (i + 1 < list.size
+			&& token_precedence(&list.tokens[i + 1]) >= 0)))
 		{
-			if (!token_isword(list.tokens[i - 1].type)
-				|| !token_isword(list.tokens[i + 1].type))
-			{
-				++i;
-				continue;
-			}
+			++i;
+			continue;
 		}
-		*/
 		if (expand_tilde(env, &list.tokens[i], &new))
 			;
 		else if (expand_param(env, &list.tokens[i], &new))
