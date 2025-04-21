@@ -12,7 +12,6 @@
 #ifndef EVAL_H
 # define EVAL_H
 
-#include "util/util.h"
 # include <parser/parser.h>
 # include <shell/opts.h>
 # include <builtins/builtin.h>

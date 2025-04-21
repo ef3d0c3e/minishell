@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/eval.h>
+#include <stdio.h>
 
 void
 	eval_subshell(t_environ *env, t_ast_node *program)
@@ -27,5 +28,8 @@ void
 		env->last_status = WEXITSTATUS(status);
 	}
 	else
+	{
 		eval(env, program->expr.head);
+		shell_exit(env, env->last_status);
+	}
 }

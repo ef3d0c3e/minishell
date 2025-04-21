@@ -9,29 +9,25 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/builtin.h"
 #include "parser/parser.h"
-#include "shell/opts.h"
-#include "util/util.h"
 #include <shell/eval.h>
 
-static char
-**cmd_to_argv(const struct s_node_cmd *cmd, int *argc)
+char
+**resolve_command(t_environ *env, const struct s_node_cmd *cmd);
+
+/** @brief Frees a command list */
+static void
+	cmd_free(char **cmd)
 {
-	char	**args;
 	size_t	i;
 
-	args = xmalloc((cmd->nargs + 1) * sizeof(char **));
 	i = 0;
-	while (i < cmd->nargs)
+	while (cmd[i])
 	{
-		args[i] = stringbuf_cstr(&cmd->args[i].atom);
+		free(cmd[i]);
 		++i;
 	}
-	args[i] = NULL;
-	if (argc)
-		*argc = i;
-	return (args);
+	free(cmd);
 }
 
 static inline void
@@ -58,24 +54,19 @@ static char
 }
 
 static void
-	eval_child(t_environ *env, char *path, t_ast_node *program)
+	eval_child(t_environ *env, char *path, char **argv)
 {
-	const struct s_node_cmd	*cmd = &program->cmd;
-	char					**argv;
 	char					**envp;
 	char					*err;
 	size_t					i;
 	
 	if (!path)
 		shell_exit(env, 127);
-	argv = cmd_to_argv(cmd, NULL);
 	envp = env_to_envp(env);
 	env->last_status = execve(path, argv, envp);
 	i = 0;
-	while (envp[i])
-		free(envp[i++]);
-	free(envp);
-	free(argv);
+	cmd_free(envp);
+	cmd_free(argv);
 	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
 	free(path);
 	shell_error(env, err, SRC_LOCATION);
@@ -83,17 +74,16 @@ static void
 }
 
 static void
-	eval_builtin(t_environ *env, t_ast_node *program)
+	eval_builtin(t_environ *env, char **argv)
 {
-	const struct s_node_cmd	*cmd = &program->cmd;
-	const t_builtin			*builtin = rb_find(&env->builtins,
-		stringbuf_cstr(&program->cmd.args[0].atom));
-	char					**argv;
+	const t_builtin			*builtin = rb_find(&env->builtins, argv[0]);
 	int						argc;
 	
-	argv = cmd_to_argv(cmd, &argc);
+	argc = 0;
+	while (argv[argc])
+		++argc;
 	env->last_status = builtin->fn(env, argc, argv);
-	free(argv);
+	cmd_free(argv);
 }
 
 int
@@ -101,12 +91,14 @@ int
 {
 	pid_t	pid;
 	int		status;
+	char	**argv;
 	char	*path;
 
-	status = resolve_executable(env, stringbuf_cstr(&program->cmd.args[0].atom),
+	argv = resolve_command(env, &program->cmd);
+	status = resolve_executable(env, argv[0],
 		&path);
 	if (status == 2)
-		return (eval_builtin(env, program), 1);
+		return (eval_builtin(env, argv), 1);
 	if (status != 0)
 	{
 		free(path);
@@ -122,7 +114,8 @@ int
 		env->last_status = WEXITSTATUS(status);
 	}
 	else
-		eval_child(env, path, program);
+		eval_child(env, path, argv);
+	cmd_free(argv);
 	free(path);
 	return (1);
 }

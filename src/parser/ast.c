@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser.h"
+#include <parser/parser.h>
 
 void
 	ast_free(t_ast_node *head)
@@ -25,7 +25,7 @@ void
 	{
 		// TODO
 	}
-	else if (head->type == NODE_ATOM)
+	else if (head->type == NODE_ATOM || head->type == NODE_PARAMETER)
 	{
 		stringbuf_free(&head->atom);
 		return ;
@@ -45,7 +45,11 @@ void
 	else if (head->type == NODE_COMMAND)
 	{
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
-			ast_free(&head->cmd.args[i]);
+		{
+			for (size_t j = 0; j < head->cmd.args[i].nitems; ++j)
+				ast_free(&head->cmd.args[i].items[j]);
+			free(head->cmd.args[i].items);
+		}
 		free(head->cmd.args);
 		for (size_t i = 0; i < head->cmd.redirs.redirs_size; ++i)
 			stringbuf_free(&head->cmd.redirs.redirs[i].word);
@@ -66,6 +70,8 @@ void
 		write(2, " | ", 3);
 	if (head->type == NODE_ATOM)
 		dprintf(2, "ATOM(`%.*s`)\n", (int)head->atom.len, head->atom.str);
+	else if (head->type == NODE_PARAMETER)
+		dprintf(2, "PARAMETER(`%.*s`)\n", (int)head->atom.len, head->atom.str);
 	else if (head->type == NODE_SUBSHELL)
 	{
 		dprintf(2, "SUBSHELL\n");
@@ -89,7 +95,13 @@ void
 	{
 		dprintf(2, "COMMAND [%zu]\n", head->cmd.nargs);
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
-			ast_print_debug(input, &head->cmd.args[i], depth + 1);
+		{
+			for (size_t k = 0; k < depth + 1; ++k)
+				write(2, " | ", 3);
+			write(2, "COMPOUND\n", 10);
+			for (size_t j = 0; j < head->cmd.args[i].nitems; ++j)
+				ast_print_debug(input, &head->cmd.args[i].items[j], depth + 2);
+		}
 		if (head->cmd.redirs.redirs)
 		{
 			for (size_t i = 0; i < depth; ++i)

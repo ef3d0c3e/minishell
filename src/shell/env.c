@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/builtin.h"
-#include "parser/parser.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/eval.h>
 
 /**
@@ -22,7 +19,7 @@
  *
  * @returns 1 if correctly parsed, 0 if an error happened
  */
-int
+static int
 	parse_environ(t_environ *env, const char *s)
 {
 	const char		*sep = ft_strchr(s, '=');

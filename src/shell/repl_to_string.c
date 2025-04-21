@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 #include <shell/eval.h>
 #include <expansion/expansion.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 static void
 	repl_to_string_child(t_environ *env, char *s, int *fds)

@@ -32,6 +32,8 @@ enum e_node_type
 	NODE_COMMAND,
 	/** @brief Atom, i.e text */
 	NODE_ATOM,
+	/** @brief Parameter requiring expansion at evaluation time, e.g `$?` */
+	NODE_PARAMETER,
 	/** @brief Binary logic operator, e.g `||`, `|&`, `>` */
 	NODE_LOGIC,
 	/** @brief Unary operator (unhandled currently) e.g: `&`, `!` */
@@ -85,15 +87,24 @@ struct s_node_expr
 	t_redirections	redirs;
 };
 
+/** @brief Data for compound nodes */
+struct s_node_compound
+{
+	/** @brief Elements of this compound (Atom or Parameter) */
+	t_ast_node	*items;
+	/** @brief Number of elements in the compound */
+	size_t		nitems;
+};
+
 /** @brief Command name and arguments */
 struct s_node_cmd
 {
-	/** @brief Program arguments */
-	t_ast_node		*args;
+	/** @brief Program arguments, a Compound */
+	struct s_node_compound	*args;
 	/** @brief Number of arguments */
-	size_t			nargs;
+	size_t					nargs;
 	/** @brief Redirections */
-	t_redirections	redirs;
+	t_redirections			redirs;
 };
 
 /** @brief Data for logic (binary) nodes */
@@ -111,13 +122,15 @@ typedef struct s_ast_node
 	enum e_node_type			type;
 	/** @brief Node-specific data */
 	union {
-		t_string_buffer		atom;
+		t_string_buffer			atom;
 		/** @brief Sub expressions AST */
-		struct s_node_expr	expr;
+		struct s_node_expr		expr;
 		/** @brief Atom, for commands (name & parameters) */
-		struct s_node_cmd	cmd;
+		struct s_node_cmd		cmd;
 		/** @brief Binary nodes, e.g `|` or `&&` */
-		struct s_logic_node	logic;
+		struct s_logic_node		logic;
+		/** @brief Compound node */
+		struct s_node_compound	compound;
 	};
 }	t_ast_node;
 

@@ -17,8 +17,31 @@ int
 {
 	return (c == '_' || c == '-'
 		|| (c >= 'A' && c <= 'Z')
-		|| (c >= 'a' && c <= 'z')
-		|| (c == '?'));
+		|| (c >= 'a' && c <= 'z'));
+}
+
+/** @brief Handles special parameters that will be resolved at evaluation
+ * time */
+static int
+	param_special(t_token_list *list, t_u8_iterator *it)
+{
+	static const char	*special[] = {
+		"$?", NULL
+	};
+	const char			*kind = str_alternatives(it_substr(it, 2), special);
+
+	if (kind)
+	{
+		token_list_push(list, (t_token){
+			.type = TOK_PARAM_SIMPLE,
+			.start = it->byte_pos,
+			.end = it->byte_pos + ft_strlen(kind + 1),
+			.word = stringbuf_from(kind + 1)
+		});
+		it_advance(it, ft_strlen(kind));
+		return (1);
+	}
+	return (0);
 }
 
 int
@@ -31,6 +54,8 @@ int
 
 	if (it->codepoint.str[0] != '$')
 		return (0);
+	if (param_special(list, it))
+		return (1);
 	cpy = *it;
 	it_advance(&cpy, 1);
 	while (cpy.codepoint.len == 1 && is_param_ident(cpy.codepoint.str[0]))
