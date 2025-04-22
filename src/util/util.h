@@ -44,5 +44,15 @@
  */
 size_t
 min_sz(size_t x, size_t y);
+/**
+ * @brief Returns the maximum between x and y
+ *
+ * @param x First parameter
+ * @param y Second parameter
+ *
+ * @returns x if `x >= y`, y otherwise
+ */
+size_t
+max_sz(size_t x, size_t y);
 
 #endif // UTIL_H

@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
+#include <stdio.h>
 
 int
 	token_isword(enum e_token_type type)
@@ -61,4 +63,63 @@ int
 		return (1);
 	}
 	return (-1);
+}
+
+static void
+	filter_escaped(
+	t_string_buffer *result,
+	size_t *escaped,
+	t_u8_iterator *it,
+	const char **filter)
+{
+	size_t	i;
+	size_t	len;
+
+	it_next(it);
+	*escaped += 1;
+	if (*escaped % 2 == 0)
+		return ;
+	i = 0;
+	while (filter[i])
+	{
+		len = ft_strlen(filter[i]);
+		if (!str_cmp(it_substr(it, len), filter[i]))
+		{
+			stringbuf_append_n(result, str_new("\\", 1), *escaped / 2);
+			stringbuf_append(result, str_new(filter[i], len));
+			*escaped = 0;
+			it_advance(it, len);
+			return ;
+		}
+		++i;
+	}
+}
+
+void
+	escape_filter(t_string_buffer *buf, const char **filter)
+{
+	t_string_buffer	result;
+	size_t			escaped;
+	t_u8_iterator	it;
+
+	printf("pre-filter=%.*s\n", buf->len, buf->str);
+	exit(1);
+	stringbuf_init(&result, buf->len);
+	it = it_new(str_new(buf->str, buf->len));
+	it_next(&it);
+	escaped = 0;
+	while (it.codepoint.len)
+	{
+		if (it.codepoint.str[0] == '\\')
+			filter_escaped(&result, &escaped, &it, filter);
+		else
+		{
+			stringbuf_append_n(&result, str_new("\\", 1), escaped / 2);
+			escaped = 0;
+			stringbuf_append(&result, it.codepoint);
+			it_next(&it);
+		}
+	}
+	stringbuf_free(buf);
+	*buf = result;
 }

@@ -10,6 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
+
+void
+	token_list_init(t_token_list *list, size_t initial_capacity)
+{
+	list->size = 0;
+	list->capacity = initial_capacity;
+	list->tokens = xmalloc(sizeof(t_token) * list->capacity);
+}
 
 void
 	token_list_push(t_token_list *list, t_token token)

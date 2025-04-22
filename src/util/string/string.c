@@ -10,8 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "../util.h"
-#include <stddef.h>
-#include <stdlib.h>
+
+t_string
+	str_new(const char *buf, size_t len)
+{
+	return ((t_string){
+		.str = buf,
+		.len = len
+	});
+}
 
 int
 	str_cmp(t_string sv, const char *token)

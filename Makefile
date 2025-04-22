@@ -39,7 +39,8 @@ $(NAME): $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS)
 # Tester
 ITESTS := \
 	-include ./tester/tests/echo.tests \
-	-include ./tester/tests/grammar.tests
+	-include ./tester/tests/grammar.tests \
+	-include ./tester/tests/sub.tests
 tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
 tests: $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS_TESTER)
 	$(CC) $(IFLAGS) $(ITESTS) $(CFLAGS) -o $@ ./tester/tests/runner.c $(OBJECTS_TESTER) $(LFLAGS)

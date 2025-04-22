@@ -18,3 +18,11 @@ size_t
 		return (x);
 	return (y);
 }
+
+size_t
+	max_sz(size_t x, size_t y)
+{
+	if (x >= y)
+		return (x);
+	return (y);
+}

@@ -14,4 +14,5 @@ int	main(void)
 {
 	test_echo();
 	test_grammar();
+	test_sub();
 }

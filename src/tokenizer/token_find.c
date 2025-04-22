@@ -40,7 +40,11 @@ size_t
 }
 
 size_t
-	find_matching(t_string input, const char *opening, const char *closing)
+	find_matching(
+	t_string input,
+	const char *opening,
+	const char *closing,
+	int escaped)
 {
 	const size_t	lens[2] = {ft_strlen(opening), ft_strlen(closing)};
 	size_t			escape;
@@ -71,7 +75,7 @@ size_t
 					return (it.byte_pos);
 			}
 		}
-		else if (it.codepoint.str[0] == '\\')
+		else if (escaped && it.codepoint.str[0] == '\\')
 			++escape;
 		else
 			escape = 0;

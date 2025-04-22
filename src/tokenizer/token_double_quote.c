@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
 
+/** @brief Token munchers for the content of a double quoted string */
 static inline const t_tokenizer_fn
 	*quoted_munchers(void)
 {
@@ -25,20 +26,22 @@ static inline const t_tokenizer_fn
 	return (munchers);
 }
 
+/** @brief Handles `\` character in double quotes: a '\' followed by '`', '$',
+ * '"', '\' or '\n' is removed */
 static void
-	token_list_debug(t_string input, const t_token_list *list)
+dquote_backslash(t_u8_iterator *it)
 {
-	size_t	i;
+	static const char	*escaped[] = {
+		"\\`", "\\$", "\\\"", "\\\\", "\\\n", NULL
+	};
 
-	i = 0;
-	while (i < list->size)
-	{
-		token_print_debug(2, input, &list->tokens[i]);
-		++i;
-	}
-	ft_dprintf(2, "\n");
+	if (it->codepoint.str[0] != '\\')
+		return ;
+	if (str_alternatives(it_substr(it, 2), escaped))
+		it_advance(it, 1);
 }
 
+/** @brief Tokenize the inside of a double quoted string */
 static void
 	expand_dquote(t_token_list *list, t_string quoted, size_t offset)
 {
@@ -47,9 +50,7 @@ static void
 	size_t			i;
 
 	i = 0;
-	inner.tokens = xmalloc(16 * sizeof(t_token));
-	inner.size = 0;
-	inner.capacity = 16;
+	token_list_init(&inner, 16);
 	it = it_new(quoted);
 	it_next(&it);
 	while (it.codepoint.len)
@@ -64,15 +65,17 @@ static void
 			}
 			++i;
 		}
-		if (i)
-		{
-			list_push_codepoint(&inner, &it);
-			it_next(&it);
-		}
+		if (!i)
+			continue ;
+		dquote_backslash(&it);
+		list_push_codepoint(&inner, &it);
+		it_next(&it);
 	}
 	list_extend(list, &inner, offset);
 }
 
+// FIXME: Bar word splitting and filename exp from being performed inside double
+// quotes
 int
 	token_double_quote(t_token_list *list, t_u8_iterator *it)
 {

@@ -34,6 +34,17 @@ typedef struct s_string
 }	t_string;
 
 /**
+ * @brief Creates a new t_string from a buffer and a length
+ *
+ * @param buf The string's buffer
+ * @param len The string's length
+ *
+ * @returns The created t_string from `buf` and `len`.
+ */
+t_string
+str_new(const char *buf, size_t len);
+
+/**
  * @brief Performs string comparisons
  *
  * @param sv String to compare with
@@ -136,6 +147,16 @@ stringbuf_free(t_string_buffer *buf);
 /** @brief Appends to the string buffer */
 void
 stringbuf_append(t_string_buffer *buf, t_string str);
+
+/**
+ * @brief Appends `n`-times to the string buffer
+ *
+ * @param s String buffer to append to
+ * @param str String to append
+ * @param n Number of times to repeat
+ */
+void
+stringbuf_append_n(t_string_buffer *s, t_string str, size_t n);
 
 /**
  * @brief Creates a stringbuffer from a string

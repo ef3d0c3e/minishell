@@ -31,13 +31,13 @@ typedef struct s_token_list
 }	t_token_list;
 
 /**
- * @brief Push `token` to the end of `list`
+ * @brief Initialze a token list with a given default capacity
  *
- * @param list List to push `token` to
- * @param token Token to push to `list`
+ * @param list List to initialize
+ * @param initial_capacity The list's initial capacity
  */
 void
-token_list_push(t_token_list *list, t_token token);
+token_list_init(t_token_list *list, size_t initial_capacity);
 /**
  * @brief Frees the token list (and the contained tokens)
  *
@@ -45,6 +45,14 @@ token_list_push(t_token_list *list, t_token token);
  */
 void
 token_list_free(t_token_list *list);
+/**
+ * @brief Push `token` to the end of `list`
+ *
+ * @param list List to push `token` to
+ * @param token Token to push to `list`
+ */
+void
+token_list_push(t_token_list *list, t_token token);
 /**
  * @brief Pushes codepoint from iterator into list
  *
@@ -270,16 +278,21 @@ find_unescaped(t_string input, const char *token);
  * @param input Input string
  * @param opening Opening delimiter
  * @param closing Closing delimiter
+ * @param escaped Apply escape rules via `\`
+ *
  * @return Finds the matching delimiter while handling escapes and nested
  * delimiters
  */
 size_t
-find_matching(t_string input, const char *opening, const char *closing);
+find_matching(
+	t_string input,
+	const char *opening,
+	const char *closing,
+	int escaped);
 
 /** @brief Checks if token is word-like */
 int
 token_isword(enum e_token_type type);
-
 /**
  * @brief Appends string word content of token to buffer
  *
@@ -292,7 +305,6 @@ token_isword(enum e_token_type type);
  */
 int
 token_wordcontent(t_string_buffer *buf, const t_token *tok);
-
 /**
  * @brief Gets the precedence of an operator token
  *
@@ -306,6 +318,17 @@ token_wordcontent(t_string_buffer *buf, const t_token *tok);
  */
 int
 token_precedence(const t_token *tok);
+/**
+ * @brief Filters escaped sequences according to `filter`
+ *
+ * @warning The filter has to be sorted by reverse length, e.g the longest
+ * entries must be at the start of the filter.
+ *
+ * @param buf Buffer to filter, will contain the filtered result
+ * @param filter The filter to use, must be NULL terminated
+ */
+void
+escape_filter(t_string_buffer *buf, const char **filter);
 
 int	token_space(t_token_list *list, t_u8_iterator *it);
 int	token_newline(t_token_list *list, t_u8_iterator *it);

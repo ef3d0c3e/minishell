@@ -31,6 +31,16 @@ void
 	s->len += str.len;
 }
 
+void
+	stringbuf_append_n(t_string_buffer *s, t_string str, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	while (i++ < n)
+		stringbuf_append(s, str);
+}
+
 t_string_buffer
 	stringbuf_substr(t_string str, size_t start, size_t end)
 {

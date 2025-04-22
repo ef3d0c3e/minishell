@@ -1,0 +1,18 @@
+#include "tests.def"
+
+DO_TEST(sub,
+	SHELL_TEST("echo a", "", "a\n", "", 0)
+	SHELL_TEST("echo `echo a`", "", "a\n", "", 0)
+	SHELL_TEST("echo `echo $(echo a)`", "", "a\n", "", 0)
+	SHELL_TEST("echo `echo $(echo $(echo a))`", "", "a\n", "", 0)
+	SHELL_TEST("echo $(echo a)", "", "a\n", "", 0)
+	SHELL_TEST("``", "", "", "", 0)
+	SHELL_TEST("$()", "", "", "", 0)
+	SHELL_TEST("`$()`", "", "", "", 0)
+	SHELL_TEST("$(``)", "", "", "", 0)
+
+	SHELL_TEST_ERR("$(", "", "", 2)
+	SHELL_TEST_ERR("$($()", "", "", 2)
+	SHELL_TEST_ERR("`", "", "", 2)
+	SHELL_TEST_ERR("```", "", "", 2)
+)
