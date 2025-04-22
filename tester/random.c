@@ -38,6 +38,20 @@ char
 	return (text);
 }
 
+char
+	*random_bytes(size_t length, uint32_t *seed)
+{
+	size_t			i;
+	char			*text;
+
+	text = malloc(length + 1);
+	i = 0;
+	while (i < length)
+		text[i++] = 1 + (xorshift(seed) % 255);
+	text[i] = 0;
+	return (text);
+}
+
 uint32_t
 	random_int(uint32_t *seed)
 {

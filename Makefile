@@ -41,6 +41,7 @@ ITESTS := \
 	-include ./tester/tests/echo.tests \
 	-include ./tester/tests/grammar.tests \
 	-include ./tester/tests/param.tests \
+	-include ./tester/tests/pipe.tests \
 	-include ./tester/tests/sub.tests
 tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
 tests: $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS_TESTER)

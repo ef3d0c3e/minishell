@@ -91,7 +91,15 @@ test_check(
  */
 char
 *random_ascii(const char *set, size_t length, uint32_t *seed);
-
+/**
+ * @brief Generates random byte string
+ *
+ * @param length Length of the generated text
+ * @param seed Seed for the random algorithm
+ * @return The random byte string
+ */
+char
+*random_bytes(size_t length, uint32_t *seed);
 /**
  * @brief Gets a random positive integer
  *

@@ -36,6 +36,14 @@ typedef struct s_unit_test
 	free(__name); \
 }
 
+#define WITH_RANDOM_BYTES(__length, __name, ...) \
+{ \
+	char	*__name; \
+	__name = random_bytes(__length, &__random_state); \
+	__VA_ARGS__ \
+	free(__name); \
+}
+
 #define RANDOM_VALUE(__min, __max) \
 	(__min + (ssize_t)(random_int(&__random_state) % (__max - __min)))
 
@@ -45,7 +53,7 @@ typedef struct s_unit_test
 	__i = 0; \
 	while (__i++ < __n) \
 	{ \
-		{ __VA_ARGS__ } \
+		__VA_ARGS__ \
 	} \
 }
 

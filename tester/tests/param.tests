@@ -7,8 +7,8 @@ DO_TEST(param,
 	SHELL_TEST("echo $@", "", "$@\n", "", 0)
 	SHELL_TEST("echo $#", "", "$#\n", "", 0)
 
-	SHELL_TEST("/usr/bin/false; echo $?", "", "1\n", "", 0)
-	SHELL_TEST("/usr/bin/true; echo $?",  "", "0\n", "", 0)
+	SHELL_TEST("echo $?; /usr/bin/false; echo $?", "", "0\n1\n", "", 0)
+	SHELL_TEST("echo $?; /usr/bin/true; echo $?",  "", "0\n0\n", "", 0)
 
 	WITH_ENV(({"A=test", "B=another", NULL}),
 		SHELL_TEST("echo $UNDEF",   "", "\n",              "", 0)
@@ -21,5 +21,19 @@ DO_TEST(param,
 		SHELL_TEST("echo ${A}${B}", "", "testanother\n", "", 0)
 		SHELL_TEST("echo $AB",      "", "\n",              "", 0)
 		SHELL_TEST("echo \"$A\"$B", "", "testanother\n",   "", 0)
+	)
+	WITH_ENV(({"PWD=A", "OLDPWD=B", "HOME=C", NULL}),
+		SHELL_TEST("echo $PWD",    "", "A\n", "", 0)
+		SHELL_TEST("echo $OLDPWD", "", "B\n", "", 0)
+		SHELL_TEST("echo $HOME",   "", "C\n", "", 0)
+		SHELL_TEST("echo ~+",      "", "A\n", "", 0)
+		SHELL_TEST("echo ~-",      "", "B\n", "", 0)
+		SHELL_TEST("echo ~",       "", "C\n", "", 0)
+		SHELL_TEST("echo \"~+\"",  "", "~+\n", "", 0)
+		SHELL_TEST("echo \"~-\"",  "", "~-\n", "", 0)
+		SHELL_TEST("echo \"~\"",   "", "~\n", "", 0)
+		SHELL_TEST("echo '~+'",  "", "~+\n", "", 0)
+		SHELL_TEST("echo '~-'",  "", "~-\n", "", 0)
+		SHELL_TEST("echo '~'",   "", "~\n", "", 0)
 	)
 )

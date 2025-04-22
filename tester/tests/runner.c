@@ -56,6 +56,7 @@ static void
 		test_echo,
 		test_grammar,
 		test_param,
+		test_pipe,
 		test_sub,
 	};
 	size_t						i;
