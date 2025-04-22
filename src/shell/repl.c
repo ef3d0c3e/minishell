@@ -46,11 +46,11 @@ int
 		token_list_debug(input, &list);
 	}
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		return (env_parser_free(env), -1);
+		return (env_parser_free(env), env->last_status = 2, env->last_status);
 	*env->token_list = token_expand(env, *env->token_list);
 	if (!report_tokens(input, env->token_list) || !shell_error_flush(env)
 		|| env->last_status != 0)
-		return (env_parser_free(env), -1);
+		return (env_parser_free(env), env->last_status = 2, env->last_status);
 	if (option_value(env, "dbg_token"))
 	{
 		dprintf(2, " -- Expanded tokens --\n");
@@ -60,7 +60,7 @@ int
 	env->parser = &parser;
 	env->program = parse(env->parser, 0, env->token_list->size, 0);
 	if (!parser_error_flush(&parser))
-		return (env_parser_free(env), -1);
+		return (env_parser_free(env), env->last_status = 2, env->last_status);
 	if (option_value(env, "dbg_ast"))
 	{
 		printf(" -- Parsing --\n");

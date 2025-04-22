@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "util/util.h"
 #include <parser/parser.h>
-#include <stdio.h>
 
 t_parser
 	parser_init(t_string input, t_token_list list)

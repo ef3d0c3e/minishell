@@ -85,5 +85,7 @@ t_ast_node
 			return (node);
 		}
 	}
+	if (node->cmd.nargs == 0)
+		return (free(node->cmd.args), free(node), NULL);
 	return (node);
 }

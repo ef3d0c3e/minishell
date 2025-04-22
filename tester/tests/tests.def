@@ -11,7 +11,24 @@
 		.stdout = stringbuf_from(__stdout), \
 		.stderr = stringbuf_from(__stderr), \
 		.status = __status, \
-		.envp = calloc(1, sizeof(char **)) \
+		.envp = calloc(1, sizeof(char **)), \
+		.flags = 0, \
+	}; \
+	++total; \
+	passed += test_run(&test); \
+	test_free(&test); \
+}
+
+#define SHELL_TEST_ERR(__expr, __stdin, __stdout, __status) \
+{ \
+	t_eval_test test = (t_eval_test){ \
+		.expr = stringbuf_from(__expr), \
+		.stdin = stringbuf_from(__stdin), \
+		.stdout = stringbuf_from(__stdout), \
+		.stderr = stringbuf_from(""), \
+		.status = __status, \
+		.envp = calloc(1, sizeof(char **)), \
+		.flags = FLAG_NO_STDERR, \
 	}; \
 	++total; \
 	passed += test_run(&test); \

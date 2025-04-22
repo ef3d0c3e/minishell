@@ -16,6 +16,14 @@
 
 # include <string.h>
 
+enum e_eval_flags
+{
+	/** @brief Ignores stdout */
+	FLAG_NO_STDOUT = 0b0001,
+	/** @brief Ignores stderr */
+	FLAG_NO_STDERR = 0b0010,
+};
+
 typedef struct s_eval_test
 {
 	/** @brief Expression to evaluate */
@@ -30,6 +38,8 @@ typedef struct s_eval_test
 	char			**envp;
 	/** @brief Expected exit status */
 	int				status;
+	/** @brief Flags */
+	int				flags;
 }	t_eval_test;
 
 /**

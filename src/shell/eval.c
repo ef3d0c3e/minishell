@@ -41,7 +41,7 @@ void
 	eval(t_environ *env, t_ast_node* program)
 {
 	if (!program)
-		;
+		return ;
 	else if (program->type == NODE_COMMAND)
 	{
 		eval_cmd(env, program);

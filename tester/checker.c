@@ -82,12 +82,13 @@ int
 	ft_dprintf(2, "[");
 	print_test_string(&test->expr);
 	ft_dprintf(2, "]: ");
-	success = 0;
-	if (stringbuf_compare("stdout", &test->stdout, stdout)
-		&& stringbuf_compare("stderr", &test->stderr, stderr))
-	{
-		success = 1;
-	}
+	success = 1;
+	if (!(test->flags & FLAG_NO_STDOUT)
+		&& !stringbuf_compare("stdout", &test->stdout, stdout))
+		success = 0;
+	if (!(test->flags & FLAG_NO_STDERR)
+		&& !stringbuf_compare("stderr", &test->stderr, stderr))
+		success = 0;
 	stringbuf_free(stdout);
 	stringbuf_free(stderr);
 	if (test->status != status)

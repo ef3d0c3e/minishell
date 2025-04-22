@@ -18,4 +18,13 @@ DO_TEST(grammar,
 	SHELL_TEST("/usr/bin/true && /usr/bin/false\necho $?", "", "1\n", "", 0)
 	SHELL_TEST("/usr/bin/false && /usr/bin/true\necho $?", "", "1\n", "", 0)
 	SHELL_TEST("/usr/bin/false && /usr/bin/true\necho $?", "", "1\n", "", 0)
+
+	SHELL_TEST("", "", "", "", 0)
+	SHELL_TEST(" ", "", "", "", 0)
+	SHELL_TEST("\t", "", "", "", 0)
+
+	SHELL_TEST_ERR(";", "", "", 2)
+	SHELL_TEST_ERR("|", "", "", 2)
+	SHELL_TEST_ERR("||", "", "", 2)
+	SHELL_TEST_ERR("&&", "", "", 2)
 )

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tester.h"
+#include <stdlib.h>
 
 void
 	run_test_child(t_eval_test *test, int *fds)
@@ -74,7 +75,7 @@ static int
 	(void)(close(fds[2]) || close(fds[4]));
 	if (waitst != pid)
 		waitpid(pid, &status, 0);
-	return (test_check(test, status, &stdout, &stderr));
+	return (test_check(test, WEXITSTATUS(status), &stdout, &stderr));
 }
 
 int
