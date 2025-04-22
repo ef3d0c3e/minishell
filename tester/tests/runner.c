@@ -38,7 +38,19 @@ static char
 	return (0);
 }
 
-int	main(int argc, char **argv)
+static size_t
+	atosz(const char *s)
+{
+	size_t	v;
+
+	v = 0;
+	while (*s >= '0' && *s <= '9')
+		v = v * 10 + (*(s++) - '0');
+	return (v);
+}
+
+static void
+	run_tests(const char *filter, size_t id_filter, uint32_t seed)
 {
 	static const t_unit_test	tests[] = {
 		test_echo,
@@ -46,22 +58,39 @@ int	main(int argc, char **argv)
 		test_param,
 		test_sub,
 	};
-	const char					*filter = "";
 	size_t						i;
-	int							passed;
-	int							total;
+	t_runner_data				runner;
 
-	if (argc > 1)
-		filter = argv[1];
-	total = 0;
-	passed = 0;
+	runner.total = 0;
+	runner.passed = 0;
+	runner.test_id = 1;
+	runner.id_filter = id_filter;
 	i = 0;
 	while (i < sizeof(tests) / sizeof(tests[0]))
 	{
 		if (ft_strstr(tests[i].name, filter))
-			tests[i].eval(&passed, &total);
+			tests[i].eval(&runner, seed);
 		++i;
 	}
-	ft_printf("-- Passed %d/%d tests (%d%%) --\n", total, passed,
-			(int)(100.f * passed / (float)total ));
+	if (!runner.total)
+		return ;
+	ft_printf("-- Passed %d/%d tests (%d%%) --\n", runner.total, runner.passed,
+		(int)(100.f * runner.passed / (float)runner.total));
+}
+
+int	main(int argc, char **argv)
+{
+	const char	*filter = "";
+	size_t		id_filter;
+	uint32_t	seed;
+
+	id_filter = 0;
+	seed = 1;
+	if (argc > 1)
+		filter = argv[1];
+	if (argc > 2)
+		id_filter = atosz(argv[2]);
+	ft_printf("Running tests with filter `%s` with random seed=%u\n",
+		filter, seed);
+	run_tests(filter, id_filter, seed);
 }

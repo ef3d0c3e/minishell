@@ -6,4 +6,25 @@ DO_TEST(echo,
 	SHELL_TEST("echo -n Hello World", "", "Hello World",   "", 0)
 	SHELL_TEST("echo",                "", "\n",            "", 0)
 	SHELL_TEST("echo -n",             "", "",              "", 0)
+	SHELL_TEST("echo -n \"\"",        "", "",              "", 0)
+	SHELL_TEST("echo -n ''",          "", "",              "", 0)
+
+	REPEAT(10,
+		char	*cmd;
+		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 32), ran, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+			ft_asprintf(&cmd, "echo -n %s", ran);
+			SHELL_TEST(cmd, "", ran, "", 0)
+			free(cmd);
+		)
+		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 32), ran, "\t\n\r\f\v\a\b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+			ft_asprintf(&cmd, "echo -n \"%s\"", ran);
+			SHELL_TEST(cmd, "", ran, "", 0)
+			free(cmd);
+		)
+		WITH_RANDOM_TEXT(RANDOM_VALUE(100, 300), ran, " \t\n\r\f\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
+			ft_asprintf(&cmd, "echo -n '%s'", ran);
+			SHELL_TEST(cmd, "", ran, "", 0)
+			free(cmd);
+		)
+	)
 )

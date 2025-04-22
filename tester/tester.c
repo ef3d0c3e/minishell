@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tester.h"
+#include "ft_printf.h"
 #include <stdlib.h>
 
 void
@@ -79,7 +80,7 @@ static int
 }
 
 int
-	test_run(t_eval_test *test)
+	test_run(t_eval_test *test, size_t id)
 {
 	pid_t	pid;
 	int		fds[6];
@@ -90,6 +91,7 @@ int
 	pid = fork();
 	if (!pid)
 		run_test_child(test, fds);
+	ft_dprintf(2, "#%zu ", id);
 	return (run_test_parent(test, pid, fds));
 }
 

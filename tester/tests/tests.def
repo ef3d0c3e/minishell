@@ -2,72 +2,117 @@
 #ifndef TESTS_DEF
 # define TESTS_DEF
 
-#include "../tester.h"
+# include <time.h>
+# include "../tester.h"
+
+typedef struct s_runner_data
+{
+	uint32_t	random_state;
+	int			passed;
+	int			total;
+	size_t		test_id;
+	size_t		id_filter;
+}	t_runner_data;
 
 typedef struct s_unit_test
 {
 	const char	*name;
-	int			(*eval)(int *, int *);
+	void		(*eval)(t_runner_data *, uint32_t);
 }	t_unit_test;
 
 #define EXPAND(...) __VA_ARGS__
 
-#define SHELL_WITH_ENV(__env, ...) \
+#define WITH_ENV(__envp, ...) \
 { \
-	static const char	*env[] = (const char*[])EXPAND __env; \
+	static const char	*__env[] = (const char*[])EXPAND __envp; \
 	__VA_ARGS__ \
+}
+
+#define WITH_RANDOM_TEXT(__length, __name, __set, ...) \
+{ \
+	char	*__name; \
+	__name = random_ascii(__set, __length, &__random_state); \
+	__VA_ARGS__ \
+	free(__name); \
+}
+
+#define RANDOM_VALUE(__min, __max) \
+	(__min + (ssize_t)(random_int(&__random_state) % (__max - __min)))
+
+#define REPEAT(__n, ...) \
+{ \
+	size_t	__i; \
+	__i = 0; \
+	while (__i++ < __n) \
+	{ \
+		{ __VA_ARGS__ } \
+	} \
 }
 
 #define SHELL_TEST(__expr, __stdin, __stdout, __stderr, __status) \
 { \
-	t_eval_test test = (t_eval_test){ \
-		.file = __FILE__, \
-		.line = __LINE__, \
-		.expr = stringbuf_from(__expr), \
-		.stdin = stringbuf_from(__stdin), \
-		.stdout = stringbuf_from(__stdout), \
-		.stderr = stringbuf_from(__stderr), \
-		.status = __status, \
-		.envp = env, \
-		.flags = 0, \
-	}; \
-	++total; \
-	passed += test_run(&test); \
-	test_free(&test); \
+	if (!__runner_data->id_filter \
+		|| __runner_data->test_id == __runner_data->id_filter) \
+	{ \
+		t_eval_test test = (t_eval_test){ \
+			.file = __FILE__, \
+			.line = __LINE__, \
+			.expr = stringbuf_from(__expr), \
+			.stdin = stringbuf_from(__stdin), \
+			.stdout = stringbuf_from(__stdout), \
+			.stderr = stringbuf_from(__stderr), \
+			.status = __status, \
+			.envp = __env, \
+			.flags = 0, \
+		}; \
+		++total; \
+		passed += test_run(&test, __runner_data->test_id); \
+		test_free(&test); \
+	} \
+	++__runner_data->test_id; \
 }
 
 #define SHELL_TEST_ERR(__expr, __stdin, __stdout, __status) \
 { \
-	t_eval_test test = (t_eval_test){ \
-		.file = __FILE__, \
-		.line = __LINE__, \
-		.expr = stringbuf_from(__expr), \
-		.stdin = stringbuf_from(__stdin), \
-		.stdout = stringbuf_from(__stdout), \
-		.stderr = stringbuf_from(""), \
-		.status = __status, \
-		.envp = env, \
-		.flags = FLAG_NO_STDERR, \
-	}; \
-	++total; \
-	passed += test_run(&test); \
-	test_free(&test); \
+	if (!__runner_data->id_filter \
+		|| __runner_data->test_id == __runner_data->id_filter) \
+	{ \
+		t_eval_test test = (t_eval_test){ \
+			.file = __FILE__, \
+			.line = __LINE__, \
+			.expr = stringbuf_from(__expr), \
+			.stdin = stringbuf_from(__stdin), \
+			.stdout = stringbuf_from(__stdout), \
+			.stderr = stringbuf_from(""), \
+			.status = __status, \
+			.envp = __env, \
+			.flags = FLAG_NO_STDERR, \
+		}; \
+		++total; \
+		passed += test_run(&test, __runner_data->test_id); \
+		test_free(&test); \
+	} \
+	++__runner_data->test_id; \
 }
 
 #define DO_TEST(__label, ...) \
-static int __test_##__label##_eval(int *out_passed, int *out_total) \
+static void __test_##__label##_eval(t_runner_data *__runner_data, uint32_t seed) \
 { \
-	static const char	*env[] = {NULL}; \
+	static const char	*__env[] = {NULL}; \
 	int					total; \
 	int					passed; \
-	ft_dprintf(2, "> Running \033[0;34m%s\033[0;0m tests...\n", #__label); \
+	uint32_t			__random_state; \
+	__random_state = seed; \
+	if (!__runner_data->id_filter) \
+		ft_dprintf(2, "> Running \033[0;34m%s\033[0;0m tests...\n", #__label); \
 	passed = 0; \
 	total = 0; \
 	{ __VA_ARGS__; } \
-	ft_dprintf(2, "\033[0;34m%s\033[0;0m tests [%d/%d passed]\n", #__label, \
-			passed, total); \
-	*out_passed += passed; \
-	*out_total += total; \
+	if (!__runner_data->id_filter) \
+		ft_dprintf(2, "\033[0;34m%s\033[0;0m tests [%d/%d passed]\n", #__label, \
+				passed, total); \
+	__runner_data->passed += passed; \
+	__runner_data->total += total; \
 } \
 static const t_unit_test	test_##__label = { \
 	.name = #__label, \

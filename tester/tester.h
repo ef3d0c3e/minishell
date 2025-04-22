@@ -15,13 +15,14 @@
 # include <shell/eval.h>
 
 # include <string.h>
+# include <stdint.h>
 
 enum e_eval_flags
 {
 	/** @brief Ignores stdout */
-	FLAG_NO_STDOUT = 0b0001,
+	FLAG_NO_STDOUT = (1<<0),
 	/** @brief Ignores stderr */
-	FLAG_NO_STDERR = 0b0010,
+	FLAG_NO_STDERR = (1<<1),
 };
 
 typedef struct s_eval_test
@@ -57,11 +58,12 @@ test_free(t_eval_test *test);
  * @brief Runs the test
  *
  * @param test The test
+ * @param id ID of the test
  *
  * @returns 1 On success
  */
 int
-test_run(t_eval_test *test);
+test_run(t_eval_test *test, size_t id);
 /**
  * @brief Checks the test's result
  *
@@ -78,5 +80,24 @@ test_check(
 	int status,
 	t_string_buffer *stdout,
 	t_string_buffer *stderr);
+
+/**
+ * @brief Generates a random string from a set
+ *
+ * @param set Set of ascii characters to use
+ * @param length Length of the generated text
+ * @param seed Seed for the random algorithm
+ * @return The random ascii string
+ */
+char
+*random_ascii(const char *set, size_t length, uint32_t *seed);
+
+/**
+ * @brief Gets a random positive integer
+ *
+ * @param seed Seed for the random algorithm
+ */
+uint32_t
+random_int(uint32_t *seed);
 
 #endif // TESTER_H

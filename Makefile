@@ -44,7 +44,7 @@ ITESTS := \
 	-include ./tester/tests/sub.tests
 tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
 tests: $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS_TESTER)
-	$(CC) $(IFLAGS) $(ITESTS) $(CFLAGS) -o $@ ./tester/tests/runner.c $(OBJECTS_TESTER) $(LFLAGS)
+	$(CC) $(IFLAGS) -Wno-unused-but-set-variable $(ITESTS) $(CFLAGS) -o $@ ./tester/tests/runner.c $(OBJECTS_TESTER) $(LFLAGS)
 
 # Libraries build
 # ft_printf
