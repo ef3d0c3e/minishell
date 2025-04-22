@@ -1,0 +1,25 @@
+// vi:syntax=c
+#include "tests.def"
+
+DO_TEST(param,
+	SHELL_TEST("echo $",  "", "$\n",  "", 0)
+	SHELL_TEST("echo $$", "", "$$\n", "", 0)
+	SHELL_TEST("echo $@", "", "$@\n", "", 0)
+	SHELL_TEST("echo $#", "", "$#\n", "", 0)
+
+	SHELL_TEST("/usr/bin/false; echo $?", "", "1\n", "", 0)
+	SHELL_TEST("/usr/bin/true; echo $?",  "", "0\n", "", 0)
+
+	SHELL_WITH_ENV(({"A=test", "B=another", NULL}),
+		SHELL_TEST("echo $UNDEF",   "", "\n",              "", 0)
+		SHELL_TEST("echo $A",       "", "test\n",          "", 0)
+		SHELL_TEST("echo ${A}",     "", "test\n",          "", 0)
+		SHELL_TEST("echo $B",       "", "another\n",       "", 0)
+		SHELL_TEST("echo ${B}",     "", "another\n",       "", 0)
+		SHELL_TEST("echo $A${B}",   "", "testanother\n",   "", 0)
+		SHELL_TEST("echo ${A}$B",   "", "testanother\n",   "", 0)
+		SHELL_TEST("echo ${A}${B}", "", "testanother\n", "", 0)
+		SHELL_TEST("echo $AB",      "", "\n",              "", 0)
+		SHELL_TEST("echo \"$A\"$B", "", "testanother\n",   "", 0)
+	)
+)

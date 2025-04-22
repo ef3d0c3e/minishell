@@ -26,6 +26,10 @@ enum e_eval_flags
 
 typedef struct s_eval_test
 {
+	/** @brief Source file of the test */
+	const char		*file;
+	/** @brief Source line of the test */
+	size_t			line;
 	/** @brief Expression to evaluate */
 	t_string_buffer	expr;
 	/** @brief Input stdin (empty for none) */
@@ -35,7 +39,7 @@ typedef struct s_eval_test
 	/** @brief Expected stderr (empty for none) */
 	t_string_buffer	stderr;
 	/** @brief Environment (empty for none) */
-	char			**envp;
+	const char		**envp;
 	/** @brief Expected exit status */
 	int				status;
 	/** @brief Flags */

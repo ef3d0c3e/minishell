@@ -102,8 +102,6 @@ void
 	size_t			escaped;
 	t_u8_iterator	it;
 
-	printf("pre-filter=%.*s\n", buf->len, buf->str);
-	exit(1);
 	stringbuf_init(&result, buf->len);
 	it = it_new(str_new(buf->str, buf->len));
 	it_next(&it);

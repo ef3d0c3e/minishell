@@ -1,3 +1,4 @@
+// vi:syntax=c
 #include "tests.def"
 
 DO_TEST(sub,
@@ -10,6 +11,9 @@ DO_TEST(sub,
 	SHELL_TEST("$()", "", "", "", 0)
 	SHELL_TEST("`$()`", "", "", "", 0)
 	SHELL_TEST("$(``)", "", "", "", 0)
+	SHELL_TEST("echo \\$\\(\\)", "", "$()\n", "", 0)
+	SHELL_TEST("echo $(echo \\$)", "", "$\n", "", 0)
+	SHELL_TEST("echo $(echo \\$\\(\\))", "", "$()\n", "", 0)
 
 	SHELL_TEST_ERR("$(", "", "", 2)
 	SHELL_TEST_ERR("$($()", "", "", 2)

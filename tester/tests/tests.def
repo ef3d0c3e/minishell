@@ -1,17 +1,34 @@
+// vi:syntax=c
 #ifndef TESTS_DEF
 # define TESTS_DEF
 
 #include "../tester.h"
 
+typedef struct s_unit_test
+{
+	const char	*name;
+	int			(*eval)(int *, int *);
+}	t_unit_test;
+
+#define EXPAND(...) __VA_ARGS__
+
+#define SHELL_WITH_ENV(__env, ...) \
+{ \
+	static const char	*env[] = (const char*[])EXPAND __env; \
+	__VA_ARGS__ \
+}
+
 #define SHELL_TEST(__expr, __stdin, __stdout, __stderr, __status) \
 { \
 	t_eval_test test = (t_eval_test){ \
+		.file = __FILE__, \
+		.line = __LINE__, \
 		.expr = stringbuf_from(__expr), \
 		.stdin = stringbuf_from(__stdin), \
 		.stdout = stringbuf_from(__stdout), \
 		.stderr = stringbuf_from(__stderr), \
 		.status = __status, \
-		.envp = calloc(1, sizeof(char **)), \
+		.envp = env, \
 		.flags = 0, \
 	}; \
 	++total; \
@@ -22,12 +39,14 @@
 #define SHELL_TEST_ERR(__expr, __stdin, __stdout, __status) \
 { \
 	t_eval_test test = (t_eval_test){ \
+		.file = __FILE__, \
+		.line = __LINE__, \
 		.expr = stringbuf_from(__expr), \
 		.stdin = stringbuf_from(__stdin), \
 		.stdout = stringbuf_from(__stdout), \
 		.stderr = stringbuf_from(""), \
 		.status = __status, \
-		.envp = calloc(1, sizeof(char **)), \
+		.envp = env, \
 		.flags = FLAG_NO_STDERR, \
 	}; \
 	++total; \
@@ -36,16 +55,23 @@
 }
 
 #define DO_TEST(__label, ...) \
-static int test_##__label(void) \
+static int __test_##__label##_eval(int *out_passed, int *out_total) \
 { \
-	int	passed; \
-	int	total; \
-	ft_dprintf(2, "Running tests %s...\n", #__label); \
+	static const char	*env[] = {NULL}; \
+	int					total; \
+	int					passed; \
+	ft_dprintf(2, "> Running \033[0;34m%s\033[0;0m tests...\n", #__label); \
 	passed = 0; \
 	total = 0; \
 	{ __VA_ARGS__; } \
-	ft_dprintf(2, "%s tests [%d/%d passed]\n", #__label, passed, total); \
-	return (passed); \
-}
+	ft_dprintf(2, "\033[0;34m%s\033[0;0m tests [%d/%d passed]\n", #__label, \
+			passed, total); \
+	*out_passed += passed; \
+	*out_total += total; \
+} \
+static const t_unit_test	test_##__label = { \
+	.name = #__label, \
+	.eval = __test_##__label##_eval, \
+};
 
 #endif // TESTS_DEF

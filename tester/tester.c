@@ -96,14 +96,8 @@ int
 void
 	test_free(t_eval_test *test)
 {
-	size_t	i;
-
 	stringbuf_free(&test->expr);
 	stringbuf_free(&test->stdin);
 	stringbuf_free(&test->stdout);
 	stringbuf_free(&test->stderr);
-	i = 0;
-	while (test->envp[i])
-		free(test->envp[i++]);
-	free(test->envp);
 }

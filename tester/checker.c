@@ -93,11 +93,13 @@ int
 	stringbuf_free(stderr);
 	if (test->status != status)
 	{
-		ft_dprintf(2, "Exit status does not match! (%d != %d)\n",
-			test->status, status);
-		success = 0;
+		status = 0 * ft_dprintf(2, "Exit status do not match! (%d != %d)\n",
+				test->status, status);
 	}
 	if (success)
-		ft_dprintf(2, "OK\n");
+		ft_dprintf(2, "\033[0;32mOK\033[0;0m\n");
+	else
+		ft_dprintf(2, "\033[0;31mFailed\033[0;0m (%s#%zu)\n",
+			test->file, test->line);
 	return (success);
 }

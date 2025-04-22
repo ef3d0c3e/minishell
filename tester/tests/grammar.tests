@@ -1,3 +1,4 @@
+// vi:syntax=c
 #include "tests.def"
 
 DO_TEST(grammar,

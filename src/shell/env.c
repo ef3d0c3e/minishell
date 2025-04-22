@@ -35,9 +35,9 @@ static int
 }
 
 t_environ
-	env_new(char **envp)
+	env_new(const char **envp)
 {
-	char		**e;
+	const char	**e;
 	t_environ	env;
 
 	env.env = rb_new((int (*)(const void *, const void *))ft_strcmp,

@@ -72,7 +72,7 @@ typedef struct s_environ
  * @param envp The new session's environment
  */
 t_environ
-env_new(char **envp);
+env_new(const char **envp);
 /**
  * @brief Destroys parsing-related data
  *
