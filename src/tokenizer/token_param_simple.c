@@ -34,8 +34,8 @@ static int
 	{
 		token_list_push(list, (t_token){
 			.type = TOK_PARAM_SIMPLE,
-			.start = it->byte_pos,
-			.end = it->byte_pos + ft_strlen(kind + 1),
+			.start = it->byte_pos + 1,
+			.end = it->byte_pos + ft_strlen(kind),
 			.word = stringbuf_from(kind + 1)
 		});
 		it_advance(it, ft_strlen(kind));

@@ -17,22 +17,11 @@
 // TEMP
 #include <stdio.h>
 
-
 /* ************************************************************************** */
-/* Token definition                                                           */
+/* Token list                                                                 */
 /* ************************************************************************** */
 
 typedef struct s_token	t_token;
-
-/**
- * @brief Frees a token
- *
- * Most token do not own thir data, but strings/words do
- *
- * @param token Token to free
- */
-void
-token_free(t_token *token);
 
 typedef struct s_token_list
 {
@@ -49,7 +38,6 @@ typedef struct s_token_list
  */
 void
 token_list_push(t_token_list *list, t_token token);
-
 /**
  * @brief Frees the token list (and the contained tokens)
  *
@@ -57,6 +45,43 @@ token_list_push(t_token_list *list, t_token token);
  */
 void
 token_list_free(t_token_list *list);
+/**
+ * @brief Pushes codepoint from iterator into list
+ *
+ * This function will create a single-quote token or append to the last
+ * token if it is a single-quote
+ *
+ * @param list List to push into
+ * @param it Iterator to get the codepoint from
+ */
+void
+list_push_codepoint(t_token_list *list, const t_u8_iterator *it);
+/**
+ * @brief Extends `result` while consuming `from`
+ *
+ * Inserts the content of `from` into `result` by applying `offset` to
+ * all elements of `from`. List `from` is freed by this function.
+ *
+ * @param result List that will contain the result of the expansion
+ * @param from List to add to `result`
+ * @param offset Offset to apply to every elements being added to result
+ */
+void
+list_extend(t_token_list *result, t_token_list *from, size_t offset);
+
+/* ************************************************************************** */
+/* Token definition                                                           */
+/* ************************************************************************** */
+
+/**
+ * @brief Frees a token
+ *
+ * Most token do not own thir data, but strings/words do
+ *
+ * @param token Token to free
+ */
+void
+token_free(t_token *token);
 
 /**
  * @brief Token types definitions
