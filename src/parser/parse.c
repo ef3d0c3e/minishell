@@ -34,35 +34,31 @@ t_ast_node
 	size_t			i;
 	size_t			next;
 
-	node = NULL;
 	i = start;
-	if (i >= end)
-	{
-		parser_error(parser, ft_strdup("Expected tokens"), start - 1, end);
-		return (NULL);
-	}
 	next = parser_next_operator(parser, i, end, min_prec);
 	if (next == (size_t)-1)
 	{
 		if (min_prec == 3)
 		{
-			node = parse_expression(parser, i, end);
+			if (i < end)
+				return (parse_expression(parser, i, end));
+			parser_error(parser, ft_strdup("Expected tokens"), start, next);
 		}
 		else
-			node = parse(parser, start, end, min_prec + 1);
+			return (parse(parser, start, end, min_prec + 1));
 	}
 	else if (start == next)
-	{
 		parser_error(parser, ft_strdup("Expected tokens"), start, next);
-		return (node);
-	}
 	else
 	{
 		node = xmalloc(sizeof(t_ast_node));
 		node->type = NODE_LOGIC;
 		node->logic.token = parser->list.tokens[next];
 		node->logic.left = parse(parser, start, next, min_prec + 1);
-		node->logic.right = parse(parser, next + 1, end, min_prec);
+		node->logic.right = NULL;
+		if (next + 1 < end || node->logic.token.reserved_word[0] != ';')
+			node->logic.right = parse(parser, next + 1, end, min_prec);
+		return (node);
 	}
-	return (node);
+	return (NULL);
 }

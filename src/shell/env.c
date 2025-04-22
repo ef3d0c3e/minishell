@@ -81,6 +81,7 @@ void
 void
 	env_free(t_environ *env)
 {
+	shell_error_flush(env);
 	rb_free(&env->env);
 	rb_free(&env->opts);
 	rb_free(&env->builtins);

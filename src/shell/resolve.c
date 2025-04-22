@@ -49,7 +49,6 @@ static char
 	*resolve_from_path(t_environ *env, const char *name)
 {
 	char	*resolved;
-	char	*msg;
 
 	resolved = rb_find(&env->path_program, name);
 	if (!resolved)
@@ -57,17 +56,13 @@ static char
 		path_populate(env);
 		resolved = rb_find(&env->path_program, name);
 		if (!resolved)
-		{
-			ft_asprintf(&msg, "Failed to find executable `%s`", name);
-			shell_error(env, msg, SRC_LOCATION);
 			return (NULL);
-		}
 	}
 	return (ft_strdup(resolved));
 }
 
 int
-	resolve_executable(t_environ *env, const char *name, char **result)
+	resolve_eval(t_environ *env, const char *name, char **result)
 {
 	char		*cwd;
 	char		*err;

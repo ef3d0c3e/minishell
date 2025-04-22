@@ -275,12 +275,17 @@ shell_perror(t_environ *env, const char *msg, const char *function);
 pid_t
 shell_fork(t_environ *env, const char *function);
 
+/******************************************************************************/
+/* Execution utility                                                          */
+/******************************************************************************/
+
 /**
  * @brief Resolves function/builtin/executable from the shell
  *
  * @param env The shell session
  * @param name Executable name
- * @param result Result of this function, will need to be freed on success
+ * @param result Result of this function, on return value 0, this will contain
+ * the full path to the executable (which must be freed)
  *
  * @returns
  *  - (-1) on error
@@ -289,6 +294,27 @@ shell_fork(t_environ *env, const char *function);
  *  - (2) if `name` refers to a builtin
  */
 int
-resolve_executable(t_environ *env, const char *name, char **result);
+resolve_eval(t_environ *env, const char *name, char **result);
+
+/**
+ * @brief Resolves command parameters to an array of strings
+ *
+ * @param env The shell session
+ * @param cmd Command to create an array of string from
+ *
+ * @returns A null-terminated array of strings to be passed to `execve`
+ */
+char
+**command_to_argv(t_environ *env, const struct s_node_cmd *cmd);
+
+/**
+ * @brief Creates envp from environment
+ *
+ * @param env The shell session
+ *
+ * @returns A null-terminated array of strings containing environment variables
+ */
+char
+**environ_to_envp(t_environ *env);
 
 #endif // EVAL_H

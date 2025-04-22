@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   resolve_atom.c                                     :+:      :+:    :+:   */
+/*   resolve_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/eval.h>
-#include <stdio.h>
 
-char
+static char
 	*resolve_arg(t_environ *env, const struct s_node_compound *comp)
 {
 	t_string_buffer	buf;
@@ -40,16 +39,8 @@ char
 	return (stringbuf_cstr(&buf));
 }
 
-/**
- * @brief Resolves command parameters to an array of strings
- *
- * @param env The shell session
- * @param cmd Command to create an array of string from
- *
- * @returns A null-terminated array of strings to be passed to `execve`
- */
 char
-	**resolve_command(t_environ *env, const struct s_node_cmd *cmd)
+	**command_to_argv(t_environ *env, const struct s_node_cmd *cmd)
 {
 	char	**result;
 	size_t	i;
@@ -63,4 +54,28 @@ char
 	}
 	result[i] = NULL;
 	return (result);
+}
+
+/** @brief Formats environ variables */
+static inline void
+	format_environ(size_t depth, t_rbnode *node, void *data)
+{
+	struct s_envp_traversal	*t = data;
+
+	(void)depth;
+	ft_asprintf(&t->envp[t->index], "%s=%s",
+		(char *)node->key, (char *)node->data);
+	++t->index;
+}
+
+char
+	**environ_to_envp(t_environ *env)
+{
+	struct s_envp_traversal	t;
+
+	t.index = 0;
+	t.envp = xmalloc((env->env.size + 1) * sizeof(char **));
+	rb_apply(&env->env, format_environ, &t);
+	t.envp[t.index] = NULL;
+	return (t.envp);
 }
