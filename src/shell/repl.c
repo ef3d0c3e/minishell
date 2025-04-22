@@ -56,9 +56,9 @@ int
 		dprintf(2, " -- Expanded tokens --\n");
 		token_list_debug(input, &list);
 	}
-	parser = parser_init(input, list);
+	parser = parser_init(input, *env->token_list);
 	env->parser = &parser;
-	env->program = parse(&parser, 0, list.size, 0);
+	env->program = parse(env->parser, 0, env->token_list->size, 0);
 	if (!parser_error_flush(&parser))
 		return (env_parser_free(env), -1);
 	if (option_value(env, "dbg_ast"))

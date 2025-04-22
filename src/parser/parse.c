@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <parser/parser.h>
+#include <stdio.h>
 
 /** @brief Parse an expression delimited by two operators */
 static t_ast_node
@@ -31,24 +32,24 @@ t_ast_node
 	*parse(t_parser *parser, size_t start, size_t end, int min_prec)
 {
 	t_ast_node		*node;
-	size_t			i;
 	size_t			next;
 
-	i = start;
-	next = parser_next_operator(parser, i, end, min_prec);
+	if (start == end)
+		return (NULL);
+	next = parser_next_operator(parser, start, end, min_prec);
 	if (next == (size_t)-1)
 	{
 		if (min_prec == 3)
 		{
-			if (i < end)
-				return (parse_expression(parser, i, end));
-			parser_error(parser, ft_strdup("Expected tokens"), start, next);
+			if (start < end)
+				return (parse_expression(parser, start, end));
+			parser_error(parser, ft_strdup("Expected tokens"), start - !!start, end);
 		}
 		else
 			return (parse(parser, start, end, min_prec + 1));
 	}
 	else if (start == next)
-		parser_error(parser, ft_strdup("Expected tokens"), start, next);
+		parser_error(parser, ft_strdup("Expected tokens"), start - !!start, next);
 	else
 	{
 		node = xmalloc(sizeof(t_ast_node));

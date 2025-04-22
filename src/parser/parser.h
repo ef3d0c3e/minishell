@@ -167,6 +167,7 @@ parser_free(t_parser *parser);
  * @param parser The parser
  * @param start Start position in token list
  * @param end End position in token list
+ * @param min_prec Operator precedence for this parsing pass [0, 3]
  *
  * @return The parsed node, may be NULL (e.g empty expressions)
  */
