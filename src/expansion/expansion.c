@@ -53,6 +53,7 @@ t_token_list
 			token_list_push(&new, list.tokens[i]);
 		++i;
 	}
+	// TODO: Join tokens
 	free(list.tokens);
 	return (new);
 }

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "util/util.h"
+#include <fcntl.h>
 #include <parser/redir.h>
 
 static void
@@ -59,12 +60,13 @@ void
 	redir.type = type;
 	redir.flags = 0;
 	redir.here_doc_eof = NULL;
-	if (type == R_DUPLICATING_INPUT_WORD || type == R_DUPLICATING_OUTPUT_WORD)
-	{
-		if (dest.filename.str[dest.filename.len - 1])
-		{
-			--dest.filename.len;
-		}
-	}
+	if (type == R_ERR_AND_OUT)
+		redir.flags = O_TRUNC | O_WRONLY | O_CREAT;
+	else if (type == R_APPEND_ERR_AND_OUT)
+		redir.flags = O_APPEND | O_WRONLY | O_CREAT;
+	else if (type == R_INPUT_OUTPUT)
+		redir.flags = O_RDWR | O_CREAT;
+	else if (type == R_INPUTA_DIRECTION)
+		redir.flags = O_RDONLY;
 	add_redir(redirs, redir);
 }

@@ -97,11 +97,6 @@ size_t
 	t_redirectee	source;
 	int				status;
 
-	if (left->type == TOK_REDIR)
-	{
-		
-		return (3);
-	}
 	if (!token_atoi(parser, start, &source.fd))
 		return (3);
 	status = 0;

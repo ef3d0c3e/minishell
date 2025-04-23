@@ -60,13 +60,12 @@ size_t	parse_redir_repeat(
 			&& parser->list.tokens[start + skipped + spaces].type == TOK_SPACE)
 			++spaces;
 		if (start + skipped + spaces >= end)
-			break;
+			break ;
 		result = parse_redir(parser, start + skipped + spaces, end, redirs);
 		skipped += result;
 		if (!result || start + skipped >= end)
-			break;
+			break ;
 		skipped += spaces;
-
 	}
 	return (skipped);
 }
