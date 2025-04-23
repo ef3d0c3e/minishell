@@ -17,6 +17,7 @@ void
 	static const char	*names[] = {
 	[TOK_SPACE] = "SPACE",
 	[TOK_DIGIT] = "DIGIT",
+	[TOK_MINUS] = "MINUS",
 	[TOK_NEWLINE] = "NEWLINE",
 	[TOK_GROUPING] = "GROUPING",
 	[TOK_PIPELINE] = "PIPELINE",

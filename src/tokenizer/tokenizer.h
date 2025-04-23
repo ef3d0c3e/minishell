@@ -100,8 +100,10 @@ enum e_token_type
 	TOK_SPACE,
 	/** @brief Newline token: `\n` */
 	TOK_NEWLINE,
-	/** @brief A positive number between [0, INT_MAX] */
+	/** @brief A number stored as a string */
 	TOK_DIGIT,
+	/** @brief The minus sign token: `-` */
+	TOK_MINUS,
 	/** @brief Grouping character, one of `{, (, }, )` */
 	TOK_GROUPING,
 	/**
@@ -316,6 +318,7 @@ int	token_space(t_token_list *list, t_u8_iterator *it);
 int	token_newline(t_token_list *list, t_u8_iterator *it);
 int	token_redir(t_token_list *list, t_u8_iterator *it);
 int	token_digit(t_token_list *list, t_u8_iterator *it);
+int	token_minus(t_token_list *list, t_u8_iterator *it);
 int	token_grouping(t_token_list *list, t_u8_iterator *it);
 int	token_sequence(t_token_list *list, t_u8_iterator *it);
 int	token_pipeline(t_token_list *list, t_u8_iterator *it);

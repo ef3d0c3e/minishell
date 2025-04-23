@@ -21,6 +21,7 @@ int
 		|| type == TOK_SINGLE_QUOTE
 		|| type == TOK_DIGIT
 		|| type == TOK_DIGIT
+		|| type == TOK_MINUS
 		|| type == TOK_KEYWORD);
 }
 
@@ -36,7 +37,7 @@ int
 				.len = tok->word.len });
 		return (1);
 	}
-	else if (tok->type == TOK_KEYWORD)
+	else if (tok->type == TOK_KEYWORD || tok->type == TOK_MINUS)
 	{
 		stringbuf_append(buf, (t_string){.str = tok->reserved_word,
 				.len = ft_strlen(tok->reserved_word) });

@@ -19,6 +19,7 @@ static inline const t_tokenizer_fn
 		token_space,
 		token_newline,
 		token_digit,
+		token_minus,
 		token_redir,
 		token_sequence,
 		token_pipeline,

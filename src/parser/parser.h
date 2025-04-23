@@ -12,6 +12,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+# include <parser/redir.h>
 # include <tokenizer/tokenizer.h>
 
 /* ************************************************************************** */
@@ -39,37 +40,6 @@ enum e_node_type
 	/** @brief Unary operator (unhandled currently) e.g: `&`, `!` */
 	NODE_UNARY,
 };
-
-typedef union u_redirectee
-{
-	/** @brief Redirect to/from file descriptor */
-	int				fd;
-	/** @brief Redirect to/from file */
-	t_string_buffer	filename;
-}	t_redirectee;
-
-/**
- * @brief Redirection data, can be part of all nodes, all files need to be
- * created before executing the nodes, only the last redirection is actually
- * used, other are left as empty files. `clobbering` may apply,
- * see: 3.6.2 Redirecting Output
- */
-typedef struct s_redir_data
-{
-	t_redirectee	from;
-	t_redirectee	to;
-}	t_redir_data;
-
-/** @brief Stores redirections */
-typedef struct s_redirections
-{
-	/** @brief Redirections */
-	t_redir_data	*redirs;
-	/** @brief Number of redirections */
-	size_t			redirs_size;
-	/** @brief Redirections capacity */
-	size_t			redirs_capacity;
-}	t_redirections;
 
 /** @brief Sub expression data */
 struct s_node_expr

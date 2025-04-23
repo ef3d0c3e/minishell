@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_digit.c                                      :+:      :+:    :+:   */
+/*   token_minus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,36 +12,16 @@
 #include <tokenizer/tokenizer.h>
 
 int
-	token_digit(t_token_list *list, t_u8_iterator *it)
+	token_minus(t_token_list *list, t_u8_iterator *it)
 {
-	const size_t	start = it->byte_pos;
-	t_string		peek;
-	t_string_buffer	digit;
-
-	if (it->codepoint.str[0] == '+' || it->codepoint.str[0] == '-')
-	{
-		peek = it_substr(it, 2);
-		if (peek.len < 2 || (peek.str[1] < '0' || peek.str[1] > '9'))
-			return (0);
-		stringbuf_init(&digit, 16);
-		stringbuf_append(&digit, it->codepoint);
-		it_advance(it, 1);
-	}
-	else if (it->codepoint.str[0] < '0' || it->codepoint.str[0] > '9')
+	if (it->codepoint.str[0] != '-')
 		return (0);
-	else
-		stringbuf_init(&digit, 16);
-	while (it->codepoint.len && it->codepoint.str[0] >= '0'
-			&& it->codepoint.str[0] <= '9')
-	{
-		stringbuf_append(&digit, it->codepoint);
-		it_next(it);
-	}
 	token_list_push(list, (t_token){
-		.type = TOK_DIGIT,
-		.start = start,
-		.end = it->byte_pos,
-		.word = digit
+		.type = TOK_MINUS,
+		.start = it->byte_pos,
+		.end = it->byte_pos + 1,
+		.reserved_word = "-"
 	});
+	it_next(it);
 	return (1);
 }
