@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <expansion/expansion.h>
 
 /** @brief Removes spaces before and after operators */
@@ -27,15 +28,56 @@ static int
 	return (0);
 }
 
+static int
+	merge_subsequent(t_token *first, t_token *second)
+{
+	t_string_buffer	content;
+
+	if (!token_isword(first->type) || !token_isword(second->type))
+		return (0);
+	if (first->type == TOK_DIGIT && second->type == TOK_MINUS)
+		return (0);
+	stringbuf_init(&content, second->end - first->start);
+	token_wordcontent(&content, first);
+	token_wordcontent(&content, second);
+	token_free(first);
+	token_free(second);
+	first->end = second->end;
+	first->type = TOK_SINGLE_QUOTE;
+	first->word = content;
+	return (1);
+}
+
+static t_token_list
+	token_join(t_environ *env, t_token_list list)
+{
+	t_token_list	new;
+	size_t			i;
+	size_t			j;
+
+	token_list_init(&new, list.size);
+	i = 0;
+	while (i < list.size)
+	{
+		j = i + 1;
+		while (j < list.size && merge_subsequent(&list.tokens[i], &list.tokens[j]))
+		{
+			++j;
+		}
+		token_list_push(&new, list.tokens[i]);
+		i = j;
+	}
+	free(list.tokens);
+	return (new);
+}
+
 t_token_list
 	token_expand(t_environ *env, t_token_list list)
 {
 	t_token_list	new;
 	size_t			i;
 
-	new.tokens = xmalloc(list.size * sizeof(t_token));
-	new.size = 0;
-	new.capacity = list.size;
+	token_list_init(&new, list.size);
 	i = 0;
 	while (i < list.size)
 	{
@@ -53,7 +95,6 @@ t_token_list
 			token_list_push(&new, list.tokens[i]);
 		++i;
 	}
-	// TODO: Join tokens
 	free(list.tokens);
-	return (new);
+	return (token_join(env, new));
 }
