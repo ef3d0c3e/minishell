@@ -12,7 +12,6 @@
 #ifndef REDIR_H
 # define REDIR_H
 
-#include "util/util.h"
 # include <tokenizer/tokenizer.h>
 
 typedef struct s_parser	t_parser;
@@ -153,10 +152,36 @@ const t_redir_tok_type
 /******************************************************************************/
 
 /**
- * @brief Parses redirections of the form `[REDIR][WORD|N|-]`,
+ * @brief Parses redirections of the form `[REDIR][WORD|NUM|-]`,
  * using the following grammar:
  * (Extract from bash Yacc grammar)
  * @code{.y}
+ * // [REDIR][N]
+ * |	LESS_AND NUMBER
+ * {
+ * 	source.dest = 0;
+ * 	redir.dest = $2;
+ * 	$$ = make_redirection (source, r_duplicating_input, redir, 0);
+ * }
+ * |	GREATER_AND NUMBER
+ * {
+ * 	source.dest = 1;
+ * 	redir.dest = $2;
+ * 	$$ = make_redirection (source, r_duplicating_output, redir, 0);
+ * }
+ * // [REDIR][-]
+ * |	GREATER_AND '-'
+ * {
+ * 	source.dest = 1;
+ * 	redir.dest = 0;
+ * 	$$ = make_redirection (source, r_close_this, redir, 0);
+ * }
+ * |	LESS_AND '-'
+ * {
+ * 	source.dest = 0;
+ * 	redir.dest = 0;
+ * 	$$ = make_redirection (source, r_close_this, redir, 0);
+ * }
  * // [REDIR OUT][WORD]
  * |	'>' WORD
  * {
@@ -234,31 +259,112 @@ const t_redir_tok_type
  * 	redir.filename = $2;
  * 	$$ = make_redirection (source, r_duplicating_input_word, redir, 0);
  * }
- * // [REDIR][N]
- * |	LESS_AND NUMBER
+ * @endcode
+ *
+ * @param parser The parser
+ * @param start Redirection start position
+ * @param redirs The redirections to store to
+ *
+ * @returns The number of skipped tokens
+*/
+size_t
+redir_parser2(
+	t_parser *parser,
+	size_t start,
+	t_redirections *redirs);
+/**
+ * @brief Parses redirections of the form `[NUM][REDIR][WORD|NUM|-]`,
+ * using the following grammar:
+ * (Extract from bash Yacc grammar)
+ * @code{.y}
+ * // [NUM][REDIR][NUM]
+ * |	NUMBER LESS_AND NUMBER
  * {
- * 	source.dest = 0;
- * 	redir.dest = $2;
+ * 	source.dest = $1;
+ * 	redir.dest = $3;
  * 	$$ = make_redirection (source, r_duplicating_input, redir, 0);
  * }
- * |	GREATER_AND NUMBER
+ * |	NUMBER GREATER_AND NUMBER
  * {
- * 	source.dest = 1;
- * 	redir.dest = $2;
+ * 	source.dest = $1;
+ * 	redir.dest = $3;
  * 	$$ = make_redirection (source, r_duplicating_output, redir, 0);
  * }
- * 
- * |	GREATER_AND '-'
+ * // [NUM][REDIR][-]
+ * |	NUMBER GREATER_AND '-'
  * {
- * 	source.dest = 1;
+ * 	source.dest = $1;
  * 	redir.dest = 0;
  * 	$$ = make_redirection (source, r_close_this, redir, 0);
  * }
- * |	LESS_AND '-'
+ * |	NUMBER LESS_AND '-'
  * {
- * 	source.dest = 0;
+ * 	source.dest = $1;
  * 	redir.dest = 0;
  * 	$$ = make_redirection (source, r_close_this, redir, 0);
+ * }
+ * // [NUM][REDIR][WORD]
+ * |	NUMBER '>' WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_output_direction, redir, 0);
+ * }
+ * |	NUMBER '<' WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_input_direction, redir, 0);
+ * }
+ * |	NUMBER GREATER_GREATER WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_appending_to, redir, 0);
+ * }
+ * |	NUMBER GREATER_BAR WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_output_force, redir, 0);
+ * }
+ * |	NUMBER LESS_GREATER WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_input_output, redir, 0);
+ * }
+ * |	NUMBER LESS_LESS WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_reading_until, redir, 0);
+ * 	push_heredoc ($$);
+ * }
+ * |	NUMBER LESS_LESS_MINUS WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_deblank_reading_until, redir, 0);
+ * 	push_heredoc ($$);
+ * }
+ * |	NUMBER LESS_LESS_LESS WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_reading_string, redir, 0);
+ * }
+ * |	NUMBER LESS_AND WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_duplicating_input_word, redir, 0);
+ * }
+ * |	NUMBER GREATER_AND WORD
+ * {
+ * 	source.dest = $1;
+ * 	redir.filename = $3;
+ * 	$$ = make_redirection (source, r_duplicating_output_word, redir, 0);
  * }
  * @endcode
  *
@@ -269,13 +375,7 @@ const t_redir_tok_type
  * @returns The number of skipped tokens
 */
 size_t
-	redir_parser2(
-	t_parser *parser,
-	size_t start,
-	t_redirections *redirs);
-
-size_t
-	redir_parser3(
+redir_parser3(
 	t_parser *parser,
 	size_t start,
 	t_redirections *redirs);

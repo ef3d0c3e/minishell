@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 #include <parser/parser.h>
 
-// FIXME: Push heredoc
-
 /** @brief Parses [REDIR][NUMBER] */
 static size_t
 	parse_redir_number(
@@ -24,7 +22,7 @@ static size_t
 	int				num;
 
 	if (!token_atoi(parser, start + 1, &num))
-		return (2);
+		return (0);
 	if (!ft_strcmp(left->reserved_word, "<&"))
 		make_redirection(redirs, (t_redirectee){.fd = 0},
 			(t_redirectee){.fd = num}, R_DUPLICATING_INPUT);
@@ -43,12 +41,12 @@ static size_t
 	size_t start,
 	t_redirections *redirs)
 {
-	const t_token	*left = &parser->list.tokens[start + 1];
+	const t_token	*tok = &parser->list.tokens[start];
 
-	if (!ft_strcmp(left->reserved_word, "<&"))
+	if (!ft_strcmp(tok->reserved_word, "<&"))
 		make_redirection(redirs, (t_redirectee){.fd = 1},
 			(t_redirectee){.fd = 0}, R_CLOSE_THIS);
-	else if (!ft_strcmp(left->reserved_word, ">&"))
+	else if (!ft_strcmp(tok->reserved_word, ">&"))
 		make_redirection(redirs, (t_redirectee){.fd = 0},
 			(t_redirectee){.fd = 0}, R_CLOSE_THIS);
 	else
@@ -96,15 +94,15 @@ size_t
 	size_t start,
 	t_redirections *redirs)
 {
-	const t_token	*left = &parser->list.tokens[start + 1];
+	const t_token	*right = &parser->list.tokens[start + 1];
 	int				status;
 
 	status = 0;
-	if (left->type == TOK_DIGIT)
+	if (right->type == TOK_DIGIT)
 		status = parse_redir_number(parser, start, redirs);
-	else if (left->type == TOK_MINUS)
+	else if (right->type == TOK_MINUS)
 		status = parse_redir_minus(parser, start, redirs);
-	else if (token_isword(left->type))
+	else if (token_isword(right->type))
 		status = parse_redir_word(parser, start, redirs);
 	if (!status)
 		parser_error(parser, ft_strdup("Invalid redirection"),

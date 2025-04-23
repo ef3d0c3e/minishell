@@ -75,11 +75,10 @@ void
 {
 	size_t				i;
 	const t_redirection	*redir;
-	
+
 	if (!redirs->redirs_size)
 		return ;
 	ft_dprintf(2, "REDIRS:\n");
-	
 	i = 0;
 	while (i < redirs->redirs_size)
 	{

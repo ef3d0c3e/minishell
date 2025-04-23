@@ -39,7 +39,7 @@ void
 	else if (head->type == NODE_SUBSHELL)
 	{
 		ast_free(head->expr.head);
-		redirs_free(&head->cmd.redirs);
+		redirs_free(&head->expr.redirs);
 	}
 	else if (head->type == NODE_COMMAND)
 	{

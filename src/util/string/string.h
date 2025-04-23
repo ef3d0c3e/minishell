@@ -210,7 +210,7 @@ stringbuf_itoa(t_string_buffer *buf, int number);
 /* ************************************************************************** */
 
 /** @brief Unicode iterator */
-typedef struct u8_iterator
+typedef struct s_u8_iterator
 {
 	/** @brief String iterated over */
 	t_string	str;

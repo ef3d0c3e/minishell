@@ -21,10 +21,14 @@ size_t	parse_redir(
 
 	if (end - start < 2)
 		return (0);
-	else if (tok->type == TOK_REDIR)
+	if (tok->type == TOK_REDIR)
 		return (redir_parser2(parser, start, redirs));
-	else if (tok->type == TOK_DIGIT && end - start >= 3)
+	else if (tok->type == TOK_DIGIT
+		&& parser->list.tokens[start + 1].type == TOK_REDIR
+		&& end - start >= 3)
 		return (redir_parser3(parser, start, redirs));
+	// TODO: If redir is of the heredoc type, push to the heredoc stack
+	// in order to read input after successful command parsing
 	return (0);
 }
 
