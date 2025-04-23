@@ -54,5 +54,16 @@ min_sz(size_t x, size_t y);
  */
 size_t
 max_sz(size_t x, size_t y);
+/**
+ * @brief Checks if `a * 10 + sign * b` will overflow
+ *
+ * @param a Integer value
+ * @param sign The sign (-1 or +1)
+ * @param b A value between 0 and 9
+ *
+ * @returns 1 If `a * 10 + sign * b` will overflow
+ */
+int
+muladd_10s_overflow(int a, int sign, int b);
 
 #endif // UTIL_H

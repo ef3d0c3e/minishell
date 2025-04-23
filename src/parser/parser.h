@@ -177,6 +177,21 @@ parser_next_operator(
 	size_t end,
 	int min_prec);
 
+/**
+ * @brief Utility that parses a token to an integer
+ *
+ * If the token is not a TOK_DIGIT, or the integer overflows, an error is
+ * reported.
+ *
+ * @param parser The parser
+ * @param pos Position of the token in `parser`
+ * @param value Stores the result on success
+ *
+ * @returns 1 on success, 0 if an error has been reported
+ */
+int
+token_atoi(t_parser *parser, size_t pos, int *value);
+
 /** @brief Command parser */
 t_ast_node
 *parse_cmd(t_parser *parser, size_t start, size_t end);
@@ -201,39 +216,5 @@ parse_word(
 	size_t start,
 	size_t end,
 	t_string_buffer *buf);
-
-/**
- * @brief Parses redirection into `redirs`
- *
- * @param parser Token sourcer
- * @param start Start token
- * @param end End token
- * @param cmd Command to parse into
- *
- * @returns The number of consumed token, 0 if no tokens were consumed
- */
-size_t
-parse_redir(
-	t_parser *parser,
-	size_t start,
-	size_t end,
-	t_redirections *redirs);
-
-/**
- * @brief Parses redirections repeatedly into `redirs`
- *
- * @param parser Token sourcer
- * @param start Start token
- * @param end End token
- * @param cmd Command to parse into
- *
- * @returns The number of consumed token, 0 if no tokens were consumed
- */
-size_t
-parse_redir_repeat(
-	t_parser *parser,
-	size_t start,
-	size_t end,
-	t_redirections *redirs);
 
 #endif // PARSER_H

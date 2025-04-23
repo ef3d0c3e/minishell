@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   arith.c                                            :+:      :+:    :+:   */
+/*   parse_redir2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,35 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util.h"
-#include <limits.h>
+#include <parser/parser.h>
 
 size_t
-	min_sz(size_t x, size_t y)
+	redir_parser3(
+	t_parser *parser,
+	size_t start,
+	t_redirections *redirs)
 {
-	if (x <= y)
-		return (x);
-	return (y);
-}
-
-size_t
-	max_sz(size_t x, size_t y)
-{
-	if (x >= y)
-		return (x);
-	return (y);
-}
-
-int
-	muladd_10s_overflow(int a, int sign, int b)
-{
-	const int	mul10 = a * 10;
-	const int	sb = sign * b;
-
-	if (a > INT_MAX / 10 || a < INT_MIN / 10)
-		return (1);
-	if ((sb > 0 && mul10 > INT_MAX - sb) ||
-			(sb < 0 && mul10 < INT_MIN - sb))
-		return (1);
-	return (0);
+	printf("3-redir detected");
+	return (3);
 }

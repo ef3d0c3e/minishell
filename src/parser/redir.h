@@ -12,9 +12,14 @@
 #ifndef REDIR_H
 # define REDIR_H
 
+#include "util/util.h"
 # include <tokenizer/tokenizer.h>
 
 typedef struct s_parser	t_parser;
+
+/******************************************************************************/
+/* Redirection definitions and utilities                                      */
+/******************************************************************************/
 
 /** @brief The types of redirections */
 enum e_redir_type
@@ -50,6 +55,7 @@ typedef union u_redirectee
 	t_string_buffer	filename;
 }	t_redirectee;
 
+/** @brief Stores a redirection */
 typedef struct s_redirection
 {
 	/** @brief Redirect from */
@@ -64,19 +70,17 @@ typedef struct s_redirection
 	char				*here_doc_eof;
 }	t_redirection;
 
-///**
-// * @brief Redirection data, can be part of all nodes, all files need to be
-// * created before executing the nodes, only the last redirection is actually
-// * used, other are left as empty files. `clobbering` may apply,
-// * see: 3.6.2 Redirecting Output
-// */
-//typedef struct s_redir_data
-//{
-//	t_redirectee	from;
-//	t_redirectee	to;
-//}	t_redir_data;
-//
-/** @brief Stores redirections */
+/**
+ * @brief Checks if the redirection destination is a WORD
+ *
+ * @param redir The redirection
+ * @return 1 If the redirection destination is a WORD, 0 if it is a file
+ * descriptor.
+ */
+int
+redir_dest_word(const t_redirection *redir);
+
+/** @brief Stores multiple redirections */
 typedef struct s_redirections
 {
 	/** @brief Redirections */
@@ -87,22 +91,72 @@ typedef struct s_redirections
 	size_t			redirs_capacity;
 }	t_redirections;
 
-/** @brief Pattern types for matching redirection tokens */
-typedef struct s_redir_tok_type
-{
-	const char			*tok;
-	enum e_redir_type	type;
-}	t_redir_tok_type;
+/**
+ * @brief Frees an array of redirections
+ *
+ * @param redirs The array to free
+ */
+void
+redirs_free(t_redirections *redirs);
 
+/**
+ * @brief Prints a list of redirections to stderr
+ *
+ * @param redirs List of redirections to print
+ * @param depth Display depth
+ */
 void
 print_redir(
 	const t_redirections *redirs,
 	size_t depth);
+/**
+ * @brief Adds a redirection to `redirs`
+ *
+ * @param redirs Redirection list to append to
+ * @param source Redirection source (fd)
+ * @param desc Redirection destination (fd or filename)
+ * @param type Type of redirection
+ */
+void
+make_redirection(
+	t_redirections *redirs,
+	t_redirectee source,
+	t_redirectee dest,
+	enum e_redir_type type);
+
+/** @brief Pattern types for matching redirection tokens */
+typedef struct s_redir_tok_type
+{
+	/** @brief The token to match */
+	const char			*tok;
+	/** @brief The type of redirection */
+	enum e_redir_type	type;
+}	t_redir_tok_type;
 
 /**
- * @brief Parses redirections in the following formats:
+ * @brief Matches from an array `t_redir_tok_type`
  *
+ * @param types The redirection types to match from
+ * @param len Number of `types` to match from
+ * @param token The word to match against
+ *
+ * @returns The matched redirection type from `types`, or NULL if not found
+ */
+const t_redir_tok_type
+*redir_alternatives(
+	const t_redir_tok_type *types,
+	size_t len,
+	const char *token);
+
+/******************************************************************************/
+/* Redirection parsing                                                        */
+/******************************************************************************/
+
+/**
+ * @brief Parses redirections of the form `[REDIR][WORD|N|-]`,
+ * using the following grammar:
  * (Extract from bash Yacc grammar)
+ * @code{.y}
  * // [REDIR OUT][WORD]
  * |	'>' WORD
  * {
@@ -206,6 +260,7 @@ print_redir(
  * 	redir.dest = 0;
  * 	$$ = make_redirection (source, r_close_this, redir, 0);
  * }
+ * @endcode
  *
  * @param parser The parser
  * @param start Redirection start position
@@ -214,9 +269,48 @@ print_redir(
  * @returns The number of skipped tokens
 */
 size_t
-	redir_parse(
+	redir_parser2(
 	t_parser *parser,
 	size_t start,
+	t_redirections *redirs);
+
+size_t
+	redir_parser3(
+	t_parser *parser,
+	size_t start,
+	t_redirections *redirs);
+
+/**
+ * @brief Parses redirection into `redirs`
+ *
+ * @param parser Token sourcer
+ * @param start Start token
+ * @param end End token
+ * @param cmd Command to parse into
+ *
+ * @returns The number of consumed token, 0 if no tokens were consumed
+ */
+size_t
+parse_redir(
+	t_parser *parser,
+	size_t start,
+	size_t end,
+	t_redirections *redirs);
+/**
+ * @brief Parses redirections repeatedly into `redirs`
+ *
+ * @param parser Token sourcer
+ * @param start Start token
+ * @param end End token
+ * @param cmd Command to parse into
+ *
+ * @returns The number of consumed token, 0 if no tokens were consumed
+ */
+size_t
+parse_redir_repeat(
+	t_parser *parser,
+	size_t start,
+	size_t end,
 	t_redirections *redirs);
 
 #endif // REDIR_H

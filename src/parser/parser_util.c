@@ -44,3 +44,32 @@ size_t
 	}
 	return ((size_t)-1);
 }
+
+int
+	token_atoi(t_parser *parser, size_t start, int *value)
+{
+	const t_token	*tok = &parser->list.tokens[start];
+	size_t			pos;
+	int				sign;
+
+	if (tok->type != TOK_DIGIT)
+		return (parser_error(parser, ft_strdup("Expected number"), start, start),
+			0);
+	pos = 0;
+	sign = 1;
+	if (tok->word.str[pos] == '+' && ++pos)
+		sign = 1;
+	else if (tok->word.str[pos] == '-' && ++pos)
+		sign = -1;
+	*value = 0;
+	while (pos < tok->word.len && tok->word.str[pos] >= '0'
+		&& tok->word.str[pos] <= '9')
+	{
+		if (muladd_10s_overflow(*value, sign, tok->word.str[pos] - '0'))
+			return (parser_error(parser, ft_strdup("Integer has overflown"),
+				start, start), 0);
+		*value = *value * 10 + sign * (tok->word.str[pos] - '0');
+		++pos;
+	}
+	return (1);
+}
