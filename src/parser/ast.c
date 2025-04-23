@@ -73,7 +73,7 @@ void
 	{
 		dprintf(2, "SUBSHELL\n");
 		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
-		print_redir(&head->cmd.redirs, depth + 2);
+		print_redir(&head->expr.redirs, depth + 2);
 	}
 	else if (head->type == NODE_SUBEXPR)
 	{

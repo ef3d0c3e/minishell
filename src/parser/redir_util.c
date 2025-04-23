@@ -79,6 +79,8 @@ void
 
 	if (!redirs->redirs_size)
 		return ;
+	for (size_t i = 1; i < depth; ++i)
+		write(2, " | ", 3);
 	ft_dprintf(2, "REDIRS:\n");
 	i = 0;
 	while (i < redirs->redirs_size)

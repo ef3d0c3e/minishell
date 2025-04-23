@@ -49,13 +49,13 @@ int
 	token_precedence(const t_token *tok)
 {
 	if (tok->type == TOK_PIPELINE)
-		return (0);
+		return (2);
 	else if (tok->type == TOK_SEQUENCE || tok->type == TOK_NEWLINE)
 	{
 		if (!ft_strcmp("&&", tok->reserved_word)
 			|| !ft_strcmp("||", tok->reserved_word))
-			return (2);
-		return (1);
+			return (1);
+		return (0);
 	}
 	return (-1);
 }

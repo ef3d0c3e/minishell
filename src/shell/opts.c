@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/eval.h>
 
 static void
@@ -36,8 +37,8 @@ void
 		"value of the last (rightmost) command to exit with a non-zero status,"
 		"or zero if all commands in the pipeline exit successfully."
 		"This option is disabled by default.", 0);
-	insert_opt(env, "dbg_token", "Display tokens for debugging", 0);
-	insert_opt(env, "dbg_ast", "Display AST for debugging", 0);
+	insert_opt(env, "dbg_token", "Display tokens for debugging", 1);
+	insert_opt(env, "dbg_ast", "Display AST for debugging", 1);
 }
 
 int
@@ -49,8 +50,7 @@ int
 	if (!opt)
 	{
 		ft_asprintf(&err, "Failed to find option `%s`", name);
-		shell_error(env, err, SRC_LOCATION);
-		shell_exit(env, EXIT_FAILURE);
+		shell_fail(env, err, SRC_LOCATION);
 	}
 	return (opt->value);
 }

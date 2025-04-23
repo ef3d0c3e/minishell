@@ -45,8 +45,8 @@ enum e_node_type
 struct s_node_expr
 {
 	/** @brief Expression substring */
-	t_string	input;
-	t_ast_node	*head;
+	t_string		input;
+	t_ast_node		*head;
 	/** @brief Redirections */
 	t_redirections	redirs;
 };
