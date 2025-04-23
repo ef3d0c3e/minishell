@@ -10,33 +10,39 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
 
 int
 	token_digit(t_token_list *list, t_u8_iterator *it)
 {
 	const size_t	start = it->byte_pos;
-	int				p;
-	int				digit;
+	t_string		peek;
+	t_string_buffer	digit;
 
-	if (it->codepoint.str[0] < '0' || it->codepoint.str[0] > '9')
-		return (0);
-	digit = 0;
-	p = 0;
-	while (it->codepoint.len
-		&& it->codepoint.str[0] >= '0' && it->codepoint.str[0] <= '9')
+	if (it->codepoint.str[0] == '+' || it->codepoint.str[0] == '-')
 	{
-		digit = digit * 10 + (it->codepoint.str[0] - '0');
-		if (digit < p)
-			p = -1;
-		if (p >= 0)
-			p = digit;
+		peek = it_substr(it, 2);
+		if (peek.len < 2 || (peek.str[1] < '0' || peek.str[1] > '9'))
+			return (0);
+		stringbuf_init(&digit, 16);
+		stringbuf_append(&digit, it->codepoint);
+		it_advance(it, 1);
+	}
+	else if (it->codepoint.str[0] < '0' || it->codepoint.str[0] > '9')
+		return (0);
+	else
+		stringbuf_init(&digit, 16);
+	while (it->codepoint.len && it->codepoint.str[0] >= '0'
+			&& it->codepoint.str[0] <= '9')
+	{
+		stringbuf_append(&digit, it->codepoint);
 		it_next(it);
 	}
-	if (p < 0)
-		token_error(list, start, it->byte_pos, "Number > 2**31 - 1");
-	else
-		token_list_push(list, (t_token){
-			.type = TOK_DIGIT, .start = start, .end = it->byte_pos,
-			.digit = digit});
+	token_list_push(list, (t_token){
+		.type = TOK_DIGIT,
+		.start = start,
+		.end = it->byte_pos,
+		.word = digit
+	});
 	return (1);
 }

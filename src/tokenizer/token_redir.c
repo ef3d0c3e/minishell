@@ -11,58 +11,17 @@
 /* ************************************************************************** */
 #include "tokenizer.h"
 
-/*
-int
-	match_simple(
-		t_token_list *list,
-		t_u8_iterator *it,
-		struct s_token_redir *redir)
-{
-	if (str_cmp(it_substr(it, 3), "&>>"))
-		redir->type = REDIR_OUTPUT_AND_ERR;
-	else if (str_cmp(it_substr(it, 2), "&>"))
-		redir->type = REDIR_OUTPUT_AND_ERR;
-	else if (str_cmp(it_substr(it, 2), "<&"))
-	{
-		redir->type = REDIR_INPUT;
-		redir->duplicate = 1;
-	}
-	else if (str_cmp(it_substr(it, 2), ">&"))
-	{
-		redir->type = REDIR_OUTPUT;
-		redir->duplicate = 1;
-	}
-	else if (str_cmp(it_substr(it, 2), ">>"))
-	{
-		redir->type = REDIR_OUTPUT;
-		redir->append = 1;
-	}
-	else if (str_cmp(it_substr(it, 1), ">|"))
-	{
-		redir->type = REDIR_OUTPUT;
-		redir->clobber = 1;
-	}
-	else if (str_cmp(it_substr(it, 1), ">"))
-		redir->type = REDIR_OUTPUT;
-	else if (str_cmp(it_substr(it, 1), "<"))
-		redir->type = REDIR_INPUT;
-	else
-		return (0);
-	return (1);
-}
-*/
-
+// TODO: Heredoc/herestrings read from stdin
 int
 	token_redir(t_token_list *list, t_u8_iterator *it)
 {
-	static const char		*redirs[] = {"<<<", "<<-", "&>>", "<<", ">>", "&>",
-										"<>", ">&", "<&", ">|", ">", "<", NULL};
+	static const char		*redirs[] = {"<<<", "&>>", "<<-", "&>>", "<&",
+		">&", "&>", "<>", ">|", "|&", ">>", "<<", "<", ">", NULL};
 	const char				*redir;
 
 	redir = str_alternatives(it_substr(it, 3), redirs);
 	if (!redir)
 		return (0);
-	// TODO: Heredoc/herestrings
 	token_list_push(list, (t_token){
 		.type = TOK_REDIR,
 		.start = it->byte_pos,

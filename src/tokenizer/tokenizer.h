@@ -100,55 +100,46 @@ enum e_token_type
 	TOK_SPACE,
 	/** @brief Newline token: `\n` */
 	TOK_NEWLINE,
-
 	/** @brief A positive number between [0, INT_MAX] */
 	TOK_DIGIT,
-
 	/** @brief Grouping character, one of `{, (, }, )` */
 	TOK_GROUPING,
-
 	/**
 	 * @brief Pipeline token, one of `|`, `|&`
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Pipelines
 	 */
 	TOK_PIPELINE,
-
 	/**
 	 * @brief Sequence separator tokens
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Lists
 	 */
 	TOK_SEQUENCE,
-
 	/**
 	 * @brief Keyword token
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Reserved-Words
 	 */
 	TOK_KEYWORD,
-
 	/**
 	 * @brief Command substitution token: `$(cmd)`
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Process-Substitution
 	 */
 	TOK_CMD_SUB,
-
 	/**
 	 * @brief Arithmetic token: `$((cmd))`
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Arithmetic-Expansion
 	 */
 	TOK_ARITH,
-
 	/**
 	 * @brief Variable expansion token: `$VAR`
 	 *
 	 * Var is matched from `[a-zA-Z0-9_]`
 	 */
 	TOK_PARAM_SIMPLE,
-
 	/**
 	 * @brief Variable expansion token: `${VAR}`
 	 *
@@ -156,23 +147,16 @@ enum e_token_type
 	 * Expansion
 	 */
 	TOK_PARAM,
-
 	/**
 	 * @brief Single quoted text
+	 *
+	 * Single quoted text undergoes no further transformations
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Single-Quotes
 	 */
 	TOK_SINGLE_QUOTE,
-	/**
-	 * @brief Double quoted text
-	 *
-	 * https://www.gnu.org/software/bash/manual/bash.html#Double-Quotes
-	 */
-	TOK_DOUBLE_QUOTE,
-
 	/** @brief Leftover content from tokenization */
 	TOK_WORD,
-
 	/**
 	 * @brief Redirection tokens, e.g `<` `>`
 	 *
@@ -206,8 +190,6 @@ typedef struct s_token
 	size_t				end;
 
 	union {
-		/** @brief Digit token */
-		int						digit;
 		/** @brief Reserved name for token, e.g keyword name, grouping char */
 		const char				*reserved_word;
 		/** @brief String content */

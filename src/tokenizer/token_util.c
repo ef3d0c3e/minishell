@@ -19,7 +19,7 @@ int
 	// TODO
 	return (type == TOK_WORD
 		|| type == TOK_SINGLE_QUOTE
-		|| type == TOK_DOUBLE_QUOTE
+		|| type == TOK_DIGIT
 		|| type == TOK_DIGIT
 		|| type == TOK_KEYWORD);
 }
@@ -30,15 +30,10 @@ int
 	// TODO
 	if (tok->type == TOK_WORD
 		|| tok->type == TOK_SINGLE_QUOTE
-		|| tok->type == TOK_DOUBLE_QUOTE)
+		|| tok->type == TOK_DIGIT)
 	{
 		stringbuf_append(buf, (t_string){.str = tok->word.str,
 				.len = tok->word.len });
-		return (1);
-	}
-	else if (tok->type == TOK_DIGIT)
-	{
-		stringbuf_itoa(buf, tok->digit);
 		return (1);
 	}
 	else if (tok->type == TOK_KEYWORD)

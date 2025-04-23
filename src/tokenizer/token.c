@@ -27,7 +27,6 @@ void
 	[TOK_HEREDOC] = "HEREDOC",
 	[TOK_HERESTRING] = "HERESTRING",
 	[TOK_SINGLE_QUOTE] = "SINGLE QUOTE",
-	[TOK_DOUBLE_QUOTE] = "DOUBLE QUOTE",
 	[TOK_CMD_SUB] = "COMMAND SUB",
 	[TOK_PARAM_SIMPLE] = "PARAM_SIMPLE",
 	[TOK_PARAM] = "PARAM",
@@ -50,10 +49,9 @@ void
 {
 	if (token->type == TOK_WORD
 		|| token->type == TOK_SINGLE_QUOTE
-		|| token->type == TOK_DOUBLE_QUOTE
+		|| token->type == TOK_DIGIT
 		|| token->type == TOK_CMD_SUB
 		|| token->type == TOK_PARAM_SIMPLE
 		|| token->type == TOK_PARAM)
 		stringbuf_free(&token->word);
-	// TODO
 }
