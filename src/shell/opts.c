@@ -36,8 +36,8 @@ void
 		"value of the last (rightmost) command to exit with a non-zero status,"
 		"or zero if all commands in the pipeline exit successfully."
 		"This option is disabled by default.", 0);
-	insert_opt(env, "dbg_token", "Display tokens for debugging", 0);
-	insert_opt(env, "dbg_ast", "Display AST for debugging", 0);
+	insert_opt(env, "dbg_token", "Display tokens for debugging", 1);
+	insert_opt(env, "dbg_ast", "Display AST for debugging", 1);
 }
 
 int

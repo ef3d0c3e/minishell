@@ -379,9 +379,43 @@ redir_parser3(
 	t_parser *parser,
 	size_t start,
 	t_redirections *redirs);
+/**
+ * @brief Parses redirections of the form `[REDIR][NUM|WORD][-]`,
+ *
+ * @param parser The parser
+ * @param start Redirection start position
+ * @param redirs The redirections to store to
+ *
+ * @returns The number of skipped tokens
+ */
+size_t
+redir_parser3_move(
+	t_parser *parser,
+	size_t start,
+	t_redirections *redirs);
+/**
+ * @brief Parses redirections of the form `[NUM][REDIR][NUM|WORD][-]`,
+ *
+ * @param parser The parser
+ * @param start Redirection start position
+ * @param redirs The redirections to store to
+ *
+ * @returns The number of skipped tokens
+ */
+size_t
+redir_parser4(
+	t_parser *parser,
+	size_t start,
+	t_redirections *redirs);
 
 /**
  * @brief Parses redirection into `redirs`
+ *
+ * The following forms of redirections are recognized:
+ *  - [REDIR][WORD|NUM|-]
+ *  - [REDIR][WORD|NUM][-]
+ *  - [NUM][REDIR][WORD|NUM|-]
+ *  - [NUM][REDIR][WORD|NUM][-]
  *
  * @param parser Token sourcer
  * @param start Start token

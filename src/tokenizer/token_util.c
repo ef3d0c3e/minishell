@@ -20,7 +20,6 @@ int
 	return (type == TOK_WORD
 		|| type == TOK_SINGLE_QUOTE
 		|| type == TOK_DIGIT
-		|| type == TOK_DIGIT
 		|| type == TOK_MINUS
 		|| type == TOK_KEYWORD);
 }

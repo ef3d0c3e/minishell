@@ -17,19 +17,29 @@ size_t	parse_redir(
 	size_t end,
 	t_redirections *redirs)
 {
-	const t_token	*tok = &parser->list.tokens[start];
+	const t_token	*list = parser->list.tokens + start;
+	int				status;
 
-	if (end - start < 2)
-		return (0);
-	if (tok->type == TOK_REDIR)
-		return (redir_parser2(parser, start, redirs));
-	else if (tok->type == TOK_DIGIT
-		&& parser->list.tokens[start + 1].type == TOK_REDIR
-		&& end - start >= 3)
-		return (redir_parser3(parser, start, redirs));
-	// TODO: If redir is of the heredoc type, push to the heredoc stack
-	// in order to read input after successful command parsing
-	return (0);
+	status = 0;
+	if (end - start >= 4 && list[0].type == TOK_DIGIT && list[1].type
+		== TOK_REDIR && token_isword(list[2].type) && list[3].type == TOK_MINUS)
+		status = redir_parser4(parser, start, redirs);
+	else if (end - start >= 3 && list[0].type == TOK_DIGIT && list[1].type
+		== TOK_REDIR && token_isword(list[2].type))
+		status = redir_parser3(parser, start, redirs);
+	else if (end - start >= 3 && list[0].type == TOK_DIGIT
+		&& token_isword(list[1].type) && list[2].type == TOK_MINUS)
+		status = redir_parser3_move(parser, start, redirs);
+	else if (end - start >= 2 && list[0].type == TOK_REDIR
+		&& token_isword(list[1].type))
+		status = redir_parser2(parser, start, redirs);
+	else if (list[0].type == TOK_REDIR)
+	{
+		parser_error(parser, ft_strdup("Invalid redirections"),
+			start, start + 1);
+		status = 1;
+	}
+	return (status);
 }
 
 size_t	parse_redir_repeat(

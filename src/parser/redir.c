@@ -59,5 +59,12 @@ void
 	redir.type = type;
 	redir.flags = 0;
 	redir.here_doc_eof = NULL;
+	if (type == R_DUPLICATING_INPUT_WORD || type == R_DUPLICATING_OUTPUT_WORD)
+	{
+		if (dest.filename.str[dest.filename.len - 1])
+		{
+			--dest.filename.len;
+		}
+	}
 	add_redir(redirs, redir);
 }

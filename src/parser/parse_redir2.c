@@ -12,30 +12,30 @@
 #include <parser/parser.h>
 
 /** @brief Parses [REDIR][NUMBER] */
-static size_t
+static int
 	parse_redir_number(
 	t_parser *parser,
 	size_t start,
 	t_redirections *redirs)
 {
-	const t_token	*left = &parser->list.tokens[start + 1];
+	const t_token	*tok = &parser->list.tokens[start + 1];
 	int				num;
 
 	if (!token_atoi(parser, start + 1, &num))
 		return (0);
-	if (!ft_strcmp(left->reserved_word, "<&"))
+	if (!ft_strcmp(tok->reserved_word, "<&"))
 		make_redirection(redirs, (t_redirectee){.fd = 0},
 			(t_redirectee){.fd = num}, R_DUPLICATING_INPUT);
-	else if (!ft_strcmp(left->reserved_word, ">&"))
+	else if (!ft_strcmp(tok->reserved_word, ">&"))
 		make_redirection(redirs, (t_redirectee){.fd = 1},
 			(t_redirectee){.fd = num}, R_DUPLICATING_OUTPUT);
 	else
 		return (0);
-	return (2);
+	return (1);
 }
 
 /** @brief Parses [REDIR][-] */
-static size_t
+static int
 	parse_redir_minus(
 	t_parser *parser,
 	size_t start,
@@ -51,11 +51,11 @@ static size_t
 			(t_redirectee){.fd = 0}, R_CLOSE_THIS);
 	else
 		return (0);
-	return (2);
+	return (1);
 }
 
 /** @brief Parses redirections [REDIR][WORD] */
-static size_t
+static int
 	parse_redir_word(
 	t_parser *parser,
 	size_t start,
@@ -78,12 +78,12 @@ static size_t
 			parser->list.tokens[start].reserved_word);
 	if (found)
 		return (make_redirection(redirs, (t_redirectee){.fd = 1},
-			(t_redirectee){.filename = word}, found->type), 2);
+			(t_redirectee){.filename = word}, found->type), 1);
 	found = redir_alternatives(ins, 6,
 			parser->list.tokens[start].reserved_word);
 	if (found)
 		return (make_redirection(redirs, (t_redirectee){.fd = 0},
-			(t_redirectee){.filename = word}, found->type), 2);
+			(t_redirectee){.filename = word}, found->type), 1);
 	stringbuf_free(&word);
 	return (0);
 }

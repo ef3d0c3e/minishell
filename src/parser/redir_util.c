@@ -34,7 +34,8 @@ int
 	redir_dest_word(const t_redirection *redir)
 {
 	if (redir->type == R_CLOSE_THIS || redir->type == R_DUPLICATING_INPUT
-		|| redir->type == R_DUPLICATING_OUTPUT)
+		|| redir->type == R_DUPLICATING_OUTPUT || redir->type == R_MOVE_INPUT
+		|| redir->type == R_MOVE_OUTPUT)
 		return (0);
 	return (1);
 }
@@ -85,7 +86,14 @@ void
 		for (size_t i = 0; i < depth; ++i)
 			write(2, " | ", 3);
 		redir = &redirs->redirs[i];
-		ft_dprintf(2, "%s fl=%05o\n", redir_name(redir->type), redir->flags);
+		if (redir_dest_word(redir))
+		{
+			ft_dprintf(2, "%s fl=%05o %d:'%.*s'\n", redir_name(redir->type), redir->flags, redir->redirector.fd, (int)redir->redirectee.filename.len, redir->redirectee.filename.str);
+		}
+		else
+		{
+			ft_dprintf(2, "%s fl=%05o %d:%d\n", redir_name(redir->type), redir->flags, redir->redirector.fd, redir->redirectee.fd);
+		}
 		++i;
 	}
 }
