@@ -39,7 +39,7 @@ static void
 }
 
 int
-	redir_dup(t_environ *env, t_redirs_stack *stack, int fd1, int fd2)
+	redir_dup(t_shell *shell, t_redirs_stack *stack, int fd1, int fd2)
 {
 	/*
 	int	fds[2];

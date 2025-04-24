@@ -13,7 +13,7 @@
 #include <expansion/expansion.h>
 
 int
-expand_filename(t_environ *env, t_token *token, t_token_list *result)
+expand_filename(t_shell *shell, t_token *token, t_token_list *result)
 {
 	if (token->type != TOK_WORD)
 		return (0);

@@ -20,7 +20,7 @@ void
 }
 
 int
-	expand_cmdsub(t_environ *env, t_token *token, t_token_list *result)
+	expand_cmdsub(t_shell *shell, t_token *token, t_token_list *result)
 {
 	t_string_buffer	buf;
 	char			*err;

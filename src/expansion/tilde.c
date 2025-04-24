@@ -15,7 +15,7 @@
 /** @brief Expands from the content of a variable */
 static inline int
 	expand_from_var(
-	t_environ *env,
+	t_shell *shell,
 	t_token *token,
 	size_t len,
 	const char	*varname)
@@ -41,7 +41,7 @@ static inline int
 /** @brief Expands using a user's home directory */
 static inline int
 	expand_home(
-	t_environ *env,
+	t_shell *shell,
 	t_string str,
 	t_token *token,
 	t_token_list *result)
@@ -71,7 +71,7 @@ static inline int
 }
 
 int
-	expand_tilde(t_environ *env, t_token *token, t_token_list *result)
+	expand_tilde(t_shell *shell, t_token *token, t_token_list *result)
 {
 	t_string	str;
 	size_t		end;

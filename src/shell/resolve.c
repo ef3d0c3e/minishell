@@ -20,7 +20,7 @@
  *  - (0) if the file is executable
  */
 static int
-	get_executable_status(t_environ *env, const char *pathname)
+	get_executable_status(t_shell *shell, const char *pathname)
 {
 	struct stat	sb;
 	char		*err;
@@ -45,7 +45,7 @@ static int
  * is returned.
  */
 static char
-	*resolve_from_path(t_environ *env, const char *name)
+	*resolve_from_path(t_shell *shell, const char *name)
 {
 	char	*resolved;
 
@@ -61,7 +61,7 @@ static char
 }
 
 int
-	resolve_eval(t_environ *env, const char *name, char **result)
+	resolve_eval(t_shell *shell, const char *name, char **result)
 {
 	char		*cwd;
 	char		*err;

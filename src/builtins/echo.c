@@ -12,7 +12,7 @@
 #include <shell/eval.h>
 
 static int
-	echo(t_environ *env, int argc, char **argv)
+	echo(t_shell *shell, int argc, char **argv)
 {
 	int	i;
 	int	start;

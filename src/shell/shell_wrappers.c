@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval_util.c                                        :+:      :+:    :+:   */
+/*   shell_wrappers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,25 +9,44 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include <shell/eval.h>
-#include <sys/types.h>
+#include <shell/shell.h>
+
+int
+	shell_open(t_shell *shell, const char *filename, int flags, int mode)
+{
+	// TODO
+}
+
+int
+	shell_close(t_shell *shell, int fd)
+{
+	// TODO
+}
 
 pid_t
-	shell_fork(t_environ *env, const char *function)
+	shell_fork(t_shell *shell, const char *function)
 {
 	pid_t	pid;
 	char	*err;
 
 	pid = fork();
-	if (env->is_child && pid == -1)
-		shell_perror(env, "fork() failed", function);
+	if (shell->is_child && pid == -1)
+		shell_perror(shell, "fork() failed", function);
 	else if (pid == -1)
 	{
 		ft_asprintf(&err, "fork() failed: %m");
-		shell_error(env, err, function);
+		shell_error(shell, err, function);
 	}
 	if (!pid)
-		env->is_child = 1;
+		shell->is_child = 1;
 	return (pid);
+}
+
+void
+	shell_exit(t_shell *shell, int status)
+{
+	if (!shell_error_flush(shell))
+		status = -1;
+	shell_free(shell);
+	exit(status);
 }

@@ -13,7 +13,7 @@
 
 /** @brief Closes fds and waits for pipes execution */
 static void
-	pipe_wait(t_environ *env, int *fds, pid_t *pids, int redir_stderr)
+	pipe_wait(t_shell *shell, int *fds, pid_t *pids, int redir_stderr)
 {
 	int	status[2];
 
@@ -34,7 +34,7 @@ static void
 
 /** @brief Runs pipe with stdout */
 static void
-	pipe_stdout(t_environ *env, t_ast_node* pipeline)
+	pipe_stdout(t_shell *shell, t_ast_node* pipeline)
 {
 	int		fds[2];
 	pid_t	pids[2];
@@ -66,7 +66,7 @@ static void
 
 /** @brief Runs pipe with stdout and stderr redirected */
 static void
-	pipe_stdout_stderr(t_environ *env, t_ast_node* pipeline)
+	pipe_stdout_stderr(t_shell *shell, t_ast_node* pipeline)
 {
 	int		fds[4];
 	pid_t	pids[2];
@@ -103,7 +103,7 @@ static void
 }
 
 void
-	eval_pipeline(t_environ *env, t_ast_node* pipeline)
+	eval_pipeline(t_shell *shell, t_ast_node* pipeline)
 {
 	const int	redir_stderr = pipeline->logic.token.reserved_word[1] == '&';
 	int			status;

@@ -27,7 +27,7 @@ static void
 }
 
 int
-	repl(t_environ *env, char *s)
+	repl(t_shell *shell, char *s)
 {
 	t_string		input;
 	t_token_list	list;

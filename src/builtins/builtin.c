@@ -18,13 +18,13 @@ static void
 }
 
 static void
-	insert_builtin(t_environ *env, const t_builtin *builtin)
+	insert_builtin(t_shell *shell, const t_builtin *builtin)
 {
 	rb_insert(&env->builtins, (void *)builtin->name, (void *)builtin);
 }
 
 void
-	init_builtin(t_environ *env)
+	init_builtin(t_shell *shell)
 {
 	env->builtins = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			noop, noop);

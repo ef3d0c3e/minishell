@@ -65,7 +65,7 @@ static inline int
 }
 
 int
-	passwd_query(t_environ *env, char *username, struct s_passwd_ent *ent)
+	passwd_query(t_shell *shell, char *username, struct s_passwd_ent *ent)
 {
 	char	*err;
 	int		fd;

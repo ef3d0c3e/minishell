@@ -11,34 +11,9 @@
 /* ************************************************************************** */
 #include <shell/eval.h>
 
-void
-	shell_exit(t_environ *env, int status)
-{
-	if (!shell_error_flush(env))
-		status = -1;
-	env_free(env);
-	exit(status);
-}
 
 void
-	shell_fail(t_environ *env, const char *msg, const char *func)
-{
-	shell_error(env, ft_strdup(msg), func);
-	shell_exit(env, EXIT_FAILURE);
-}
-
-void
-	shell_perror(t_environ *env, const char *msg, const char *func)
-{
-	char	*err;
-
-	ft_asprintf(&err, "%s: %m", msg);
-	shell_error(env, err, func);
-	shell_exit(env, EXIT_FAILURE);
-}
-
-void
-	eval(t_environ *env, t_ast_node* program)
+	eval(t_shell *shell, t_ast_node* program)
 {
 	if (!program)
 		return ;

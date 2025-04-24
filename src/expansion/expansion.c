@@ -51,7 +51,7 @@ static int
 }
 
 static t_token_list
-	token_join(t_environ *env, t_token_list list)
+	token_join(t_shell *shell, t_token_list list)
 {
 	t_token_list	new;
 	size_t			i;
@@ -74,7 +74,7 @@ static t_token_list
 }
 
 t_token_list
-	token_expand(t_environ *env, t_token_list list)
+	token_expand(t_shell *shell, t_token_list list)
 {
 	t_token_list	new;
 	size_t			i;

@@ -12,7 +12,7 @@
 #include <shell/eval.h>
 
 static int
-	fds(t_environ *env, int argc, char **argv)
+	fds(t_shell *shell, int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;

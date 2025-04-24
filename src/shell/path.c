@@ -16,7 +16,7 @@
 
 /** @brief Check that a given program is executable */
 static void
-	path_check(t_environ *env, const char *dirname, struct dirent *ent)
+	path_check(t_shell *shell, const char *dirname, struct dirent *ent)
 {
 	struct stat	sb;
 	char		*fullpath;
@@ -42,7 +42,7 @@ static void
 
 /** @brief Populate from directory */
 static void
-	populate_path(t_environ *env, const char *dirname)
+	populate_path(t_shell *shell, const char *dirname)
 {
 	char			*str;
 	DIR				*dir;
@@ -73,7 +73,7 @@ static void
 
 /** @brief Reads the `PATH` and populate the programs entries */
 static void
-	read_path(t_environ *env)
+	read_path(t_shell *shell)
 {
 	const char	*path = rb_find(&env->env, "PATH");
 	const char	*prev = path;
@@ -99,7 +99,7 @@ static void
 }
 
 void
-	path_populate(t_environ *env)
+	path_populate(t_shell *shell)
 {
 	rb_free(&env->path_program);
 	read_path(env);

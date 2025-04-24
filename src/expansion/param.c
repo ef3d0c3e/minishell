@@ -20,7 +20,7 @@ static int
 }
 
 static inline int
-	expand_param_complex(t_environ *env, t_token *token, t_token_list *result)
+	expand_param_complex(t_shell *shell, t_token *token, t_token_list *result)
 {
 	size_t			sep;
 	char			*expanded;
@@ -56,7 +56,7 @@ static inline int
 
 // TODO: Handle other param expansion with ${...}
 int
-	expand_param(t_environ *env, t_token *token, t_token_list *result)
+	expand_param(t_shell *shell, t_token *token, t_token_list *result)
 {
 	char		*expanded;
 

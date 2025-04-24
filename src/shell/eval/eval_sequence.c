@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   opts.h                                             :+:      :+:    :+:   */
+/*   eval_sequence.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,38 +9,20 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef OPTS_H
-# define OPTS_H
+#include "tokenizer/tokenizer.h"
+#include <shell/eval.h>
 
-typedef struct s_environ t_environ;
-
-/** @brief Represents a configuration option for the shell. Options can be
- * configured using the `set` builtin */
-struct s_option
-{
-	/** @brief Concise option description */
-	const char	*desc;
-	/** @brief Value of the option */
-	int			value;
-};
-
-/**
- * @brief Initializes default options for the shell
- */
 void
-init_options(t_environ *env);
-
-/**
- * @brief Gets the value of an option
- *
- * This function will call to `shell_exit()` if the option doesn't exist
- *
- * @param env The shell session
- * @param name Name of the option to get
- *
- * @returns The value of the option
- */
-int
-option_value(t_environ *env, const char *name);
-
-#endif // OPTS_H
+	eval_sequence(t_shell *shell, t_ast_node *program)
+{
+	eval(env, program->logic.left);
+	if (program->logic.token.type == TOK_NEWLINE
+		|| !ft_strcmp(program->logic.token.reserved_word, ";"))
+		eval(env, program->logic.right);
+	if (!ft_strcmp(program->logic.token.reserved_word, "&&")
+		&& !env->last_status)
+		eval(env, program->logic.right);
+	else if (!ft_strcmp(program->logic.token.reserved_word, "||")
+		&& env->last_status)
+		eval(env, program->logic.right);
+}

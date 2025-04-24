@@ -13,7 +13,7 @@
 #include <expansion/expansion.h>
 
 static void
-	repl_to_string_child(t_environ *env, char *s, int *fds)
+	repl_to_string_child(t_shell *shell, char *s, int *fds)
 {
 	char			*prompt;
 	t_string		input;
@@ -47,7 +47,7 @@ static void
 
 /** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
 static void
-	read_incoming(t_environ *env, int fd, t_string_buffer *buf)
+	read_incoming(t_shell *shell, int fd, t_string_buffer *buf)
 {
 	ssize_t	sz;
 
@@ -64,7 +64,7 @@ static void
 
 static int
 	repl_to_string_parent(
-	t_environ *env,
+	t_shell *shell,
 	t_string_buffer *buf,
 	int *fds,
 	pid_t pid)
@@ -90,7 +90,7 @@ int		waitst;
 }
 
 int
-	repl_to_string(t_environ *env, char *input, t_string_buffer *buf)
+	repl_to_string(t_shell *shell, char *input, t_string_buffer *buf)
 {
 	pid_t	pid;
 	int		fds[2];

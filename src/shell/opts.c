@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
-#include <shell/eval.h>
+#include <shell/shell.h>
 
 static void
 	noop(void *data)
@@ -19,17 +18,17 @@ static void
 }
 
 static void
-	insert_opt(t_environ *env, char *name, const char *desc, int value)
+	insert_opt(t_shell *shell, char *name, const char *desc, int value)
 {
 	struct s_option *const	opt = xmalloc(sizeof(struct s_option));
 
 	opt->desc = desc;
 	opt->value = value;
-	rb_insert(&env->opts, name, opt);
+	rb_insert(&shell->options, name, opt);
 }
 
 void
-	init_options(t_environ *env)
+	options_init(t_shell *shell)
 {
 	env->opts = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			noop, free);
@@ -45,7 +44,7 @@ void
 }
 
 int
-	option_value(t_environ *env, const char *name)
+	option_value(t_shell *shell, const char *name)
 {
 	const struct s_option	*opt = rb_find(&env->opts, (const void *)name);
 	char					*err;

@@ -20,7 +20,7 @@ static int
 
 /** @brief Opens a file in noclobber moder, returns -1 and reports on failure */
 static int
-	noclobber_open(t_environ *env, t_redirection *redir, int flags)
+	noclobber_open(t_shell *shell, t_redirection *redir, int flags)
 {
 	const char	*filename = stringbuf_cstr(&redir->redirectee.filename);
 	struct stat	sb[2];
@@ -57,7 +57,7 @@ static int
 }
 
 int
-	redir_open(t_environ *env, t_redirection *redir)
+	redir_open(t_shell *shell, t_redirection *redir)
 {
 	const char	*filename = stringbuf_cstr(&redir->redirectee.filename);
 	int			fd;

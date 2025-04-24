@@ -28,7 +28,7 @@ static void
 }
 
 static void
-	eval_exec_child(t_environ *env, t_ast_node *cmd, char *path, char **argv)
+	eval_exec_child(t_shell *shell, t_ast_node *cmd, char *path, char **argv)
 {
 	char					**envp;
 	char					*err;
@@ -51,7 +51,7 @@ static void
 }
 
 static void
-	eval_exec_parent(t_environ *env, t_ast_node *cmd, char *path, char **argv)
+	eval_exec_parent(t_shell *shell, t_ast_node *cmd, char *path, char **argv)
 {
 	pid_t	pid;
 	int		status;
@@ -71,7 +71,7 @@ static void
 }
 
 static void
-	eval_builtin(t_environ *env, t_ast_node *cmd, char **argv)
+	eval_builtin(t_shell *shell, t_ast_node *cmd, char **argv)
 {
 	const t_builtin			*builtin = rb_find(&env->builtins, argv[0]);
 	int						argc;
@@ -88,7 +88,7 @@ static void
 }
 
 int
-	eval_cmd(t_environ *env, t_ast_node *program)
+	eval_cmd(t_shell *shell, t_ast_node *program)
 {
 	int		status;
 	char	*err;

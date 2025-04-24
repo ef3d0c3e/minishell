@@ -15,7 +15,7 @@
 #include <shell/redir/eval_redir.h>
 
 void
-	do_redir(t_environ *env, t_redirs_stack *stack, t_redirections *redirs)
+	do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs)
 {
 	size_t	i;
 
@@ -28,7 +28,7 @@ void
 }
 
 void
-	undo_redir(t_environ *env, t_redirs_stack *stack)
+	undo_redir(t_shell *shell, t_redirs_stack *stack)
 {
 	t_redir_fd	*saved;
 	size_t		i;

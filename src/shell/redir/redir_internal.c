@@ -14,7 +14,7 @@
 /** @brief Handles redirections to files */
 static void
 	redir_internal_files(
-	t_environ *env,
+	t_shell *shell,
 	t_redirs_stack *stack,
 	t_redirection *redir)
 {
@@ -47,7 +47,7 @@ static void
 /** @brief Handles move and duplicate redirections */
 static void
 	redir_internal_dup_move(
-	t_environ *env,
+	t_shell *shell,
 	t_redirs_stack *stack,
 	t_redirection *redir)
 {
@@ -67,7 +67,7 @@ static void
 
 static void
 	redir_internal_close(
-	t_environ *env,
+	t_shell *shell,
 	t_redirs_stack *stack,
 	t_redirection *redir)
 {
@@ -79,7 +79,7 @@ static void
 // TODO: Add a way to keep track of opened fd, because we can't use `fcntl(F_GETFD)`
 // Probably inside an rb tree
 void
-	redir_internal(t_environ *env, t_redirs_stack *stack, t_redirection *redir)
+	redir_internal(t_shell *shell, t_redirs_stack *stack, t_redirection *redir)
 {
 	if (redir->type == R_OUTPUT_DIRECTION || redir->type == R_APPENDING_TO
 		|| redir->type == R_INPUT_DIRECTION || redir->type == R_ERR_AND_OUT

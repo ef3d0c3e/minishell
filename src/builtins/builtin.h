@@ -12,8 +12,8 @@
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-typedef struct s_environ t_environ;
-typedef int(*t_builtin_fn)(t_environ *env, int argc, char **argv);
+typedef struct s_shell t_shell;
+typedef int(*t_builtin_fn)(t_shell *shell, int argc, char **argv);
 
 typedef struct s_builtin
 {
@@ -25,10 +25,10 @@ typedef struct s_builtin
 /**
  * @brief Registers default builtins for the shell
  *
- * @param env The shell session
+ * @param shell The shell session
  */
 void
-init_builtin(t_environ *env);
+builtin_init(t_shell *shell);
 
 /**
  * @brief The `echo` builtin
