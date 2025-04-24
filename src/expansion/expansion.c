@@ -21,7 +21,8 @@ static int
 		&& ((*i && (token_precedence(&list->tokens[*i - 1]) >= 0
 		|| list->tokens[*i - 1].type == TOK_REDIR))
 		|| (*i + 1 < list->size
-		&& token_precedence(&list->tokens[*i + 1]) >= 0)))
+		&& token_precedence(&list->tokens[*i + 1]) >= 0)
+		|| *i + 1 >= list->size))
 	{
 		++(*i);
 		return (1);

@@ -29,4 +29,5 @@ void
 	env->builtins = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			noop, noop);
 	insert_builtin(env, builtin_echo());
+	insert_builtin(env, builtin_fds());
 }

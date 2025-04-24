@@ -62,7 +62,7 @@ int
 		return (env_parser_free(env), env->last_status = 2, env->last_status);
 	if (option_value(env, "dbg_ast"))
 	{
-		printf(" -- Parsing --\n");
+		ft_dprintf(2, " -- Parsing --\n");
 		ast_print_debug(input, env->program, 0);
 	}
 	eval(env, env->program);
