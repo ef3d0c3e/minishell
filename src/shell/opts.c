@@ -11,12 +11,14 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+/** @brief Does nothing */
 static void
 	noop(void *data)
 {
 	(void)data;
 }
 
+/** @brief Insert option into the registry */
 static void
 	insert_opt(t_shell *shell, char *name, const char *desc, int value)
 {
@@ -30,29 +32,29 @@ static void
 void
 	options_init(t_shell *shell)
 {
-	env->opts = rb_new((int (*)(const void *, const void *))ft_strcmp,
+	shell->options = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			noop, free);
-	insert_opt(env, "pipefail", "If set, the return value of a pipeline is the"
+	insert_opt(shell, "pipefail", "If set, the return value of a pipeline is the"
 		"value of the last (rightmost) command to exit with a non-zero status,"
 		"or zero if all commands in the pipeline exit successfully."
 		"This option is disabled by default.", 0);
-	insert_opt(env, "noclobber", "If set, redirections will not be able to"
+	insert_opt(shell, "noclobber", "If set, redirections will not be able to"
 		"overwrite existing files. To bypass noclobber mode, one can use `>|`"
 		"instead of `>`. This option is disabled by default ", 0);
-	insert_opt(env, "dbg_token", "Display tokens for debugging", 1);
-	insert_opt(env, "dbg_ast", "Display AST for debugging", 1);
+	insert_opt(shell, "dbg_token", "Display tokens for debugging", 0);
+	insert_opt(shell, "dbg_ast", "Display AST for debugging", 0);
 }
 
 int
 	option_value(t_shell *shell, const char *name)
 {
-	const struct s_option	*opt = rb_find(&env->opts, (const void *)name);
+	const struct s_option	*opt = rb_find(&shell->options, (const void *)name);
 	char					*err;
 
 	if (!opt)
 	{
 		ft_asprintf(&err, "Failed to find option `%s`", name);
-		shell_fail(env, err, SRC_LOCATION);
+		shell_fail(shell, err, SRC_LOCATION);
 	}
 	return (opt->value);
 }

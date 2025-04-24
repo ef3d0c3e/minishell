@@ -12,7 +12,7 @@
 #ifndef TESTER_H
 # define TESTER_H
 
-# include <shell/eval.h>
+# include <shell/shell.h>
 
 # include <string.h>
 # include <stdint.h>

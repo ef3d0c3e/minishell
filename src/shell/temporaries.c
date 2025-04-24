@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_word.c                                       :+:      :+:    :+:   */
+/*   temporaries.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,24 +11,14 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-size_t	parse_word(
-	t_parser *parser,
-	size_t start,
-	size_t end,
-	t_string_buffer *buf)
+static int
+	ptr_cmp(const void *a, const void *b)
 {
-	size_t	i;
+	return ((int)((ptrdiff_t)a - (ptrdiff_t)b));
+}
 
-	i = 0;
-	buf->len = 0;
-	buf->capacity = 0;
-	buf->str = NULL;
-	while (start + i < end && token_isword(parser->list.tokens[start + i].type))
-	{
-		if (buf->str)
-			stringbuf_init(buf, 16);
-		token_wordcontent(buf, &parser->list.tokens[start + i]);
-		++i;
-	}
-	return (i);
+void
+	temporaries_init(t_shell *shell)
+{
+	shell->temporaries = rb_new(ptr_cmp, NULL, free);
 }

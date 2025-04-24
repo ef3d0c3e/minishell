@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/eval.h>
-#include <expansion/expansion.h>
+#include <shell/shell.h>
 
 static void
 	repl_to_string_child(t_shell *shell, char *s, int *fds)
@@ -21,28 +20,28 @@ static void
 	t_parser		parser;
 
 	prompt = ft_strdup(s);
-	env_parser_free(env);
+	shell_parser_free(shell);
 	input.str = prompt;
 	input.len = ft_strlen(prompt);
-	env->prompt = prompt;
+	shell->prompt = prompt;
 	close(fds[0]);
 	if (dup2(fds[1], STDOUT_FILENO) == -1)
-		shell_perror(env, "dup2() failed", SRC_LOCATION);
+		shell_perror(shell, "dup2() failed", SRC_LOCATION);
 	close(fds[1]);
-	env->token_list = &list;
+	shell->token_list = &list;
 	list = tokenizer_tokenize(input);
-	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		shell_fail(env, "tokenization failed", SRC_LOCATION);
-	*env->token_list = token_expand(env, *env->token_list);
-	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		shell_fail(env, "expansion failed", SRC_LOCATION);
+	if (!report_tokens(input, shell->token_list) || !shell_error_flush(shell))
+		shell_fail(shell, "tokenization failed", SRC_LOCATION);
+	*shell->token_list = token_expand(shell, *shell->token_list);
+	if (!report_tokens(input, shell->token_list) || !shell_error_flush(shell))
+		shell_fail(shell, "expansion failed", SRC_LOCATION);
 	parser = parser_init(input, list);
-	env->parser = &parser;
-	env->program = parse(&parser, 0, list.size, 0);
+	shell->parser = &parser;
+	shell->program = parse(&parser, 0, list.size, 0);
 	if (!parser_error_flush(&parser))
-		shell_exit(env, EXIT_FAILURE);
-	eval(env, env->program);
-	shell_exit(env, env->last_status);
+		shell_exit(shell, EXIT_FAILURE);
+	eval(shell, shell->program);
+	shell_exit(shell, shell->last_status);
 }
 
 /** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
@@ -56,7 +55,7 @@ static void
 	{
 		sz = read(fd, buf->str + buf->len, 1024);
 		if (sz < 0)
-			shell_perror(env, "read() failed", SRC_LOCATION);
+			shell_perror(shell, "read() failed", SRC_LOCATION);
 		buf->len += sz;
 		stringbuf_reserve(buf, buf->len + 1024);
 	}
@@ -76,17 +75,17 @@ int		waitst;
 	waitst = 0;
 	while (waitst != pid)
 	{
-		read_incoming(env, fds[0], buf);
+		read_incoming(shell, fds[0], buf);
 		waitst = waitpid(pid, &status, WNOHANG);
 		if (waitst == -1)
-			shell_perror(env, "waitpid() failed", SRC_LOCATION);
+			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
-	read_incoming(env, fds[0], buf);
+	read_incoming(shell, fds[0], buf);
 	if (waitst != pid && waitpid(pid, &status, 0) == -1)
-		shell_perror(env, "waitpid() failed", SRC_LOCATION);
-	env->last_status = WEXITSTATUS(status);
+		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+	shell->last_status = WEXITSTATUS(status);
 	close(fds[0]);
-	return (env->last_status);
+	return (shell->last_status);
 }
 
 int
@@ -99,18 +98,18 @@ int
 	if (pipe(fds) == -1)
 	{
 		ft_asprintf(&err, "pipe() failed: %m");
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		return (-1);
 	}
-	pid = shell_fork(env, SRC_LOCATION);
+	pid = shell_fork(shell, SRC_LOCATION);
 	if (pid == -1)
 	{
 		ft_asprintf(&err, "fork() failed: %m");
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		return (-1);
 	}
 	if (!pid)
-		repl_to_string_child(env, input, fds);
+		repl_to_string_child(shell, input, fds);
 	close(fds[1]);
-	return (repl_to_string_parent(env, buf, fds, pid));
+	return (repl_to_string_parent(shell, buf, fds, pid));
 }

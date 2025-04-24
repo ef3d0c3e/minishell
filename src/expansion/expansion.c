@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
-#include <expansion/expansion.h>
+#include <shell/shell.h>
 
 /** @brief Removes spaces before and after operators */
 static int
@@ -85,18 +83,18 @@ t_token_list
 	{
 		if (remove_space(&list, &i))
 			continue ;
-		if (expand_tilde(env, &list.tokens[i], &new))
+		if (expand_tilde(shell, &list.tokens[i], &new))
 			;
-		else if (expand_param(env, &list.tokens[i], &new))
+		else if (expand_param(shell, &list.tokens[i], &new))
 			;
-		else if (expand_cmdsub(env, &list.tokens[i], &new))
+		else if (expand_cmdsub(shell, &list.tokens[i], &new))
 			;
-		else if (expand_filename(env, &list.tokens[i], &new))
+		else if (expand_filename(shell, &list.tokens[i], &new))
 			;
 		else
 			token_list_push(&new, list.tokens[i]);
 		++i;
 	}
 	free(list.tokens);
-	return (token_join(env, new));
+	return (token_join(shell, new));
 }

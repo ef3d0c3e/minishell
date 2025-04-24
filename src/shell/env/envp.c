@@ -30,7 +30,7 @@ void
 	rb_insert(&shell->reg_env, stringbuf_cstr(&key), stringbuf_cstr(&value));
 }
 
-/** @brief Formats environ variables */
+/** @brief Formats environ variables to the `VARIABLE=VALUE` format */
 static inline void
 	format_environ(size_t depth, t_rbnode *node, void *data)
 {

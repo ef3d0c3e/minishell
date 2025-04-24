@@ -12,8 +12,8 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include <parser/redir.h>
 # include <tokenizer/tokenizer.h>
+# include <parser/redir_parser.h>
 
 /* ************************************************************************** */
 /* The AST                                                                    */

@@ -9,11 +9,12 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/eval.h>
+#include <shell/shell.h>
 
 static int
 	fds(t_shell *shell, int argc, char **argv)
 {
+	(void)shell;
 	(void)argc;
 	(void)argv;
 	return (0);

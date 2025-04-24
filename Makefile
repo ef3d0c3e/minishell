@@ -15,6 +15,8 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/builtins/*.c) \
 	$(wildcard src/shell/*.c) \
 	$(wildcard src/shell/redir/*.c) \
+	$(wildcard src/shell/eval/*.c) \
+	$(wildcard src/shell/env/*.c) \
 	$(wildcard src/parser/*.c)
 
 SOURCES_TESTER := $(filter-out %main.c,$(SOURCES))

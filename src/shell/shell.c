@@ -9,10 +9,12 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
+
 t_shell
-	env_new(const char **envp)
+	shell_new(const char **envp)
 {
 	const char	**e;
 	t_shell	shell;
@@ -35,15 +37,17 @@ t_shell
 	e = envp;
 	while (*e)
 		envp_populate(&shell, *(e++));
+	temporaries_init(&shell);
 	options_init(&shell);
 	builtin_init(&shell);
+	fd_data_init(&shell);
 	path_populate(&shell);
 	shell_error_flush(&shell);
 	return (shell);
 }
 
 void
-	env_parser_free(t_shell *shell)
+	shell_parser_free(t_shell *shell)
 {
 	free(shell->prompt);
 	if (shell->token_list)
@@ -58,7 +62,7 @@ void
 }
 
 void
-	env_free(t_shell *shell)
+	shell_free(t_shell *shell)
 {
 	shell_error_flush(shell);
 	rb_free(&shell->temporaries);

@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <parser/parser.h>
+#include <shell/shell.h>
 
 void
 	compound_push(t_ast_node *node, size_t arg_pos, const t_token *token)

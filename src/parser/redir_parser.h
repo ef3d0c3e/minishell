@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir.h                                            :+:      :+:    :+:   */
+/*   redir_parser.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,8 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef REDIR_H
-# define REDIR_H
+#ifndef REDIR_PARSER_H
+# define REDIR_PARSER_H
 
 # include <tokenizer/tokenizer.h>
 
@@ -446,4 +446,4 @@ parse_redir_repeat(
 	size_t end,
 	t_redirections *redirs);
 
-#endif // REDIR_H
+#endif // REDIR_PARSER_H

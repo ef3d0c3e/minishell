@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "eval.h"
-#include "util/util.h"
-#include <stddef.h>
-#include <sys/stat.h>
+#include <shell/shell.h>
 
 /** @brief Check that a given program is executable */
 static void
@@ -30,12 +27,12 @@ static void
 	if (lstat(fullpath, &sb))
 	{
 		ft_asprintf(&err, "Failed to lstat(\"%s\"): %m", fullpath);
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		free(fullpath);
 		return ;
 	}
 	if (S_ISREG(sb.st_mode))
-		rb_insert(&env->path_program, ft_strdup(ent->d_name), fullpath);
+		rb_insert(&shell->path_cache, ft_strdup(ent->d_name), fullpath);
 	else
 		free(fullpath);
 }
@@ -52,7 +49,7 @@ static void
 	if (!dir)
 	{
 		ft_asprintf(&str, "Failed to opendir(\"%s\"): %m", dirname);
-		shell_error(env, str, SRC_LOCATION);
+		shell_error(shell, str, SRC_LOCATION);
 		return ;
 	}
 	while (dir)
@@ -62,11 +59,11 @@ static void
 		if (errno)
 		{
 			ft_asprintf(&str, "Failed to readdir(\"%s\"): %m", dirname);
-			shell_error(env, str, SRC_LOCATION);
+			shell_error(shell, str, SRC_LOCATION);
 		}
 		if (!ent)
 			break ;
-		path_check(env, dirname, ent);
+		path_check(shell, dirname, ent);
 	}
 	closedir(dir);
 }
@@ -75,7 +72,7 @@ static void
 static void
 	read_path(t_shell *shell)
 {
-	const char	*path = rb_find(&env->env, "PATH");
+	const char	*path = rb_find(&shell->reg_env, "PATH");
 	const char	*prev = path;
 	const char	*sep;
 	char		*dirname;
@@ -89,7 +86,7 @@ static void
 			dirname = ft_substr(prev, 0, sep - prev);
 		else
 			dirname = ft_substr(prev, 0, ft_strlen(prev));
-		populate_path(env, dirname);
+		populate_path(shell, dirname);
 		free(dirname);
 		if (!sep)
 			return ;
@@ -101,6 +98,6 @@ static void
 void
 	path_populate(t_shell *shell)
 {
-	rb_free(&env->path_program);
-	read_path(env);
+	rb_free(&shell->path_cache);
+	read_path(shell);
 }

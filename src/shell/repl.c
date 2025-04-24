@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/eval.h>
-#include <expansion/expansion.h>
+#include <shell/shell.h>
 
 static void
 	token_list_debug(t_string input, const t_token_list *list)
@@ -33,39 +32,39 @@ int
 	t_token_list	list;
 	t_parser		parser;
 
-	env_parser_free(env);
+	shell_parser_free(shell);
 	input.str = s;
 	input.len = ft_strlen(s);
-	env->prompt = s;
-	env->token_list = &list;
+	shell->prompt = s;
+	shell->token_list = &list;
 	list = tokenizer_tokenize(input);
-	if (option_value(env, "dbg_token"))
+	if (option_value(shell, "dbg_token"))
 	{
 		ft_dprintf(2, " -- Raw tokens --\n");
 		token_list_debug(input, &list);
 	}
-	if (!report_tokens(input, env->token_list) || !shell_error_flush(env))
-		return (env_parser_free(env), env->last_status = 2, env->last_status);
-	*env->token_list = token_expand(env, *env->token_list);
-	if (!report_tokens(input, env->token_list) || !shell_error_flush(env)
-		|| env->last_status != 0)
-		return (env_parser_free(env), env->last_status = 2, env->last_status);
-	if (option_value(env, "dbg_token"))
+	if (!report_tokens(input, shell->token_list) || !shell_error_flush(shell))
+		return (shell_parser_free(shell), shell->last_status = 2, shell->last_status);
+	*shell->token_list = token_expand(shell, *shell->token_list);
+	if (!report_tokens(input, shell->token_list) || !shell_error_flush(shell)
+		|| shell->last_status != 0)
+		return (shell_parser_free(shell), shell->last_status = 2, shell->last_status);
+	if (option_value(shell, "dbg_token"))
 	{
 		ft_dprintf(2, " -- Expanded tokens --\n");
 		token_list_debug(input, &list);
 	}
-	parser = parser_init(input, *env->token_list);
-	env->parser = &parser;
-	env->program = parse(env->parser, 0, env->token_list->size, 0);
+	parser = parser_init(input, *shell->token_list);
+	shell->parser = &parser;
+	shell->program = parse(shell->parser, 0, shell->token_list->size, 0);
 	if (!parser_error_flush(&parser))
-		return (env_parser_free(env), env->last_status = 2, env->last_status);
-	if (option_value(env, "dbg_ast"))
+		return (shell_parser_free(shell), shell->last_status = 2, shell->last_status);
+	if (option_value(shell, "dbg_ast"))
 	{
 		ft_dprintf(2, " -- Parsing --\n");
-		ast_print_debug(input, env->program, 0);
+		ast_print_debug(input, shell->program, 0);
 	}
-	eval(env, env->program);
-	env_parser_free(env);
-	return (env->last_status);
+	eval(shell, shell->program);
+	shell_parser_free(shell);
+	return (shell->last_status);
 }

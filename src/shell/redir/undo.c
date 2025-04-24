@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/redir/eval_redir.h>
-#include <unistd.h>
+#include <shell/shell.h>
 
 void
 	redir_stack_init(t_redirs_stack *stack)
@@ -66,7 +65,7 @@ int
 
 	saved_fd = dup(fd2);
 	if (saved_fd < 0)
-		shell_perror(env, "dup failed", SRC_LOCATION);
+		shell_perror(shell, "dup failed", SRC_LOCATION);
 	stack_push(stack, saved_fd, fd2);  // Save (saved_fd, fd2) for restoration
 	return (dup2(fd1, fd2));
 }

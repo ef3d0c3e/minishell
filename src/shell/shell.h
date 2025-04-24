@@ -13,9 +13,12 @@
 # define SHELL_H
 
 # include <tokenizer/tokenizer.h>
+# include <expansion/expansion.h>
 # include <parser/parser.h>
-# include <shell/env/env.h>
 # include <builtins/builtin.h>
+# include <shell/env/env.h>
+# include <shell/eval/eval.h>
+# include <shell/redir/redir.h>
 
 # include <ft_printf.h>
 # include <gnl.h>
@@ -119,6 +122,13 @@ shell_parser_free(t_shell *shell);
  */
 void
 shell_free(t_shell *shell);
+/**
+ * @brief Initializes the temporaries registry
+ *
+ * @param shell The shell session
+ */
+void
+temporaries_init(t_shell *shell);
 
 /******************************************************************************/
 /* Shell libc wrappers                                                        */
@@ -270,5 +280,33 @@ options_init(t_shell *shell);
  */
 int
 option_value(t_shell *shell, const char *name);
+
+/******************************************************************************/
+/* File descriptor wrappers                                                   */
+/******************************************************************************/
+
+typedef struct s_fd_data
+{
+	/** @brief Original filename, may be NULL */
+	char	*filename;
+	int		flags;
+	int		mode;
+}	t_fd_data;
+
+/**
+ * @brief Initializes fd-related data for the shell
+ *
+ * @param shell The shell session
+ */
+void
+fd_data_init(t_shell *shell);
+
+/**
+ * @brief Frees fd-related data
+ * 
+ * @param fd Fd data to free
+ */
+void
+fd_data_free(t_fd_data *fd);
 
 #endif // SHELL_H

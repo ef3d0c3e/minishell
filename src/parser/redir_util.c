@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/redir.h"
-#include <parser/parser.h>
+#include <shell/shell.h>
 
 const t_redir_tok_type
 	*redir_alternatives(

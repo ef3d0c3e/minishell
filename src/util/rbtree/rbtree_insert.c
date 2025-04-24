@@ -126,20 +126,20 @@ t_rbnode	*rb_insert(t_rbtree *tree, void *key, void *data)
 	while (current != NULL)
 	{
 		cmp = tree->key_cmp(key, current->key);
-		if (cmp == 0)
-		{
-			tree->key_destroy(current->key);
-			tree->data_destroy(current->data);
-			current->key = key;
-			current->data = data;
-			return (current);
-		}
 		parent = current;
-		if (cmp < 0)
-			current = current->left;
-		else
-			current = current->right;
+		if (cmp)
+		{
+			if (cmp > 0)
+				current = current->right;
+			else
+				current = current->left;
+			continue ;
+		}
+		(void)(tree->key_destroy && (tree->key_destroy(current->key), 0));
+		(void)(tree->data_destroy && (tree->data_destroy(current->data), 0));
+		current->key = key;
+		current->data = data;
+		return (current);
 	}
-	++tree->size;
-	return (insert_new(tree, key, data, parent));
+	return (++tree->size, insert_new(tree, key, data, parent));
 }

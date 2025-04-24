@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/redir.h"
-#include <parser/parser.h>
+#include <shell/shell.h>
 
 void
 	ast_free(t_ast_node *head)

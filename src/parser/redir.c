@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
-#include <fcntl.h>
-#include <parser/redir.h>
+#include <shell/shell.h>
 
 static void
 	redir_free(t_redirection *redir)

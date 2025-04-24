@@ -84,7 +84,9 @@ resolve_eval(t_shell *shell, const char *name, char **result);
  */
 struct s_passwd_ent
 {
+	/** @brief A user's username */
 	char	*username;
+	/** @brief A user's home directory */
 	char	*homedir;
 };
 

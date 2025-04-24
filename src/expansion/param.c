@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <expansion/expansion.h>
+#include <shell/shell.h>
 
 static int
 	expand_special(const char *name)
@@ -34,7 +34,7 @@ static inline int
 	{
 		ft_asprintf(&err, "Bad substitution: `%.*s` is not a valid"
 			" substitution", (int)token->word.len, token->word.str);
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		return (0);
 	}
 	name = stringbuf_from_range(token->word.str, token->word.str + sep);
@@ -43,7 +43,7 @@ static inline int
 		stringbuf_free(&name);
 		return (0);
 	}
-	expanded = rb_find(&env->env, stringbuf_cstr(&name));
+	expanded = rb_find(&shell->reg_env, stringbuf_cstr(&name));
 	if (!expanded)
 		expanded = "";
 	stringbuf_free(&token->word);
@@ -64,7 +64,7 @@ int
 	{
 		if (expand_special(stringbuf_cstr(&token->word)))
 			return (0);
-		expanded = rb_find(&env->env, stringbuf_cstr(&token->word));
+		expanded = rb_find(&shell->reg_env, stringbuf_cstr(&token->word));
 		if (!expanded)
 			expanded = "";
 		stringbuf_free(&token->word);
@@ -74,6 +74,6 @@ int
 		return (1);
 	}
 	else if (token->type == TOK_PARAM)
-		return (expand_param_complex(env, token, result));
+		return (expand_param_complex(shell, token, result));
 	return (0);
 }

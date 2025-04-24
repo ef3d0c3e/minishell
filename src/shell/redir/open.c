@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/redir/eval_redir.h>
+#include <shell/shell.h>
 
 /** @brief Checks whether a redirection is clobbering */
 static int
@@ -31,7 +31,7 @@ static int
 	status = stat(filename, &sb[0]);
 	if (!status && (S_ISREG(sb[0].st_mode)))
 		return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
-			" mode", filename), shell_error(env, err, SRC_LOCATION), -1);
+			" mode", filename), shell_error(shell, err, SRC_LOCATION), -1);
 	flags &= ~O_TRUNC;
 	if (status != 0)
 	{
@@ -39,13 +39,13 @@ static int
 		if (fd < 0 || errno == EEXIST)
 			return (ft_asprintf(&err, "Failed to open `%s` for writing in "
 				"noclobber mode", filename),
-				shell_error(env, err, SRC_LOCATION), -1);
+				shell_error(shell, err, SRC_LOCATION), -1);
 		return (fd);
 	}
 	fd = open (filename, flags, 0666);
 	if (fd < 0)
 		return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
-			" mode", filename), shell_error(env, err, SRC_LOCATION), -1);
+			" mode", filename), shell_error(shell, err, SRC_LOCATION), -1);
 	if ((fstat(fd, &sb[1]) == 0) && (S_ISREG(sb[1].st_mode) == 0) && status == 0
 			&& (S_ISREG(sb[0].st_mode) == 0) &&
 			sb[0].st_dev == sb[1].st_dev && sb[0].st_ino == sb[1].st_ino)
@@ -53,7 +53,7 @@ static int
 	close(fd);
 	errno = EEXIST;
 	return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
-		" mode", filename), shell_error(env, err, SRC_LOCATION), -1);
+		" mode", filename), shell_error(shell, err, SRC_LOCATION), -1);
 }
 
 int
@@ -65,13 +65,13 @@ int
 
 	// TODO: Handle special filenames e.g /dev/std* and /dev/fd*
 	
-	if (option_value(env, "noclobber") && redir_is_clobbering(redir))
-		return (noclobber_open(env, redir, redir->flags));
+	if (option_value(shell, "noclobber") && redir_is_clobbering(redir))
+		return (noclobber_open(shell, redir, redir->flags));
 	fd = open(filename, redir->flags, 0666);
 	if (fd < 0 && errno == EINTR)
-		shell_perror(env, "Interrupted by syscall", SRC_LOCATION);
+		shell_perror(shell, "Interrupted by syscall", SRC_LOCATION);
 	//else if (fd < 0)
 	//	return (ft_asprintf(&err, "Failed to open `%s`: %m", filename),
-	//		shell_error(env, err, SRC_LOCATION), -1);
+	//		shell_error(shell, err, SRC_LOCATION), -1);
 	return (fd);
 }

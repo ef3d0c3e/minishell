@@ -82,8 +82,10 @@ int
 		rb_transplant_single(tree, z, &x, &x_parent);
 	else
 		original_color = rb_transplant_multiple(tree, z, &x, &x_parent);
-	tree->key_destroy(z->key);
-	tree->data_destroy(z->data);
+	if (tree->key_destroy)
+		tree->key_destroy(z->key);
+	if (tree->data_destroy)
+		tree->data_destroy(z->data);
 	free(z);
 	if (original_color == 1 && (x != NULL || x_parent != NULL))
 		rb_delete_fixup(tree, x, x_parent);

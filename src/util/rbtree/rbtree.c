@@ -32,8 +32,10 @@ static inline void
 {
 	if (!node)
 		return ;
-	tree->data_destroy(node->data);
-	tree->key_destroy(node->key);
+	if (tree->data_destroy)
+		tree->data_destroy(node->data);
+	if (tree->key_destroy)
+		tree->key_destroy(node->key);
 	free_node(tree, node->left);
 	free_node(tree, node->right);
 	free(node);

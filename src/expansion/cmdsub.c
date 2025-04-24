@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <expansion/expansion.h>
+#include <shell/shell.h>
 
 /** @brief Removes trailing newlines, according to bash's rules */
 void
@@ -29,13 +29,13 @@ int
 	if (token->type != TOK_CMD_SUB)
 		return (0);
 
-	status = repl_to_string(env, stringbuf_cstr(&token->word), &buf);
+	status = repl_to_string(shell, stringbuf_cstr(&token->word), &buf);
 	if (status)
 	{
 		ft_asprintf(&err, "Command substitution for `%.*s` failed: return "
 			"value=%d", (int)token->word.len, token->word.str, status);
 		token_free(token);
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		return (1);
 	}
 	remove_trailing(&buf);

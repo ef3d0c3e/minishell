@@ -1,11 +1,11 @@
-#include <shell/eval.h>
+#include <shell/shell.h>
 
 int main(int ac, char **av, const char **envp)
 {
-	t_environ		environ;
+	t_shell		shell;
 
-	environ = env_new(envp);
-	repl(&environ, ft_strdup(av[1]));
-	env_free(&environ);
+	shell = shell_new(envp);
+	repl(&shell, ft_strdup(av[1]));
+	shell_free(&shell);
 	return (0);
 }

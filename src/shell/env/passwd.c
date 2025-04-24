@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/eval.h>
+#include <shell/shell.h>
 
 void
 	passwd_free(struct s_passwd_ent *ent)
@@ -75,7 +75,7 @@ int
 	if (fd == -1)
 	{
 		ft_asprintf(&err, "Failed to open(\"/etc/passwd\"): %m");
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		return (0);
 	}
 	ret = read_entry(fd, username, ent);

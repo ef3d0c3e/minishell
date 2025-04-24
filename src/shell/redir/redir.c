@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/redir.h"
-#include "shell/eval.h"
-#include "util/util.h"
-#include <shell/redir/eval_redir.h>
+#include <shell/shell.h>
 
 void
 	do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs)
@@ -22,7 +19,7 @@ void
 	i = 0;
 	while (i < redirs->redirs_size)
 	{
-		redir_internal(env, stack, &redirs->redirs[i]);
+		redir_internal(shell, stack, &redirs->redirs[i]);
 		++i;
 	}
 }

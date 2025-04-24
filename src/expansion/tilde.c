@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
-#include <expansion/expansion.h>
+#include <shell/shell.h>
 
 /** @brief Expands from the content of a variable */
 static inline int
@@ -23,7 +22,7 @@ static inline int
 	char			*expanded;
 	char			*err;
 
-	expanded = rb_find(&env->env, varname);
+	expanded = rb_find(&shell->reg_env, varname);
 	if (expanded)
 	{
 		token->type = TOK_SINGLE_QUOTE;
@@ -33,7 +32,7 @@ static inline int
 	{
 		ft_asprintf(&err, "Failed to perform tilde expansion: variable `%s`"
 			" not set", varname);
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 	}
 	return (0);
 }
@@ -51,9 +50,9 @@ static inline int
 	char				*err;
 
 	if (!str_cmp(str, "~"))
-		return (expand_from_var(env, token, 1, "HOME"));
+		return (expand_from_var(shell, token, 1, "HOME"));
 	username = stringbuf_from_range(str.str + 1, str.str + str.len);
-	if (passwd_query(env, stringbuf_cstr(&username), &ent))
+	if (passwd_query(shell, stringbuf_cstr(&username), &ent))
 	{
 		token->type = TOK_SINGLE_QUOTE;
 		stringbuf_replace(&token->word, 0, str.len, ent.homedir);
@@ -63,7 +62,7 @@ static inline int
 	{
 		ft_asprintf(&err, "Failed to perform tilde expansion: user `%.*s`"
 			" not found (in /etc/passwd)", (int)username.len, username.str);
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 	}
 	token_list_push(result, *token);
 	stringbuf_free(&username);
@@ -86,9 +85,9 @@ int
 	end = min_sz(str.len, str_find(str, "/"));
 	str.len = end;
 	if (!str_cmp(str, "~-"))
-		return (expand_from_var(env, token, 2, "OLDPWD"));
+		return (expand_from_var(shell, token, 2, "OLDPWD"));
 	else if (!str_cmp(str, "~+"))
-		return (expand_from_var(env, token, 2, "PWD"));
+		return (expand_from_var(shell, token, 2, "PWD"));
 	else
-		return (expand_home(env, str, token, result));
+		return (expand_home(shell, str, token, result));
 }

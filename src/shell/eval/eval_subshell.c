@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/redir/eval_redir.h>
-#include <shell/eval.h>
+#include <shell/shell.h>
 
 void
 	eval_subshell(t_shell *shell, t_ast_node *program)
@@ -19,21 +18,21 @@ void
 	int				status;
 	t_redirs_stack	stack;
 
-	pid = shell_fork(env, SRC_LOCATION);
+	pid = shell_fork(shell, SRC_LOCATION);
 	if (pid == -1)
-		shell_perror(env, "fork() failed", SRC_LOCATION);
+		shell_perror(shell, "fork() failed", SRC_LOCATION);
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			shell_perror(env, "waitpid() failed", SRC_LOCATION);
-		env->last_status = WEXITSTATUS(status);
+			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+		shell->last_status = WEXITSTATUS(status);
 	}
 	else
 	{
 		redir_stack_init(&stack);
-		do_redir(env, &stack, &program->expr.redirs);
-		eval(env, program->expr.head);
-		undo_redir(env, &stack);
-		shell_exit(env, env->last_status);
+		do_redir(shell, &stack, &program->expr.redirs);
+		eval(shell, program->expr.head);
+		undo_redir(shell, &stack);
+		shell_exit(shell, shell->last_status);
 	}
 }

@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/eval.h>
+#include <shell/shell.h>
 
 static int
 	echo(t_shell *shell, int argc, char **argv)
@@ -18,7 +18,7 @@ static int
 	int	start;
 	int	newline;
 
-	(void)env;
+	(void)shell;
 	newline = 1;
 	start = 1;
 	if (start < argc && !ft_strcmp(argv[start], "-n"))

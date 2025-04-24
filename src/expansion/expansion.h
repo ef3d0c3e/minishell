@@ -12,62 +12,59 @@
 #ifndef EXPANSION_H
 # define  EXPANSION_H
 
+typedef struct s_shell	t_shell;
+
 # include <tokenizer/tokenizer.h>
-# include <shell/eval.h>
 
 /**
  * @brief Performs tilde (~) expansion
  *
  * Currently the following expansions are supported: ~ ~+ ~- ~user
  *
- * @param env The shell session
+ * @param shell The shell session
  * @param token Parameter token
  * @param result Resulting token list
  *
  * @returns 1 on success, 0 on failure
  */
 int
-expand_tilde(t_environ *env, t_token *token, t_token_list *result);
-
+expand_tilde(t_shell *shell, t_token *token, t_token_list *result);
 /**
  * @brief Performs parameter expansion, e.g `$VAR` or `${VAR}`
  *
  * On failure, an error token is inserted and it's error message should be
  * displayed by iterating through the resulting token list.
  *
- * @param env Shell session
+ * @param shell Shell session
  * @param token Parameter token
  * @param result Resulting token list
  *
  * @returns 1 on success, 0 on failure
  */
 int
-expand_param(t_environ *env, t_token *token, t_token_list *result);
-
+expand_param(t_shell *shell, t_token *token, t_token_list *result);
 /**
  * @brief Performs command substition, `$(expr) -> stdout of `expr`
  *
- * @param env Shell session
+ * @param shell Shell session
  * @param token Parameter token
  * @param result Resulting token list
  *
  * @returns 1 on success, 0 on failure
  */
 int
-expand_cmdsub(t_environ *env, t_token *token, t_token_list *result);
-
+expand_cmdsub(t_shell *shell, t_token *token, t_token_list *result);
 /**
  * @brief Performs filename expansion
  *
- * @param env Shell session
+ * @param shell Shell session
  * @param token Parameter token
  * @param result Resulting token list
  *
  * @returns 1 on success, 0 on failure
  */
 int
-expand_filename(t_environ *env, t_token *token, t_token_list *result);
-
+expand_filename(t_shell *shell, t_token *token, t_token_list *result);
 /**
  * @brief Performs word expansion according to bash rules
  * See https://www.gnu.org/software/bash/manual/bash.html#Shell-Expansions
@@ -82,15 +79,16 @@ expand_filename(t_environ *env, t_token *token, t_token_list *result);
  *  6. Process substitution
  *  7. Word splitting (TODO: rules)
  *  8. Filename expansion
+ * Additionaly, word joining and space removing is performed.
  *
  * @note The caller is expected to check the environment for potential errors
  * On errors, the interpreter should stop.
  *
- * @param env The shell session
+ * @param shell The shell session
  * @param list Token list to expand
  * @return The expanded token list
  */
 t_token_list
-token_expand(t_environ *env, t_token_list list);
+token_expand(t_shell *shell, t_token_list list);
 
 #endif // EXPANSION_H

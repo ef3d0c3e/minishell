@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser.h"
-#include "tokenizer/tokenizer.h"
+#include <shell/shell.h>
 
 size_t
 	parser_next_operator(

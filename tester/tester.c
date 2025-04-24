@@ -15,7 +15,7 @@
 void
 	run_test_child(t_eval_test *test, int *fds)
 {
-	t_environ	env;
+	t_shell	shell;
 
 	close(fds[1]);
 	close(fds[2]);
@@ -26,10 +26,10 @@ void
 	close(fds[5]);
 	dup2(fds[0], STDIN_FILENO);
 	close(fds[0]);
-	env = env_new(test->envp);
-	repl(&env, ft_strdup(stringbuf_cstr(&test->expr)));
+	shell = shell_new(test->envp);
+	repl(&shell, ft_strdup(stringbuf_cstr(&test->expr)));
 	test_free(test);
-	shell_exit(&env, env.last_status);
+	shell_exit(&shell, shell.last_status);
 }
 
 void

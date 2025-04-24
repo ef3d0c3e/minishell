@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/redir/eval_redir.h>
+#include <shell/shell.h>
 
 /** @brief Handles redirections to files */
 static void
@@ -21,24 +21,24 @@ static void
 	int		fd;
 	char	*err;
 
-	fd = redir_open(env, redir);
+	fd = redir_open(shell, redir);
 	if (fd < 0)
 		return ;
-	if (fd != redir->redirector.fd && redir_dup(env, stack, fd, redir->redirector.fd) < 0)
+	if (fd != redir->redirector.fd && redir_dup(shell, stack, fd, redir->redirector.fd) < 0)
 	{
 		close(fd);
 		ft_asprintf(&err, "Failed to dup2: %m");
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		return ;
 	}
 	if (fd != redir->redirector.fd)
 		close(fd);
 	if (redir->type == R_ERR_AND_OUT || redir->type == R_APPEND_ERR_AND_OUT)
 	{
-		if (redir_dup(env, stack, STDOUT_FILENO, STDERR_FILENO) < 0)
+		if (redir_dup(shell, stack, STDOUT_FILENO, STDERR_FILENO) < 0)
 		{
 			ft_asprintf(&err, "Failed to dup2: %m");
-			shell_error(env, err, SRC_LOCATION);
+			shell_error(shell, err, SRC_LOCATION);
 			return ;
 		}
 	}
@@ -55,10 +55,10 @@ static void
 
 	if (redir->redirectee.fd == redir->redirector.fd)
 		return ;
-	if (redir_dup(env, stack, redir->redirectee.fd, redir->redirector.fd) < 0)
+	if (redir_dup(shell, stack, redir->redirectee.fd, redir->redirector.fd) < 0)
 	{
 		ft_asprintf(&err, "Failed to dup2: %m");
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 		return ;
 	}
 	if (redir->type == R_MOVE_INPUT || redir->type == R_MOVE_OUTPUT)
@@ -73,7 +73,7 @@ static void
 {
 	(void)stack;
 	(void)redir;
-	shell_fail(env, "Unhandled redirection type", SRC_LOCATION);
+	shell_fail(shell, "Unhandled redirection type", SRC_LOCATION);
 }
 
 // TODO: Add a way to keep track of opened fd, because we can't use `fcntl(F_GETFD)`
@@ -85,13 +85,13 @@ void
 		|| redir->type == R_INPUT_DIRECTION || redir->type == R_ERR_AND_OUT
 		|| redir->type == R_APPEND_ERR_AND_OUT || redir->type == R_INPUT_OUTPUT
 		|| redir->type == R_OUTPUT_FORCE)
-		redir_internal_files(env, stack, redir);
+		redir_internal_files(shell, stack, redir);
 	else if (redir->type == R_DUPLICATING_INPUT || redir->type == R_MOVE_INPUT
 		|| redir->type == R_DUPLICATING_OUTPUT || redir->type == R_MOVE_OUTPUT)
-		redir_internal_dup_move(env, stack, redir);
+		redir_internal_dup_move(shell, stack, redir);
 	else if (redir->type == R_CLOSE_THIS)
-		redir_internal_close(env, stack, redir);
+		redir_internal_close(shell, stack, redir);
 	else
-		shell_fail(env, "Unhandled redirection type", SRC_LOCATION);
+		shell_fail(shell, "Unhandled redirection type", SRC_LOCATION);
 	// TODO: HERESTRING/DOC
 }

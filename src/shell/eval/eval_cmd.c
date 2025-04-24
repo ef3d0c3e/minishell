@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/redir/eval_redir.h>
-#include <shell/eval.h>
+#include <shell/shell.h>
 
 /** @brief Frees a command list */
 static void
@@ -30,24 +29,24 @@ static void
 static void
 	eval_exec_child(t_shell *shell, t_ast_node *cmd, char *path, char **argv)
 {
-	char					**envp;
+	char					**shellp;
 	char					*err;
 	t_redirs_stack			stack;
 	
 	if (!path)
-		shell_exit(env, 127);
-	envp = environ_to_envp(env);
+		shell_exit(shell, 127);
+	shellp = environ_to_envp(shell);
 	redir_stack_init(&stack);
-	do_redir(env, &stack, &cmd->cmd.redirs);
-	if (shell_error_flush(env))
-		env->last_status = execve(path, argv, envp);
-	undo_redir(env, &stack);
-	arglist_free(envp);
+	do_redir(shell, &stack, &cmd->cmd.redirs);
+	if (shell_error_flush(shell))
+		shell->last_status = execve(path, argv, shellp);
+	undo_redir(shell, &stack);
+	arglist_free(shellp);
 	arglist_free(argv);
 	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
 	free(path);
-	shell_error(env, err, SRC_LOCATION);
-	shell_exit(env, EXIT_FAILURE);
+	shell_error(shell, err, SRC_LOCATION);
+	shell_exit(shell, EXIT_FAILURE);
 }
 
 static void
@@ -56,24 +55,24 @@ static void
 	pid_t	pid;
 	int		status;
 
-	pid = shell_fork(env, SRC_LOCATION);
+	pid = shell_fork(shell, SRC_LOCATION);
 	if (pid == -1)
-		shell_perror(env, "fork() failed", SRC_LOCATION);
+		shell_perror(shell, "fork() failed", SRC_LOCATION);
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			shell_perror(env, "waitpid() failed", SRC_LOCATION);
-		env->last_status = WEXITSTATUS(status);
+			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+		shell->last_status = WEXITSTATUS(status);
 		free(path);
 	}
 	else
-		eval_exec_child(env, cmd, path, argv);
+		eval_exec_child(shell, cmd, path, argv);
 }
 
 static void
 	eval_builtin(t_shell *shell, t_ast_node *cmd, char **argv)
 {
-	const t_builtin			*builtin = rb_find(&env->builtins, argv[0]);
+	const t_builtin			*builtin = rb_find(&shell->reg_builtins, argv[0]);
 	int						argc;
 	t_redirs_stack			stack;
 	
@@ -81,10 +80,10 @@ static void
 	while (argv[argc])
 		++argc;
 	redir_stack_init(&stack);
-	do_redir(env, &stack, &cmd->cmd.redirs);
-	if (shell_error_flush(env))
-		env->last_status = builtin->fn(env, argc, argv);
-	undo_redir(env, &stack);
+	do_redir(shell, &stack, &cmd->cmd.redirs);
+	if (shell_error_flush(shell))
+		shell->last_status = builtin->fn(shell, argc, argv);
+	undo_redir(shell, &stack);
 }
 
 int
@@ -95,17 +94,17 @@ int
 	char	**argv;
 	char	*path;
 
-	argv = command_to_argv(env, &program->cmd);
-	status = resolve_eval(env, argv[0],
+	argv = command_to_argv(shell, &program->cmd);
+	status = resolve_eval(shell, argv[0],
 		&path);
 	if (status == 2)
-		eval_builtin(env, program, argv);
+		eval_builtin(shell, program, argv);
 	else if (status == 0)
-		eval_exec_parent(env, program, path, argv);
+		eval_exec_parent(shell, program, path, argv);
 	else
 	{
 		ft_asprintf(&err, "%s: command not found", argv[0]);
-		shell_error(env, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
 	}
 	arglist_free(argv);
 	return (status != -1);

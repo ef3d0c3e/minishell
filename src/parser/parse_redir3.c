@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
-#include <parser/parser.h>
+#include <shell/shell.h>
 
 /** @brief Parses [NUM][REDIR][NUM] */
 static int
