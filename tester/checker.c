@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "tester.h"
 
 /** @brief Prints the content of a test string, replacing non printable
@@ -26,7 +27,9 @@ static void
 	i = 0;
 	while (i < buf->len)
 	{
-		if (buf->str[i] < ' ' || buf->str[i] == 0x7f)
+		if (buf->str[i] < 0)
+			ft_dprintf(2, "\033[0;34m\\%03o\033[0m", 256 + (int)buf->str[i]);
+		else if (buf->str[i] < ' ' || buf->str[i] == 0x7f)
 		{
 			write(2, "\033[0;34m", 7);
 			write(2, mapping[(int)buf->str[i]],

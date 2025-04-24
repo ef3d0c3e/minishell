@@ -66,23 +66,23 @@ void
 	for (size_t i = 0; i < depth; ++i)
 		write(2, " | ", 3);
 	if (head->type == NODE_ATOM)
-		dprintf(2, "ATOM(`%.*s`)\n", (int)head->atom.len, head->atom.str);
+		ft_dprintf(2, "ATOM(`%.*s`)\n", (int)head->atom.len, head->atom.str);
 	else if (head->type == NODE_PARAMETER)
-		dprintf(2, "PARAMETER(`%.*s`)\n", (int)head->atom.len, head->atom.str);
+		ft_dprintf(2, "PARAMETER(`%.*s`)\n", (int)head->atom.len, head->atom.str);
 	else if (head->type == NODE_SUBSHELL)
 	{
-		dprintf(2, "SUBSHELL\n");
+		ft_dprintf(2, "SUBSHELL\n");
 		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
 		print_redir(&head->expr.redirs, depth + 2);
 	}
 	else if (head->type == NODE_SUBEXPR)
 	{
-		dprintf(2, "SUBEXPR\n");
+		ft_dprintf(2, "SUBEXPR\n");
 		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
 	}
 	else if (head->type == NODE_COMMAND)
 	{
-		dprintf(2, "COMMAND [%zu]\n", head->cmd.nargs);
+		ft_dprintf(2, "COMMAND [%zu]\n", head->cmd.nargs);
 		for (size_t i = 0; i < head->cmd.nargs; ++i)
 		{
 			for (size_t k = 0; k < depth + 1; ++k)
@@ -95,7 +95,7 @@ void
 	}
 	else if (head->type == NODE_LOGIC)
 	{
-		dprintf(2, "LOGIC `%s`\n", head->logic.token.reserved_word);
+		ft_dprintf(2, "LOGIC `%s`\n", head->logic.token.reserved_word);
 		ast_print_debug(input, head->logic.left, depth + 1);
 		ast_print_debug(input, head->logic.right, depth + 1);
 	}

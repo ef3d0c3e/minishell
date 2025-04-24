@@ -9,14 +9,15 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include <shell/redir/eval_redir.h>
 #include <shell/eval.h>
-#include <stdio.h>
 
 void
 	eval_subshell(t_environ *env, t_ast_node *program)
 {
-	pid_t	pid;
-	int		status;
+	pid_t			pid;
+	int				status;
+	t_redirs_stack	stack;
 
 	pid = shell_fork(env, SRC_LOCATION);
 	if (pid == -1)
@@ -29,7 +30,10 @@ void
 	}
 	else
 	{
+		redir_stack_init(&stack);
+		do_redir(env, &stack, &program->expr.redirs);
 		eval(env, program->expr.head);
+		undo_redir(env, &stack);
 		shell_exit(env, env->last_status);
 	}
 }

@@ -67,7 +67,7 @@ void
 		redir.flags = O_APPEND | O_WRONLY | O_CREAT;
 	else if (type == R_INPUT_OUTPUT)
 		redir.flags = O_RDWR | O_CREAT;
-	else if (type == R_INPUTA_DIRECTION || R_INPUT_DIRECTION)
+	else if (R_INPUT_DIRECTION)
 		redir.flags = O_RDONLY;
 	add_redir(redirs, redir);
 }

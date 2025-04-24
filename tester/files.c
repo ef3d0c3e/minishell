@@ -71,6 +71,7 @@ static int
 	ft_dprintf(2, "(%s): ", test->path);
 	original = stringbuf_from_range(test->content, test->content + test->size);
 	fd = open(test->path, O_RDONLY);
+	stringbuf_init(&read, 1024);
 	read_incoming(fd, &read);
 	status = stringbuf_compare("", &original, &read);
 	if (status)

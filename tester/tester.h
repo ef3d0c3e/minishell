@@ -54,7 +54,7 @@ typedef struct s_file_test
 	/** @brief Source line of the test */
 	size_t			line;
 	/** @brief File to check */
-	char		*path;
+	char			*path;
 	/** @brief Expected content */
 	const char		*content;
 	/** @brief Expected length */

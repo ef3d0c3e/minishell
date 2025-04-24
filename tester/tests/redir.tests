@@ -1,10 +1,132 @@
 // vi:syntax=c
 #include "tests.def"
 
-DO_TEST(redir,
+DO_TEST(redir, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	SHELL_TEST("echo Hello, World! >/dev/null", "", "", "", 0);
 
-	TEST_FILES(({"a", "Test"}),
-		SHELL_TEST("echo -n Test>a", "", "", "", 0);
+	//TEST_FILES(({"a", "Test"}),
+	//	SHELL_TEST("echo -n Test>a", "", "", "", 0);
+	//)
+
+
+	WITH_RANDOM_BYTES(32, ran,
+		TEST_FILES(({"file", ran}),
+			SHELL_TEST("cat - >file", ran, "", "", 0);
+		)
 	)
-)
+
+	WITH_RANDOM_BYTES(32, ran,
+		SHELL_TEST("cat - > /dev/stderr", ran, "", ran, 0);
+	)
+
+	WITH_RANDOM_BYTES(32, ran,
+		TEST_FILES(({"file", ran}),
+			SHELL_TEST("cat - >/dev/stderr &>file", ran, "", "", 0);
+		)
+	)
+
+	// R_OUTPUT_DIRECTION
+	WITH_RANDOM_BYTES(32, ran1,
+		WITH_RANDOM_BYTES(32, ran2,
+			TEST_FILES(({"r_output_direction1", ran1}),
+				SHELL_TEST("cat - >r_output_direction1", ran1, "", "", 0);
+			)
+			TEST_FILES(({"r_output_direction2", ran1}),
+				SHELL_TEST("cat - >r_output_direction2", ran1, "", "", 0);
+				SHELL_TEST("cat - >r_output_direction2", ran1, "", "", 0);
+			)
+			TEST_FILES(({"r_output_direction3", ran2}),
+				SHELL_TEST("cat - >r_output_direction3", ran1, "", "", 0);
+				SHELL_TEST("cat - >r_output_direction3", ran2, "", "", 0);
+			)
+		)
+	)
+
+	// R_APPENDING_TO
+	WITH_RANDOM_BYTES(32, ran1,
+		WITH_RANDOM_BYTES(32, ran2,
+			char *cat;
+			ft_asprintf(&cat, "%s%s", ran1, ran2);
+			TEST_FILES(({"r_appening_to1", cat}),
+				SHELL_TEST("cat - >>r_appening_to1", ran1, "", "", 0);
+				SHELL_TEST("cat - >>r_appening_to1", ran2, "", "", 0);
+			)
+			TEST_FILES(({"r_appening_to2", cat}),
+				SHELL_TEST("cat - >r_appening_to2", ran1, "", "", 0);
+				SHELL_TEST("cat - >>r_appening_to2", ran2, "", "", 0);
+			)
+			TEST_FILES(({"r_appening_to3", ran2}),
+				SHELL_TEST("cat - >r_appening_to3", ran1, "", "", 0);
+				SHELL_TEST("cat - >r_appening_to3", ran2, "", "", 0);
+			)
+			free(cat);
+		)
+	)
+
+	// R_INPUT_DIRECTION
+	WITH_RANDOM_BYTES(32, ran1,
+		WITH_RANDOM_BYTES(32, ran2,
+			TEST_FILES(({"r_input_direction1", ran1}),
+				SHELL_TEST("cat - >r_input_direction1", ran1, "", "", 0);
+				SHELL_TEST("cat < r_input_direction1", "", ran1, "", 0);
+			)
+			TEST_FILES(({"r_input_direction2a", ran1, "r_input_direction2b", ran2}),
+				SHELL_TEST("cat - >r_input_direction2a", ran1, "", "", 0);
+				SHELL_TEST("cat - >r_input_direction2b", ran2, "", "", 0);
+				SHELL_TEST("cat < r_input_direction2a < r_input_direction2b", "", ran2, "", 0);
+			)
+		)
+	)
+
+	// R_ERR_AND_OUT
+	WITH_RANDOM_BYTES(32, ran1,
+		WITH_RANDOM_BYTES(32, ran2,
+			TEST_FILES(({"r_err_and_out1", ran1}),
+				SHELL_TEST("cat - &>r_err_and_out1", ran1, "", "", 0);
+			)
+			TEST_FILES(({"r_err_and_out1", ran2}),
+				SHELL_TEST("cat - >/dev/stderr &>r_err_and_out1", ran2, "", "", 0);
+			)
+			TEST_FILES(({"r_err_and_out2", "B\n"}),
+				SHELL_TEST("(echo A; echo B >/dev/stderr) &>r_err_and_out2", "", "", "", 0);
+			)
+			TEST_FILES(({"r_err_and_out3", "B\n"}),
+				SHELL_TEST("(echo A >/dev/stderr; echo B) &>r_err_and_out3", "", "", "", 0);
+			)
+			TEST_FILES(({"r_err_and_out4", "AB\n"}),
+				SHELL_TEST("(echo AB >/dev/stderr) &>r_err_and_out4", "", "", "", 0);
+			)
+		)
+	)
+
+	// R_APPEND_ERR_AND_OUT
+	WITH_RANDOM_BYTES(32, ran1,
+		WITH_RANDOM_BYTES(32, ran2,
+			char *cat;
+			ft_asprintf(&cat, "%s%s", ran1, ran2);
+			TEST_FILES(({"r_append_err_and_out1", ran1}),
+				SHELL_TEST("cat - &>>r_append_err_and_out1", ran1, "", "", 0);
+			)
+			TEST_FILES(({"r_append_err_and_out1", cat}),
+				SHELL_TEST("cat - >/dev/stderr &>>r_append_err_and_out1", ran2, "", "", 0);
+			)
+			TEST_FILES(({"r_append_err_and_out2", "B\n"}),
+				SHELL_TEST("(echo A; echo B >/dev/stderr) &>>r_append_err_and_out2", "", "", "", 0);
+			)
+			TEST_FILES(({"r_append_err_and_out3", "A\nB\n"}),
+				SHELL_TEST("(echo A; echo B >>/dev/stderr) &>>r_append_err_and_out3", "", "", "", 0);
+			)
+			TEST_FILES(({"r_append_err_and_out4", "A\nB\n"}),
+				SHELL_TEST("(echo A >/dev/stderr; echo B) &>>r_append_err_and_out4", "", "", "", 0);
+			)
+			TEST_FILES(({"r_append_err_and_out5", "AB\n"}),
+				SHELL_TEST("(echo AB >/dev/stderr) &>>r_append_err_and_out5", "", "", "", 0);
+			)
+			free(cat);
+		)
+	)
+
+	// R_INPUT_OUTPUT (TODO)
+
+	// R_OUTPUT_FORCE (TODO enable noclobber)
+))
