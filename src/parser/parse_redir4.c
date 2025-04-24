@@ -78,7 +78,6 @@ size_t
 	else if (token_isword(right->type) && right->type != TOK_MINUS)
 		status = parse_redir_word(parser, start, redirs, source);
 	if (!status)
-		parser_error(parser, ft_strdup("Invalid redirection"),
-			start, start + 3);
+		return (0);
 	return (4);
 }

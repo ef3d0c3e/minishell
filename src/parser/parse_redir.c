@@ -21,19 +21,19 @@ size_t	parse_redir(
 	int				status;
 
 	status = 0;
-	if (end - start >= 4 && list[0].type == TOK_DIGIT && list[1].type
-		== TOK_REDIR && token_isword(list[2].type) && list[3].type == TOK_MINUS)
-		status = redir_parser4(parser, start, redirs);
-	else if (end - start >= 3 && list[0].type == TOK_DIGIT && list[1].type
-		== TOK_REDIR && token_isword(list[2].type))
-		status = redir_parser3(parser, start, redirs);
-	else if (end - start >= 3 && list[0].type == TOK_DIGIT
+	if (end - start >= 3 && list[0].type == TOK_REDIR
 		&& token_isword(list[1].type) && list[2].type == TOK_MINUS)
 		status = redir_parser3_move(parser, start, redirs);
-	else if (end - start >= 2 && list[0].type == TOK_REDIR
+	if (!status && end - start >= 2 && list[0].type == TOK_REDIR
 		&& token_isword(list[1].type))
 		status = redir_parser2(parser, start, redirs);
-	else if (list[0].type == TOK_REDIR)
+	if (!status && end - start >= 4 && list[0].type == TOK_DIGIT && list[1].type
+		== TOK_REDIR && token_isword(list[2].type) && list[3].type == TOK_MINUS)
+		status = redir_parser4(parser, start, redirs);
+	if (!status && end - start >= 3 && list[0].type == TOK_DIGIT && list[1].type
+		== TOK_REDIR && token_isword(list[2].type))
+		status = redir_parser3(parser, start, redirs);
+	if (list[0].type == TOK_REDIR && !status)
 	{
 		parser_error(parser, ft_strdup("Invalid redirections"),
 			start, start + 1);

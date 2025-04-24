@@ -67,8 +67,7 @@ static int
 {
 	static const t_redir_tok_type	tokens[] = {
 	{">", R_OUTPUT_DIRECTION}, {">>", R_APPENDING_TO}, {">|", R_OUTPUT_FORCE},
-	{">&", R_DUPLICATING_OUTPUT_WORD}, {"&>", R_ERR_AND_OUT},
-	{"&>>", R_APPEND_ERR_AND_OUT}, {"<", R_INPUT_DIRECTION},
+	{">&", R_DUPLICATING_OUTPUT_WORD}, {"<", R_INPUT_DIRECTION},
 	{"<>", R_INPUT_OUTPUT}, {"<<", R_READING_UNTIL},
 	{"<<-", R_DEBLANK_READING_UNTIL}, {"<<<", R_READING_STRING},
 	{"<&", R_DUPLICATING_INPUT_WORD}};
@@ -107,7 +106,6 @@ size_t
 	else if (token_isword(right->type))
 		status = parse_redir_word(parser, start, redirs, source);
 	if (!status)
-		parser_error(parser, ft_strdup("Invalid redirection"),
-			start, start + 2);
+		return (0);
 	return (3);
 }

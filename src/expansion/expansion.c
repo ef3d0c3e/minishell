@@ -18,7 +18,8 @@ static int
 	remove_space(const t_token_list *list, size_t *i)
 {
 	if (list->tokens[*i].type == TOK_SPACE
-		&& ((*i && token_precedence(&list->tokens[*i - 1]) >= 0)
+		&& ((*i && (token_precedence(&list->tokens[*i - 1]) >= 0
+		|| list->tokens[*i - 1].type == TOK_REDIR))
 		|| (*i + 1 < list->size
 		&& token_precedence(&list->tokens[*i + 1]) >= 0)))
 	{
