@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "tester.h"
 #include "ft_printf.h"
+#include "util/util.h"
 #include <stdlib.h>
 
 void
@@ -33,11 +34,12 @@ void
 	shell_exit(&env, env.last_status);
 }
 
-static void
+void
 	read_incoming(int fd, t_string_buffer *buf)
 {
 	ssize_t	sz;
 
+	stringbuf_init(buf, 1024);
 	sz = 1;
 	while (sz > 0)
 	{
@@ -57,8 +59,6 @@ static int
 	t_string_buffer	stdout;
 	t_string_buffer	stderr;
 
-	stringbuf_init(&stdout, 1024);
-	stringbuf_init(&stderr, 1024);
 	(void)(close(fds[0]) || close(fds[3]) || close(fds[5]));
 	write(fds[1], test->stdin.str, test->stdin.len);
 	close(fds[1]);

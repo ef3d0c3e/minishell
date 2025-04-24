@@ -1,8 +1,8 @@
 NAME := minishell
 CC := gcc
 CFLAGS := -Wall -Wextra -pedantic -ggdb
-IFLAGS := -I./src -I./libs/ft_printf/includes -I./libs/ft_gnl/includes
-LFLAGS := 
+IFLAGS := -I./src
+LFLAGS :=
 
 # :^] `.!find src -name "*.c" -exec echo "{} \\" \;`
 SOURCES := $(wildcard src/*.c) \
@@ -14,6 +14,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/expansion/*.c) \
 	$(wildcard src/builtins/*.c) \
 	$(wildcard src/shell/*.c) \
+	$(wildcard src/shell/redir/*.c) \
 	$(wildcard src/parser/*.c)
 
 SOURCES_TESTER := $(filter-out %main.c,$(SOURCES))
@@ -24,9 +25,10 @@ OBJECTS := $(addprefix build/,$(SOURCES:.c=.o))
 OBJECTS_TESTER := $(addprefix build/,$(SOURCES_TESTER:.c=.o))
 # Libraries
 LIB_PRINTF := ./libs/ft_printf/libftprintf.a
+IFLAGS += -I$(dir $(LIB_PRINTF))includes/
 LIB_GNL := ./libs/ft_gnl/libgnl.a
+IFLAGS += -I$(dir $(LIB_GNL))includes/
 
-build/%.o: IFLAGS += -I$(dir $(LIB_PRINTF))/includes/
 build/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
@@ -42,10 +44,12 @@ ITESTS := \
 	-include ./tester/tests/grammar.tests \
 	-include ./tester/tests/param.tests \
 	-include ./tester/tests/pipe.tests \
+	-include ./tester/tests/redir.tests \
 	-include ./tester/tests/sub.tests
+tests: CFLAGS += -D_XOPEN_SOURCE=500
 tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
 tests: $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS_TESTER)
-	$(CC) $(IFLAGS) -Wno-unused-but-set-variable $(ITESTS) $(CFLAGS) -o $@ ./tester/tests/runner.c $(OBJECTS_TESTER) $(LFLAGS)
+	$(CC) $(IFLAGS) $(ITESTS) $(CFLAGS) -o $@ ./tester/tests/runner.c $(OBJECTS_TESTER) $(LFLAGS)
 
 # Libraries build
 # ft_printf

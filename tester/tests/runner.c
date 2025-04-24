@@ -10,43 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-static char
-	*ft_strstr(const char *haystack, const char *needle)
+static void
+	evaluator(void *data)
 {
-	const size_t	n = ft_strlen(haystack);
-	size_t			find_len;
-	size_t			i;
-	size_t			j;
+	t_evaluator_data *const	eval = data;
 
-	if (!*needle)
-		return ((char *)haystack);
-	if (n == 0)
-		return ((char *)0);
-	find_len = ft_strlen(needle);
-	i = 0;
-	while (haystack[i] && i + find_len <= n)
-	{
-		j = 0;
-		while (haystack[i + j] == needle[j])
-		{
-			if (j + 1 == find_len)
-				return (((char *)haystack + i));
-			++j;
-		}
-		++i;
-	}
-	return (0);
-}
-
-static size_t
-	atosz(const char *s)
-{
-	size_t	v;
-
-	v = 0;
-	while (*s >= '0' && *s <= '9')
-		v = v * 10 + (*(s++) - '0');
-	return (v);
+	eval->test->eval(eval->runner, eval->seed);
 }
 
 static void
@@ -58,8 +27,10 @@ static void
 		test_param,
 		test_pipe,
 		test_sub,
+		test_redir,
 	};
 	size_t						i;
+	t_evaluator_data			eval;
 	t_runner_data				runner;
 
 	runner.total = 0;
@@ -69,13 +40,16 @@ static void
 	i = 0;
 	while (i < sizeof(tests) / sizeof(tests[0]))
 	{
+		eval.seed = seed;
+		eval.test = &tests[i];
+		eval.runner = &runner;
 		if (ft_strstr(tests[i].name, filter))
-			tests[i].eval(&runner, seed);
+			eval_in_tempdir(tests[i].name, evaluator, &eval);
 		++i;
 	}
 	if (!runner.total)
 		return ;
-	ft_printf("-- Passed %d/%d tests (%d%%) --\n", runner.total, runner.passed,
+	ft_printf("-- Passed %d/%d tests (%d%%) --\n", runner.passed, runner.total,
 		(int)(100.f * runner.passed / (float)runner.total));
 }
 

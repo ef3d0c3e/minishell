@@ -39,8 +39,7 @@ static void
 	}
 }
 
-/** @brief Performs comparison and print the difference */
-static int
+int
 	stringbuf_compare(
 	const char *label,
 	t_string_buffer *left,

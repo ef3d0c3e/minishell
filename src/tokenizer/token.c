@@ -39,7 +39,7 @@ void
 	const t_string	literal = {.str = prompt.str + token->start,
 		.len = token->end - token->start };
 
-	dprintf(2, "(%s, %zu..%zu, `%.*s`)",
+	ft_dprintf(2, "(%s, %zu..%zu, `%.*s`)",
 		names[token->type],
 		token->start, token->end,
 		(int)literal.len, literal.str);

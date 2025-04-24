@@ -1,0 +1,10 @@
+// vi:syntax=c
+#include "tests.def"
+
+DO_TEST(redir,
+	SHELL_TEST("echo Hello, World! >/dev/null", "", "", "", 0);
+
+	TEST_FILES(({"a", "Test"}),
+		SHELL_TEST("echo -n Test>a", "", "", "", 0);
+	)
+)

@@ -20,19 +20,63 @@ typedef struct s_unit_test
 	void		(*eval)(t_runner_data *, uint32_t);
 }	t_unit_test;
 
+typedef struct s_file_content
+{
+	const char	*filename;
+	const char	*content;
+}	t_file_content;
+
+typedef struct s_evaluator_data
+{
+	uint32_t			seed;
+	const t_unit_test	*test;
+	t_runner_data		*runner;
+}	t_evaluator_data;
+
+
 #define EXPAND(...) __VA_ARGS__
 
 #define WITH_ENV(__envp, ...) \
 { \
-	static const char	*__env[] = (const char*[])EXPAND __envp; \
-	__VA_ARGS__ \
+	char	*__env[] = EXPAND __envp; \
+	{ __VA_ARGS__ } \
+}
+
+#define TEST_FILES(__pfiles, ...) \
+{ \
+	if (!__runner_data->id_filter \
+		|| __runner_data->test_id == __runner_data->id_filter) \
+	{ \
+		t_file_content	__files[] = EXPAND __pfiles; \
+		size_t			i; \
+		int				status = 1; \
+		{ __VA_ARGS__ } \
+		i = 0; \
+		while (i < sizeof(__files) / sizeof(__files[0])) \
+		{ \
+			t_file_test test = (t_file_test){ \
+				.file = __FILE__, \
+				.line = __LINE__, \
+				.path = NULL, \
+				.content = __files[i].content, \
+				.size = ft_strlen(__files[i].content), \
+			}; \
+			ft_asprintf(&test.path, "/tmp/shelltest-%s/%s", __test_name, __files[i].filename); \
+			status &= test_file_run(&test, __runner_data->test_id); \
+			free(test.path); \
+			++i; \
+		} \
+		++total; \
+		passed += status; \
+	} \
+	++__runner_data->test_id; \
 }
 
 #define WITH_RANDOM_TEXT(__length, __name, __set, ...) \
 { \
 	char	*__name; \
 	__name = random_ascii(__set, __length, &__random_state); \
-	__VA_ARGS__ \
+	{ __VA_ARGS__ } \
 	free(__name); \
 }
 
@@ -53,7 +97,7 @@ typedef struct s_unit_test
 	__i = 0; \
 	while (__i++ < __n) \
 	{ \
-		__VA_ARGS__ \
+		{ __VA_ARGS__ } \
 	} \
 }
 
@@ -70,7 +114,7 @@ typedef struct s_unit_test
 			.stdout = stringbuf_from(__stdout), \
 			.stderr = stringbuf_from(__stderr), \
 			.status = __status, \
-			.envp = __env, \
+			.envp = (const char **)__env, \
 			.flags = 0, \
 		}; \
 		++total; \
@@ -93,7 +137,7 @@ typedef struct s_unit_test
 			.stdout = stringbuf_from(__stdout), \
 			.stderr = stringbuf_from(""), \
 			.status = __status, \
-			.envp = __env, \
+			.envp = (const char **)__env, \
 			.flags = FLAG_NO_STDERR, \
 		}; \
 		++total; \
@@ -107,6 +151,7 @@ typedef struct s_unit_test
 static void __test_##__label##_eval(t_runner_data *__runner_data, uint32_t seed) \
 { \
 	static const char	*__env[] = {NULL}; \
+	static const char	*__test_name = #__label; \
 	int					total; \
 	int					passed; \
 	uint32_t			__random_state; \
@@ -115,7 +160,7 @@ static void __test_##__label##_eval(t_runner_data *__runner_data, uint32_t seed)
 		ft_dprintf(2, "> Running \033[0;34m%s\033[0;0m tests...\n", #__label); \
 	passed = 0; \
 	total = 0; \
-	{ __VA_ARGS__; } \
+	{ __VA_ARGS__ } \
 	if (!__runner_data->id_filter) \
 		ft_dprintf(2, "\033[0;34m%s\033[0;0m tests [%d/%d passed]\n", #__label, \
 				passed, total); \

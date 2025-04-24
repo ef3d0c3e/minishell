@@ -47,6 +47,20 @@ typedef struct s_eval_test
 	int				flags;
 }	t_eval_test;
 
+typedef struct s_file_test
+{
+	/** @brief Source file of the test */
+	const char		*file;
+	/** @brief Source line of the test */
+	size_t			line;
+	/** @brief File to check */
+	char		*path;
+	/** @brief Expected content */
+	const char		*content;
+	/** @brief Expected length */
+	size_t			size;
+}	t_file_test;
+
 /**
  * @brief Frees test-related data
  *
@@ -65,6 +79,16 @@ test_free(t_eval_test *test);
 int
 test_run(t_eval_test *test, size_t id);
 /**
+ * @brief Runs a file test
+ *
+ * @param test The test
+ * @param id ID of the test
+ *
+ * @returns 1 On success
+ */
+int
+test_file_run(t_file_test *test, size_t id);
+/**
  * @brief Checks the test's result
  *
  * @param test The test
@@ -80,6 +104,12 @@ test_check(
 	int status,
 	t_string_buffer *stdout,
 	t_string_buffer *stderr);
+/** @brief Performs comparison and print the difference */
+int
+stringbuf_compare(
+	const char *label,
+	t_string_buffer *left,
+	t_string_buffer *right);
 
 /**
  * @brief Generates a random string from a set
@@ -107,5 +137,22 @@ char
  */
 uint32_t
 random_int(uint32_t *seed);
+
+/**
+ * @brief Creates temporary directory and evaluate function inside of it
+ *
+ * @param name Temp directory to create
+ * @param fn Function to execute
+ * @param cookie Data passed to function
+ */
+void
+eval_in_tempdir(const char *name, void (*fn)(void *), void *cookie);
+
+char
+*ft_strstr(const char *haystack, const char *needle);
+size_t
+atosz(const char *s);
+void
+read_incoming(int fd, t_string_buffer *buf);
 
 #endif // TESTER_H

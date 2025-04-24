@@ -23,7 +23,7 @@ DO_TEST(pipe,
 			)
 		)
 
-		WITH_RANDOM_TEXT(50, ran, "ABCDEF",
+		WITH_RANDOM_TEXT(50, ran, "0123456789ABCDEF",
 			REPEAT(10,
 				size_t	idx = RANDOM_VALUE(1, 30);
 				char	*cmd;

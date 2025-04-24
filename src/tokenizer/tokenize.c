@@ -64,7 +64,7 @@ t_token_list
 		}
 		if (i)
 		{
-			dprintf(2, "Leftover tokens: `%.*s`\n",
+			ft_dprintf(2, "Leftover tokens: `%.*s`\n",
 				(int)(prompt.len - it.byte_pos), prompt.str + it.byte_pos);
 			break ;
 		}
