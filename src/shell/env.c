@@ -53,6 +53,8 @@ t_environ
 	env.token_list = NULL;
 	env.parser = NULL;
 	env.program = NULL;
+
+	env.is_interactive = 1;
 	e = envp;
 	while (*e)
 		parse_environ(&env, *(e++));

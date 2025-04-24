@@ -64,6 +64,9 @@ typedef struct s_environ
 	t_parser		*parser;
 	/** @brief Currently executed program (Non-owning) */
 	t_ast_node		*program;
+
+	/** Shell runtime **/
+	int				is_interactive; // TODO
 }	t_environ;
 
 /**

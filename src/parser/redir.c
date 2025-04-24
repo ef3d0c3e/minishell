@@ -60,13 +60,14 @@ void
 	redir.type = type;
 	redir.flags = 0;
 	redir.here_doc_eof = NULL;
-	if (type == R_ERR_AND_OUT)
+	if (type == R_ERR_AND_OUT || type == R_OUTPUT_FORCE
+		|| type == R_OUTPUT_DIRECTION)
 		redir.flags = O_TRUNC | O_WRONLY | O_CREAT;
-	else if (type == R_APPEND_ERR_AND_OUT)
+	else if (type == R_APPEND_ERR_AND_OUT || type == R_APPENDING_TO)
 		redir.flags = O_APPEND | O_WRONLY | O_CREAT;
 	else if (type == R_INPUT_OUTPUT)
 		redir.flags = O_RDWR | O_CREAT;
-	else if (type == R_INPUTA_DIRECTION)
+	else if (type == R_INPUTA_DIRECTION || R_INPUT_DIRECTION)
 		redir.flags = O_RDONLY;
 	add_redir(redirs, redir);
 }

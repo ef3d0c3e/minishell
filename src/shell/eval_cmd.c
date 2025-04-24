@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include <shell/redir/eval_redir.h>
 #include <shell/eval.h>
 
 /** @brief Frees a command list */
@@ -27,15 +28,20 @@ static void
 }
 
 static void
-	eval_exec_child(t_environ *env, char *path, char **argv)
+	eval_exec_child(t_environ *env, t_ast_node *cmd, char *path, char **argv)
 {
 	char					**envp;
 	char					*err;
+	t_redirs_stack			stack;
 	
 	if (!path)
 		shell_exit(env, 127);
 	envp = environ_to_envp(env);
-	env->last_status = execve(path, argv, envp);
+	redir_stack_init(&stack);
+	do_redir(env, &stack, &cmd->cmd.redirs);
+	if (shell_error_flush(env))
+		env->last_status = execve(path, argv, envp);
+	undo_redir(env, &stack);
 	arglist_free(envp);
 	arglist_free(argv);
 	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
@@ -45,7 +51,7 @@ static void
 }
 
 static void
-	eval_exec_parent(t_environ *env, char *path, char **argv)
+	eval_exec_parent(t_environ *env, t_ast_node *cmd, char *path, char **argv)
 {
 	pid_t	pid;
 	int		status;
@@ -61,19 +67,24 @@ static void
 		free(path);
 	}
 	else
-		eval_exec_child(env, path, argv);
+		eval_exec_child(env, cmd, path, argv);
 }
 
 static void
-	eval_builtin(t_environ *env, char **argv)
+	eval_builtin(t_environ *env, t_ast_node *cmd, char **argv)
 {
 	const t_builtin			*builtin = rb_find(&env->builtins, argv[0]);
 	int						argc;
+	t_redirs_stack			stack;
 	
 	argc = 0;
 	while (argv[argc])
 		++argc;
-	env->last_status = builtin->fn(env, argc, argv);
+	redir_stack_init(&stack);
+	do_redir(env, &stack, &cmd->cmd.redirs);
+	if (shell_error_flush(env))
+		env->last_status = builtin->fn(env, argc, argv);
+	undo_redir(env, &stack);
 }
 
 int
@@ -88,9 +99,9 @@ int
 	status = resolve_eval(env, argv[0],
 		&path);
 	if (status == 2)
-		eval_builtin(env, argv);
+		eval_builtin(env, program, argv);
 	else if (status == 0)
-		eval_exec_parent(env, path, argv);
+		eval_exec_parent(env, program, path, argv);
 	else
 	{
 		ft_asprintf(&err, "%s: command not found", argv[0]);
