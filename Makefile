@@ -1,5 +1,5 @@
 NAME := minishell
-CC := gcc
+CC := clang
 CFLAGS := -Wall -Wextra -pedantic -ggdb
 IFLAGS := -I./src
 LFLAGS :=
@@ -17,6 +17,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/shell/redir/*.c) \
 	$(wildcard src/shell/eval/*.c) \
 	$(wildcard src/shell/env/*.c) \
+	$(wildcard src/shell/fds/*.c) \
 	$(wildcard src/parser/*.c)
 
 SOURCES_TESTER := $(filter-out %main.c,$(SOURCES))

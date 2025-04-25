@@ -103,7 +103,7 @@ size_t
 		status = parse_redir_number(parser, start, redirs);
 	else if (right->type == TOK_MINUS)
 		status = parse_redir_minus(parser, start, redirs);
-	else if (token_isword(right->type))
+	if (status == 0 && token_isword(right->type))
 		status = parse_redir_word(parser, start, redirs);
 	if (!status)
 		return (0);

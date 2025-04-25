@@ -74,7 +74,7 @@ size_t
 	status = 0;
 	if (right->type == TOK_DIGIT)
 		status = parse_redir_number(parser, start, redirs, source);
-	else if (token_isword(right->type) && right->type != TOK_MINUS)
+	if (status == 0 && token_isword(right->type) && right->type != TOK_MINUS)
 		status = parse_redir_word(parser, start, redirs, source);
 	if (!status)
 		return (0);

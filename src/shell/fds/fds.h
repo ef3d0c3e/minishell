@@ -24,6 +24,7 @@ enum e_fd_type
 	FDT_PIPE,
 };
 
+/** @brief Per file-descriptor data */
 typedef struct s_fd_data
 {
 	enum e_fd_type	type;

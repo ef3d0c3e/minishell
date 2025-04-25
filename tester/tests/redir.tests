@@ -39,6 +39,12 @@ DO_TEST(redir, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 				SHELL_TEST("cat - >r_output_direction3", ran1, "", "", 0);
 				SHELL_TEST("cat - >r_output_direction3", ran2, "", "", 0);
 			)
+			TEST_FILES(({"r_output_direction4", "A\n"}),
+				SHELL_TEST("echo A 1>r_output_direction4", "", "", "", 0);
+			)
+			TEST_FILES(({"r_output_direction5", ""}),
+				SHELL_TEST("echo A 2>r_output_direction5", "", "A\n", "", 0);
+			)
 		)
 	)
 
