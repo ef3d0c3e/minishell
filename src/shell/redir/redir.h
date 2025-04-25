@@ -35,6 +35,14 @@ typedef struct s_redirs_stack
 }	t_redirs_stack;
 
 /**
+ * @brief Initializes the redirection unwind stack
+ *
+ * @param stack Stack to initialize
+ */
+void
+redir_stack_init(t_redirs_stack *stack);
+
+/**
  * @brief `dup2` wrapper for redirections
  *
  * This function will save file descriptors whose value is smaller than 10.
@@ -49,7 +57,7 @@ typedef struct s_redirs_stack
  * reported
  */
 int
-redir_dup(t_shell *shell, t_redirs_stack *stack, int fd1, int fd2);
+redir_dup2(t_shell *shell, t_redirs_stack *stack, int fd1, int fd2);
 /**
  * @brief Opens a file for redirection
  *
@@ -70,13 +78,6 @@ redir_open(t_shell *shell, t_redirection *redir);
  */
 void
 redir_internal(t_shell *shell, t_redirs_stack *stack, t_redirection *redir);
-/**
- * @brief Initializes the redirection unwind stack
- *
- * @param stack Stack to initialize
- */
-void
-redir_stack_init(t_redirs_stack *stack);
 
 /**
  * @brief Performs redirection from a redirection list

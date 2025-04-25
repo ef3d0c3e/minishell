@@ -99,7 +99,8 @@ static int
 	{
 		if (w)
 			w->color = 0;
-		x = x_parent;
+		//x = x_parent;
+		*x = *x_parent;
 		(*x_parent) = (*x_parent)->parent;
 	}
 	else

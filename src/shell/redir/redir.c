@@ -35,8 +35,8 @@ void
 	{
 		saved = &stack->fds[stack->size - i];
 		if (saved->fd != saved->original_fd)
-			dup2(saved->fd, saved->original_fd);
-		close(saved->fd);
+			shell_dup2(shell, saved->fd, saved->original_fd);
+		shell_close(shell, saved->fd);
 	}
 	free(stack->fds);
 }

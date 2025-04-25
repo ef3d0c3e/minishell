@@ -138,10 +138,10 @@ enum e_fd_type
 {
 	/** @brief FD comes from `open()` */
 	FDT_OPEN,
-	/** @brief FD comes from `pipe()` */
-	FDT_PIPE,
 	/** @brief FD comes from `dup()` */
 	FDT_DUP,
+	/** @brief FD comes from `pipe()` */
+	FDT_PIPE,
 };
 
 typedef struct s_fd_data
@@ -154,11 +154,11 @@ typedef struct s_fd_data
 	/** @brief Open mode (unset when irrelevant) */
 	int				mode;
 	/** @brief FD shadowed by this one, for `dup2` */
-	int				shadowing;
-	/** @brief Other end of the pipe for pipe fds */
+	int				duped_to;
+	/** @brief Original file descriptor for `dup`ed fds */
+	int				duped_from;
+	/** @brief Other end of the pipe for `pipe` fds */
 	int				pipe;
-	/** @brief Original file descriptor for duped fds */
-	int				original_fd;
 }	t_fd_data;
 
 /**
@@ -235,6 +235,36 @@ shell_open(t_shell *shell, const char *filename, int flags, int mode);
  */
 int
 shell_close(t_shell *shell, int fd);
+/**
+ * @brief Wrapper for `dup`
+ *
+ * On success, this function will register the newly created copy of `fd`.
+ *
+ * @warning In case the file descriptor was not previously registered, an error
+ * is thrown.
+ *
+ * @param shell The shell session
+ * @param fd File descriptor to `dup`
+ *
+ * @returns the new file descriptor on success, -1 on error and set errno.
+ */
+int
+shell_dup(t_shell *shell, int fd);
+/**
+ * @brief Wrapper for `dup2`
+ *
+ * On success, this function will mark newfd as shadowing oldfd.
+ *
+ * @warning In case the file descriptor was not previously registered, an error
+ * is thrown.
+ *
+ * @param shell The shell session
+ * @param fd File descriptor to `dup`
+ *
+ * @returns the new file descriptor on success, -1 on error and set errno.
+ */
+int
+shell_dup2(t_shell *shell, int oldfd, int newfd);
 /**
  * @brief Exits the shell with the given error status. Essentially a wrapper for
  * `exit`

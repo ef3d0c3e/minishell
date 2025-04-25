@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "../util.h"
 
+/*
 void
 	rb_rotate_left(t_rbtree *tree, t_rbnode *x)
 {
@@ -49,6 +50,54 @@ void
 		x->parent->right = y;
 	y->right = x;
 	x->parent = y;
+}
+*/
+void rb_rotate_left(t_rbtree *tree, t_rbnode *x)
+{
+    t_rbnode *y = x->right;
+    // 1) turn y’s left subtree into x’s right subtree
+    x->right = y->left;
+    if (y->left)
+        y->left->parent = x;
+
+    // 2) link y’s parent to x’s parent
+    y->parent = x->parent;
+    if (x->parent == NULL) {
+        // <— this line is critical when x was root
+        tree->root = y;
+    }
+    else if (x == x->parent->left) {
+        x->parent->left = y;
+    }
+    else {
+        x->parent->right = y;
+    }
+
+    // 3) put x on y’s left
+    y->left = x;
+    x->parent = y;
+}
+
+void rb_rotate_right(t_rbtree *tree, t_rbnode *x)
+{
+    t_rbnode *y = x->left;
+    x->left = y->right;
+    if (y->right)
+        y->right->parent = x;
+
+    y->parent = x->parent;
+    if (x->parent == NULL) {
+        tree->root = y;
+    }
+    else if (x == x->parent->right) {
+        x->parent->right = y;
+    }
+    else {
+        x->parent->left = y;
+    }
+
+    y->right = x;
+    x->parent = y;
 }
 
 t_rbnode

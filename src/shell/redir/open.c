@@ -35,14 +35,14 @@ static int
 	flags &= ~O_TRUNC;
 	if (status != 0)
 	{
-		fd = open (filename, flags | O_EXCL, 0666);
+		fd = shell_open(shell, filename, flags | O_EXCL, 0666);
 		if (fd < 0 || errno == EEXIST)
 			return (ft_asprintf(&err, "Failed to open `%s` for writing in "
 				"noclobber mode", filename),
 				shell_error(shell, err, SRC_LOCATION), -1);
 		return (fd);
 	}
-	fd = open (filename, flags, 0666);
+	fd = shell_open(shell, filename, flags, 0666);
 	if (fd < 0)
 		return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
 			" mode", filename), shell_error(shell, err, SRC_LOCATION), -1);
@@ -50,7 +50,7 @@ static int
 			&& (S_ISREG(sb[0].st_mode) == 0) &&
 			sb[0].st_dev == sb[1].st_dev && sb[0].st_ino == sb[1].st_ino)
 		return (fd);
-	close(fd);
+	shell_close(shell, fd);
 	errno = EEXIST;
 	return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
 		" mode", filename), shell_error(shell, err, SRC_LOCATION), -1);
@@ -64,10 +64,9 @@ int
 	char		*err;
 
 	// TODO: Handle special filenames e.g /dev/std* and /dev/fd*
-	
 	if (option_value(shell, "noclobber") && redir_is_clobbering(redir))
 		return (noclobber_open(shell, redir, redir->flags));
-	fd = open(filename, redir->flags, 0666);
+	fd = shell_open(shell, filename, redir->flags, 0666);
 	if (fd < 0 && errno == EINTR)
 		shell_perror(shell, "Interrupted by syscall", SRC_LOCATION);
 	//else if (fd < 0)

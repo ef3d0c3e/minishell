@@ -38,7 +38,7 @@ static void
 }
 
 int
-	redir_dup(t_shell *shell, t_redirs_stack *stack, int fd1, int fd2)
+	redir_dup2(t_shell *shell, t_redirs_stack *stack, int fd1, int fd2)
 {
 	/*
 	int	fds[2];
@@ -63,9 +63,9 @@ int
 	*/	
 	int	saved_fd;
 
-	saved_fd = dup(fd2);
+	saved_fd = shell_dup(shell, fd2);
 	if (saved_fd < 0)
 		shell_perror(shell, "dup failed", SRC_LOCATION);
 	stack_push(stack, saved_fd, fd2);  // Save (saved_fd, fd2) for restoration
-	return (dup2(fd1, fd2));
+	return (shell_dup2(shell, fd1, fd2));
 }

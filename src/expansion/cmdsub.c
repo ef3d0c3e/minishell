@@ -29,7 +29,9 @@ int
 	if (token->type != TOK_CMD_SUB)
 		return (0);
 
+	rb_insert(&shell->temporaries, result->tokens, NULL);
 	status = repl_to_string(shell, stringbuf_cstr(&token->word), &buf);
+	rb_delete(&shell->temporaries, result->tokens);
 	if (status)
 	{
 		ft_asprintf(&err, "Command substitution for `%.*s` failed: return "

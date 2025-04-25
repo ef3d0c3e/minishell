@@ -40,8 +40,8 @@ t_fd_data
 		.flags = flags,
 		.mode = mode,
 		.pipe = -1,
-		.original_fd = -1,
-		.shadowing = -1,
+		.duped_from = -1,
+		.duped_to = -1,
 	});
 }
 
@@ -63,7 +63,7 @@ t_fd_data
 		.flags = data->flags,
 		.mode = data->mode,
 		.pipe = data->pipe,
-		.original_fd = data->original_fd,
-		.shadowing = data->shadowing,
+		.duped_from = data->duped_from,
+		.duped_to = data->duped_to,
 	});
 }
