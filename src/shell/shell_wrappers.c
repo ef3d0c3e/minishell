@@ -11,18 +11,6 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-int
-	shell_open(t_shell *shell, const char *filename, int flags, int mode)
-{
-	// TODO
-}
-
-int
-	shell_close(t_shell *shell, int fd)
-{
-	// TODO
-}
-
 pid_t
 	shell_fork(t_shell *shell, const char *function)
 {

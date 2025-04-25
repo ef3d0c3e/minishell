@@ -13,13 +13,22 @@
 # define BUILTIN_H
 
 typedef struct s_shell t_shell;
-typedef int(*t_builtin_fn)(t_shell *shell, int argc, char **argv);
+typedef int(*t_builtin_run)(t_shell *shell, int argc, char **argv);
+typedef void(*t_builtin_hook)(t_shell *shell);
 
+/** @brief Represents a shell builtin */
 typedef struct s_builtin
 {
+	/** @brief The builtin's command name */
 	const char		*name;
+	/** @brief The builtin's command description */
 	const char		*desc;
-	t_builtin_fn	fn;
+	/** @brief The builtin's run function */
+	t_builtin_run	run;
+	/** @brief The builtin's init hook */
+	t_builtin_hook	init;
+	/** @brief The builtin's deinit hook */
+	t_builtin_hook	deinit;
 }	t_builtin;
 
 /**
@@ -29,6 +38,13 @@ typedef struct s_builtin
  */
 void
 builtin_init(t_shell *shell);
+/**
+ * @brief Unregisters builtins for the shell
+ *
+ * @param shell The shell session
+ */
+void
+builtin_deinit(t_shell *shell);
 
 /**
  * @brief The `echo` builtin

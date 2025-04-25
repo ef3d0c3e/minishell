@@ -82,7 +82,7 @@ static void
 	redir_stack_init(&stack);
 	do_redir(shell, &stack, &cmd->cmd.redirs);
 	if (shell_error_flush(shell))
-		shell->last_status = builtin->fn(shell, argc, argv);
+		shell->last_status = builtin->run(shell, argc, argv);
 	undo_redir(shell, &stack);
 }
 

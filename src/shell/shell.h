@@ -131,6 +131,73 @@ void
 temporaries_init(t_shell *shell);
 
 /******************************************************************************/
+/* File descriptor wrappers                                                   */
+/******************************************************************************/
+
+enum e_fd_type
+{
+	/** @brief FD comes from `open()` */
+	FDT_OPEN,
+	/** @brief FD comes from `pipe()` */
+	FDT_PIPE,
+	/** @brief FD comes from `dup()` */
+	FDT_DUP,
+};
+
+typedef struct s_fd_data
+{
+	enum e_fd_type	type;
+	/** @brief Original filename, may be NULL */
+	char			*filename;
+	/** @brief Open flags (unset when irrelevant) */
+	int				flags;
+	/** @brief Open mode (unset when irrelevant) */
+	int				mode;
+	/** @brief FD shadowed by this one, for `dup2` */
+	int				shadowing;
+	/** @brief Other end of the pipe for pipe fds */
+	int				pipe;
+	/** @brief Original file descriptor for duped fds */
+	int				original_fd;
+}	t_fd_data;
+
+/**
+ * @brief Initializes fd-related data for the shell
+ *
+ * @param shell The shell session
+ */
+void
+fd_data_init(t_shell *shell);
+/**
+ * @brief Frees fd-related data
+ *
+ * @param fd Fd data to free
+ */
+void
+fd_data_free(t_fd_data *fd);
+/**
+ * @brief Creates a new fd data
+ *
+ * @param type The type of file descriptor
+ * @param filename The fd's filename (NULL for none)
+ * @param flags The flags for `open` (0 for none)
+ * @param mode The mode for `open` (0 for none)
+ *
+ * @returns The newly created fd data
+ */
+t_fd_data
+fd_data_from(enum e_fd_type type, char *filename, int flags, int mode);
+/**
+ * @brief Creates a new fd data from an existing one
+ *
+ * @param data The existing fd data
+ *
+ * @returns A copy of data
+ */
+t_fd_data
+fd_data_clone(t_fd_data *data);
+
+/******************************************************************************/
 /* Shell libc wrappers                                                        */
 /******************************************************************************/
 
@@ -280,33 +347,5 @@ options_init(t_shell *shell);
  */
 int
 option_value(t_shell *shell, const char *name);
-
-/******************************************************************************/
-/* File descriptor wrappers                                                   */
-/******************************************************************************/
-
-typedef struct s_fd_data
-{
-	/** @brief Original filename, may be NULL */
-	char	*filename;
-	int		flags;
-	int		mode;
-}	t_fd_data;
-
-/**
- * @brief Initializes fd-related data for the shell
- *
- * @param shell The shell session
- */
-void
-fd_data_init(t_shell *shell);
-
-/**
- * @brief Frees fd-related data
- * 
- * @param fd Fd data to free
- */
-void
-fd_data_free(t_fd_data *fd);
 
 #endif // SHELL_H

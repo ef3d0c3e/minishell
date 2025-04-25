@@ -45,7 +45,9 @@ const t_builtin
 	static const t_builtin	builtin = (t_builtin){
 		.name = "echo",
 		.desc = "The echo builtin",
-		.fn = echo,
+		.run = echo,
+		.init = NULL,
+		.deinit = NULL,
 	};
 
 	return (&builtin);
