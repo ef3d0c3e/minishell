@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
+#include <stdio.h>
 
 /** @brief Handles redirections to files */
 static void

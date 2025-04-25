@@ -69,8 +69,8 @@ int
 	fd = shell_open(shell, filename, redir->flags, 0666);
 	if (fd < 0 && errno == EINTR)
 		shell_perror(shell, "Interrupted by syscall", SRC_LOCATION);
-	//else if (fd < 0)
-	//	return (ft_asprintf(&err, "Failed to open `%s`: %m", filename),
-	//		shell_error(shell, err, SRC_LOCATION), -1);
+	else if (fd < 0)
+		return (ft_asprintf(&err, "Failed to open `%s`: %m", filename),
+			shell_error(shell, err, SRC_LOCATION), -1);
 	return (fd);
 }

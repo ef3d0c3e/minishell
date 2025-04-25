@@ -78,8 +78,8 @@ int
 	if (token->type != TOK_WORD
 		|| token->word.len < 1 || token->word.str[0] != '~')
 		return (0);
-	if (result->size != 0 && result->tokens[result->size - 1].type != TOK_SPACE
-		&& result->tokens[result->size - 1].type != TOK_NEWLINE)
+	if (result->size != 0
+		&& token_isword(result->tokens[result->size - 1].type))
 		return (0);
 	str = (t_string){.str = token->word.str, .len = token->word.len};
 	end = min_sz(str.len, str_find(str, "/"));

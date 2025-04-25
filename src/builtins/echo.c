@@ -11,6 +11,20 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+static void
+	write_msg(const char *msg)
+{
+	const size_t	len = ft_strlen(msg);
+	ssize_t			written;
+
+	written = write(1, msg, len);
+	if (written == -1 || (size_t)written != len)
+	{
+		ft_dprintf(2, "echo: Write error");
+		exit(EXIT_FAILURE);
+	}
+}
+
 static int
 	echo(t_shell *shell, int argc, char **argv)
 {
@@ -30,12 +44,12 @@ static int
 	while (i < argc)
 	{
 		if (i != start)
-			ft_printf(" ");
-		ft_printf("%s", argv[i]);
+			write_msg(" ");
+		write_msg(argv[i]);
 		++i;
 	}
 	if (newline)
-		ft_printf("\n");
+		write_msg("\n");
 	return (0);
 }
 
