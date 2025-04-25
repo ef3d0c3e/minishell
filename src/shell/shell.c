@@ -12,6 +12,7 @@
 #include "builtins/builtin.h"
 #include "util/util.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 
 t_shell
@@ -67,12 +68,12 @@ void
 {
 	builtin_deinit(shell);
 	shell_error_flush(shell);
-	rb_free(&shell->temporaries);
 	rb_free(&shell->reg_env);
 	rb_free(&shell->reg_fds);
 	rb_free(&shell->path_cache);
 	rb_free(&shell->reg_builtins);
 	rb_free(&shell->options);
 	shell_parser_free(shell);
+	temporaries_cleanup(shell);
 	free(shell->errors.errors);
 }

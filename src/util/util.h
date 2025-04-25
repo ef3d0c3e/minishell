@@ -28,7 +28,10 @@
 # define __STRINGIFY(__x) #__x
 # define STRINGIFY(__x) __STRINGIFY(__x)
 # define SRC_LOCATION __FILE__ "#" STRINGIFY(__LINE__)
-//# define SRC_LOCATION __func__
+
+# ifndef SRC_LOCATION
+#  define SRC_LOCATION __func__
+# endif // SRC_LOCATION
 
 /* ************************************************************************** */
 /* Arithmetic utils                                                           */

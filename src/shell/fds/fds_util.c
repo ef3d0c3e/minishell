@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   temporaries.c                                      :+:      :+:    :+:   */
+/*   fds_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,44 +9,15 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
+#include <shell/shell.h>
 
-/**
- * @file Handles temporary heap variables
- *
- * Variables are added to this tree so they can be removed when `fork` is called
- * and finishes.
- */
-
-static int
-	ptr_cmp(const void *a, const void *b)
+int
+	fd_check(t_shell *shell, int fd, int mask)
 {
-	return ((int)((ptrdiff_t)a - (ptrdiff_t)b));
-}
+	const t_fd_data	*data = rb_find(&shell->reg_fds, (void *)(ptrdiff_t)fd);
 
-void
-	temporaries_init(t_shell *shell)
-{
-	shell->temporaries = rb_new(ptr_cmp, NULL, NULL);
-}
-
-static void
-	cleanup_fn(size_t depth, t_rbnode *node, void *cookie)
-{
-	(void)depth;
-	(void)cookie;
-
-	if (node->data)
-		((void (*)(void *))node->data)(node->key);
-	else
-		free(node->key);
-}
-
-void
-	temporaries_cleanup(t_shell *shell)
-{
-	rb_apply(&shell->temporaries, cleanup_fn, NULL);
-	rb_free(&shell->temporaries);
+	if (!data)
+		return (-1);
+	return (data->flags & mask);
 }

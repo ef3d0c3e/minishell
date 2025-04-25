@@ -19,6 +19,7 @@
 # include <shell/env/env.h>
 # include <shell/eval/eval.h>
 # include <shell/redir/redir.h>
+# include <shell/fds/fds.h>
 
 # include <ft_printf.h>
 # include <gnl.h>
@@ -66,7 +67,10 @@ typedef struct s_shell
 
 	/** @brief Stack of temporary values that need to be `free`d when the shell
 	 * exits. The purpose of this is to avoid leaks when forking. View it as
-	 * a per-process-unique pointers registry */
+	 * a per-process-unique pointers registry.
+	 *
+	 * If the data member for a node is set, it will be used as the cleanup
+	 * function instead of `free`. */
 	t_rbtree			temporaries;
 	/** @brief Current program prompt */
 	char				*prompt;
@@ -122,6 +126,11 @@ shell_parser_free(t_shell *shell);
  */
 void
 shell_free(t_shell *shell);
+
+/******************************************************************************/
+/* Temporaries handling                                                       */
+/******************************************************************************/
+
 /**
  * @brief Initializes the temporaries registry
  *
@@ -129,73 +138,13 @@ shell_free(t_shell *shell);
  */
 void
 temporaries_init(t_shell *shell);
-
-/******************************************************************************/
-/* File descriptor wrappers                                                   */
-/******************************************************************************/
-
-enum e_fd_type
-{
-	/** @brief FD comes from `open()` */
-	FDT_OPEN,
-	/** @brief FD comes from `dup()` */
-	FDT_DUP,
-	/** @brief FD comes from `pipe()` */
-	FDT_PIPE,
-};
-
-typedef struct s_fd_data
-{
-	enum e_fd_type	type;
-	/** @brief Original filename, may be NULL */
-	char			*filename;
-	/** @brief Open flags (unset when irrelevant) */
-	int				flags;
-	/** @brief Open mode (unset when irrelevant) */
-	int				mode;
-	/** @brief FD shadowed by this one, for `dup2` */
-	int				duped_to;
-	/** @brief Original file descriptor for `dup`ed fds */
-	int				duped_from;
-	/** @brief Other end of the pipe for `pipe` fds */
-	int				pipe;
-}	t_fd_data;
-
 /**
- * @brief Initializes fd-related data for the shell
+ * @brief Celanup all temporaries
  *
  * @param shell The shell session
  */
 void
-fd_data_init(t_shell *shell);
-/**
- * @brief Frees fd-related data
- *
- * @param fd Fd data to free
- */
-void
-fd_data_free(t_fd_data *fd);
-/**
- * @brief Creates a new fd data
- *
- * @param type The type of file descriptor
- * @param filename The fd's filename (NULL for none)
- * @param flags The flags for `open` (0 for none)
- * @param mode The mode for `open` (0 for none)
- *
- * @returns The newly created fd data
- */
-t_fd_data
-fd_data_from(enum e_fd_type type, char *filename, int flags, int mode);
-/**
- * @brief Creates a new fd data from an existing one
- *
- * @param data The existing fd data
- *
- * @returns A copy of data
- */
-t_fd_data
-fd_data_clone(t_fd_data *data);
+temporaries_cleanup(t_shell *shell);
 
 /******************************************************************************/
 /* Shell libc wrappers                                                        */

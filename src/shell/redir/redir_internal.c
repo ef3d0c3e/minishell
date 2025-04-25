@@ -9,26 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
-
-static void
-	print_fn(size_t depth, t_rbnode *node, void *cookie)
-{
-	const t_fd_data	*data;
-	(void)depth;
-	(void)cookie;
-
-	data = node->data;
-	ft_dprintf(2, "%d: %s fl=%04o m=%04o",
-		(int)(ptrdiff_t)node->key, data->filename, data->flags, data->mode);
-	if (data->type == FDT_DUP)
-		ft_dprintf(2, " duped_from=%d", data->duped_from);
-	if (data->duped_to != -1)
-		ft_dprintf(2, " duped_to=%d", data->duped_to);
-	ft_dprintf(2, "\n");
-}
-
 
 /** @brief Handles redirections to files */
 static void
@@ -50,7 +31,6 @@ static void
 		shell_error(shell, err, SRC_LOCATION);
 		return ;
 	}
-	rb_apply(&shell->reg_fds, print_fn, NULL);
 	if (fd != redir->redirector.fd)
 		shell_close(shell, fd);
 	if (redir->type == R_ERR_AND_OUT || redir->type == R_APPEND_ERR_AND_OUT)
@@ -72,9 +52,32 @@ static void
 	t_redirection *redir)
 {
 	char	*err;
+	int		dest;
+	int		status;
 
 	if (redir->redirectee.fd == redir->redirector.fd)
 		return ;
+	err = NULL;
+	status = fd_check(shell, redir->redirectee.fd, O_RDONLY);
+	if (status < 0)
+		ft_asprintf(&err, "Dest fd %d is not valid", redir->redirectee.fd);
+	else if (status > 0)
+		ft_asprintf(&err, "Dest fd %d is not writeable", redir->redirectee.fd);
+	if (err)
+	{
+		shell_error(shell, err, SRC_LOCATION);
+		return ;
+	}
+	status = fd_check(shell, redir->redirector.fd, O_WRONLY);
+	if (status < 0)
+		ft_asprintf(&err, "Source fd %d is not valid", redir->redirector.fd);
+	else if (status > 0)
+		ft_asprintf(&err, "Source fd %d is not readeable", redir->redirectee.fd);
+	if (err)
+	{
+		shell_error(shell, err, SRC_LOCATION);
+		return ;
+	}
 	if (redir_dup2(shell, stack, redir->redirectee.fd, redir->redirector.fd) < 0)
 	{
 		ft_asprintf(&err, "Failed to dup2: %m");

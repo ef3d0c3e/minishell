@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <parser/parser.h>
+#include <stdio.h>
 
 /** @brief Parses [REDIR][NUMBER] */
 static int
@@ -18,7 +19,7 @@ static int
 	size_t start,
 	t_redirections *redirs)
 {
-	const t_token	*tok = &parser->list.tokens[start + 1];
+	const t_token	*tok = &parser->list.tokens[start];
 	int				num;
 
 	if (!token_atoi(parser, start + 1, &num))
