@@ -60,7 +60,7 @@ int
 	if (option_value(shell, "dbg_ast"))
 	{
 		ft_dprintf(2, " -- Parsing --\n");
-		ast_print_debug(input, shell->program, 0);
+		ast_print(0, shell->program);
 	}
 	if (!parser_error_flush(&parser))
 		return (shell_parser_free(shell), shell->last_status = 2, shell->last_status);
@@ -68,7 +68,7 @@ int
 	if (option_value(shell, "dbg_ast"))
 	{
 		ft_dprintf(2, " -- Parsing --\n");
-		ast_print_debug(input, shell->program, 0);
+		ast_print(0, shell->program);
 	}
 	eval(shell, shell->program);
 	shell_parser_free(shell);

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast.c                                              :+:      :+:    :+:   */
+/*   node_list.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,39 +11,37 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
-	ast_free(t_ast_node *node)
+t_ast_node
+	*make_list_node(void)
 {
-	static void(*cleaners[])(t_ast_node *) = {
-	[NODE_BLOCK] = free_block_node,
-	[NODE_SUBSHELL] = free_subshell_node,
-	[NODE_COMMAND] = free_cmd_node,
-	[NODE_LIST] = free_cmdlist_node,
-	[NODE_LOGIC] = free_logic_node,
-	[NODE_FUNCTION] = free_function_node,
-	[NODE_IF] = free_if_node,
-	};
+	t_ast_node	*node;
 
-	if (!node)
-		return ;
-	cleaners[node->type](node);
-	free(node);
+	node = xmalloc(sizeof(t_ast_node));
+	node->type = NODE_LIST;
+	node->list.cmds = NULL;
+	node->list.ncmds = 0;
+	return (node);
 }
 
 void
-	ast_print(
-	size_t depth,
-	t_ast_node *node)
+	free_cmdlist_node(t_ast_node *node)
 {
-	static void(*printers[])(size_t, const t_ast_node *) = {
-	[NODE_BLOCK] = print_block_node,
-	[NODE_SUBSHELL] = print_subshell_node,
-	[NODE_COMMAND] = print_cmd_node,
-	[NODE_LIST] = print_cmdlist_node,
-	[NODE_LOGIC] = print_logic_node,
-	[NODE_FUNCTION] = print_function_node,
-	[NODE_IF] = print_if_node,
-	};
+	size_t	i;
 
-	printers[node->type](depth, node);
+	i = 0;
+	while (i < node->list.ncmds)
+		ast_free(node->list.cmds[i++]);
+	free(node->list.cmds);
+}
+
+void
+	print_cmdlist_node(size_t depth, const t_ast_node *node)
+{
+	size_t	i;
+
+	print_pad(" | ", depth);
+	ft_dprintf(2, "LIST\n");
+	i = 0;
+	while (i < node->list.ncmds)
+		ast_print(depth + 1, node->list.cmds[i++]);
 }

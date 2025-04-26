@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
@@ -95,4 +96,14 @@ int
 		++pos;
 	}
 	return (1);
+}
+
+void
+	print_pad(const char *pad, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i++ < n)
+		ft_dprintf(2, "%s", pad);
 }

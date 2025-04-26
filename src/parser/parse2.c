@@ -267,7 +267,7 @@ t_ast_node
 	parser->pos += 3;
 	body = parse_compound_command(parser);
 	// TODO: Force node to be a subshell or block node
-	return (make_funcdef_node(name, body));
+	return (make_function_node(name, body));
 }
 
 t_ast_node

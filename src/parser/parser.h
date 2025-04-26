@@ -100,6 +100,8 @@ enum e_node_type
 	NODE_SUBSHELL,
 	/** @brief Command */
 	NODE_COMMAND,
+	/** @brief Command list */
+	NODE_LIST,
 	/** @brief Binary logic operator, e.g `||`, `|&`, `>` */
 	NODE_LOGIC,
 	/** @brief Function definition node */
@@ -115,6 +117,16 @@ struct s_node_block
 	t_ast_node		*inner;
 };
 
+/** @brief Creates a block node */
+t_ast_node
+*make_block_node(t_ast_node *inner);
+/** @brief Frees a block node */
+void
+free_block_node(t_ast_node *node);
+/** @brief Prints a block node */
+void
+print_block_node(size_t depth, const t_ast_node *node);
+
 /** @brief Sub expression data */
 struct s_subshell_node
 {
@@ -123,6 +135,16 @@ struct s_subshell_node
 	/** @brief Redirections */
 	t_redirections	redirs;
 };
+
+/** @brief Creates a subshell node */
+t_ast_node
+*make_subshell_node(t_ast_node *inner);
+/** @brief Frees a subshell node */
+void
+free_subshell_node(t_ast_node *node);
+/** @brief Prints a subshell node */
+void
+print_subshell_node(size_t depth, const t_ast_node *node);
 
 /** @brief Command name and arguments */
 struct s_cmd_node
@@ -139,6 +161,32 @@ struct s_cmd_node
 	t_redirections		redirs;
 };
 
+/** @brief Creates a command node */
+t_ast_node
+*make_cmd_node(void);
+/** @brief Frees a command node */
+void
+free_cmd_node(t_ast_node *node);
+/** @brief Prints a command node */
+void
+print_cmd_node(size_t depth, const t_ast_node *node);
+
+/** @brief Command list node */
+struct s_cmdlist_node
+{
+	t_ast_node	**cmds;
+	size_t		ncmds;
+};
+
+t_ast_node
+*make_cmdlist_node(void);
+/** @brief Frees a command list node */
+void
+free_cmdlist_node(t_ast_node *node);
+/** @brief Prints a command list node */
+void
+print_cmdlist_node(size_t depth, const t_ast_node *node);
+
 /** @brief Data for logic (binary) nodes */
 struct s_logic_node
 {
@@ -150,6 +198,16 @@ struct s_logic_node
 	t_ast_node	*right;
 };
 
+/** @brief Creates a logic node */
+t_ast_node
+*make_logic_node(t_token op, t_ast_node *left, t_ast_node *right);
+/** @brief Frees a logic node */
+void
+free_logic_node(t_ast_node *node);
+/** @brief Prints a logic node */
+void
+print_logic_node(size_t depth, const t_ast_node *node);
+
 /** @brief A node for function definition */
 struct s_function_node
 {
@@ -158,6 +216,16 @@ struct s_function_node
 	/** @brief The function's body */
 	t_ast_node		*body;
 };
+
+/** @brief Creates a function node */
+t_ast_node
+*make_function_node(t_string_buffer name, t_ast_node *body);
+/** @brief Frees a function node */
+void
+free_function_node(t_ast_node *node);
+/** @brief Prints a function node */
+void
+print_function_node(size_t depth, const t_ast_node *node);
 
 struct s_if_node
 {
@@ -168,6 +236,16 @@ struct s_if_node
 	t_ast_node	**bodies;
 	size_t		nbodies;
 };
+
+/** @brief Creates a if node */
+t_ast_node
+*make_if_node(void);
+/** @brief Frees a if node */
+void
+free_if_node(t_ast_node *node);
+/** @brief Prints a if node */
+void
+print_if_node(size_t depth, const t_ast_node *node);
 
 /** @brief AST Node type */
 typedef struct s_ast_node
@@ -182,6 +260,8 @@ typedef struct s_ast_node
 		struct s_subshell_node	expr;
 		/** @brief Atom, for commands (name & parameters) */
 		struct s_cmd_node		cmd;
+		/** @brief Command list token */
+		struct s_cmdlist_node	list;
 		/** @brief Binary nodes, e.g `|` or `&&` */
 		struct s_logic_node		logic;
 		/** @brief Function definition node */
@@ -193,36 +273,10 @@ typedef struct s_ast_node
 
 /** @brief Frees the AST */
 void
-ast_free(t_ast_node *head);
-
+ast_free(t_ast_node *node);
 /** @brief Prints debug info for the AST */
 void
-ast_print_debug(
-	t_string input,
-	t_ast_node *head,
-	size_t depth);
-
-/**
- * @brief Creates a new logic node
- *
- * @param op The logic operator token
- * @param left Left side operand
- * @param right Right side operand
- *
- * @returns The newly created logic node
- */
-t_ast_node
-*make_logic_node(t_token op, t_ast_node *left, t_ast_node *right);
-t_ast_node
-*make_cmd_node(void);
-t_ast_node
-*make_subshell_node(t_ast_node *inner);
-t_ast_node
-*make_block_node(t_ast_node *inner);
-t_ast_node
-*make_funcdef_node(t_string_buffer name, t_ast_node *body);
-t_ast_node
-*make_if_node(void);
+ast_print(size_t depth, t_ast_node *node);
 
 /******************************************************************************/
 /* The parser                                                                 */
@@ -367,5 +421,14 @@ expect(t_parser *parser, int offset, const char *word);
  */
 int
 token_atoi(t_parser *parser, size_t pos, int *value);
+
+/**
+ * @brief Prints `pad` `n` times
+ *
+ * @param pad Padding string
+ * @param n Number of times to print `pad`
+ */
+void
+print_pad(const char *pad, size_t n);
 
 #endif // PARSER_H

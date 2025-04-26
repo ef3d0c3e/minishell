@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nodes_basic.c                                      :+:      :+:    :+:   */
+/*   node_subshell.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,36 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
-
-t_ast_node
-	*make_logic_node(t_token op, t_ast_node *left, t_ast_node *right)
-{
-	t_ast_node	*node;
-
-	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_LOGIC;
-	node->logic.token = op;
-	node->logic.left = left;
-	node->logic.right = right;
-	return (node);
-}
-
-t_ast_node
-	*make_cmd_node(void)
-{
-	t_ast_node	*node;
-
-	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_COMMAND;
-	node->cmd.args = NULL;
-	node->cmd.nargs = 0;
-	node->cmd.assigns = NULL;
-	node->cmd.nassigns = 0;
-	node->cmd.redirs.redirs = NULL;
-	node->cmd.redirs.redirs_capacity = 0;
-	node->cmd.redirs.redirs_size = 0;
-	return (node);
-}
 
 t_ast_node
 	*make_subshell_node(t_ast_node *inner)
@@ -55,13 +25,18 @@ t_ast_node
 	return (node);
 }
 
-t_ast_node
-	*make_block_node(t_ast_node *inner)
+void
+	free_subshell_node(t_ast_node *node)
 {
-	t_ast_node	*node;
+	ast_free(node->expr.head);
+	redirs_free(&node->expr.redirs);
+}
 
-	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_BLOCK;
-	node->block.inner = inner;
-	return (node);
+void
+	print_subshell_node(size_t depth, const t_ast_node *node)
+{
+	print_pad(" | ", depth);
+	ft_dprintf(2, "SUBSHELL\n");
+	ast_print(depth + 1, node->expr.head);
+	print_redir(&node->expr.redirs, depth + 1);
 }
