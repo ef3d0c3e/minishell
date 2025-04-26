@@ -57,8 +57,14 @@ int
 	parser = parser_init(input, *shell->token_list);
 	shell->parser = &parser;
 	shell->program = parse(shell->parser, 0, shell->token_list->size, 0);
+	if (option_value(shell, "dbg_ast"))
+	{
+		ft_dprintf(2, " -- Parsing --\n");
+		ast_print_debug(input, shell->program, 0);
+	}
 	if (!parser_error_flush(&parser))
 		return (shell_parser_free(shell), shell->last_status = 2, shell->last_status);
+	shell_exit(shell, 0);
 	if (option_value(shell, "dbg_ast"))
 	{
 		ft_dprintf(2, " -- Parsing --\n");

@@ -42,7 +42,19 @@ void
 		stringbuf_free(&head->function.name);
 		ast_free(head->function.body);
 	}
+	else if (head->type == NODE_FUNCTION)
+	{
+		stringbuf_free(&head->function.name);
+		ast_free(head->function.body);
+	}
 	free(head);
+}
+
+static void
+	pad(size_t depth)
+{
+	for (size_t i = 0; i < depth; ++i)
+		write(2, " | ", 3);
 }
 
 void
@@ -51,10 +63,11 @@ void
 		t_ast_node *head,
 		size_t depth)
 {
+	size_t	i;
+
 	if (!head)
 		return ;
-	for (size_t i = 0; i < depth; ++i)
-		write(2, " | ", 3);
+	pad(depth);
 	if (head->type == NODE_BLOCK)
 	{
 		ft_dprintf(2, "BLOCK\n");
@@ -82,5 +95,25 @@ void
 	{
 		ft_dprintf(2, "FUNCTION `%.*s`\n", head->function.name.len, head->function.name.str);
 		ast_print_debug(input, head->function.body, depth + 1);
+	}
+	else if (head->type == NODE_IF)
+	{
+		i = 0;
+		while (i < head->st_if.nconds)
+		{
+			ft_dprintf(2, "%s\n", &"IF\0ELIF"[!!i * 3]);
+			pad(depth + 1);
+			ft_dprintf(2, "(COND)\n");
+			ast_print_debug(input, head->st_if.conds[i], depth + 1);
+			pad(depth + 1);
+			ft_dprintf(2, "(BODY)\n");
+			ast_print_debug(input, head->st_if.bodies[i], depth + 1);
+			++i;
+		}
+		if (i < head->st_if.nbodies)
+		{
+			ft_dprintf(2, "ELSE\n");
+			ast_print_debug(input, head->st_if.bodies[i], depth + 1);
+		}
 	}
 }

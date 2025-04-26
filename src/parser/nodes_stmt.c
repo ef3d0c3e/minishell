@@ -23,3 +23,17 @@ t_ast_node
 	node->function.body = body;
 	return (node);
 }
+
+t_ast_node
+	*make_if_node(void)
+{
+	t_ast_node	*node;
+
+	node = xmalloc(sizeof(t_ast_node));
+	node->type = NODE_IF;
+	node->st_if.conds = NULL;
+	node->st_if.nconds = 0;
+	node->st_if.bodies = NULL;
+	node->st_if.nbodies = 0;
+	return (node);
+}

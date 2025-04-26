@@ -105,6 +105,9 @@ t_ast_node
 	*/
 
 	arg_pos = 0;
+	if (parser->pos < parser->list.size
+		&& parser->list.tokens[parser->pos].type == TOK_SPACE)
+		++parser->pos;
 	while (parser->pos < parser->list.size)
 	{
 		parse_redir_repeat(parser, &cmd->cmd.redirs);
@@ -113,7 +116,8 @@ t_ast_node
 		tok = &parser->list.tokens[parser->pos];
 
 		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
-			|| token_isword(tok->type))
+			|| (arg_pos != 0 && token_isword(tok->type))
+			|| accept_word(parser, 0))
 		{
 			cmd_arg_push(cmd, arg_pos, tok);
 			++parser->pos;
@@ -132,17 +136,56 @@ t_ast_node
 t_ast_node
 	*parse_cmdlist(t_parser *parser);
 
+
+static void
+	if_push(t_parser *parser, t_ast_node *stmt, int with_cond)
+{
+	t_ast_node	*cond;
+	t_ast_node	*body;
+
+	if (with_cond)
+	{
+		cond = parse_cmdlist(parser);
+		expect(parser, 0, "then");
+		++parser->pos;
+	}
+	body = parse_cmdlist(parser);
+
+	if (with_cond)
+	{
+		stmt->st_if.conds = ft_realloc(stmt->st_if.conds,
+				sizeof(t_ast_node **) * stmt->st_if.nconds,
+				sizeof(t_ast_node **) * (stmt->st_if.nconds + 1));
+		stmt->st_if.conds[stmt->st_if.nconds++] = cond;
+	}
+	stmt->st_if.bodies = ft_realloc(stmt->st_if.bodies,
+		sizeof(t_ast_node **) * stmt->st_if.nbodies,
+		sizeof(t_ast_node **) * (stmt->st_if.nbodies + 1));
+	stmt->st_if.bodies[stmt->st_if.nbodies++] = body;
+}
+
 t_ast_node
 	*parse_if_stmt(t_parser *parser)
 {
-	t_ast_node	*cond;
+	t_ast_node	*stmt;
 
 	++parser->pos;
-	cond = parse_cmdlist(parser);
-	expect(parser, 0, "then");
-	++parser->pos;
+	parser->allow_reserved = 0;
+	stmt = make_if_node();
+	if_push(parser, stmt, 1);
+	while (accept(parser, 0, "elif"))
+	{
+		++parser->pos;
+		if_push(parser, stmt, 1);
+	}
+	if (accept(parser, 0, "else"))
+	{
+		++parser->pos;
+		if_push(parser, stmt, 0);
+	}
 	expect(parser, 0, "fi");
-	return (NULL);
+	parser->allow_reserved = 1;
+	return (stmt);
 }
 /*
 AST* parse_if_clause() {
@@ -188,7 +231,6 @@ t_ast_node
 	{
 		++parser->pos;
 		inner = parse_cmdlist(parser);
-		printf("HERE: %zu\n", parser->pos);
 		// TODO: Expect sequence token before `}` (for bash like behavior)
 		if (!accept(parser, 0, "}"))
 			parser_error(parser, ft_strdup("Expected `}` token"),
@@ -299,6 +341,8 @@ t_ast_node
 	t_ast_node*	right;
 	t_token		op;
 	
+	if (parser->pos >= parser->list.size)
+		return (NULL);
 	left = parse_and_or(parser);
 	if (accept(parser, 0, ";") || accept(parser, 0, "&")
 		|| accept(parser, 0, "\n"))

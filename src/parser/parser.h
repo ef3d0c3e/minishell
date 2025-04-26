@@ -104,6 +104,8 @@ enum e_node_type
 	NODE_LOGIC,
 	/** @brief Function definition node */
 	NODE_FUNCTION,
+	/** @brief If statement node */
+	NODE_IF,
 };
 
 /** @brief A block node */
@@ -157,6 +159,16 @@ struct s_function_node
 	t_ast_node		*body;
 };
 
+struct s_if_node
+{
+	/** @brief Conditions, at most `nbodies` */
+	t_ast_node	**conds;
+	size_t		nconds;
+	/** @brief Bodies, at most `nconds + 1` */
+	t_ast_node	**bodies;
+	size_t		nbodies;
+};
+
 /** @brief AST Node type */
 typedef struct s_ast_node
 {
@@ -174,6 +186,8 @@ typedef struct s_ast_node
 		struct s_logic_node		logic;
 		/** @brief Function definition node */
 		struct s_function_node	function;
+		/** @brief If node */
+		struct s_if_node		st_if;
 	};
 }	t_ast_node;
 
@@ -207,6 +221,8 @@ t_ast_node
 *make_block_node(t_ast_node *inner);
 t_ast_node
 *make_funcdef_node(t_string_buffer name, t_ast_node *body);
+t_ast_node
+*make_if_node(void);
 
 /******************************************************************************/
 /* The parser                                                                 */
@@ -314,6 +330,16 @@ parser_next_operator(
  */
 int
 accept(t_parser *parser, int offset, const char *word);
+/**
+ * @brief Checks if the current token can be treated as a word
+ *
+ * @param parser The parser
+ * @param offset Offset from current position
+ *
+ * @returns 1 If the token can be treated as a plain word.
+ */
+int
+accept_word(t_parser *parser, int offset);
 /**
  * @brief Checks if the current token is a control token and it's content
  * matches against `word`. If it doesn't match an error is reported
