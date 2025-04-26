@@ -9,13 +9,33 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 /** @brief Removes spaces before and after operators */
 static int
 	remove_space(const t_token_list *list, size_t *i)
 {
+	const t_token	*prev;
+	const t_token	*next;
+	if (list->tokens[*i].type != TOK_SPACE)
+		return (0);
+	if (*i + 1 >= list->size
+		|| *i == 0)
+	{
+		++*i;
+		return (1);
+	}
+	prev = &list->tokens[*i - 1];
+	next = &list->tokens[*i + 1];
+	if ((token_isword(next->type) || next->type == TOK_PARAM
+		|| next->type == TOK_PARAM_SIMPLE || next->type == TOK_CMD_SUB)
+		&& (token_isword(prev->type) || prev->type == TOK_PARAM
+		|| prev->type == TOK_PARAM_SIMPLE || prev->type == TOK_CMD_SUB))
+		return (0);
+	++*i;
+	return (1);
+	/*
 	if (list->tokens[*i].type == TOK_SPACE
 		&& ((*i && (token_precedence(&list->tokens[*i - 1]) >= 0
 		|| list->tokens[*i - 1].type == TOK_REDIR))
@@ -27,6 +47,7 @@ static int
 		return (1);
 	}
 	return (0);
+	*/
 }
 
 static int

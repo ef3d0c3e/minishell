@@ -11,37 +11,43 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-size_t
-	parser_next_operator(
-		t_parser *parser,
-		size_t start,
-		size_t end,
-		int min_prec)
+int
+	accept(t_parser *parser, int offset, const char *word)
 {
 	const t_token	*tok;
-	size_t			i;
-	size_t			balance[2];
 
-	i = start;
-	balance[0] = 0;
-	balance[1] = 0;
-	// TODO: `{}` balance
-	while (i < end)
-	{
-		tok = &parser->list.tokens[i];
-		if (tok->type == TOK_GROUPING && tok->reserved_word[0] == '(')
-			++balance[0];
-		else if (tok->type == TOK_GROUPING && tok->reserved_word[0] == ')')
-			--balance[0];
-		if ((tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE)
-			&& balance[0] == 0)
-		{
-			if (token_precedence(tok) == min_prec)
-				return (i);
-		}
-		++i;
-	}
-	return ((size_t)-1);
+	if (offset > 0 && parser->pos + offset >= parser->list.size)
+		return (0);
+	else if (offset < 0 && (size_t)-offset > parser->pos)
+		return (0);
+	if (parser->pos + offset >= parser->list.size)
+		return (0);
+	tok = &parser->list.tokens[parser->pos + offset];
+	if (tok->type == TOK_KEYWORD || tok->type == TOK_SEQUENCE
+		|| tok->type == TOK_OPERATOR || tok->type == TOK_PIPELINE
+		|| tok->type == TOK_GROUPING)
+		return (!ft_strcmp(tok->reserved_word, word));
+	return (0);
+}
+
+int
+	expect(t_parser *parser, int offset, const char *word)
+{
+	size_t	start;
+	char	*err;
+
+	if (accept(parser, offset, word))
+		return (1);
+	ft_asprintf(&err, "Expected `%s` token", word);
+	start = parser->pos;
+	if (offset >= 0)
+		start = min_sz(start + offset, parser->list.size - 1);
+	else if ((size_t)-offset > start)
+		start = 0;
+	else
+		start = min_sz(start + offset, parser->list.size - 1);
+	parser_error(parser, err, start, parser->list.size);
+	return (0);
 }
 
 int

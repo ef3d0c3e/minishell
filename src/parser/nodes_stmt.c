@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nodes.c                                            :+:      :+:    :+:   */
+/*   nodes_stmt.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -13,45 +13,13 @@
 #include <shell/shell.h>
 
 t_ast_node
-	*make_logic_node(t_token op, t_ast_node *left, t_ast_node *right)
+	*make_funcdef_node(t_string_buffer name, t_ast_node *body)
 {
 	t_ast_node	*node;
 
 	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_LOGIC;
-	node->logic.token = op;
-	node->logic.left = left;
-	node->logic.right = right;
-	return (node);
-}
-
-t_ast_node
-	*make_cmd_node()
-{
-	t_ast_node	*node;
-
-	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_COMMAND;
-	node->cmd.args = NULL;
-	node->cmd.nargs = 0;
-	node->cmd.assigns = NULL;
-	node->cmd.nassigns = 0;
-	node->cmd.redirs.redirs = NULL;
-	node->cmd.redirs.redirs_capacity = 0;
-	node->cmd.redirs.redirs_size = 0;
-	return (node);
-}
-
-t_ast_node
-	*make_subshell_node(t_ast_node *inner)
-{
-	t_ast_node	*node;
-
-	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_SUBSHELL;
-	node->expr.head = inner;
-	node->expr.redirs.redirs = NULL;
-	node->expr.redirs.redirs_capacity = 0;
-	node->expr.redirs.redirs_size = 0;
+	node->type = NODE_FUNCTION;
+	node->function.name = name;
+	node->function.body = body;
 	return (node);
 }

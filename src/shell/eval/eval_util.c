@@ -44,7 +44,7 @@ static char
 
 
 char
-	**command_to_argv(t_shell *shell, const struct s_node_cmd *cmd)
+	**command_to_argv(t_shell *shell, const struct s_cmd_node *cmd)
 {
 	char	**result;
 	size_t	i;

@@ -421,13 +421,11 @@ redir_parser4(
  * @param end End token
  * @param cmd Command to parse into
  *
- * @returns The number of consumed token, 0 if no tokens were consumed
+ * @returns 1 If a redirection was successfully parsed, 0 otherwise
  */
-size_t
+int
 parse_redir(
 	t_parser *parser,
-	size_t start,
-	size_t end,
 	t_redirections *redirs);
 /**
  * @brief Parses redirections repeatedly into `redirs`
@@ -436,14 +434,10 @@ parse_redir(
  * @param start Start token
  * @param end End token
  * @param cmd Command to parse into
- *
- * @returns The number of consumed token, 0 if no tokens were consumed
  */
-size_t
+void
 parse_redir_repeat(
 	t_parser *parser,
-	size_t start,
-	size_t end,
 	t_redirections *redirs);
 
 #endif // REDIR_PARSER_H

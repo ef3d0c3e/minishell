@@ -15,6 +15,7 @@ int
 	token_keyword(t_token_list *list, t_u8_iterator *it)
 {
 	static const char	*keywords[] = {
+	"[[", "]]", "[", "]", "((", "))",
 	"if", "then", "elif", "else", "fi", "time",
 	"for", "in", "until", "while", "do", "done",
 	"case", "esac", "coproc", "select", "function",

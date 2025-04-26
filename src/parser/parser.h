@@ -93,19 +93,29 @@ typedef struct s_ast_node	t_ast_node;
 /** @brief Type for nodes */
 enum e_node_type
 {
-	/** @brief Expression that should run in a sub-shell */
+	/** @brief Block node, delimited by `{` and `}` */
+	NODE_BLOCK,
+	/** @brief Expression that should run in a sub-shell, delimited by `{` and
+	 * `}` */
 	NODE_SUBSHELL,
 	/** @brief Command */
 	NODE_COMMAND,
 	/** @brief Binary logic operator, e.g `||`, `|&`, `>` */
 	NODE_LOGIC,
+	/** @brief Function definition node */
+	NODE_FUNCTION,
+};
+
+/** @brief A block node */
+struct s_node_block
+{
+	/** @brief Subshell inner */
+	t_ast_node		*inner;
 };
 
 /** @brief Sub expression data */
-struct s_node_subshell
+struct s_subshell_node
 {
-	/** @brief Expression substring */
-	//t_string		input;
 	/** @brief Subshell inner */
 	t_ast_node		*head;
 	/** @brief Redirections */
@@ -113,7 +123,7 @@ struct s_node_subshell
 };
 
 /** @brief Command name and arguments */
-struct s_node_cmd
+struct s_cmd_node
 {
 	/** @brief Program arguments */
 	struct s_argument	*args;
@@ -130,9 +140,21 @@ struct s_node_cmd
 /** @brief Data for logic (binary) nodes */
 struct s_logic_node
 {
+	/** @brief Operator token */
 	t_token		token;
+	/** @brief Left operand */
 	t_ast_node	*left;
+	/** @brief Right operand */
 	t_ast_node	*right;
+};
+
+/** @brief A node for function definition */
+struct s_function_node
+{
+	/** @brief Function's name */
+	t_string_buffer	name;
+	/** @brief The function's body */
+	t_ast_node		*body;
 };
 
 /** @brief AST Node type */
@@ -142,15 +164,16 @@ typedef struct s_ast_node
 	enum e_node_type			type;
 	/** @brief Node-specific data */
 	union {
-		t_string_buffer			atom;
+		/** @brief Block expression AST */
+		struct s_node_block		block;
 		/** @brief Sub expressions AST */
-		struct s_node_subshell	expr;
+		struct s_subshell_node	expr;
 		/** @brief Atom, for commands (name & parameters) */
-		struct s_node_cmd		cmd;
+		struct s_cmd_node		cmd;
 		/** @brief Binary nodes, e.g `|` or `&&` */
 		struct s_logic_node		logic;
-		/** @brief Compound node */
-		struct s_argument	compound;
+		/** @brief Function definition node */
+		struct s_function_node	function;
 	};
 }	t_ast_node;
 
@@ -165,6 +188,26 @@ ast_print_debug(
 	t_ast_node *head,
 	size_t depth);
 
+/**
+ * @brief Creates a new logic node
+ *
+ * @param op The logic operator token
+ * @param left Left side operand
+ * @param right Right side operand
+ *
+ * @returns The newly created logic node
+ */
+t_ast_node
+*make_logic_node(t_token op, t_ast_node *left, t_ast_node *right);
+t_ast_node
+*make_cmd_node(void);
+t_ast_node
+*make_subshell_node(t_ast_node *inner);
+t_ast_node
+*make_block_node(t_ast_node *inner);
+t_ast_node
+*make_funcdef_node(t_string_buffer name, t_ast_node *body);
+
 /******************************************************************************/
 /* The parser                                                                 */
 /******************************************************************************/
@@ -177,6 +220,11 @@ typedef struct s_parser
 	char			**errors;
 	size_t			errors_size;
 	size_t			errors_cap;
+	
+	/** @brief Current position in the parser's input list */
+	size_t			pos;
+	/** @brief Determines if keywords have to be treated as words */
+	int				allow_reserved;
 }	t_parser;
 
 /** @brief Initializes a new parser */
@@ -250,6 +298,35 @@ parser_next_operator(
 	size_t end,
 	int min_prec);
 
+/******************************************************************************/
+/* Parsing helpers                                                            */
+/******************************************************************************/
+
+/**
+ * @brief Checks if the current token is a control token and it's content
+ * matches against `word`
+ *
+ * @param parser The parser
+ * @param offset Offset from current position
+ * @param word Word to match against
+ *
+ * @returns 1 If the condition is fulfilled.
+ */
+int
+accept(t_parser *parser, int offset, const char *word);
+/**
+ * @brief Checks if the current token is a control token and it's content
+ * matches against `word`. If it doesn't match an error is reported
+ *
+ * @param parser The parser
+ * @param offset Offset from current position
+ * @param word Word to match against
+ *
+ * @returns 1 If the condition is fulfilled. 0 otherwise and an error is
+ * reported
+ */
+int
+expect(t_parser *parser, int offset, const char *word);
 /**
  * @brief Utility that parses a token to an integer
  *

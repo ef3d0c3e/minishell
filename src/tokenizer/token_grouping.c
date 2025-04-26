@@ -22,6 +22,11 @@ int
 	grouping = str_alternatives(it_substr(it, 1), groupings);
 	if (!grouping)
 		return (0);
+	if ((grouping[0] == '{' || grouping[0] == '}')
+			&& list->size
+			&& list->tokens[list->size - 1].type != TOK_SPACE
+			&& list->tokens[list->size - 1].type != TOK_SEQUENCE)
+		return (0);
 	token_list_push(list, (t_token){
 		.type = TOK_GROUPING,
 		.start = it->byte_pos,

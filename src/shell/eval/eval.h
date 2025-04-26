@@ -79,6 +79,6 @@ eval_subshell(t_shell *shell, t_ast_node* subshell);
  * @returns A null-terminated array of strings to be passed to `execve`
  */
 char
-**command_to_argv(t_shell *shell, const struct s_node_cmd *cmd);
+**command_to_argv(t_shell *shell, const struct s_cmd_node *cmd);
 
 #endif // EVAL_H

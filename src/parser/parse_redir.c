@@ -11,61 +11,60 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-size_t	parse_redir(
+int
+	parse_redir(
 	t_parser *parser,
-	size_t start,
-	size_t end,
 	t_redirections *redirs)
 {
-	const t_token	*list = parser->list.tokens + start;
-	int				status;
+	const size_t	end = parser->list.size;
+	const t_token	*list = parser->list.tokens + parser->pos;
+	size_t			skip;
 
-	status = 0;
-	if (end - start >= 3 && list[0].type == TOK_REDIR
+	skip = 0;
+	if (end - parser->pos >= 3 && list[0].type == TOK_REDIR
 		&& token_isword(list[1].type) && list[2].type == TOK_MINUS)
-		status = redir_parser3_move(parser, start, redirs);
-	if (!status && end - start >= 2 && list[0].type == TOK_REDIR
+		skip = redir_parser3_move(parser, parser->pos, redirs);
+	if (!skip && end - parser->pos >= 2 && list[0].type == TOK_REDIR
 		&& token_isword(list[1].type))
-		status = redir_parser2(parser, start, redirs);
-	if (!status && end - start >= 4 && list[0].type == TOK_DIGIT && list[1].type
-		== TOK_REDIR && token_isword(list[2].type) && list[3].type == TOK_MINUS)
-		status = redir_parser4(parser, start, redirs);
-	if (!status && end - start >= 3 && list[0].type == TOK_DIGIT && list[1].type
-		== TOK_REDIR && token_isword(list[2].type))
-		status = redir_parser3(parser, start, redirs);
-	if (list[0].type == TOK_REDIR && !status)
+		skip = redir_parser2(parser, parser->pos, redirs);
+	if (!skip && end - parser->pos >= 4 && list[0].type == TOK_DIGIT
+		&& list[1].type == TOK_REDIR && token_isword(list[2].type) 
+		&& list[3].type == TOK_MINUS)
+		skip = redir_parser4(parser, parser->pos, redirs);
+	if (!skip && end - parser->pos >= 3 && list[0].type == TOK_DIGIT
+		&& list[1].type == TOK_REDIR && token_isword(list[2].type))
+		skip = redir_parser3(parser, parser->pos, redirs);
+	if (list[0].type == TOK_REDIR && !skip)
 	{
 		parser_error(parser, ft_strdup("Invalid redirections"),
-			start, start + 1);
-		status = 1;
+			parser->pos, parser->pos + 1);
+		skip = 1;
 	}
-	return (status);
+	return (parser->pos += skip, skip != 0);
 }
 
-size_t	parse_redir_repeat(
+void
+	parse_redir_repeat(
 	t_parser *parser,
-	size_t start,
-	size_t end,
 	t_redirections *redirs)
 {
-	size_t	skipped;
-	size_t	result;
+	int	result;
 	size_t	spaces;
 
-	skipped = 0;
+	parser->pos = parser->pos;
 	while (1)
 	{
 		spaces = 0;
-		while (start + skipped + spaces < end
-			&& parser->list.tokens[start + skipped + spaces].type == TOK_SPACE)
+		while (parser->pos + spaces < parser->list.size
+			&& parser->list.tokens[parser->pos + spaces].type == TOK_SPACE)
 			++spaces;
-		if (start + skipped + spaces >= end)
+		if (parser->pos + spaces >= parser->list.size)
 			break ;
-		result = parse_redir(parser, start + skipped + spaces, end, redirs);
-		skipped += result;
-		if (!result || start + skipped >= end)
+		parser->pos += spaces;
+		result = parse_redir(parser, redirs);
+		if (!result)
+			parser->pos -= spaces;
+		if (!result || parser->pos >= parser->list.size)
 			break ;
-		skipped += spaces;
 	}
-	return (skipped);
 }

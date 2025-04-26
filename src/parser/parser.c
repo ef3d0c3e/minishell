@@ -20,6 +20,8 @@ t_parser
 		.errors = xmalloc(sizeof(t_string_buffer) * 16),
 		.errors_size = 0,
 		.errors_cap = 16,
+		.pos = 0,
+		.allow_reserved = 1,
 	});
 }
 

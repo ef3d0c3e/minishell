@@ -14,6 +14,7 @@
 #include "parser/redir_parser.h"
 #include "tokenizer/tokenizer.h"
 #include "util/util.h"
+#include <math.h>
 #include <shell/shell.h>
 
 /*
@@ -61,31 +62,6 @@
 						'esac'
 */
 
-/**
- * @brief Creates a new logic node
- */
-t_ast_node
-*make_logic_node(t_token op, t_ast_node *left, t_ast_node *right);
-t_ast_node
-*make_cmd_node();
-t_ast_node
-*make_subshell_node(t_ast_node *inner);
-
-int
-	accept(t_parser *parser, size_t start, size_t end, const char *word)
-{
-	const t_token	*tok;
-
-	if (start >= end)
-		return (0);
-	tok = &parser->list.tokens[start];
-	if (tok->type == TOK_KEYWORD || tok->type == TOK_SEQUENCE
-		|| tok->type == TOK_OPERATOR || tok->type == TOK_PIPELINE
-		|| tok->type == TOK_GROUPING)
-		return (!ft_strcmp(tok->reserved_word, word));
-	return (0);
-}
-
 static void
 	cmd_arg_push(t_ast_node *cmd, size_t arg_pos, const t_token *tok)
 {
@@ -102,7 +78,7 @@ static void
 }
 
 t_ast_node
-	*parse_simple_command(t_parser *parser, size_t *start, size_t end)
+	*parse_simple_command(t_parser *parser)
 {
 	t_ast_node		*cmd;
 	const t_token	*tok;
@@ -129,22 +105,22 @@ t_ast_node
 	*/
 
 	arg_pos = 0;
-	while (*start < end)
+	while (parser->pos < parser->list.size)
 	{
-		*start += parse_redir_repeat(parser, *start, end, &cmd->cmd.redirs);
-		if (*start >= end)
+		parse_redir_repeat(parser, &cmd->cmd.redirs);
+		if (parser->pos >= parser->list.size)
 			break ;
-		tok = &parser->list.tokens[*start];
+		tok = &parser->list.tokens[parser->pos];
 
 		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
 			|| token_isword(tok->type))
 		{
 			cmd_arg_push(cmd, arg_pos, tok);
-			++*start;
+			++parser->pos;
 		}
 		else if (tok->type == TOK_SPACE)
 		{
-			++*start;
+			++parser->pos;
 			++arg_pos;
 		}
 		else
@@ -154,39 +130,81 @@ t_ast_node
 }
 
 t_ast_node
-	*parse_cmdlist(t_parser *parser, size_t *start, size_t end);
+	*parse_cmdlist(t_parser *parser);
 
 t_ast_node
-	*parse_compound_command(t_parser *parser, size_t *start, size_t end)
+	*parse_if_stmt(t_parser *parser)
 {
-	const size_t	begin = *start;
+	t_ast_node	*cond;
+
+	++parser->pos;
+	cond = parse_cmdlist(parser);
+	expect(parser, 0, "then");
+	++parser->pos;
+	expect(parser, 0, "fi");
+	return (NULL);
+}
+/*
+AST* parse_if_clause() {
+    AST* cond = parse_list_of_commands();
+    expect("then");
+    AST* then_branch = parse_list_of_commands();
+    vector<(AST*,AST*)> elifs;
+    while (accept("elif")) {
+        AST* c = parse_list_of_commands();
+        expect("then");
+        AST* b = parse_list_of_commands();
+        elifs.push_back({c,b});
+    }
+    AST* else_branch = nullptr;
+    if (accept("else")) {
+        else_branch = parse_list_of_commands();
+    }
+    expect("fi");
+    return make_if_node(cond, then_branch, elifs, else_branch);
+}
+*/
+
+t_ast_node
+	*parse_compound_command(t_parser *parser)
+{
+	const size_t	begin = parser->pos;
 	t_ast_node		*inner;
 	t_ast_node		*node;
 
 	node = NULL;
-	if (accept(parser, *start, end, "("))
+	if (accept(parser, 0, "("))
 	{
-		++*start;
-		inner = parse_cmdlist(parser, start, end);
-		if (!accept(parser, *start, end, ")"))
+		++parser->pos;
+		inner = parse_cmdlist(parser);
+		if (!accept(parser, 0, ")"))
 			parser_error(parser, ft_strdup("Expected `)` token"),
-					begin, end);
-		++*start;
+					begin, parser->list.size);
+		++parser->pos;
 		node = make_subshell_node(inner);
-		*start += parse_redir_repeat(parser, *start, end, &node->expr.redirs);
+		parse_redir_repeat(parser, &node->expr.redirs);
 	}
+	else if (accept(parser, 0, "{"))
+	{
+		++parser->pos;
+		inner = parse_cmdlist(parser);
+		printf("HERE: %zu\n", parser->pos);
+		// TODO: Expect sequence token before `}` (for bash like behavior)
+		if (!accept(parser, 0, "}"))
+			parser_error(parser, ft_strdup("Expected `}` token"),
+					begin, parser->list.size);
+		++parser->pos;
+		node = make_block_node(inner);
+	}
+	else if (accept(parser, 0, "if"))
+		return (parse_if_stmt(parser));
 	else
 	{
 		parser_error(parser, ft_strdup("Unexpected token"),
-				begin, end);
+				begin, parser->list.size);
 	}
 	return (node);
 	/* TODO:
-    if (accept("{")) {
-        AST* inner = parse_list_of_commands();
-        expect("}");
-        return make_block_node(inner);
-    }
     if (accept("if"))      return parse_if_clause();
     if (accept("while"))   return parse_while_clause();
     if (accept("until"))   return parse_until_clause();
@@ -197,7 +215,21 @@ t_ast_node
 }
 
 t_ast_node
-	*parse_command(t_parser *parser, size_t *start, size_t end)
+	*parse_function_def(t_parser *parser)
+{
+	t_string_buffer	name;
+	t_ast_node		*body;
+
+	stringbuf_init(&name, 64);
+	token_wordcontent(&name, &parser->list.tokens[parser->pos]);
+	parser->pos += 3;
+	body = parse_compound_command(parser);
+	// TODO: Force node to be a subshell or block node
+	return (make_funcdef_node(name, body));
+}
+
+t_ast_node
+	*parse_command(t_parser *parser)
 {
 	/*
 	TODO: [WORD] '()' -> function parser
@@ -209,62 +241,71 @@ t_ast_node
         return parse_compound_command();
     }
 	*/
-	if (accept(parser, *start, end, "("))
-		return (parse_compound_command(parser, start, end));
+	if (token_isword(parser->list.tokens[parser->pos].type)
+		&& accept(parser, 1, "(")
+		&& accept(parser, 2, ")"))
+		return (parse_function_def(parser));
+	if (accept(parser, 0, "(") || accept(parser, 0, "{")
+		|| accept(parser, 0, "if")
+		|| accept(parser, 0, "while")
+		|| accept(parser, 0, "until")
+		|| accept(parser, 0, "for")
+		|| accept(parser, 0, "case"))
+		return (parse_compound_command(parser));
 
-	return (parse_simple_command(parser, start, end));
+	return (parse_simple_command(parser));
 }
 
 t_ast_node
-	*parse_pipeline(t_parser *parser, size_t *start, size_t end)
+	*parse_pipeline(t_parser *parser)
 {
 	t_ast_node	*left;
 	t_ast_node	*right;
 	t_token		op;
 
-	left = parse_command(parser, start, end);
-	while (accept(parser, *start, end, "|") || accept(parser, *start, end, "|&"))
+	left = parse_command(parser);
+	while (accept(parser, 0, "|") || accept(parser, 0, "|&"))
 	{
-		op = parser->list.tokens[*start];
-		++*start;
-		right = parse_command(parser, start, end);
+		op = parser->list.tokens[parser->pos];
+		++parser->pos;
+		right = parse_command(parser);
 		left = make_logic_node(op, left, right);
 	}
 	return (left);
 }
 
 t_ast_node
-	*parse_and_or(t_parser *parser, size_t *start, size_t end)
+	*parse_and_or(t_parser *parser)
 {
 	t_ast_node	*left;
 	t_ast_node	*right;
 	t_token		op;
 
-	left = parse_pipeline(parser, start, end);
-	while (accept(parser, *start, end, "&&") || accept(parser, *start, end, "||"))
+	left = parse_pipeline(parser);
+	while (accept(parser, 0, "&&") || accept(parser, 0, "||"))
 	{
-		op = parser->list.tokens[*start];
-		++*start;
-		right = parse_command(parser, start, end);
+		op = parser->list.tokens[parser->pos];
+		++parser->pos;
+		right = parse_command(parser);
 		left = make_logic_node(op, left, right);
 	}
 	return (left);
 }
 
 t_ast_node
-	*parse_cmdlist(t_parser *parser, size_t *start, size_t end)
+	*parse_cmdlist(t_parser *parser)
 {
 	t_ast_node*	left;
 	t_ast_node*	right;
 	t_token		op;
 	
-	left = parse_and_or(parser, start, end);
-	if (accept(parser, *start, end, ";") || accept(parser, *start, end, "&")
-		|| accept(parser, *start, end, "\n"))
+	left = parse_and_or(parser);
+	if (accept(parser, 0, ";") || accept(parser, 0, "&")
+		|| accept(parser, 0, "\n"))
 	{
-		op = parser->list.tokens[*start];
-		++*start;
-		right = parse_cmdlist(parser, start, end);
+		op = parser->list.tokens[parser->pos];
+		++parser->pos;
+		right = parse_cmdlist(parser);
 		return (make_logic_node(op, left, right));
 	}
 	return (left);
@@ -273,6 +314,6 @@ t_ast_node
 t_ast_node
 	*parse(t_parser *parser, size_t start, size_t end, int min_prec)
 {
-	return (parse_cmdlist(parser, &start, end));
+	return (parse_cmdlist(parser));
 }
 

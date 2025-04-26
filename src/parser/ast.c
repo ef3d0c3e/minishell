@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser/parser.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 void
@@ -17,10 +18,9 @@ void
 {
 	if (!head)
 		return ;
-	if (head->type == NODE_LOGIC)
+	if (head->type == NODE_BLOCK)
 	{
-		ast_free(head->logic.left);
-		ast_free(head->logic.right);
+		ast_free(head->block.inner);
 	}
 	else if (head->type == NODE_SUBSHELL)
 	{
@@ -31,6 +31,16 @@ void
 	{
 		arglist_free(head->cmd.args, head->cmd.nargs);
 		redirs_free(&head->cmd.redirs);
+	}
+	else if (head->type == NODE_LOGIC)
+	{
+		ast_free(head->logic.left);
+		ast_free(head->logic.right);
+	}
+	else if (head->type == NODE_FUNCTION)
+	{
+		stringbuf_free(&head->function.name);
+		ast_free(head->function.body);
 	}
 	free(head);
 }
@@ -45,7 +55,12 @@ void
 		return ;
 	for (size_t i = 0; i < depth; ++i)
 		write(2, " | ", 3);
-	if (head->type == NODE_SUBSHELL)
+	if (head->type == NODE_BLOCK)
+	{
+		ft_dprintf(2, "BLOCK\n");
+		ast_print_debug(input, head->block.inner, depth + 1);
+	}
+	else if (head->type == NODE_SUBSHELL)
 	{
 		ft_dprintf(2, "SUBSHELL\n");
 		ast_print_debug(input, head->expr.head, depth + 1);
@@ -62,5 +77,10 @@ void
 		ft_dprintf(2, "LOGIC `%s`\n", head->logic.token.reserved_word);
 		ast_print_debug(input, head->logic.left, depth + 1);
 		ast_print_debug(input, head->logic.right, depth + 1);
+	}
+	else if (head->type == NODE_FUNCTION)
+	{
+		ft_dprintf(2, "FUNCTION `%.*s`\n", head->function.name.len, head->function.name.str);
+		ast_print_debug(input, head->function.body, depth + 1);
 	}
 }

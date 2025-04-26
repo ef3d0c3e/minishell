@@ -102,7 +102,7 @@ enum e_token_type
 	TOK_DIGIT,
 	/** @brief The minus sign token: `-` */
 	TOK_MINUS,
-	/** @brief Grouping character, one of `{, (, }, )` */
+	/** @brief Grouping character: `{`, `}`, `(` and `)` */
 	TOK_GROUPING,
 	/**
 	 * @brief Pipeline token: `|` and `|&`
