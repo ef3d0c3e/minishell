@@ -172,6 +172,7 @@ static void
 t_ast_node
 	*parse_if_stmt(t_parser *parser)
 {
+	int			in_stmt = !parser->allow_reserved;
 	t_ast_node	*stmt;
 
 	++parser->pos;
@@ -189,29 +190,29 @@ t_ast_node
 		if_push(parser, stmt, 0);
 	}
 	expect(parser, 0, "fi");
-	parser->allow_reserved = 1;
+	++parser->pos;
+	parser->allow_reserved = !in_stmt;
 	return (stmt);
 }
-/*
-AST* parse_if_clause() {
-    AST* cond = parse_list_of_commands();
-    expect("then");
-    AST* then_branch = parse_list_of_commands();
-    vector<(AST*,AST*)> elifs;
-    while (accept("elif")) {
-        AST* c = parse_list_of_commands();
-        expect("then");
-        AST* b = parse_list_of_commands();
-        elifs.push_back({c,b});
-    }
-    AST* else_branch = nullptr;
-    if (accept("else")) {
-        else_branch = parse_list_of_commands();
-    }
-    expect("fi");
-    return make_if_node(cond, then_branch, elifs, else_branch);
+
+t_ast_node
+	*parse_while_stmt(t_parser *parser)
+{
+	int			in_stmt = !parser->allow_reserved;
+	t_ast_node	*cond;
+	t_ast_node	*body;
+
+	++parser->pos;
+	parser->allow_reserved = 0;
+	cond = parse_cmdlist(parser);
+	expect(parser, 0, "do");
+	++parser->pos;
+	body = parse_cmdlist(parser);
+	expect(parser, 0, "done");
+	++parser->pos;
+	parser->allow_reserved = !in_stmt;
+	return (make_while_node(cond, body));
 }
-*/
 
 t_ast_node
 	*parse_compound_command(t_parser *parser)
@@ -225,9 +226,7 @@ t_ast_node
 	{
 		++parser->pos;
 		inner = parse_cmdlist(parser);
-		if (!accept(parser, 0, ")"))
-			parser_error(parser, ft_strdup("Expected `)` token"),
-					begin, parser->list.size);
+		expect(parser, 0, ")");
 		++parser->pos;
 		node = make_subshell_node(inner);
 		parse_redir_repeat(parser, &node->sub.redirs);
@@ -236,20 +235,17 @@ t_ast_node
 	{
 		++parser->pos;
 		inner = parse_cmdlist(parser);
-		// TODO: Expect sequence token before `}` (for bash like behavior)
-		if (!accept(parser, 0, "}"))
-			parser_error(parser, ft_strdup("Expected `}` token"),
-					begin, parser->list.size);
+		expect(parser, 0, "}");
 		++parser->pos;
 		node = make_block_node(inner);
 	}
 	else if (accept(parser, 0, "if"))
 		return (parse_if_stmt(parser));
+	else if (accept(parser, 0, "while"))
+		return (parse_while_stmt(parser));
 	else
-	{
 		parser_error(parser, ft_strdup("Unexpected token"),
 				begin, parser->list.size);
-	}
 	return (node);
 	/* TODO:
     if (accept("if"))      return parse_if_clause();
@@ -345,7 +341,9 @@ t_ast_node
 	t_ast_node	*cmd;
 	t_ast_node	*list;
 
-	cmd = parse_and_or(parser);
+	cmd = NULL;
+	if (parser->pos < parser->list.size)
+		cmd = parse_and_or(parser);
 	list = make_list_node();
 	list_node_push(list, cmd);
 	while (accept(parser, 0, ";") || accept(parser, 0, "\n"))

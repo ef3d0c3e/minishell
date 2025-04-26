@@ -16,8 +16,9 @@ int
 {
 	static const char	*keywords[] = {
 	"[[", "]]", "[", "]", "((", "))",
+	"done",
 	"if", "then", "elif", "else", "fi", "time",
-	"for", "in", "until", "while", "do", "done",
+	"for", "in", "until", "while", "do",
 	"case", "esac", "coproc", "select", "function",
 	NULL};
 	const char			*keyword = str_alternatives(it_substr(it, 8), keywords);

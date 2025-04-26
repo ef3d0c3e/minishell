@@ -22,6 +22,7 @@ void
 	[NODE_LOGIC] = free_logic_node,
 	[NODE_FUNCTION] = free_function_node,
 	[NODE_IF] = free_if_node,
+	[NODE_WHILE] = free_while_node,
 	};
 
 	if (!node)
@@ -43,7 +44,9 @@ void
 	[NODE_LOGIC] = print_logic_node,
 	[NODE_FUNCTION] = print_function_node,
 	[NODE_IF] = print_if_node,
+	[NODE_WHILE] = print_while_node,
 	};
 
-	printers[node->type](depth, node);
+	if (node)
+		printers[node->type](depth, node);
 }

@@ -108,6 +108,8 @@ enum e_node_type
 	NODE_FUNCTION,
 	/** @brief If statement node */
 	NODE_IF,
+	/** @brief While statement node */
+	NODE_WHILE,
 };
 
 /** @brief A block node */
@@ -235,6 +237,7 @@ free_function_node(t_ast_node *node);
 void
 print_function_node(size_t depth, const t_ast_node *node);
 
+/** @brief If statement node */
 struct s_if_node
 {
 	/** @brief Conditions, at most `nbodies` */
@@ -254,6 +257,25 @@ free_if_node(t_ast_node *node);
 /** @brief Prints a if node */
 void
 print_if_node(size_t depth, const t_ast_node *node);
+
+/** @brief While statement node */
+struct s_while_node
+{
+	/** @brief While condition */
+	t_ast_node	*cond;
+	/** @brief While body */
+	t_ast_node	*body;
+};
+
+/** @brief Creates a while node */
+t_ast_node
+*make_while_node(t_ast_node *cond, t_ast_node *body);
+/** @brief Frees a while node */
+void
+free_while_node(t_ast_node *node);
+/** @brief Prints a while node */
+void
+print_while_node(size_t depth, const t_ast_node *node);
 
 /** @brief AST Node type */
 typedef struct s_ast_node
@@ -276,6 +298,8 @@ typedef struct s_ast_node
 		struct s_function_node	function;
 		/** @brief If node */
 		struct s_if_node		st_if;
+		/** @brief While node */
+		struct s_while_node		st_while;
 	};
 }	t_ast_node;
 

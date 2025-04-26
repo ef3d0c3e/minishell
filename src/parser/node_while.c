@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval_subshell.c                                    :+:      :+:    :+:   */
+/*   node_while.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,28 +11,34 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
-	eval_subshell(t_shell *shell, t_ast_node *program)
+t_ast_node
+	*make_while_node(t_ast_node *cond, t_ast_node *body)
 {
-	pid_t			pid;
-	int				status;
-	t_redirs_stack	stack;
+	t_ast_node	*node;
 
-	pid = shell_fork(shell, SRC_LOCATION);
-	if (pid == -1)
-		shell_perror(shell, "fork() failed", SRC_LOCATION);
-	if (pid)
-	{
-		if (waitpid(pid, &status, 0) == -1)
-			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
-		shell->last_status = WEXITSTATUS(status);
-	}
-	else
-	{
-		redir_stack_init(&stack);
-		do_redir(shell, &stack, &program->sub.redirs);
-		eval(shell, program->sub.head);
-		undo_redir(shell, &stack);
-		shell_exit(shell, shell->last_status);
-	}
+	node = xmalloc(sizeof(t_ast_node));
+	node->type = NODE_WHILE;
+	node->st_while.cond = cond;
+	node->st_while.body = body;
+	return (node);
+}
+
+void
+	free_while_node(t_ast_node *node)
+{
+	ast_free(node->st_while.cond);
+	ast_free(node->st_while.body);
+}
+
+void
+	print_while_node(size_t depth, const t_ast_node *node)
+{
+	print_pad(" | ", depth);
+	ft_dprintf(2, "WHILE\n");
+	print_pad(" | ", depth);
+	ft_dprintf(2, "(COND)\n");
+	ast_print(depth + 1, node->st_while.cond);
+	print_pad(" | ", depth);
+	ft_dprintf(2, "(BODY)\n");
+	ast_print(depth + 1, node->st_while.body);
 }
