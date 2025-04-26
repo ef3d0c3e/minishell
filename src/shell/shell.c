@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/builtin.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 
 t_shell
@@ -45,6 +42,7 @@ t_shell
 	path_populate(&shell);
 	shell_error_flush(&shell);
 	builtin_init(&shell);
+	funs_init(&shell);
 	return (shell);
 }
 
@@ -66,6 +64,7 @@ void
 void
 	shell_free(t_shell *shell)
 {
+	funs_deinit(shell);
 	builtin_deinit(shell);
 	shell_error_flush(shell);
 	rb_free(&shell->reg_env);

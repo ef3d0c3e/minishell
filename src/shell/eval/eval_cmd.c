@@ -89,6 +89,7 @@ static void
 	undo_redir(shell, &stack);
 }
 
+
 int
 	eval_cmd(t_shell *shell, t_ast_node *program)
 {
@@ -102,7 +103,9 @@ int
 	status = 0;
 	if (argv[0])
 		status = resolve_eval(shell, argv[0], &path);
-	if (status == 2)
+	if (status == 1)
+		eval_function(shell, program, argv);
+	else if (status == 2)
 		eval_builtin(shell, program, argv);
 	else if (status == 0)
 		eval_exec_parent(shell, program, path, argv);

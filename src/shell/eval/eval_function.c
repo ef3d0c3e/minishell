@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_wrappers.c                                   :+:      :+:    :+:   */
+/*   eval_function.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,33 +11,19 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-pid_t
-	shell_fork(t_shell *shell, const char *function)
-{
-	pid_t	pid;
-	char	*err;
-
-	pid = fork();
-	if (shell->is_child && pid == -1)
-		shell_perror(shell, "fork() failed", function);
-	else if (pid == -1)
-	{
-		ft_asprintf(&err, "fork() failed: %m");
-		shell_error(shell, err, function);
-	}
-	if (!pid)
-	{
-		shell->is_child = 1;
-		shell->is_interactive = 0;
-	}
-	return (pid);
-}
-
 void
-	shell_exit(t_shell *shell, int status)
+	eval_function(t_shell *shell, t_ast_node *cmd, char **argv)
 {
-	if (!shell_error_flush(shell))
-		status = -1;
-	shell_free(shell);
-	exit(status);
+	t_ast_node *const	function = rb_find(&shell->reg_fns, argv[0]);
+	t_redirs_stack		stack;
+	
+	redir_stack_init(&stack);
+	do_redir(shell, &stack, &cmd->cmd.redirs);
+	if (shell_error_flush(shell))
+	{
+		funs_stack_push(shell, function, argv);
+		eval(shell, function);
+		funs_stack_pop(shell);
+	}
+	undo_redir(shell, &stack);
 }

@@ -16,6 +16,7 @@ static inline const t_tokenizer_fn
 	*munchers(void)
 {
 	static const t_tokenizer_fn	munchers[] = {
+		token_comment,
 		token_space,
 		token_digit,
 		token_minus,

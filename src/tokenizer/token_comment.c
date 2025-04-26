@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_wrappers.c                                   :+:      :+:    :+:   */
+/*   token_comment.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,35 +9,22 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <shell/shell.h>
+#include "util/util.h"
+#include <tokenizer/tokenizer.h>
 
-pid_t
-	shell_fork(t_shell *shell, const char *function)
+int
+	token_comment(t_token_list *list, t_u8_iterator *it)
 {
-	pid_t	pid;
-	char	*err;
+	const size_t	start = it->byte_pos;
 
-	pid = fork();
-	if (shell->is_child && pid == -1)
-		shell_perror(shell, "fork() failed", function);
-	else if (pid == -1)
-	{
-		ft_asprintf(&err, "fork() failed: %m");
-		shell_error(shell, err, function);
-	}
-	if (!pid)
-	{
-		shell->is_child = 1;
-		shell->is_interactive = 0;
-	}
-	return (pid);
-}
-
-void
-	shell_exit(t_shell *shell, int status)
-{
-	if (!shell_error_flush(shell))
-		status = -1;
-	shell_free(shell);
-	exit(status);
+	if (it->codepoint.str[0] != '#')
+		return (0);
+	while (it->codepoint.len && it->codepoint.str[0] != '\n')
+		it_next(it);
+	token_list_push(list, (t_token){
+		.start = start,
+		.end = it->byte_pos,
+		.type = TOK_COMMENT,
+	});
+	return (1);
 }

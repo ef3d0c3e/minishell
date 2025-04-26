@@ -313,6 +313,7 @@ token_precedence(const t_token *tok);
 void
 escape_filter(t_string_buffer *buf, const char **filter);
 
+int	token_comment(t_token_list *list, t_u8_iterator *it);
 int	token_space(t_token_list *list, t_u8_iterator *it);
 int	token_redir(t_token_list *list, t_u8_iterator *it);
 int	token_digit(t_token_list *list, t_u8_iterator *it);

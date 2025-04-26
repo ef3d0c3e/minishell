@@ -50,6 +50,15 @@ repl_to_string(t_shell *shell, char *input, t_string_buffer *buf);
 int
 eval_cmd(t_shell *shell, t_ast_node* cmd);
 /**
+ * @brief Evaluates a function
+ *
+ * @param shell The shell session
+ * @param function The evaluated function node
+ * @param argv Function arguments
+ */
+void
+eval_function(t_shell *shell, t_ast_node *function, char **argv);
+/**
  * @brief Evaluates a pipeline `|` or `|&`
  */
 void

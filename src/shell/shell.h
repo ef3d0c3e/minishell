@@ -20,6 +20,7 @@
 # include <shell/eval/eval.h>
 # include <shell/redir/redir.h>
 # include <shell/fds/fds.h>
+# include <shell/funs/funs.h>
 
 # include <ft_printf.h>
 # include <gnl.h>
@@ -54,6 +55,8 @@ typedef struct s_shell
 	t_rbtree			path_cache;
 	/** @brief Builtins registry */
 	t_rbtree			reg_builtins;
+	/** @brief Registry for defined functions */
+	t_rbtree			reg_fns;
 	/** @brief Shell options, modified by the `set` buitltin */
 	t_rbtree			options;
 	/** @brief File descriptor registry */
@@ -80,6 +83,9 @@ typedef struct s_shell
 	t_parser			*parser;
 	/** @brief Currently executed program (Non-owning) */
 	t_ast_node			*program;
+
+	/** @brief Evaluation stack for proceduces */
+	t_eval_stack		eval_stack;
 
 	/** @brief Set to 1 when the shell is not the parent shell. This value is
 	 * set by @ref shell_fork */

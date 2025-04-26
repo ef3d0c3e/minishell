@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Gets the status of an executable
@@ -69,8 +70,9 @@ int
 
 	if (!ft_strchr(name, '/'))
 	{
-		// TODO: Function then builtin resolution
-		if (rb_find(&shell->reg_builtins, name))
+		if (rb_find(&shell->reg_fns, name))
+			return (1);
+		else if (rb_find(&shell->reg_builtins, name))
 			return (2);
 		*result = resolve_from_path(shell, name);
 		if (!*result)
