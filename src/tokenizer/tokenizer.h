@@ -98,8 +98,6 @@ enum e_token_type
 {
 	/** @brief Whitespace (non newline) character */
 	TOK_SPACE,
-	/** @brief Newline token: `\n` */
-	TOK_NEWLINE,
 	/** @brief A number stored as a string */
 	TOK_DIGIT,
 	/** @brief The minus sign token: `-` */
@@ -107,17 +105,20 @@ enum e_token_type
 	/** @brief Grouping character, one of `{, (, }, )` */
 	TOK_GROUPING,
 	/**
-	 * @brief Pipeline token, one of `|`, `|&`
+	 * @brief Pipeline token: `|` and `|&`
 	 *
 	 * https://www.gnu.org/software/bash/manual/bash.html#Pipelines
 	 */
 	TOK_PIPELINE,
 	/**
-	 * @brief Sequence separator tokens
-	 *
-	 * https://www.gnu.org/software/bash/manual/bash.html#Lists
+	 * @brief Logic operator tokens: `||` and `&&`
+	 */
+	TOK_OPERATOR,
+	/**
+	 * @brief Sequence separator tokens: `;` `\n`, `&` and EOF
 	 */
 	TOK_SEQUENCE,
+
 	/**
 	 * @brief Keyword token
 	 *
@@ -170,8 +171,6 @@ enum e_token_type
 	TOK_HEREDOC,
 	TOK_HERESTRING,
 
-	/** @brief End of input */
-	TOK_EOF,
 	/** @brief Error message */
 	TOK_ERROR,
 };
@@ -315,12 +314,12 @@ void
 escape_filter(t_string_buffer *buf, const char **filter);
 
 int	token_space(t_token_list *list, t_u8_iterator *it);
-int	token_newline(t_token_list *list, t_u8_iterator *it);
 int	token_redir(t_token_list *list, t_u8_iterator *it);
 int	token_digit(t_token_list *list, t_u8_iterator *it);
 int	token_minus(t_token_list *list, t_u8_iterator *it);
 int	token_grouping(t_token_list *list, t_u8_iterator *it);
 int	token_sequence(t_token_list *list, t_u8_iterator *it);
+int	token_operator(t_token_list *list, t_u8_iterator *it);
 int	token_pipeline(t_token_list *list, t_u8_iterator *it);
 int	token_keyword(t_token_list *list, t_u8_iterator *it);
 int	token_double_quote(t_token_list *list, t_u8_iterator *it);

@@ -23,7 +23,7 @@ int
 
 	if (list->size
 			&& list->tokens[list->size - 1].type != TOK_SPACE
-			&& list->tokens[list->size - 1].type != TOK_NEWLINE)
+			&& list->tokens[list->size - 1].type != TOK_SEQUENCE)
 		return (0);
 	if (!keyword)
 		return (0);

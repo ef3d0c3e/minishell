@@ -34,7 +34,7 @@ static inline size_t
 	return ((size_t)-1);
 }
 
-struct s_node_subexpr
+struct s_node_subshell
 	parse_delimited(t_parser *parser, size_t start, size_t end)
 {
 	const t_token	*const tok_start = &parser->list.tokens[start];
@@ -43,8 +43,8 @@ struct s_node_subexpr
 		.len = tok_end->start - tok_start->end
 	};
 
-	return ((struct s_node_subexpr){
-		.input = input,
+	return ((struct s_node_subshell){
+		//.input = input,
 		.head = parse(parser, start + 1, end, 0),
 		.redirs = {
 			.redirs = NULL,

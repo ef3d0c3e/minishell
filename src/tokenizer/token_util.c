@@ -50,13 +50,10 @@ int
 {
 	if (tok->type == TOK_PIPELINE)
 		return (2);
-	else if (tok->type == TOK_SEQUENCE || tok->type == TOK_NEWLINE)
-	{
-		if (!ft_strcmp("&&", tok->reserved_word)
-			|| !ft_strcmp("||", tok->reserved_word))
-			return (1);
+	else if (tok->type == TOK_OPERATOR)
+		return (1);
+	else if (tok->type == TOK_SEQUENCE)
 		return (0);
-	}
 	return (-1);
 }
 

@@ -31,18 +31,3 @@ int
 	it_advance(it, it->codepoint.len);
 	return (1);
 }
-
-int
-	token_newline(t_token_list *list, t_u8_iterator *it)
-{
-	if (it->codepoint.str[0] != '\n')
-		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_NEWLINE,
-		.start = it->byte_pos,
-		.end = it->byte_pos + it->codepoint.len,
-		.reserved_word = "\n",
-	});
-	it_advance(it, it->codepoint.len);
-	return (1);
-}

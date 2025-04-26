@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
-#include <unistd.h>
 
 int
 	shell_open(t_shell *shell, const char *filename, int flags, int mode)

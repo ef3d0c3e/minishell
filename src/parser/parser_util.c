@@ -33,8 +33,8 @@ size_t
 			++balance[0];
 		else if (tok->type == TOK_GROUPING && tok->reserved_word[0] == ')')
 			--balance[0];
-		if ((tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE
-			|| tok->type == TOK_NEWLINE) && balance[0] == 0)
+		if ((tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE)
+			&& balance[0] == 0)
 		{
 			if (token_precedence(tok) == min_prec)
 				return (i);

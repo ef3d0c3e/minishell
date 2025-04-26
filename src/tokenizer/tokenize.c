@@ -17,10 +17,10 @@ static inline const t_tokenizer_fn
 {
 	static const t_tokenizer_fn	munchers[] = {
 		token_space,
-		token_newline,
 		token_digit,
 		token_minus,
 		token_redir,
+		token_operator,
 		token_sequence,
 		token_pipeline,
 		token_grouping,

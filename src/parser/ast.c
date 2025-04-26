@@ -22,11 +22,6 @@ void
 		ast_free(head->logic.left);
 		ast_free(head->logic.right);
 	}
-	else if (head->type == NODE_SUBEXPR)
-	{
-		ast_free(head->expr.head);
-		return ;
-	}
 	else if (head->type == NODE_SUBSHELL)
 	{
 		ast_free(head->expr.head);
@@ -53,13 +48,8 @@ void
 	if (head->type == NODE_SUBSHELL)
 	{
 		ft_dprintf(2, "SUBSHELL\n");
-		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
+		ast_print_debug(input, head->expr.head, depth + 1);
 		print_redir(&head->expr.redirs, depth + 2);
-	}
-	else if (head->type == NODE_SUBEXPR)
-	{
-		ft_dprintf(2, "SUBEXPR\n");
-		ast_print_debug(head->expr.input, head->expr.head, depth + 1);
 	}
 	else if (head->type == NODE_COMMAND)
 	{

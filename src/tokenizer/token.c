@@ -18,9 +18,9 @@ void
 	[TOK_SPACE] = "SPACE",
 	[TOK_DIGIT] = "DIGIT",
 	[TOK_MINUS] = "MINUS",
-	[TOK_NEWLINE] = "NEWLINE",
 	[TOK_GROUPING] = "GROUPING",
 	[TOK_PIPELINE] = "PIPELINE",
+	[TOK_OPERATOR] = "OPERATOR",
 	[TOK_SEQUENCE] = "SEQUENCE",
 	[TOK_KEYWORD] = "KEYWORD",
 	[TOK_REDIR] = "REDIR",
@@ -33,7 +33,6 @@ void
 	[TOK_PARAM] = "PARAM",
 	[TOK_ARITH] = "ARITH",
 	[TOK_WORD] = "WORD",
-	[TOK_EOF] = "EOF",
 	[TOK_ERROR] = "ERROR",
 	};
 	const t_string	literal = {.str = prompt.str + token->start,

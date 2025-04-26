@@ -27,6 +27,7 @@ static t_ast_node
 }
 
 
+/*
 t_ast_node
 	*parse(t_parser *parser, size_t start, size_t end, int min_prec)
 {
@@ -62,3 +63,4 @@ t_ast_node
 	}
 	return (NULL);
 }
+*/

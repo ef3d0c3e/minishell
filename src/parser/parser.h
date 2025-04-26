@@ -65,6 +65,26 @@ void
 arglist_print(size_t depth, struct s_argument *list, size_t size);
 
 /******************************************************************************/
+/* Assignment nodes                                                           */
+/******************************************************************************/
+
+/** @brief A variable assignment */
+struct s_assignment
+{
+	/** @brief Name of the variable being assigned to */
+	t_string_buffer		*variable;
+	/** @brief Value to assign to `variable`, may require lazy expansion */
+	struct s_argument	value;
+};
+
+/** @brief Frees an array of assignments */
+void
+assignlist_free(struct s_argument *list, size_t size);
+/** @brief Displays an array of assignments to stderr */
+void
+assignlist_print(size_t depth, struct s_argument *list, size_t size);
+
+/******************************************************************************/
 /* The AST                                                                    */
 /******************************************************************************/
 
@@ -73,9 +93,6 @@ typedef struct s_ast_node	t_ast_node;
 /** @brief Type for nodes */
 enum e_node_type
 {
-	/** @brief Expression that should run in a sub-shell, whose result is 
-	 * expanded in-place */
-	NODE_SUBEXPR,
 	/** @brief Expression that should run in a sub-shell */
 	NODE_SUBSHELL,
 	/** @brief Command */
@@ -85,10 +102,11 @@ enum e_node_type
 };
 
 /** @brief Sub expression data */
-struct s_node_subexpr
+struct s_node_subshell
 {
 	/** @brief Expression substring */
-	t_string		input;
+	//t_string		input;
+	/** @brief Subshell inner */
 	t_ast_node		*head;
 	/** @brief Redirections */
 	t_redirections	redirs;
@@ -97,10 +115,14 @@ struct s_node_subexpr
 /** @brief Command name and arguments */
 struct s_node_cmd
 {
-	/** @brief Program arguments, a Compound */
+	/** @brief Program arguments */
 	struct s_argument	*args;
 	/** @brief Number of arguments */
 	size_t				nargs;
+	/** @brief Assignments for this command */
+	struct s_assignment	*assigns;
+	/** @brief Number of assignments */
+	size_t				nassigns;
 	/** @brief Redirections */
 	t_redirections		redirs;
 };
@@ -122,7 +144,7 @@ typedef struct s_ast_node
 	union {
 		t_string_buffer			atom;
 		/** @brief Sub expressions AST */
-		struct s_node_subexpr	expr;
+		struct s_node_subshell	expr;
 		/** @brief Atom, for commands (name & parameters) */
 		struct s_node_cmd		cmd;
 		/** @brief Binary nodes, e.g `|` or `&&` */

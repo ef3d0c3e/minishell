@@ -14,8 +14,8 @@
 int
 	token_sequence(t_token_list *list, t_u8_iterator *it)
 {
-	static const char	*separators[] = {"&&", "||", /*"&",*/ ";", NULL};
-	const char			*sep = str_alternatives(it_substr(it, 2), separators);
+	static const char	*separators[] = {"\n", "&", ";", NULL};
+	const char			*sep = str_alternatives(it_substr(it, 1), separators);
 
 	if (!sep)
 		return (0);
