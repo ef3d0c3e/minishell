@@ -9,12 +9,13 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
 #include <shell/shell.h>
 
 /** @brief Translates single command argument (Compound) to string, optionnaly
  * performing lazy-expansion */
 static char
-	*resolve_arg(t_shell *shell, const struct s_node_compound *comp)
+	*resolve_arg(t_shell *shell, const struct s_argument *arg)
 {
 	t_string_buffer	buf;
 	t_string		str;
@@ -22,13 +23,13 @@ static char
 
 	i = 0;
 	stringbuf_init(&buf, 16);
-	while (i < comp->nitems)
+	while (i < arg->nitems)
 	{
-		str.str = comp->items[i].atom.str;
-		str.len = comp->items[i].atom.len;
-		if (comp->items[i].type == NODE_ATOM)
+		str.str = arg->items[i].data.str;
+		str.len = arg->items[i].data.len;
+		if (arg->items[i].type == ARG_LITERAL)
 			stringbuf_append(&buf, str);
-		else if (comp->items[i].type == NODE_PARAMETER)
+		else if (arg->items[i].type == ARG_PARAMETER)
 		{
 			if (!str_cmp(str, "?"))
 				stringbuf_itoa(&buf, shell->last_status);

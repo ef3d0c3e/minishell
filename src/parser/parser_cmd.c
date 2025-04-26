@@ -9,12 +9,13 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
 #include <shell/shell.h>
 
 void
 	compound_push(t_ast_node *node, size_t arg_pos, const t_token *token)
 {
-	struct s_node_compound	*comp;
+	struct s_argument	*comp;
 
 	if (node->cmd.nargs <= arg_pos)
 	{
@@ -27,18 +28,18 @@ void
 		sizeof(comp->items[0]) * (comp->nitems + 1));
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
 	{
-		comp->items[comp->nitems] = (t_ast_node){
-			.type = NODE_PARAMETER,
-			.atom = stringbuf_from_range(token->word.str, token->word.str + token->word.len),
+		comp->items[comp->nitems] = (struct s_arg_item){
+			.type = ARG_PARAMETER,
+			.data = stringbuf_from_range(token->word.str, token->word.str + token->word.len),
 		};
 	}
 	else
 	{
-		comp->items[comp->nitems] = (t_ast_node){
-			.type = NODE_ATOM,
+		comp->items[comp->nitems] = (struct s_arg_item){
+			.type = ARG_LITERAL,
 		};
-		stringbuf_init(&comp->items[comp->nitems].atom, 16);
-		token_wordcontent(&comp->items[comp->nitems].atom, token);
+		stringbuf_init(&comp->items[comp->nitems].data, 16);
+		token_wordcontent(&comp->items[comp->nitems].data, token);
 	}
 	++comp->nitems;
 }

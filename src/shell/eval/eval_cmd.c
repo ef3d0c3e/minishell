@@ -11,9 +11,9 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-/** @brief Frees a command list */
+/** @brief Frees a NULL-terminated array of strings */
 static void
-	arglist_free(char **cmd)
+	args_free(char **cmd)
 {
 	size_t	i;
 
@@ -41,8 +41,8 @@ static void
 	if (shell_error_flush(shell))
 		shell->last_status = execve(path, argv, shellp);
 	undo_redir(shell, &stack);
-	arglist_free(shellp);
-	arglist_free(argv);
+	args_free(shellp);
+	args_free(argv);
 	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
 	free(path);
 	shell_error(shell, err, SRC_LOCATION);
@@ -106,6 +106,6 @@ int
 		ft_asprintf(&err, "%s: command not found", argv[0]);
 		shell_error(shell, err, SRC_LOCATION);
 	}
-	arglist_free(argv);
+	args_free(argv);
 	return (status != -1);
 }
