@@ -15,8 +15,6 @@ void
 	eval_sequence(t_shell *shell, t_ast_node *program)
 {
 	eval(shell, program->logic.left);
-	if (program->logic.token.type == TOK_SEQUENCE) // TODO: `& token`
-		eval(shell, program->logic.right);
 	if (!ft_strcmp(program->logic.token.reserved_word, "&&")
 		&& !shell->last_status)
 		eval(shell, program->logic.right);

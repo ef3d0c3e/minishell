@@ -179,13 +179,21 @@ struct s_cmdlist_node
 };
 
 t_ast_node
-*make_cmdlist_node(void);
+*make_list_node(void);
 /** @brief Frees a command list node */
 void
-free_cmdlist_node(t_ast_node *node);
+free_list_node(t_ast_node *node);
 /** @brief Prints a command list node */
 void
-print_cmdlist_node(size_t depth, const t_ast_node *node);
+print_list_node(size_t depth, const t_ast_node *node);
+/**
+ * @brief Pushes a command to a command list
+ *
+ * @param list The command list to push to
+ * @param cmd Command to push to the command list
+ */
+void
+list_node_push(t_ast_node *list, t_ast_node *cmd);
 
 /** @brief Data for logic (binary) nodes */
 struct s_logic_node
@@ -257,7 +265,7 @@ typedef struct s_ast_node
 		/** @brief Block expression AST */
 		struct s_node_block		block;
 		/** @brief Sub expressions AST */
-		struct s_subshell_node	expr;
+		struct s_subshell_node	sub;
 		/** @brief Atom, for commands (name & parameters) */
 		struct s_cmd_node		cmd;
 		/** @brief Command list token */

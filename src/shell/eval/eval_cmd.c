@@ -33,16 +33,18 @@ static void
 	char					*err;
 	t_redirs_stack			stack;
 	
-	if (!path)
+	if (argv[0] && !path)
 		shell_exit(shell, 127);
 	shellp = environ_to_envp(shell);
 	redir_stack_init(&stack);
 	do_redir(shell, &stack, &cmd->cmd.redirs);
-	if (shell_error_flush(shell))
+	if (shell_error_flush(shell) && argv[0])
 		shell->last_status = execve(path, argv, shellp);
 	undo_redir(shell, &stack);
 	args_free(shellp);
 	args_free(argv);
+	if (!path)
+		shell_exit(shell, EXIT_SUCCESS);
 	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
 	free(path);
 	shell_error(shell, err, SRC_LOCATION);
@@ -63,7 +65,8 @@ static void
 		if (waitpid(pid, &status, 0) == -1)
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 		shell->last_status = WEXITSTATUS(status);
-		free(path);
+		if (argv[0])
+			free(path);
 	}
 	else
 		eval_exec_child(shell, cmd, path, argv);
@@ -94,9 +97,11 @@ int
 	char	**argv;
 	char	*path;
 
+	path = NULL;
 	argv = command_to_argv(shell, &program->cmd);
-	status = resolve_eval(shell, argv[0],
-		&path);
+	status = 0;
+	if (argv[0])
+		status = resolve_eval(shell, argv[0], &path);
 	if (status == 2)
 		eval_builtin(shell, program, argv);
 	else if (status == 0)

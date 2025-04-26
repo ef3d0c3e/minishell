@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_ast_node
@@ -24,7 +26,7 @@ t_ast_node
 }
 
 void
-	free_cmdlist_node(t_ast_node *node)
+	free_list_node(t_ast_node *node)
 {
 	size_t	i;
 
@@ -35,7 +37,7 @@ void
 }
 
 void
-	print_cmdlist_node(size_t depth, const t_ast_node *node)
+	print_list_node(size_t depth, const t_ast_node *node)
 {
 	size_t	i;
 
@@ -44,4 +46,13 @@ void
 	i = 0;
 	while (i < node->list.ncmds)
 		ast_print(depth + 1, node->list.cmds[i++]);
+}
+
+void
+	list_node_push(t_ast_node *list, t_ast_node *cmd)
+{
+	list->list.cmds = ft_realloc(list->list.cmds,
+			sizeof(t_ast_node **) * list->list.ncmds,
+			sizeof(t_ast_node **) * (list->list.ncmds + 1));
+	list->list.cmds[list->list.ncmds++] = cmd;
 }

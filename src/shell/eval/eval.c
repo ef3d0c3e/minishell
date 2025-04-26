@@ -9,13 +9,23 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
+#include "parser/parser.h"
 #include <shell/shell.h>
 
 void
 	eval(t_shell *shell, t_ast_node* program)
 {
+	size_t	i;
+
 	if (!program)
 		return ;
+	if (program->type == NODE_LIST)
+	{
+		i = 0;
+		while (i < program->list.ncmds)
+			eval(shell, program->list.cmds[i++]);
+	}
 	else if (program->type == NODE_COMMAND)
 	{
 		eval_cmd(shell, program);

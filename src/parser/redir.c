@@ -34,7 +34,7 @@ static void
 {
 	size_t	new_cap;
 
-	new_cap = redirs->redirs_capacity + !redirs->redirs_capacity * 16;
+	new_cap = redirs->redirs_capacity + !redirs->redirs_capacity * 4;
 	while (new_cap < redirs->redirs_size + 1)
 		new_cap *= 2;
 	redirs->redirs = ft_realloc(redirs->redirs,

@@ -18,18 +18,18 @@ t_ast_node
 
 	node = xmalloc(sizeof(t_ast_node));
 	node->type = NODE_SUBSHELL;
-	node->expr.head = inner;
-	node->expr.redirs.redirs = NULL;
-	node->expr.redirs.redirs_capacity = 0;
-	node->expr.redirs.redirs_size = 0;
+	node->sub.head = inner;
+	node->sub.redirs.redirs = NULL;
+	node->sub.redirs.redirs_capacity = 0;
+	node->sub.redirs.redirs_size = 0;
 	return (node);
 }
 
 void
 	free_subshell_node(t_ast_node *node)
 {
-	ast_free(node->expr.head);
-	redirs_free(&node->expr.redirs);
+	ast_free(node->sub.head);
+	redirs_free(&node->sub.redirs);
 }
 
 void
@@ -37,6 +37,6 @@ void
 {
 	print_pad(" | ", depth);
 	ft_dprintf(2, "SUBSHELL\n");
-	ast_print(depth + 1, node->expr.head);
-	print_redir(&node->expr.redirs, depth + 1);
+	ast_print(depth + 1, node->sub.head);
+	print_redir(&node->sub.redirs, depth + 1);
 }

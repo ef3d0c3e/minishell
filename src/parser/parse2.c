@@ -130,6 +130,11 @@ t_ast_node
 		else
 			break ;
 	}
+	if (!cmd->cmd.args && !cmd->cmd.assigns && !cmd->cmd.redirs.redirs_size)
+	{
+		free(cmd);
+		return (NULL);
+	}
 	return (cmd);
 }
 
@@ -225,7 +230,7 @@ t_ast_node
 					begin, parser->list.size);
 		++parser->pos;
 		node = make_subshell_node(inner);
-		parse_redir_repeat(parser, &node->expr.redirs);
+		parse_redir_repeat(parser, &node->sub.redirs);
 	}
 	else if (accept(parser, 0, "{"))
 	{
@@ -337,6 +342,23 @@ t_ast_node
 t_ast_node
 	*parse_cmdlist(t_parser *parser)
 {
+	t_ast_node	*cmd;
+	t_ast_node	*list;
+
+	cmd = parse_and_or(parser);
+	list = make_list_node();
+	list_node_push(list, cmd);
+	while (accept(parser, 0, ";") || accept(parser, 0, "\n"))
+	{
+		++parser->pos;
+		if (parser->pos >= parser->list.size)
+			break ;
+		cmd = parse_and_or(parser);
+		if (cmd)
+			list_node_push(list, cmd);
+	}
+
+	/*
 	t_ast_node*	left;
 	t_ast_node*	right;
 	t_token		op;
@@ -353,6 +375,8 @@ t_ast_node
 		return (make_logic_node(op, left, right));
 	}
 	return (left);
+	*/
+	return (list);
 }
 
 t_ast_node
