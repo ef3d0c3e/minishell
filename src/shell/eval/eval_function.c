@@ -12,6 +12,17 @@
 #include <shell/shell.h>
 
 void
+	eval_function_definition(t_shell *shell, t_ast_node *def)
+{
+	char	*name;
+
+	name = stringbuf_cstr(&def->function.name);
+	def->function.registered = 1;
+	rb_insert(&shell->reg_fns, ft_strdup(name), def);
+
+}
+
+void
 	eval_function(t_shell *shell, t_ast_node *cmd, char **argv)
 {
 	t_ast_node *const	function = rb_find(&shell->reg_fns, argv[0]);
@@ -22,7 +33,7 @@ void
 	if (shell_error_flush(shell))
 	{
 		funs_stack_push(shell, function, argv);
-		eval(shell, function);
+		eval(shell, function->function.body);
 		funs_stack_pop(shell);
 	}
 	undo_redir(shell, &stack);

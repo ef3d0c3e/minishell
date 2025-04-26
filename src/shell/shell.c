@@ -64,7 +64,6 @@ void
 void
 	shell_free(t_shell *shell)
 {
-	funs_deinit(shell);
 	builtin_deinit(shell);
 	shell_error_flush(shell);
 	rb_free(&shell->reg_env);
@@ -73,6 +72,7 @@ void
 	rb_free(&shell->reg_builtins);
 	rb_free(&shell->options);
 	shell_parser_free(shell);
+	funs_deinit(shell);
 	temporaries_cleanup(shell);
 	free(shell->errors.errors);
 }

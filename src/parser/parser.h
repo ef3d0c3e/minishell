@@ -225,6 +225,9 @@ struct s_function_node
 	t_string_buffer	name;
 	/** @brief The function's body */
 	t_ast_node		*body;
+	/** @brief Set to 1 when the function is registered. This prevent the
+	 * function from being freed when the ast is freed. */
+	int				registered;
 };
 
 /** @brief Creates a function node */

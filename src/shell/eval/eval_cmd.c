@@ -104,7 +104,7 @@ int
 	if (argv[0])
 		status = resolve_eval(shell, argv[0], &path);
 	if (status == 1)
-		eval_function(shell, program, argv);
+		return (eval_function(shell, program, argv), 1);
 	else if (status == 2)
 		eval_builtin(shell, program, argv);
 	else if (status == 0)

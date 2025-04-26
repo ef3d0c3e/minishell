@@ -50,7 +50,15 @@ repl_to_string(t_shell *shell, char *input, t_string_buffer *buf);
 int
 eval_cmd(t_shell *shell, t_ast_node* cmd);
 /**
- * @brief Evaluates a function
+ * @brief Evaluates a function definition
+ *
+ * @param shell The shell session
+ * @param definition The function definition node
+ */
+void
+eval_function_definition(t_shell *shell, t_ast_node *definition);
+/**
+ * @brief Evaluates a function call
  *
  * @param shell The shell session
  * @param function The evaluated function node

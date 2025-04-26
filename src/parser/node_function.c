@@ -20,6 +20,7 @@ t_ast_node
 	node->type = NODE_FUNCTION;
 	node->function.name = name;
 	node->function.body = body;
+	node->function.registered = 0;
 	return (node);
 }
 

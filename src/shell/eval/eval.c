@@ -26,20 +26,18 @@ void
 		while (i < program->list.ncmds)
 			eval(shell, program->list.cmds[i++]);
 	}
+	else if (program->type == NODE_BLOCK)
+		eval(shell, program->block.inner);
 	else if (program->type == NODE_COMMAND)
-	{
 		eval_cmd(shell, program);
-	}
 	else if (program->type == NODE_LOGIC)
-	{
 		if (!ft_strcmp(program->logic.token.reserved_word, "|")
 			|| !ft_strcmp(program->logic.token.reserved_word, "|&"))
 			eval_pipeline(shell, program);
 		else
 			eval_sequence(shell, program);
-	}
 	else if (program->type == NODE_SUBSHELL)
-	{
 		eval_subshell(shell, program);
-	}
+	else if (program->type == NODE_FUNCTION)
+		eval_function_definition(shell, program);
 }

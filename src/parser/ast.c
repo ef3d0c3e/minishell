@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
 #include <shell/shell.h>
 
 void
@@ -26,6 +27,8 @@ void
 	};
 
 	if (!node)
+		return ;
+	if (node->type == NODE_FUNCTION && node->function.registered)
 		return ;
 	cleaners[node->type](node);
 	free(node);

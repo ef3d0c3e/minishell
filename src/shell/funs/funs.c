@@ -9,10 +9,19 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/funs/funs.h"
 #include "parser/parser.h"
-#include "util/util.h"
 #include <shell/shell.h>
+
+/** @brief Function to free function definitions */
+static void
+	fun_free(void *fun)
+{
+	t_ast_node *node;
+
+	node = fun;
+	node->function.registered = 0;
+	ast_free(node);
+}
 
 void
 	funs_init(t_shell *shell)
@@ -22,7 +31,7 @@ void
 	shell->eval_stack.frames = xmalloc(sizeof(t_stack_frame)
 		* shell->eval_stack.capacity);
 	shell->reg_fns = rb_new((int(*)(const void *, const void *))ft_strcmp,
-		free, (void(*)(void *))ast_free);
+		free, fun_free);
 }
 
 void
@@ -48,6 +57,7 @@ funs_stack_push(t_shell *shell, t_ast_node *function, char **argv)
 	frame.function = function;
 	frame.locals = rb_new((int(*)(const void *, const void *))ft_strcmp,
 		free, free);
+	shell->eval_stack.frames[shell->eval_stack.size++] = frame;
 }
 
 void
