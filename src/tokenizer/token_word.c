@@ -22,12 +22,8 @@ int
 	{
 		stringbuf_init(&buf, 8);
 		stringbuf_append(&buf, it->codepoint);
-		token_list_push(list, (t_token){
-			.type = TOK_WORD,
-			.start = it->byte_pos,
-			.end = it->byte_pos + it->codepoint.len,
-			.word = buf
-		});
+		token_list_push(list, TOK_WORD,
+			it->byte_pos, it->byte_pos + it->codepoint.len)->word = buf;
 	}
 	else
 	{

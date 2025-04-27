@@ -22,12 +22,8 @@ int
 	redir = str_alternatives(it_substr(it, 3), redirs);
 	if (!redir)
 		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_REDIR,
-		.start = it->byte_pos,
-		.end = it->byte_pos + ft_strlen(redir),
-		.reserved_word = redir,
-	});
+	token_list_push(list, TOK_REDIR, it->byte_pos,
+		it->byte_pos + ft_strlen(redir))->reserved_word = redir;
 	it_advance(it, ft_strlen(redir));
 	return (1);
 }

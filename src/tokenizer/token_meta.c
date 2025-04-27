@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
+#include <tokenizer/tokenizer.h>
 
 // https://www.gnu.org/software/bash/manual/bash.html#index-metacharacter
 
@@ -20,11 +20,8 @@ int
 		return (0);
 	if (!list->size || list->tokens[list->size - 1].type != TOK_SPACE)
 	{
-		token_list_push(list, (t_token){
-			.type = TOK_SPACE,
-			.start = it->byte_pos,
-			.end = it->byte_pos + it->codepoint.len,
-		});
+		token_list_push(list, TOK_SPACE, it->byte_pos,
+			it->byte_pos + it->codepoint.len);
 	}
 	else
 		list->tokens[list->size - 1].end += it->codepoint.len;

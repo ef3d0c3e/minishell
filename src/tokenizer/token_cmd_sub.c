@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include "util/util.h"
-#include <stdio.h>
+#include <tokenizer/tokenizer.h>
 
 static int
 	cmd_sub_dollar(t_token_list *list, t_u8_iterator *it)
@@ -25,13 +23,9 @@ static int
 		token_error(list, it->byte_pos - 2, it->byte_pos, "Unterminated `$(` token");
 		return (1);
 	}
-	token_list_push(list, (t_token){
-		.type = TOK_CMD_SUB,
-		.start = it->byte_pos,
-		.end = it->byte_pos + end,
-		.word = stringbuf_from_range(it->str.str + it->byte_pos,
-			it->str.str + it->byte_pos + end)
-	});
+	token_list_push(list, TOK_CMD_SUB, it->byte_pos,
+		it->byte_pos + end)->word = stringbuf_from_range(it->str.str + it->byte_pos,
+			it->str.str + it->byte_pos + end);
 	it_advance(it, end + 1);
 	return (1);
 }
@@ -51,12 +45,8 @@ static int
 	}
 	buf = stringbuf_from_range(it->str.str + it->byte_pos,
 			it->str.str + it->byte_pos + end);
-	token_list_push(list, (t_token){
-		.type = TOK_CMD_SUB,
-		.start = it->byte_pos,
-		.end = it->byte_pos + end,
-		.word = buf
-	});
+	token_list_push(list, TOK_CMD_SUB, it->byte_pos,
+		it->byte_pos + end)->word = buf;
 	it_advance(it, end + 1);
 	return (1);
 }

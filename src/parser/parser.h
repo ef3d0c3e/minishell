@@ -28,6 +28,8 @@ enum e_arg_type
 	/** @brief Content is to be interpreted as a variable needing expansion
 	 * at run-time */
 	ARG_PARAMETER,
+	/** @brief Sub expression, needs evaluation at run-time */
+	ARG_SUBEXPR,
 };
 
 /** @brief A single argument item */
@@ -176,7 +178,11 @@ print_cmd_node(size_t depth, const t_ast_node *node);
 /** @brief Command list node */
 struct s_cmdlist_node
 {
+	/** @brief The commands */
 	t_ast_node	**cmds;
+	/** @brief Separator tokens */
+	char		*seps;
+	/** @brief Number of commands */
 	size_t		ncmds;
 };
 
@@ -193,9 +199,10 @@ print_list_node(size_t depth, const t_ast_node *node);
  *
  * @param list The command list to push to
  * @param cmd Command to push to the command list
+ * @param sep Separator
  */
 void
-list_node_push(t_ast_node *list, t_ast_node *cmd);
+list_node_push(t_ast_node *list, t_ast_node *cmd, char sep);
 
 /** @brief Data for logic (binary) nodes */
 struct s_logic_node

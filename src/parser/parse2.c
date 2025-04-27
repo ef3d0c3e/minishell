@@ -16,6 +16,7 @@
 #include "util/util.h"
 #include <math.h>
 #include <shell/shell.h>
+#include <stdio.h>
 
 /*
 <script>				::= <list_of_commands>
@@ -116,6 +117,7 @@ t_ast_node
 		tok = &parser->list.tokens[parser->pos];
 
 		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
+			|| tok->type == TOK_CMD_SUB
 			|| (arg_pos != 0 && token_isword(tok->type))
 			|| accept_word(parser, 0))
 		{
@@ -244,8 +246,10 @@ t_ast_node
 	else if (accept(parser, 0, "while"))
 		return (parse_while_stmt(parser));
 	else
+	{
 		parser_error(parser, ft_strdup("Unexpected token"),
 				begin, parser->list.size);
+	}
 	return (node);
 	/* TODO:
     if (accept("if"))      return parse_if_clause();
@@ -266,6 +270,8 @@ t_ast_node
 	stringbuf_init(&name, 64);
 	token_wordcontent(&name, &parser->list.tokens[parser->pos]);
 	parser->pos += 3;
+	while (accept(parser, 0, "\n"))
+		++parser->pos;
 	body = parse_compound_command(parser);
 	// TODO: Force node to be a subshell or block node
 	return (make_function_node(name, body));
@@ -295,7 +301,6 @@ t_ast_node
 		|| accept(parser, 0, "for")
 		|| accept(parser, 0, "case"))
 		return (parse_compound_command(parser));
-
 	return (parse_simple_command(parser));
 }
 
@@ -340,20 +345,23 @@ t_ast_node
 {
 	t_ast_node	*cmd;
 	t_ast_node	*list;
+	t_token		*sep;
 
 	cmd = NULL;
 	if (parser->pos < parser->list.size)
 		cmd = parse_and_or(parser);
 	list = make_list_node();
-	list_node_push(list, cmd);
-	while (accept(parser, 0, ";") || accept(parser, 0, "\n"))
+	list_node_push(list, cmd, '\0');
+	while (accept(parser, 0, ";") || accept(parser, 0, "\n")
+		|| accept(parser, 0, "&"))
 	{
+		sep = &parser->list.tokens[parser->pos];
 		++parser->pos;
 		if (parser->pos >= parser->list.size)
 			break ;
 		cmd = parse_and_or(parser);
 		if (cmd)
-			list_node_push(list, cmd);
+			list_node_push(list, cmd, sep->reserved_word[0]);
 	}
 
 	/*

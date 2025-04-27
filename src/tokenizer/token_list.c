@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include "util/util.h"
+#include <tokenizer/tokenizer.h>
 
 void
 	token_list_init(t_token_list *list, size_t initial_capacity)
@@ -21,7 +20,7 @@ void
 }
 
 void
-	token_list_push(t_token_list *list, t_token token)
+	token_list_push_token(t_token_list *list, t_token token)
 {
 	if (list->size >= list->capacity)
 	{
@@ -30,6 +29,28 @@ void
 			list->capacity * sizeof(t_token));
 	}
 	list->tokens[list->size++] = token;
+}
+
+t_token
+	*token_list_push(
+	t_token_list *list,
+	int type,
+	size_t start,
+	size_t end)
+{
+	if (list->size >= list->capacity)
+	{
+		list->capacity = ((list->capacity + !list->capacity) * 2);
+		list->tokens = ft_realloc(list->tokens, list->size * sizeof(t_token),
+			list->capacity * sizeof(t_token));
+	}
+	list->tokens[list->size++] = (t_token){
+		.type = type,
+		.start = start,
+		.end = end,
+		.flag = FL_NONE,
+	};
+	return (&list->tokens[list->size - 1]);
 }
 
 void

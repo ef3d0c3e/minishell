@@ -52,7 +52,23 @@ token_list_free(t_token_list *list);
  * @param token Token to push to `list`
  */
 void
-token_list_push(t_token_list *list, t_token token);
+token_list_push_token(t_token_list *list, t_token token);
+/**
+ * @brief Constructs a new token at the end of the list
+ *
+ * @param list List to create `token`
+ * @param type Token type
+ * @param start Token's start position
+ * @param end Token's end position
+ *
+ * @returns The newly created token
+ */
+t_token
+*token_list_push(
+	t_token_list *list,
+	int type,
+	size_t start,
+	size_t end);
 /**
  * @brief Pushes codepoint from iterator into list
  *
@@ -80,6 +96,15 @@ list_extend(t_token_list *result, t_token_list *from, size_t offset);
 /* ************************************************************************** */
 /* Token definition                                                           */
 /* ************************************************************************** */
+
+enum e_token_flag
+{
+	FL_NONE = 0,
+	/** @brief Token is single quoted */
+	FL_SQUOTED = (1<<0),
+	/** @brief Token is double quoted */
+	FL_DQUOTED = (1<<1),
+};
 
 /**
  * @brief Frees a token
@@ -189,17 +214,16 @@ typedef struct s_token
 	size_t				start;
 	/** @brief Token end byte position in the original input */
 	size_t				end;
+	/** @brief Flag for the token */
+	enum e_token_flag	flag;
 
 	union {
 		/** @brief Reserved name for token, e.g keyword name, grouping char */
-		const char				*reserved_word;
+		const char		*reserved_word;
 		/** @brief String content */
-		t_string_buffer			word;
+		t_string_buffer	word;
 		/** @brief Error message */
-		t_string				err;
-
-		/** @brief Expansion result */
-		t_token_list			expansion;
+		t_string		err;
 	};
 }	t_token;
 

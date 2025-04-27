@@ -21,13 +21,9 @@ void
 	}
 	else
 	{
-		token_list_push(list, (t_token){
-			.type = TOK_SINGLE_QUOTE,
-			.start = it->byte_pos,
-			.end = it->byte_pos + it->codepoint.len,
-			.word = stringbuf_from_range(it->codepoint.str,
-				it->codepoint.str + it->codepoint.len)
-		});
+		token_list_push(list, TOK_SINGLE_QUOTE, it->byte_pos,
+			it->byte_pos + it->codepoint.len)->word = stringbuf_from_range(
+			it->codepoint.str, it->codepoint.str + it->codepoint.len);
 	}
 }
 
@@ -41,7 +37,7 @@ void
 	{
 		from->tokens[i].start += offset;
 		from->tokens[i].end += offset;
-		token_list_push(result, from->tokens[i]);
+		token_list_push_token(result, from->tokens[i]);
 		++i;
 	}
 	free(from->tokens);

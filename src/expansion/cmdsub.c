@@ -44,12 +44,8 @@ int
 	if (buf.len)
 	{
 		// TODO: Perform word splitting
-		token_list_push(result, (t_token){
-				.type = TOK_SINGLE_QUOTE,
-				.start = token->start,
-				.end = token->end,
-				.word = buf
-				});
+		token_list_push(result, TOK_SINGLE_QUOTE, token->start, token->end)
+			->word = buf;
 	}
 	else
 		stringbuf_free(&buf);

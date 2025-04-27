@@ -37,11 +37,7 @@ int
 		stringbuf_append(&digit, it->codepoint);
 		it_next(it);
 	}
-	token_list_push(list, (t_token){
-		.type = TOK_DIGIT,
-		.start = start,
-		.end = it->byte_pos,
-		.word = digit
-	});
+	token_list_push(list, TOK_DIGIT, start,
+		it->byte_pos)->word = digit;
 	return (1);
 }

@@ -32,12 +32,8 @@ static int
 
 	if (kind)
 	{
-		token_list_push(list, (t_token){
-			.type = TOK_PARAM_SIMPLE,
-			.start = it->byte_pos + 1,
-			.end = it->byte_pos + ft_strlen(kind),
-			.word = stringbuf_from(kind + 1)
-		});
+		token_list_push(list, TOK_PARAM_SIMPLE, it->byte_pos + 1,
+			it->byte_pos + ft_strlen(kind))->word = stringbuf_from(kind + 1);
 		it_advance(it, ft_strlen(kind));
 		return (1);
 	}
@@ -64,21 +60,13 @@ int
 	{
 		stringbuf_init(&buf, 8);
 		stringbuf_append(&buf, it->codepoint);
-		token_list_push(list, (t_token){
-				.type = TOK_WORD,
-				.start = start,
-				.end = start + 1,
-				.word = buf,
-		});
+		token_list_push(list, TOK_WORD, start,
+			start + 1)->word = buf;
 	}
 	else
-		token_list_push(list, (t_token){
-			.type = TOK_PARAM_SIMPLE,
-			.start = start + 1,
-			.end = cpy.byte_pos,
-			.word = stringbuf_from_range(it->str.str + start + 1,
-					it->str.str + cpy.byte_pos)
-		});
+		token_list_push(list, TOK_PARAM_SIMPLE, start, cpy.byte_pos)->word 
+			= stringbuf_from_range(it->str.str + start + 1,
+			it->str.str + cpy.byte_pos);
 	*it = cpy;
 	return (1);
 }

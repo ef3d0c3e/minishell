@@ -50,6 +50,16 @@ static int
 	*/
 }
 
+/** @brief Removes spaces before and after operators */
+static int
+	remove_comment(const t_token_list *list, size_t *i)
+{
+	if (list->tokens[*i].type != TOK_COMMENT)
+		return (0);
+	++*i;
+	return (1);
+}
+
 static int
 	merge_subsequent(t_token *first, t_token *second)
 {
@@ -86,7 +96,7 @@ static t_token_list
 		{
 			++j;
 		}
-		token_list_push(&new, list.tokens[i]);
+		token_list_push_token(&new, list.tokens[i]);
 		i = j;
 	}
 	free(list.tokens);
@@ -103,18 +113,18 @@ t_token_list
 	i = 0;
 	while (i < list.size)
 	{
-		if (remove_space(&list, &i))
+		if (remove_space(&list, &i) || remove_comment(&list, &i))
 			continue ;
-		if (expand_tilde(shell, &list.tokens[i], &new))
-			;
-		else if (expand_param(shell, &list.tokens[i], &new))
-			;
-		else if (expand_cmdsub(shell, &list.tokens[i], &new))
-			;
-		else if (expand_filename(shell, &list.tokens[i], &new))
-			;
-		else
-			token_list_push(&new, list.tokens[i]);
+		//if (expand_tilde(shell, &list.tokens[i], &new))
+		//	;
+		//else if (expand_param(shell, &list.tokens[i], &new))
+		//	;
+		//else if (expand_cmdsub(shell, &list.tokens[i], &new))
+		//	;
+		//else if (expand_filename(shell, &list.tokens[i], &new))
+		//	;
+		//else
+		token_list_push_token(&new, list.tokens[i]);
 		++i;
 	}
 	free(list.tokens);

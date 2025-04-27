@@ -9,7 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 static void
 	token_list_debug(t_string input, const t_token_list *list)
@@ -25,14 +27,26 @@ static void
 	ft_dprintf(2, "\n");
 }
 
+// TODO
+typedef struct s_repl_frame
+{
+	t_parser 		*parser;
+	char		 	*prompt;
+	t_token_list	*list;
+}	t_repl_frame;
+
 int
 	repl(t_shell *shell, char *s)
 {
+	t_repl_frame	save;
 	t_string		input;
 	t_token_list	list;
 	t_parser		parser;
 
-	shell_parser_free(shell);
+	printf("Prompt=`%s`\n",s);
+	save.parser = shell->parser;
+	save.prompt = shell->prompt;
+	save.list = shell->token_list;
 	input.str = s;
 	input.len = ft_strlen(s);
 	shell->prompt = s;
@@ -66,5 +80,8 @@ int
 		return (shell_parser_free(shell), shell->last_status = 2, shell->last_status);
 	eval(shell, shell->program);
 	shell_parser_free(shell);
+	shell->parser = save.parser;
+	shell->prompt = save.prompt;
+	shell->token_list = save.list;
 	return (shell->last_status);
 }

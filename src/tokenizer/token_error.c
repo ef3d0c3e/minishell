@@ -14,10 +14,9 @@
 void
 	token_error(t_token_list *list, size_t start, size_t end, const char *msg)
 {
-	token_list_push(list, (t_token){
-		.type = TOK_ERROR,
-		.start = start,
-		.end = end,
-		.err = (t_string){.str = msg, .len = ft_strlen(msg)}
-	});
+	token_list_push(list, TOK_ERROR, start,
+		end)->err = (t_string){
+		.str = msg,
+		.len = ft_strlen(msg)
+	};
 }

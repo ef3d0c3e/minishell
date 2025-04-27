@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <tokenizer/tokenizer.h>
 
 int
@@ -21,10 +20,7 @@ int
 		return (0);
 	while (it->codepoint.len && it->codepoint.str[0] != '\n')
 		it_next(it);
-	token_list_push(list, (t_token){
-		.start = start,
-		.end = it->byte_pos,
-		.type = TOK_COMMENT,
-	});
+	token_list_push(list, TOK_COMMENT, start,
+		it->byte_pos);
 	return (1);
 }

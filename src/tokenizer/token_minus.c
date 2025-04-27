@@ -16,12 +16,8 @@ int
 {
 	if (it->codepoint.str[0] != '-')
 		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_MINUS,
-		.start = it->byte_pos,
-		.end = it->byte_pos + 1,
-		.reserved_word = "-"
-	});
+	token_list_push(list, TOK_MINUS, it->byte_pos,
+		it->byte_pos + 1)->reserved_word = "-";
 	it_next(it);
 	return (1);
 }

@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
+#include <tokenizer/tokenizer.h>
 
 int
 	token_arith(t_token_list *list, t_u8_iterator *it)
@@ -25,11 +25,8 @@ int
 		token_error(list, it->byte_pos - 3, it->byte_pos, "Unterminated `$((` token");
 		return (1);
 	}
-	token_list_push(list, (t_token){
-		.type = TOK_ARITH,
-		.start = it->byte_pos,
-		.end = it->byte_pos + end,
-	});
+	token_list_push(list, TOK_ARITH, it->byte_pos,
+		it->byte_pos + end);
 	it_advance(it, end + 2);
 	return (1);
 }

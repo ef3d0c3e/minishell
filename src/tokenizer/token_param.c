@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include "util/util.h"
-#include <stdio.h>
+#include <tokenizer/tokenizer.h>
 
 /** @brief Handles special parameters that will be resolved at evaluation
  * time */
@@ -25,12 +23,8 @@ static int
 
 	if (kind && ft_strlen(kind) == end)
 	{
-		token_list_push(list, (t_token){
-			.type = TOK_PARAM_SIMPLE,
-			.start = it->byte_pos,
-			.end = it->byte_pos + ft_strlen(kind),
-			.word = stringbuf_from(kind)
-		});
+		token_list_push(list, TOK_PARAM_SIMPLE, it->byte_pos,
+			it->byte_pos + ft_strlen(kind))->word = stringbuf_from(kind);
 		it_advance(it, ft_strlen(kind) + 1);
 		return (1);
 	}
@@ -53,13 +47,9 @@ int
 	}
 	if (param_special(list, it, end))
 		return (1);
-	token_list_push(list, (t_token){
-		.type = TOK_PARAM,
-		.start = it->byte_pos,
-		.end = it->byte_pos + end,
-		.word = stringbuf_from_range(it->str.str + it->byte_pos,
-				it->str.str + it->byte_pos + end)
-	});
+	token_list_push(list, TOK_PARAM, it->byte_pos, it->byte_pos + end)->word 
+		= stringbuf_from_range(it->str.str + it->byte_pos,
+		it->str.str + it->byte_pos + end);
 	it_advance(it, end + 1);
 	return (1);
 }

@@ -9,22 +9,21 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
+#include <tokenizer/tokenizer.h>
 
 int
 	token_sequence(t_token_list *list, t_u8_iterator *it)
 {
+	const size_t		start = it->byte_pos;
 	static const char	*separators[] = {"\n", "&", ";", NULL};
 	const char			*sep = str_alternatives(it_substr(it, 1), separators);
 
 	if (!sep)
 		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_SEQUENCE,
-		.start = it->byte_pos,
-		.end = it->byte_pos + ft_strlen(sep),
-		.reserved_word = sep
-	});
 	it_advance(it, ft_strlen(sep));
+	while (it->codepoint.len == 1 && it->codepoint.str[0] == '\n')
+		it_next(it);
+	token_list_push(list,
+		TOK_SEQUENCE, start, it->byte_pos)->reserved_word = sep;
 	return (1);
 }

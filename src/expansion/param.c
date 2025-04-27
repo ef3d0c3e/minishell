@@ -50,7 +50,7 @@ static inline int
 	stringbuf_free(&name);
 	token->type = TOK_SINGLE_QUOTE;
 	token->word = stringbuf_from(expanded);
-	token_list_push(result, *token);
+	token_list_push_token(result, *token);
 	return (1);
 }
 
@@ -70,7 +70,7 @@ int
 		stringbuf_free(&token->word);
 		token->type = TOK_SINGLE_QUOTE;
 		token->word = stringbuf_from(expanded);
-		token_list_push(result, *token);
+		token_list_push_token(result, *token);
 		return (1);
 	}
 	else if (token->type == TOK_PARAM)

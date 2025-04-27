@@ -64,7 +64,7 @@ static inline int
 			" not found (in /etc/passwd)", (int)username.len, username.str);
 		shell_error(shell, err, SRC_LOCATION);
 	}
-	token_list_push(result, *token);
+	token_list_push_token(result, *token);
 	stringbuf_free(&username);
 	return (1);
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_single_quote.c                               :+:      :+:    :+:   */
+/*   expand.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,31 +9,28 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
+#include "util/util.h"
+#include <shell/shell.h>
+#include <stddef.h>
+#include <stdlib.h>
 
-int
-	token_single_quote(t_token_list *list, t_u8_iterator *it)
+static void
+	argv_push(char **argv, size_t len, char *str)
 {
-	t_string_buffer	buf;
-	const size_t	start = it->byte_pos;
+	argv = ft_realloc(argv, sizeof(char **) * len, sizeof(char **) * (len + 1));
+	argv[len] = str;
+}
 
-	if (it->codepoint.str[0] != '\'')
-		return (0);
-	it_advance(it, 1);
-	while (it->codepoint.len)
+char
+	**arg_expansion(t_shell *shell, const struct s_cmd_node *cmd)
+{
+	char	**argv;
+	size_t	size;
+	size_t	i;
+
+	size = 0;
+	argv = NULL;
+	while (cmd->nargs)
 	{
-		if (it->codepoint.str[0] == '\'')
-		{
-			stringbuf_init(&buf, it->byte_pos - start);
-			stringbuf_append(&buf, (t_string){.str = it->str.str + start + 1,
-					.len = it->byte_pos - start - 1});
-			token_list_push(list,
-				TOK_SINGLE_QUOTE, start + 1, it->byte_pos)->word = buf;
-			it_advance(it, 1);
-			return (1);
-		}
-		it_next(it);
 	}
-	token_error(list, start, it->byte_pos, "Unterminated `'` token");
-	return (1);
 }

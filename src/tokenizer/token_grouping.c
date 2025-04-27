@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
+#include <tokenizer/tokenizer.h>
 
 // https://www.gnu.org/software/bash/manual/bash.html#Redirections
 
@@ -27,12 +27,8 @@ int
 			&& list->tokens[list->size - 1].type != TOK_SPACE
 			&& list->tokens[list->size - 1].type != TOK_SEQUENCE)
 		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_GROUPING,
-		.start = it->byte_pos,
-		.end = it->byte_pos + ft_strlen(grouping),
-		.reserved_word = grouping
-	});
+	token_list_push(list, TOK_GROUPING, it->byte_pos,
+		it->byte_pos + ft_strlen(grouping))->reserved_word = grouping;
 	it_advance(it, ft_strlen(grouping));
 	return (1);
 }

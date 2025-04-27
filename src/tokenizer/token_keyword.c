@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
+#include <tokenizer/tokenizer.h>
 
 int
 	token_keyword(t_token_list *list, t_u8_iterator *it)
@@ -29,12 +29,8 @@ int
 		return (0);
 	if (!keyword)
 		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_KEYWORD,
-		.start = it->byte_pos,
-		.end = it->byte_pos + ft_strlen(keyword),
-		.reserved_word = keyword
-	});
+	token_list_push(list, TOK_KEYWORD, it->byte_pos,
+		it->byte_pos + ft_strlen(keyword))->reserved_word = keyword;
 	it_advance(it, ft_strlen(keyword));
 	return (1);
 }

@@ -20,12 +20,8 @@ int
 	operator = str_alternatives(it_substr(it, 2), operators);
 	if (!operator)
 		return (0);
-	token_list_push(list, (t_token){
-		.type = TOK_OPERATOR,
-		.start = it->byte_pos,
-		.end = it->byte_pos + ft_strlen(operator),
-		.reserved_word = operator
-	});
+	token_list_push(list, TOK_OPERATOR, it->byte_pos,
+		it->byte_pos + ft_strlen(operator))->reserved_word = operator;
 	it_advance(it, ft_strlen(operator));
 	return (1);
 }

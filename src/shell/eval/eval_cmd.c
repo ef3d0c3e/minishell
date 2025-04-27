@@ -99,7 +99,7 @@ int
 	char	*path;
 
 	path = NULL;
-	argv = command_to_argv(shell, &program->cmd);
+	argv = arg_expansion(shell, &program->cmd);
 	status = 0;
 	if (argv[0])
 		status = resolve_eval(shell, argv[0], &path);

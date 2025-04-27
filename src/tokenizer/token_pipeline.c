@@ -20,12 +20,8 @@ int
 	if (it->codepoint.str[0] != '|')
 		return (0);
 	pipeline = str_alternatives(it_substr(it, 2), pipelines);
-	token_list_push(list, (t_token){
-		.type = TOK_PIPELINE,
-		.start = it->byte_pos,
-		.end = it->byte_pos + ft_strlen(pipeline),
-		.reserved_word = pipeline
-	});
+	token_list_push(list, TOK_PIPELINE, it->byte_pos,
+		it->byte_pos + ft_strlen(pipeline))->reserved_word = pipeline;
 	it_advance(it, ft_strlen(pipeline));
 	return (1);
 }

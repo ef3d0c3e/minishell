@@ -52,6 +52,11 @@ builtin_deinit(t_shell *shell);
 const t_builtin
 *builtin_echo(void);
 /**
+ * @brief The `source` builtin
+ */
+const t_builtin
+*builtin_source(void);
+/**
  * @brief The `fds` builtin
  */
 const t_builtin

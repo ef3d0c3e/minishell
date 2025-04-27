@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "ft_printf.h"
 #include "parser/parser.h"
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 void
@@ -24,6 +25,13 @@ void
 			.type = ARG_PARAMETER,
 			.data = stringbuf_from_range(token->word.str, token->word.str
 				+ token->word.len),
+		};
+	}
+	else if (token->type == TOK_CMD_SUB)
+	{
+		arg->items[arg->nitems] = (struct s_arg_item){
+			.type = ARG_SUBEXPR,
+			.data = token->word,
 		};
 	}
 	else
@@ -76,7 +84,10 @@ void
 			ft_dprintf(2, "'%.*s'",
 				(int)arg->items[i].data.len, arg->items[i].data.str);
 		else if (arg->items[i].type == ARG_PARAMETER)
-			ft_dprintf(2, "{%.*s}",
+			ft_dprintf(2, "${%.*s}",
+				(int)arg->items[i].data.len, arg->items[i].data.str);
+		else if (arg->items[i].type == ARG_SUBEXPR)
+			ft_dprintf(2, "$(%.*s)",
 				(int)arg->items[i].data.len, arg->items[i].data.str);
 
 		++i;
