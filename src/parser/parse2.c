@@ -64,7 +64,7 @@
 */
 
 static void
-	cmd_arg_push(t_ast_node *cmd, size_t arg_pos, const t_token *tok)
+	cmd_arg_push(t_parser *parser, t_ast_node *cmd, size_t arg_pos, size_t pos)
 {
 	while (cmd->cmd.nargs <= arg_pos)
 	{
@@ -75,7 +75,7 @@ static void
 		cmd->cmd.args[cmd->cmd.nargs].nitems = 0;
 		++cmd->cmd.nargs;
 	}
-	arg_push(&cmd->cmd.args[arg_pos], tok);
+	arg_push(parser, &cmd->cmd.args[arg_pos], pos);
 }
 
 t_ast_node
@@ -121,7 +121,7 @@ t_ast_node
 			|| (arg_pos != 0 && token_isword(tok->type))
 			|| accept_word(parser, 0))
 		{
-			cmd_arg_push(cmd, arg_pos, tok);
+			cmd_arg_push(parser, cmd, arg_pos, parser->pos);
 			++parser->pos;
 		}
 		else if (tok->type == TOK_SPACE)

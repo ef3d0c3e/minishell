@@ -60,7 +60,7 @@ static void
 		{
 			if (quoted_munchers()[i](&inner, &it))
 			{
-				inner.tokens[inner.size - 1].flag |= FL_DQUOTED;
+				inner.tokens[inner.size - 1].flags |= FL_DQUOTED;
 				i = 0;
 				break ;
 			}

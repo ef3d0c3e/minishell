@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
-#include <stdlib.h>
 
 static void
 	argv_push(char **argv, size_t len, char *str)
@@ -30,7 +27,9 @@ char
 
 	size = 0;
 	argv = NULL;
+	i = 0;
 	while (cmd->nargs)
 	{
+		++i;
 	}
 }

@@ -56,7 +56,7 @@ static inline int
 
 // TODO: Handle other param expansion with ${...}
 int
-	expand_param(t_shell *shell, t_token *token, t_token_list *result)
+	_expand_param(t_shell *shell, t_token *token, t_token_list *result)
 {
 	char		*expanded;
 

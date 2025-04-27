@@ -82,21 +82,4 @@ eval_sequence(t_shell *shell, t_ast_node* pipeline);
 void
 eval_subshell(t_shell *shell, t_ast_node* subshell);
 
-/******************************************************************************/
-/* Argument expansion                                                         */
-/******************************************************************************/
-
-
-/**
- * @brief Resolves command parameters to an array of strings while performing
- * argument expansion
- *
- * @param shell The shell session
- * @param cmd Command to create an array of string from
- *
- * @returns A null-terminated array of strings to be passed to `execve`
- */
-char
-**arg_expansion(t_shell *shell, const struct s_cmd_node *cmd);
-
 #endif // EVAL_H

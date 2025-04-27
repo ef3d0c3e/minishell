@@ -57,7 +57,6 @@ char
  */
 void
 path_populate(t_shell *shell);
-
 /**
  * @brief Resolves function/builtin/executable from the shell
  *

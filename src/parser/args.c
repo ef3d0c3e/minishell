@@ -9,29 +9,22 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 void
-	arg_push(struct s_argument *arg, const t_token *token)
+	arg_push(t_parser *parser, struct s_argument *arg, size_t pos)
 {
+	const t_token	*token = &parser->list.tokens[pos];
+
 	arg->items = ft_realloc(arg->items, sizeof(arg->items[0]) * arg->nitems,
 		sizeof(arg->items[0]) * (arg->nitems + 1));
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
-	{
-		arg->items[arg->nitems] = (struct s_arg_item){
-			.type = ARG_PARAMETER,
-			.data = stringbuf_from_range(token->word.str, token->word.str
-				+ token->word.len),
-		};
-	}
+		parse_param(parser, &arg->items[arg->nitems], pos);
 	else if (token->type == TOK_CMD_SUB)
 	{
 		arg->items[arg->nitems] = (struct s_arg_item){
 			.type = ARG_SUBEXPR,
-			.data = token->word,
+			.text = token->word,
 		};
 	}
 	else
@@ -39,8 +32,8 @@ void
 		arg->items[arg->nitems] = (struct s_arg_item){
 			.type = ARG_LITERAL,
 		};
-		stringbuf_init(&arg->items[arg->nitems].data, 64);
-		token_wordcontent(&arg->items[arg->nitems].data, token);
+		stringbuf_init(&arg->items[arg->nitems].text, 64);
+		token_wordcontent(&arg->items[arg->nitems].text, token);
 	}
 	++arg->nitems;
 }
@@ -52,7 +45,15 @@ void
 
 	i = 0;
 	while (i < arg->nitems)
-		stringbuf_free(&arg->items[i++].data);
+	{
+		if (arg->items[i].type == ARG_PARAMETER)
+		{
+			ast_free(arg->items[i].param.word);
+			free(arg->items[i].param.name);
+		}
+		else
+			stringbuf_free(&arg->items[i++].text);
+	}
 	free(arg->items);
 }
 
@@ -82,13 +83,13 @@ void
 			ft_dprintf(2, " ");
 		if (arg->items[i].type == ARG_LITERAL)
 			ft_dprintf(2, "'%.*s'",
-				(int)arg->items[i].data.len, arg->items[i].data.str);
+				(int)arg->items[i].text.len, arg->items[i].text.str);
 		else if (arg->items[i].type == ARG_PARAMETER)
-			ft_dprintf(2, "${%.*s}",
-				(int)arg->items[i].data.len, arg->items[i].data.str);
+			ft_dprintf(2, "${%s} (op=%s)",
+				arg->items[i].param.name, arg->items[i].param.op);
 		else if (arg->items[i].type == ARG_SUBEXPR)
 			ft_dprintf(2, "$(%.*s)",
-				(int)arg->items[i].data.len, arg->items[i].data.str);
+				(int)arg->items[i].text.len, arg->items[i].text.str);
 
 		++i;
 	}

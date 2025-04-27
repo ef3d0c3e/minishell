@@ -12,9 +12,11 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-#include "util/util.h"
 # include <tokenizer/tokenizer.h>
 # include <parser/redir_parser.h>
+
+typedef struct s_ast_node	t_ast_node;
+typedef struct s_parser		t_parser;
 
 /******************************************************************************/
 /* Argument nodes                                                             */
@@ -32,13 +34,36 @@ enum e_arg_type
 	ARG_SUBEXPR,
 };
 
+/** @brief Data for parameter expaision */
+struct s_arg_param
+{
+	/** @brief Flags of the source token */
+	int				flags;
+	/** @brief Parameter name */
+	char			*name;
+	/** @brief The special operator: ":-", "-", ":=", "=", ":?", "?", ":+", "+",
+	 * "#", "##", "%", "%%", ":offset", ":offset:length" (or NULL) */
+	const char		*op;
+	/** @brief Ast for the special operator */
+	t_ast_node		*word;
+	/** @brief Offset for substring */
+	size_t			offset;
+	/** @brief Length for substring */
+	size_t			length;
+};
+
 /** @brief A single argument item */
 struct s_arg_item
 {
 	/** @brief Type of arugment */
-	enum e_arg_type	type;
-	/** @brief Text data */
-	t_string_buffer	data;
+	enum e_arg_type			type;
+	union
+	{
+		/** @brief Text data */
+		t_string_buffer		text;
+		/** @brief Param data */
+		struct s_arg_param	param;
+	};
 };
 
 /** @brief Data for command arguments */
@@ -50,9 +75,19 @@ struct s_argument
 	size_t				nitems;
 };
 
+/**
+ * @brief Parses parameter token into argument
+ *
+ * @param parser The parser
+ * @param arg Argument to parse into
+ * @param pos Position of the token to parse
+ */
+void
+parse_param(t_parser *parser, struct s_arg_item *arg, size_t pos);
+
 /** @brief Pushes a token to an argument */
 void
-arg_push(struct s_argument *arg, const t_token *token);
+arg_push(t_parser *parser, struct s_argument *arg, size_t pos);
 /** @brief Frees an argument structure */
 void
 arg_free(struct s_argument *arg);

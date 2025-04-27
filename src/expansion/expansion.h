@@ -16,55 +16,55 @@ typedef struct s_shell	t_shell;
 
 # include <tokenizer/tokenizer.h>
 
-/**
- * @brief Performs tilde (~) expansion
- *
- * Currently the following expansions are supported: ~ ~+ ~- ~user
- *
- * @param shell The shell session
- * @param token Parameter token
- * @param result Resulting token list
- *
- * @returns 1 on success, 0 on failure
- */
-int
-expand_tilde(t_shell *shell, t_token *token, t_token_list *result);
-/**
- * @brief Performs parameter expansion, e.g `$VAR` or `${VAR}`
- *
- * On failure, an error token is inserted and it's error message should be
- * displayed by iterating through the resulting token list.
- *
- * @param shell Shell session
- * @param token Parameter token
- * @param result Resulting token list
- *
- * @returns 1 on success, 0 on failure
- */
-int
-expand_param(t_shell *shell, t_token *token, t_token_list *result);
-/**
- * @brief Performs command substition, `$(expr) -> stdout of `expr`
- *
- * @param shell Shell session
- * @param token Parameter token
- * @param result Resulting token list
- *
- * @returns 1 on success, 0 on failure
- */
-int
-expand_cmdsub(t_shell *shell, t_token *token, t_token_list *result);
-/**
- * @brief Performs filename expansion
- *
- * @param shell Shell session
- * @param token Parameter token
- * @param result Resulting token list
- *
- * @returns 1 on success, 0 on failure
- */
-int
-expand_filename(t_shell *shell, t_token *token, t_token_list *result);
+///**
+// * @brief Performs tilde (~) expansion
+// *
+// * Currently the following expansions are supported: ~ ~+ ~- ~user
+// *
+// * @param shell The shell session
+// * @param token Parameter token
+// * @param result Resulting token list
+// *
+// * @returns 1 on success, 0 on failure
+// */
+//int
+//expand_tilde(t_shell *shell, t_token *token, t_token_list *result);
+///**
+// * @brief Performs parameter expansion, e.g `$VAR` or `${VAR}`
+// *
+// * On failure, an error token is inserted and it's error message should be
+// * displayed by iterating through the resulting token list.
+// *
+// * @param shell Shell session
+// * @param token Parameter token
+// * @param result Resulting token list
+// *
+// * @returns 1 on success, 0 on failure
+// */
+//int
+//expand_param(t_shell *shell, t_token *token, t_token_list *result);
+///**
+// * @brief Performs command substition, `$(expr) -> stdout of `expr`
+// *
+// * @param shell Shell session
+// * @param token Parameter token
+// * @param result Resulting token list
+// *
+// * @returns 1 on success, 0 on failure
+// */
+//int
+//expand_cmdsub(t_shell *shell, t_token *token, t_token_list *result);
+///**
+// * @brief Performs filename expansion
+// *
+// * @param shell Shell session
+// * @param token Parameter token
+// * @param result Resulting token list
+// *
+// * @returns 1 on success, 0 on failure
+// */
+//int
+//expand_filename(t_shell *shell, t_token *token, t_token_list *result);
 /**
  * @brief Performs word expansion according to bash rules
  * See https://www.gnu.org/software/bash/manual/bash.html#Shell-Expansions

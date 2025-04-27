@@ -41,6 +41,7 @@ void
 	insert_opt(shell, "noclobber", "If set, redirections will not be able to"
 		"overwrite existing files. To bypass noclobber mode, one can use `>|`"
 		"instead of `>`. This option is disabled by default ", 0);
+	insert_opt(shell, "expfail", "Equivalent to bash's `set -u`", 1);
 	insert_opt(shell, "dbg_token", "Display tokens for debugging", 1);
 	insert_opt(shell, "dbg_ast", "Display AST for debugging", 1);
 }

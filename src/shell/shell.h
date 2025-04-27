@@ -21,6 +21,7 @@
 # include <shell/redir/redir.h>
 # include <shell/fds/fds.h>
 # include <shell/funs/funs.h>
+# include <shell/expand/expand.h>
 
 # include <ft_printf.h>
 # include <gnl.h>

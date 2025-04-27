@@ -215,7 +215,7 @@ typedef struct s_token
 	/** @brief Token end byte position in the original input */
 	size_t				end;
 	/** @brief Flag for the token */
-	enum e_token_flag	flag;
+	enum e_token_flag	flags;
 
 	union {
 		/** @brief Reserved name for token, e.g keyword name, grouping char */

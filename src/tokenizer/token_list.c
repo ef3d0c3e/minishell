@@ -48,7 +48,7 @@ t_token
 		.type = type,
 		.start = start,
 		.end = end,
-		.flag = FL_NONE,
+		.flags = FL_NONE,
 	};
 	return (&list->tokens[list->size - 1]);
 }

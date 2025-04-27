@@ -72,9 +72,9 @@ int
 str_starts_with(t_string str, const char *token);
 
 /**
- * @brief Finds if `alternatives` contains `str`
+ * @brief Finds if `str` starts with a string in `alternatives`
  *
- * @param str String to find alternative of
+ * @param str String to serach in
  * @param alternatives Alternatives to search for (NULL-terminated)
  *
  * @returns The member of `alternatives` equal to `str`
