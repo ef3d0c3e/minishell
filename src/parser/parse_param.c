@@ -24,6 +24,7 @@ void
 	char				*err;
 	size_t				sep;
 
+	arg->type = ARG_PARAMETER;
 	arg->param.flags = token->flags;
 	arg->param.op = NULL;
 	arg->param.word = NULL;
@@ -32,7 +33,7 @@ void
 	name = stringbuf_cstr(&token->word);
 	if (token->type == TOK_PARAM_SIMPLE)
 	{
-		arg->param.name = name;
+		arg->param.name = ft_strdup(name);
 		return ;
 	}
 	
@@ -52,7 +53,7 @@ void
 	}
 	if (sep == token->word.len)
 	{
-		arg->param.name = name;
+		arg->param.name = ft_strdup(name);
 		return ;
 	}
 	ft_dprintf(2, "TODO(%s)\n\n ", SRC_LOCATION);

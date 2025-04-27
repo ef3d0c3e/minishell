@@ -49,7 +49,7 @@ int
 expand_param(
 	t_shell *shell,
 	struct s_arg_param *param,
-	char **argv,
+	char ***argv,
 	size_t *size);
 
 #endif // EXPAND_H

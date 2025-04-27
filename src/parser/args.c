@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 void
@@ -24,7 +25,8 @@ void
 	{
 		arg->items[arg->nitems] = (struct s_arg_item){
 			.type = ARG_SUBEXPR,
-			.text = token->word,
+			.text = stringbuf_from_range(token->word.str,
+				token->word.str + token->word.len),
 		};
 	}
 	else
@@ -53,6 +55,7 @@ void
 		}
 		else
 			stringbuf_free(&arg->items[i++].text);
+		++i;
 	}
 	free(arg->items);
 }

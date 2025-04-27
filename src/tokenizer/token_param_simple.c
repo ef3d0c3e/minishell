@@ -13,9 +13,17 @@
 #include "util/util.h"
 
 int
+	is_param_ident_start(char c)
+{
+	return (c == '#' || c == '@' || c == '*' || c == '$' || c == '-'
+		|| is_param_ident(c));
+}
+
+int
 	is_param_ident(char c)
 {
-	return (c == '_' || c == '-'
+	return (c == '_'
+		|| (c >= '0' && c <= '9')
 		|| (c >= 'A' && c <= 'Z')
 		|| (c >= 'a' && c <= 'z'));
 }
@@ -44,30 +52,25 @@ int
 	token_param_simple(t_token_list *list, t_u8_iterator *it)
 {
 	const size_t	start = it->byte_pos;
-	t_u8_iterator	cpy;
+	t_string		next;
 	t_string_buffer	buf;
 
 
 	if (it->codepoint.str[0] != '$')
 		return (0);
-	if (param_special(list, it))
-		return (1);
-	cpy = *it;
-	it_advance(&cpy, 1);
-	while (cpy.codepoint.len == 1 && is_param_ident(cpy.codepoint.str[0]))
-		it_next(&cpy);
-	if (cpy.byte_pos == it->byte_pos + 1)
+	next = it_substr(it, 2);
+	if (next.len != 2 || !is_param_ident_start(next.str[1]))
+		return (0);
+	it_advance(it, 2);
+	stringbuf_init(&buf, 64);
+	stringbuf_append(&buf, (t_string){next.str + 1, 1});
+	while (it->codepoint.len == 1 && is_param_ident(it->codepoint.str[0]))
 	{
-		stringbuf_init(&buf, 8);
 		stringbuf_append(&buf, it->codepoint);
-		token_list_push(list, TOK_WORD, start,
-			start + 1)->word = buf;
+		it_next(it);
 	}
-	else
-		token_list_push(list, TOK_PARAM_SIMPLE, start, cpy.byte_pos)->word 
-			= stringbuf_from_range(it->str.str + start + 1,
-			it->str.str + cpy.byte_pos);
-	*it = cpy;
+	token_list_push(list, TOK_PARAM_SIMPLE, start, it->byte_pos)->word
+		= buf;
 	return (1);
 }
 

@@ -68,5 +68,15 @@ max_sz(size_t x, size_t y);
  */
 int
 muladd_10s_overflow(int a, int sign, int b);
+/**
+ * @brief Converts string to integer, while checking for overflow and errors
+ *
+ * @param s String to convert
+ * @param value Conversion result
+ *
+ * @returns 1 on success, 0 on error
+ */
+int
+atoi_checked(const char *s, int *value);
 
 #endif // UTIL_H

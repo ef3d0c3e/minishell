@@ -41,3 +41,24 @@ int
 		return (1);
 	return (0);
 }
+
+int
+	atoi_checked(const char *s, int *value)
+{
+	int	sign;
+
+	sign = 1;
+	if (*s == '+' && ++s)
+		sign = 1;
+	else if (*s == '-' && ++s)
+		sign = -1;
+	*value = 0;
+	while (*s >= '0' && *s <= '9')
+	{
+		if (muladd_10s_overflow(*value, sign, *s - '0'))
+			return (0);
+		*value = *value * 10 + sign * (*s - '0');
+		++s;
+	}
+	return (!*s);
+}

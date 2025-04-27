@@ -263,6 +263,15 @@ tokenizer_tokenize(t_string prompt);
 /* ************************************************************************** */
 
 /**
+ * @brief Check if a given character can be the start of a parameter identifier
+ * This will also accept special parameter name like `#` or `@`
+ *
+ * @param c The character to check
+ * @return 1 if c is in `[a-zA-Z0-9_]`
+ */
+int
+is_param_ident_start(char codepoint);
+/**
  * @brief Check if a given character can be part of a parameter identifier
  *
  * @param c The character to check
