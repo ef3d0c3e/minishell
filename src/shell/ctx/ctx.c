@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "ft_printf.h"
 #include "parser/parser.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_ctx
@@ -41,6 +42,12 @@ void
 	context->list = NULL;
 	context->parser = NULL;
 	context->program = NULL;
+}
+
+static void	cleanup(void *ptr)
+{
+	ft_dprintf(2, "HERE\n");
+	ast_free(ptr, 1);
 }
 
 int
@@ -91,6 +98,7 @@ int
 		ctx->program = NULL;
 		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
 	}
+	t_ast_node *program = ctx->program;
 	evaluator(ctx, cookie);
 	return (1);
 

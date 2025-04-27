@@ -9,13 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/ctx/ctx.h"
-#include "shell/expand/expand.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
-#include <string.h>
 
 int
 	expand_subexpr(
@@ -29,7 +23,7 @@ int
 	ft_asprintf(&info, "$(%s)", stringbuf_cstr(&param->text));
 	// Right here, the program will be forked then the fork will exit, so every
 	// local heap-allocated variables are going to be the source of memory leaks.
-	// I don't know if this is possible to prevent..
+	// This preventable, either via extensive bookkeeping or by using execve tricks
 	result = ctx_eval_string(shell, ft_strdup(stringbuf_cstr(&param->text)), info);
 	if (shell->last_status != 0)
 	{
@@ -37,6 +31,8 @@ int
 		stringbuf_free(&result);
 		return (0);
 	}
+	while (result.len && result.str[result.len - 1] == '\n')
+		--result.len;
 	fraglist_push(list, result, param->flags);
 	return (1);
 }

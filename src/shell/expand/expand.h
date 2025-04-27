@@ -85,9 +85,8 @@ expand_param(
  * @brief Expands sub expressions
  *
  * @param shell The shell session
- * @param subexpr Sub expression to expand
- * @param argv Argument list to expand into
- * @param size Size of `argv`
+ * @param list Fragment list to insert into
+ * @param param Sub expression to expand
  *
  * @returns 1 On success, 0 on failure.
  */

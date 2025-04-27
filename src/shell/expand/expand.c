@@ -12,11 +12,8 @@
 #include "shell/expand/expand.h"
 #include "ft_printf.h"
 #include "parser/parser.h"
-#include "tokenizer/tokenizer.h"
 #include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
-#include <string.h>
 
 void
 	fraglist_push(t_fragment_list *list, t_string_buffer word, int flags)
@@ -47,7 +44,7 @@ void
 	stringbuf_free(&word);
 }
 
-void
+static void
 	expand_arg(t_shell *shell, t_fragment_list *list, struct s_argument *arg)
 {
 	const size_t	start_size = list->size;
@@ -72,8 +69,34 @@ void
 static void
 	split(t_fragment_list *list, const char *ifs, t_string_buffer *word)
 {
-	size_t	i;
-	size_t	last;
+	size_t					i;
+	size_t					last;
+
+	i = 0;
+	last = 0;
+	while (i < word->len)
+	{
+		if (!ft_strchr(ifs, word->str[i]))
+		{
+			++i;
+			continue ;
+		}
+		fraglist_append(list, stringbuf_from_range(word->str + last,
+			word->str + i));
+		++i;
+		last = i;
+	}
+	if (last != word->len)
+		fraglist_append(list, stringbuf_from_range(word->str + last,
+			word->str + word->len));
+	stringbuf_free(word);
+}
+
+static void
+	split_force(t_fragment_list *list, const char *ifs, t_string_buffer *word)
+{
+	size_t					i;
+	size_t					last;
 
 	i = 0;
 	last = 0;
@@ -85,7 +108,7 @@ static void
 			continue ;
 		}
 		fraglist_push(list, stringbuf_from_range(word->str + last,
-			word->str + i), 0);
+				word->str + i), 0);
 		++i;
 		last = i;
 	}
@@ -111,10 +134,15 @@ static t_fragment_list
 	i = 0;
 	while (i < list->size)
 	{
-		if ((list->fragments[i].flags & (FL_DQUOTED | FL_DQUOTED)) == 0)
+		if ((list->fragments[i].flags & (FL_DQUOTED | FL_DQUOTED)) == 0 &&
+			list->fragments[i].force_split)
+			split_force(&new, ifs, &list->fragments[i].word);
+		else if ((list->fragments[i].flags & (FL_DQUOTED | FL_DQUOTED)) == 0)
 			split(&new, ifs, &list->fragments[i].word);
-		else
+		else if (list->fragments[i].force_split)
 			fraglist_push(&new, list->fragments[i].word, 0);
+		else
+			fraglist_append(&new, list->fragments[i].word);
 		++i;
 	}
 	free(list->fragments);
@@ -137,7 +165,6 @@ char
 		expand_arg(shell, &list, &cmd->args[i]);
 		++i;
 	}
-	// TODO: Word splitting here: fraglist into a new fraglist
 	list = word_split(shell, &list);
 	argv = xmalloc(sizeof(char *) * (list.size + 1));
 	i = 0;

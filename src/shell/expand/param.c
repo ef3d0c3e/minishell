@@ -10,9 +10,46 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "shell/expand/expand.h"
-#include "tokenizer/tokenizer.h"
+#include "shell/funs/funs.h"
 #include "util/util.h"
 #include <shell/shell.h>
+
+static int
+	param_special_glob(
+	t_shell *shell,
+	t_fragment_list *list,
+	struct s_arg_item *param,
+	const t_stack_frame *frame)
+{
+	t_string_buffer	buf;
+	size_t			i;
+
+	i = 1;
+	if (!ft_strcmp(param->param.name, "*"))
+	{
+		stringbuf_init(&buf, 64);
+		while (i < frame->nargs)
+		{
+			if (i > 1)
+				stringbuf_append(&buf, (t_string){" ", 1});
+			stringbuf_append(&buf, (t_string){frame->args[i],
+				ft_strlen(frame->args[i])});
+			++i;
+		}
+		fraglist_push(list, buf, param->flags);
+		return (1);
+	}
+	else if (ft_strcmp(param->param.name, "@"))
+		return (0);
+	while (i < frame->nargs)
+	{
+		fraglist_push(list, stringbuf_from_range(frame->args[i],
+				frame->args[i] + ft_strlen(frame->args[i])), param->flags);
+		if (i++ > 1)
+			list->fragments[list->size - 1].force_split = 1;
+	}
+	return (1);
+}
 
 static int
 	param_special(
@@ -24,7 +61,6 @@ static int
 		[shell->eval_stack.size - 1];
 	t_string_buffer		buf;
 
-	// FIXME -- Incorrect argv handling
 	if (!ft_strcmp(param->param.name, "?"))
 	{
 		stringbuf_init(&buf, 64);
@@ -39,36 +75,8 @@ static int
 		fraglist_push(list, buf, param->flags);
 		return (1);
 	}
-	/*
-	else if (!ft_strcmp(param->name, "@") && shell->eval_stack.size)
-	{
-		i = 1;
-		while (i < frame->nargs)
-		{
-			if (i > 1)
-				stringbuf_append(&buf, (t_string){" ", 1});
-			stringbuf_append(&buf, (t_string){
-					frame->args[i], ft_strlen(frame->args[i])});
-			++i;
-		}
-		argv_push(argv, (*size)++, stringbuf_cstr(&buf));
-		return (1);
-	}
-	if (!ft_strcmp(param->name, "*") && shell->eval_stack.size)
-	{
-		i = 1;
-		while (i < frame->nargs)
-		{
-			stringbuf_append(&buf, (t_string){
-					frame->args[i], ft_strlen(frame->args[i])});
-			argv_push(argv, (*size)++, stringbuf_cstr(&buf));
-			stringbuf_init(&buf, 64);
-			++i;
-		}
-		return (1);
-	}
-	stringbuf_free(&buf);
-	*/
+	else if (shell->eval_stack.size)
+		return (param_special_glob(shell, list, param, frame));
 	return (0);
 }
 
@@ -93,7 +101,7 @@ static int
 }
 
 static int
-	param_local(
+	param_local_env(
 	t_shell *shell,
 	t_fragment_list *list,
 	struct s_arg_item *param)
@@ -102,9 +110,16 @@ static int
 		[shell->eval_stack.size - 1];
 	const char				*found;
 
-	if (shell->eval_stack.size == 0)
-		return (0);
-	found = rb_find(&frame->locals, param->param.name);
+	if (shell->eval_stack.size != 0)
+	{
+		found = rb_find(&frame->locals, param->param.name);
+		if (found)
+		{
+			fraglist_push(list, stringbuf_from(found), param->flags);
+			return (1);
+		}
+	}
+	found = rb_find(&shell->reg_env, param->param.name);
 	if (!found)
 		return (0);
 	fraglist_push(list, stringbuf_from(found), param->flags);
@@ -139,10 +154,8 @@ expand_param(
 	if (!status)
 		status = param_positional(shell, list, param);
 	if (!status)
-		status = param_local(shell, list, param);
-	if (!status)
-		status = param_env(shell, list, param);
+		status = param_local_env(shell, list, param);
 	
-	// TODO: Perform expansion and custom processing according to the parameter's rules and status
+	// TODO: custom processing according to the parameter's rules and status
 	return (status);
 }

@@ -60,7 +60,6 @@ static void
 		{
 			if (quoted_munchers()[i](&inner, &it))
 			{
-				inner.tokens[inner.size - 1].flags |= FL_DQUOTED;
 				i = 0;
 				break ;
 			}
@@ -71,6 +70,12 @@ static void
 		dquote_backslash(&it);
 		list_push_codepoint(&inner, &it);
 		it_next(&it);
+	}
+	i = 0;
+	while (i < inner.size)
+	{
+		inner.tokens[i].flags |= FL_DQUOTED;
+		++i;
 	}
 	list_extend(list, &inner, offset);
 }
