@@ -34,7 +34,7 @@ void
 
 	i = 0;
 	while (i < node->list.ncmds)
-		ast_free(node->list.cmds[i++]);
+		ast_free(node->list.cmds[i++], 0);
 	free(node->list.seps);
 	free(node->list.cmds);
 }

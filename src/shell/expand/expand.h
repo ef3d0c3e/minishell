@@ -12,18 +12,41 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
+#include "util/util.h"
 typedef struct s_shell	t_shell;
 
 #include <parser/parser.h>
 
-void
-argv_push(char ***argv, size_t len, char *str);
+/** @brief A fragment */
+typedef struct s_fragment
+{
+	t_string_buffer	word;
+	int				flags;
+	/** @brief Force this fragment to become the beginning of it's own
+	 * argument */
+	int				force_split;
+}	t_fragment;
 
-void
-argv_append(char **argv, const char *app);
+/** @brief A list of fragment */
+typedef struct s_fragment_list
+{
+	t_fragment	*fragments;
+	size_t		size;
+	size_t		capacity;
+}	t_fragment_list;
 
 /**
- * @brief Resolves command parameters to an array of strings while performing
+ * @brief Pushes a word to the fragment list
+ *
+ * @param list List to push to
+ * @param word Word to push
+ * @param Original word flags
+ */
+void
+fraglist_push(t_fragment_list *list, t_string_buffer word, int flags);
+
+/**
+ * @brief Resolves command arguments to an array of strings while performing
  * argument expansion
  *
  * @param shell The shell session
@@ -35,7 +58,7 @@ char
 **arg_expansion(t_shell *shell, const struct s_cmd_node *cmd);
 
 /**
- * @brief Resolvevs a parameter in the current context
+ * @brief Resolves a parameter in the current context
  *
  * Resolution is done in the following order
  *  - Check for special parameter: $?, $# $@, etc.
@@ -55,8 +78,23 @@ char
 int
 expand_param(
 	t_shell *shell,
-	struct s_arg_param *param,
-	char ***argv,
-	size_t *size);
+	t_fragment_list *list,
+	struct s_arg_item *param);
+
+/**
+ * @brief Expands sub expressions
+ *
+ * @param shell The shell session
+ * @param subexpr Sub expression to expand
+ * @param argv Argument list to expand into
+ * @param size Size of `argv`
+ *
+ * @returns 1 On success, 0 on failure.
+ */
+int
+expand_subexpr(
+	t_shell *shell,
+	t_fragment_list *list,
+	struct s_arg_item *param);
 
 #endif // EXPAND_H

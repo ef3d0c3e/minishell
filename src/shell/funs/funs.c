@@ -20,7 +20,7 @@ static void
 
 	node = fun;
 	node->function.registered = 0;
-	ast_free(node);
+	ast_free(node, 0);
 }
 
 void

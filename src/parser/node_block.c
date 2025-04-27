@@ -25,7 +25,7 @@ t_ast_node
 void
 	free_block_node(t_ast_node *node)
 {
-	ast_free(node->block.inner);
+	ast_free(node->block.inner, 0);
 }
 
 void

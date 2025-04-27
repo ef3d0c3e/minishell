@@ -33,12 +33,12 @@ void
 	i = 0;
 	while (i < node->st_if.nconds)
 	{
-		ast_free(node->st_if.bodies[i]);
-		ast_free(node->st_if.conds[i]);
+		ast_free(node->st_if.bodies[i], 0);
+		ast_free(node->st_if.conds[i], 0);
 		++i;
 	}
 	if (i < node->st_if.nbodies)
-		ast_free(node->st_if.bodies[i]);
+		ast_free(node->st_if.bodies[i], 0);
 	free(node->st_if.bodies);
 	free(node->st_if.conds);
 }

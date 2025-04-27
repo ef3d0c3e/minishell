@@ -28,7 +28,7 @@ t_ast_node
 void
 	free_subshell_node(t_ast_node *node)
 {
-	ast_free(node->sub.head);
+	ast_free(node->sub.head, 0);
 	redirs_free(&node->sub.redirs);
 }
 

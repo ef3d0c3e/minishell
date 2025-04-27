@@ -13,7 +13,7 @@
 #include <shell/shell.h>
 
 void
-	ast_free(t_ast_node *node)
+	ast_free(t_ast_node *node, int cleanup)
 {
 	static void(*cleaners[])(t_ast_node *) = {
 	[NODE_BLOCK] = free_block_node,
@@ -28,7 +28,7 @@ void
 
 	if (!node)
 		return ;
-	if (node->type == NODE_FUNCTION && node->function.registered)
+	if (!cleanup && node->type == NODE_FUNCTION && node->function.registered)
 		return ;
 	cleaners[node->type](node);
 	free(node);

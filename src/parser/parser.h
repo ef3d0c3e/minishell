@@ -37,8 +37,6 @@ enum e_arg_type
 /** @brief Data for parameter expaision */
 struct s_arg_param
 {
-	/** @brief Flags of the source token */
-	int				flags;
 	/** @brief Parameter name */
 	char			*name;
 	/** @brief The special operator: ":-", "-", ":=", "=", ":?", "?", ":+", "+",
@@ -55,6 +53,8 @@ struct s_arg_param
 /** @brief A single argument item */
 struct s_arg_item
 {
+	/** @brief Flags of the source token */
+	int						flags;
 	/** @brief Type of arugment */
 	enum e_arg_type			type;
 	union
@@ -348,9 +348,14 @@ typedef struct s_ast_node
 	};
 }	t_ast_node;
 
-/** @brief Frees the AST */
+/**
+ * @brief Frees the AST
+ *
+ * @param node Node to free
+ * @param cleanup Forces cleanup of functions
+ */
 void
-ast_free(t_ast_node *node);
+ast_free(t_ast_node *node, int cleanup);
 /** @brief Prints debug info for the AST */
 void
 ast_print(size_t depth, t_ast_node *node);

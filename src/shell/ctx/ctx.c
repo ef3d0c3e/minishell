@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
+#include "parser/parser.h"
 #include <shell/shell.h>
 
 t_ctx
@@ -32,7 +33,7 @@ void
 		token_list_free(context->list);
 	if (context->parser)
 		parser_free(context->parser);
-	ast_free(context->program);
+	ast_free(context->program, 0);
 	free(context->prompt);
 	free(context->info);
 	context->info = NULL;
@@ -54,7 +55,7 @@ int
 	t_token_list	list;
 	t_parser		parser;
 
-	if (ctx->info)
+	if (option_value(ctx->shell, "dbg_parser") && ctx->info)
 		ft_dprintf(2, "[Entering context %s]\n", ctx->info);
 	ctx->list = &list;
 	ctx->parser = &parser;
@@ -62,30 +63,34 @@ int
 	input.str = prompt;
 	input.len = ft_strlen(prompt);
 	*ctx->list = tokenizer_tokenize(input);
-	if (option_value(ctx->shell, "dbg_token"))
+	if (option_value(ctx->shell, "dbg_parser"))
 	{
 		ft_dprintf(2, " -- Raw tokens --\n");
 		token_list_print(input, &list);
 	}
 	if (!report_tokens(input, ctx->list) || !shell_error_flush(shell))
-		return (shell->last_status = 2, 0);
+		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
 	*ctx->list = token_expand(shell, *ctx->list);
 	if (!report_tokens(input, ctx->list) || !shell_error_flush(shell))
-		return (shell->last_status = 2, 0);
-	if (option_value(shell, "dbg_token"))
+		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
+	if (option_value(shell, "dbg_parser"))
 	{
 		ft_dprintf(2, " -- Expanded tokens --\n");
 		token_list_print(input, &list);
 	}
 	*ctx->parser = parser_init(input, *ctx->list);
 	ctx->program = parse(ctx->parser, 0, ctx->list->size, 0);
-	if (option_value(shell, "dbg_ast"))
+	if (option_value(shell, "dbg_parser"))
 	{
 		ft_dprintf(2, " -- Parsing --\n");
 		ast_print(0, ctx->program);
 	}
 	if (!parser_error_flush(&parser))
-		return (shell->last_status = 2, 0);
+	{
+		ast_free(ctx->program, 1);
+		ctx->program = NULL;
+		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
+	}
 	evaluator(ctx, cookie);
 	return (1);
 

@@ -25,7 +25,7 @@ void
 	size_t				sep;
 
 	arg->type = ARG_PARAMETER;
-	arg->param.flags = token->flags;
+	arg->flags = token->flags;
 	arg->param.op = NULL;
 	arg->param.word = NULL;
 	arg->param.offset = 0;

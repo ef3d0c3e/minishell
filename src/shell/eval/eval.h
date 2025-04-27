@@ -58,5 +58,10 @@ eval_sequence(t_shell *shell, t_ast_node* pipeline);
  */
 void
 eval_subshell(t_shell *shell, t_ast_node* subshell);
+/**
+ * @brief Evaluates subexpressions `$(...)`
+ */
+void
+eval_subexpr(t_shell *shell, t_ast_node* subexpr);
 
 #endif // EVAL_H

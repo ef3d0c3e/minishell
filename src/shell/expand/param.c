@@ -9,37 +9,37 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/expand/expand.h"
+#include "tokenizer/tokenizer.h"
 #include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 static int
 	param_special(
 	t_shell *shell,
-	struct s_arg_param *param,
-	char ***argv,
-	size_t *size)
+	t_fragment_list *list,
+	struct s_arg_item *param)
 {
 	const t_stack_frame	*frame = &shell->eval_stack.frames
 		[shell->eval_stack.size - 1];
 	t_string_buffer		buf;
-	size_t				i;
 
 	// FIXME -- Incorrect argv handling
-	stringbuf_init(&buf, 64);
-	if (!ft_strcmp(param->name, "?"))
+	if (!ft_strcmp(param->param.name, "?"))
 	{
+		stringbuf_init(&buf, 64);
 		stringbuf_itoa(&buf, shell->last_status);
-		argv_push(argv, (*size)++, stringbuf_cstr(&buf));
+		fraglist_push(list, buf, param->flags);
 		return (1);
 	}
-	else if (!ft_strcmp(param->name, "#") && shell->eval_stack.size)
+	else if (!ft_strcmp(param->param.name, "#") && shell->eval_stack.size)
 	{
-		stringbuf_itoa(&buf,
-				shell->eval_stack.frames[shell->eval_stack.size - 1].nargs);
-		argv_push(argv, (*size)++, stringbuf_cstr(&buf));
+		stringbuf_init(&buf, 64);
+		stringbuf_itoa(&buf, frame->nargs);
+		fraglist_push(list, buf, param->flags);
 		return (1);
 	}
+	/*
 	else if (!ft_strcmp(param->name, "@") && shell->eval_stack.size)
 	{
 		i = 1;
@@ -68,42 +68,35 @@ static int
 		return (1);
 	}
 	stringbuf_free(&buf);
+	*/
 	return (0);
 }
 
 static int
 	param_positional(
 	t_shell *shell,
-	struct s_arg_param *param,
-	char ***argv,
-	size_t *size)
+	t_fragment_list *list,
+	struct s_arg_item *param)
 {
 	const t_stack_frame	*frame = &shell->eval_stack.frames
 		[shell->eval_stack.size - 1];
 	int		num;
-	size_t	i;
 
 	if (shell->eval_stack.size == 0)
 		return (0);
-	i = 0;
-	while (param->name[i] >= '0' && param->name[i] <= '9')
-		++i;
-	if (param->name[i])
-		return (0);
-	if (!atoi_checked(param->name, &num))
+	if (!atoi_checked(param->param.name, &num) || num < 0)
 		return (0);
 	if ((size_t)num >= frame->nargs)
 		return (0);
-	argv_append((*argv) + *size, frame->args[num]);
+	fraglist_push(list, stringbuf_from(frame->args[num]), param->flags);
 	return (1);
 }
 
 static int
 	param_local(
 	t_shell *shell,
-	struct s_arg_param *param,
-	char ***argv,
-	size_t *size)
+	t_fragment_list *list,
+	struct s_arg_item *param)
 {
 	t_stack_frame *const	frame = &shell->eval_stack.frames
 		[shell->eval_stack.size - 1];
@@ -111,46 +104,44 @@ static int
 
 	if (shell->eval_stack.size == 0)
 		return (0);
-	found = rb_find(&frame->locals, param->name);
+	found = rb_find(&frame->locals, param->param.name);
 	if (!found)
 		return (0);
-	argv_append((*argv) + *size, found);
+	fraglist_push(list, stringbuf_from(found), param->flags);
 	return (1);
 }
 
 static int
 	param_env(
 	t_shell *shell,
-	struct s_arg_param *param,
-	char ***argv,
-	size_t *size)
+	t_fragment_list *list,
+	struct s_arg_item *param)
 {
 	const char				*found;
 
-	found = rb_find(&shell->reg_env, param->name);
+	found = rb_find(&shell->reg_env, param->param.name);
 	if (!found)
 		return (0);
-	argv_append((*argv) + *size, found);
+	fraglist_push(list, stringbuf_from(found), param->flags);
 	return (1);
 }
 
+// FIXME: This doesn't handle word splitting...
 int
 expand_param(
 	t_shell *shell,
-	struct s_arg_param *param,
-	char ***argv,
-	size_t *size)
+	t_fragment_list *list,
+	struct s_arg_item *param)
 {
-	const size_t	start_size = *size;
 	int				status;
 
-	status = param_special(shell, param, argv, size);
+	status = param_special(shell, list, param);
 	if (!status)
-		status = param_positional(shell, param, argv, size);
+		status = param_positional(shell, list, param);
 	if (!status)
-		status = param_local(shell, param, argv, size);
+		status = param_local(shell, list, param);
 	if (!status)
-		status = param_env(shell, param, argv, size);
+		status = param_env(shell, list, param);
 	
 	// TODO: Perform expansion and custom processing according to the parameter's rules and status
 	return (status);

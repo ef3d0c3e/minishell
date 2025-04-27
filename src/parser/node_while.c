@@ -26,8 +26,8 @@ t_ast_node
 void
 	free_while_node(t_ast_node *node)
 {
-	ast_free(node->st_while.cond);
-	ast_free(node->st_while.body);
+	ast_free(node->st_while.cond, 0);
+	ast_free(node->st_while.body, 0);
 }
 
 void

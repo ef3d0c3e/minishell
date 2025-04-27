@@ -27,8 +27,8 @@ t_ast_node
 void
 	free_logic_node(t_ast_node *node)
 {
-	ast_free(node->logic.left);
-	ast_free(node->logic.right);
+	ast_free(node->logic.left, 0);
+	ast_free(node->logic.right, 0);
 }
 
 void

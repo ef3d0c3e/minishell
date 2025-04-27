@@ -28,7 +28,7 @@ void
 	free_function_node(t_ast_node *node)
 {
 	stringbuf_free(&node->function.name);
-	ast_free(node->function.body);
+	ast_free(node->function.body, 0);
 }
 
 void

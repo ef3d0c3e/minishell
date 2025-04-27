@@ -40,7 +40,17 @@ ctx_new(t_shell *shell, char *info);
 /** @brief Cleans a context */
 void
 ctx_free(t_ctx *context);
-/** @brief Pushes a new context to the shell and parse the given prompt in it */
+/**
+ * @brief Evaluates the given prompt in the given context
+ *
+ * In case an error happens, `evaluator` is still called, but the `ctx->program`
+ * field will be NULL. This means that it will have to be cleaned up.
+ *
+ * @param context Context to tokenize+parse+evaluate in
+ * @param prompt Prompt to evaluate
+ * @param evaluator Evaluator function
+ * @param cookie Cookie given to the evaluator function
+ */
 int
 ctx_eval(
 	t_ctx *context,

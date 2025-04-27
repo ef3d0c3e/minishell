@@ -25,6 +25,7 @@ void
 	{
 		arg->items[arg->nitems] = (struct s_arg_item){
 			.type = ARG_SUBEXPR,
+			.flags = token->flags,
 			.text = stringbuf_from_range(token->word.str,
 				token->word.str + token->word.len),
 		};
@@ -32,6 +33,7 @@ void
 	else
 	{
 		arg->items[arg->nitems] = (struct s_arg_item){
+			.flags = token->flags,
 			.type = ARG_LITERAL,
 		};
 		stringbuf_init(&arg->items[arg->nitems].text, 64);
@@ -50,7 +52,7 @@ void
 	{
 		if (arg->items[i].type == ARG_PARAMETER)
 		{
-			ast_free(arg->items[i].param.word);
+			ast_free(arg->items[i].param.word, 0);
 			free(arg->items[i].param.name);
 		}
 		else
