@@ -68,7 +68,6 @@ funs_stack_pop(t_shell *shell)
 
 	if (shell->eval_stack.size == 0)
 		shell_fail(shell, "Stack underflow", SRC_LOCATION);
-
 	j = 0;
 	while (j < shell->eval_stack.frames[i].nargs)
 		free(shell->eval_stack.frames[i].args[j++]);

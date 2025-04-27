@@ -46,7 +46,8 @@ static int
 		return (1);
 	}
 	close(fd);
-	return (repl(shell, stringbuf_cstr(&buf)));
+	ctx_eval_stdout(shell, stringbuf_cstr(&buf));
+	return (0);
 }
 
 const t_builtin

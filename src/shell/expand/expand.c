@@ -28,11 +28,16 @@ void
 	argv_append(char **argv, const char *app)
 {
 	char			*new;
+	char			*av;
 
-	ft_printf("append\n");
-	ft_asprintf(&new, "%s%s", *argv, app);
-	free(*argv);
-	*argv = new;
+	if (*argv)
+	{
+		ft_asprintf(&new, "%s%s", *argv, app);
+		free(*argv);
+		*argv = new;
+	}
+	else
+		*argv = ft_strdup(app);
 }
 
 void
@@ -40,15 +45,13 @@ void
 {
 	size_t	i;
 
+	argv_push(argv, *len, NULL);
 	i = 0;
 	while (i < arg->nitems)
 	{
 		if (arg->items[i].type == ARG_LITERAL)
 		{
-			if (!i)
-				argv_push(argv, (*len)++, ft_strdup(stringbuf_cstr(&arg->items[i].text)));
-			else
-				argv_append(&(*argv)[*len - 1], ft_strdup(stringbuf_cstr(&arg->items[i].text)));
+			argv_append(&(*argv)[*len], stringbuf_cstr(&arg->items[i].text));
 		}
 		else if (arg->items[i].type == ARG_SUBEXPR)
 		{
@@ -58,6 +61,7 @@ void
 			expand_param(shell, &arg->items[i].param, argv, len);
 		++i;
 	}
+	(*len)++;
 }
 
 char

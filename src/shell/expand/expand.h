@@ -12,8 +12,15 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
-#include "parser/parser.h"
 typedef struct s_shell	t_shell;
+
+#include <parser/parser.h>
+
+void
+argv_push(char ***argv, size_t len, char *str);
+
+void
+argv_append(char **argv, const char *app);
 
 /**
  * @brief Resolves command parameters to an array of strings while performing

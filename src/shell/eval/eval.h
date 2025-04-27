@@ -20,29 +20,6 @@ void
 eval(t_shell *shell, t_ast_node* program);
 
 /**
- * @brief Tokenizes and evaluate to stdout/stderr
- *
- * @param shell Shell session
- * @param input Prompt input
- *
- * @returns The return value of the evaluated command (-1 = parse/token error)
- */
-int
-repl(t_shell *shell, char *input);
-
-/**
- * @brief Tokenizes and evaluate to a string
- *
- * @param shell Shell session
- * @param input Prompt input
- * @param buf Buffer to store stdout
- *
- * @returns The return value of the evaluated command
- */
-int
-repl_to_string(t_shell *shell, char *input, t_string_buffer *buf);
-
-/**
  * @brief Evaluates command node
  *
  * @returns 1 On success, 0 if failed to resolve executable

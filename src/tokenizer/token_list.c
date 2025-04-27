@@ -66,3 +66,17 @@ void
 	}
 	free(list->tokens);
 }
+
+void
+	token_list_print(t_string input, const t_token_list *list)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < list->size)
+	{
+		token_print_debug(2, input, &list->tokens[i]);
+		++i;
+	}
+	ft_dprintf(2, "\n");
+}

@@ -1,4 +1,5 @@
 #include "ft_printf.h"
+#include "shell/ctx/ctx.h"
 #include "util/util.h"
 #include <shell/shell.h>
 #include <stddef.h>
@@ -24,7 +25,7 @@ int main(int ac, char **av, const char **envp)
 	t_shell		shell;
 
 	shell = shell_new(envp);
-	repl(&shell, ft_strdup(av[1]));
+	ctx_eval_stdout(&shell, ft_strdup(av[1]));
 	shell_free(&shell);
 
 	return (0);

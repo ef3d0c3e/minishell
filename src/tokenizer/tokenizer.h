@@ -93,6 +93,15 @@ list_push_codepoint(t_token_list *list, const t_u8_iterator *it);
 void
 list_extend(t_token_list *result, t_token_list *from, size_t offset);
 
+/**
+ * @brief Prints the token list to stderr
+ *
+ * @param input The list's input string
+ * @param list The list to display
+ */
+void
+token_list_print(t_string input, const t_token_list *list);
+
 /* ************************************************************************** */
 /* Token definition                                                           */
 /* ************************************************************************** */

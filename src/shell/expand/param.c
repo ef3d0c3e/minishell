@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 #include "util/util.h"
 #include <shell/shell.h>
-
-void
-	argv_push(char ***argv, size_t len, char *str);
+#include <stdio.h>
 
 static int
 	param_special(
@@ -27,6 +25,7 @@ static int
 	t_string_buffer		buf;
 	size_t				i;
 
+	// FIXME -- Incorrect argv handling
 	stringbuf_init(&buf, 64);
 	if (!ft_strcmp(param->name, "?"))
 	{
@@ -34,14 +33,14 @@ static int
 		argv_push(argv, (*size)++, stringbuf_cstr(&buf));
 		return (1);
 	}
-	else if (ft_strcmp(param->name, "#") && shell->eval_stack.size)
+	else if (!ft_strcmp(param->name, "#") && shell->eval_stack.size)
 	{
 		stringbuf_itoa(&buf,
 				shell->eval_stack.frames[shell->eval_stack.size - 1].nargs);
 		argv_push(argv, (*size)++, stringbuf_cstr(&buf));
 		return (1);
 	}
-	else if (ft_strcmp(param->name, "@") && shell->eval_stack.size)
+	else if (!ft_strcmp(param->name, "@") && shell->eval_stack.size)
 	{
 		i = 1;
 		while (i < frame->nargs)
@@ -55,7 +54,7 @@ static int
 		argv_push(argv, (*size)++, stringbuf_cstr(&buf));
 		return (1);
 	}
-	if (ft_strcmp(param->name, "*") && shell->eval_stack.size)
+	if (!ft_strcmp(param->name, "*") && shell->eval_stack.size)
 	{
 		i = 1;
 		while (i < frame->nargs)
@@ -95,7 +94,7 @@ static int
 		return (0);
 	if ((size_t)num >= frame->nargs)
 		return (0);
-	argv_push(argv, (*size)++, frame->args[num]);
+	argv_append((*argv) + *size, frame->args[num]);
 	return (1);
 }
 
@@ -115,7 +114,7 @@ static int
 	found = rb_find(&frame->locals, param->name);
 	if (!found)
 		return (0);
-	argv_push(argv, (*size)++, ft_strdup(found));
+	argv_append((*argv) + *size, found);
 	return (1);
 }
 
@@ -131,7 +130,7 @@ static int
 	found = rb_find(&shell->reg_env, param->name);
 	if (!found)
 		return (0);
-	argv_push(argv, (*size)++, ft_strdup(found));
+	argv_append((*argv) + *size, found);
 	return (1);
 }
 

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   repl_to_string.c                                   :+:      :+:    :+:   */
+/*   evaluator.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,40 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
+#include "shell/ctx/ctx.h"
+#include "util/util.h"
 #include <shell/shell.h>
-
-static void
-	repl_to_string_child(t_shell *shell, char *s, int *fds)
-{
-	char			*prompt;
-	t_string		input;
-	t_token_list	list;
-	t_parser		parser;
-
-	prompt = ft_strdup(s);
-	shell_parser_free(shell);
-	input.str = prompt;
-	input.len = ft_strlen(prompt);
-	shell->prompt = prompt;
-	close(fds[0]);
-	if (dup2(fds[1], STDOUT_FILENO) == -1)
-		shell_perror(shell, "dup2() failed", SRC_LOCATION);
-	close(fds[1]);
-	shell->token_list = &list;
-	list = tokenizer_tokenize(input);
-	if (!report_tokens(input, shell->token_list) || !shell_error_flush(shell))
-		shell_fail(shell, "tokenization failed", SRC_LOCATION);
-	*shell->token_list = token_expand(shell, *shell->token_list);
-	if (!report_tokens(input, shell->token_list) || !shell_error_flush(shell))
-		shell_fail(shell, "expansion failed", SRC_LOCATION);
-	parser = parser_init(input, list);
-	shell->parser = &parser;
-	shell->program = parse(&parser, 0, list.size, 0);
-	if (!parser_error_flush(&parser))
-		shell_exit(shell, EXIT_FAILURE);
-	eval(shell, shell->program);
-	shell_exit(shell, shell->last_status);
-}
 
 /** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
 static void
@@ -61,15 +31,23 @@ static void
 	}
 }
 
-static int
-	repl_to_string_parent(
-	t_shell *shell,
-	t_string_buffer *buf,
-	int *fds,
-	pid_t pid)
+static void
+	evaluator_child(t_ctx *ctx, int *fds)
 {
-int		status;
-int		waitst;
+	close(fds[0]);
+	if (dup2(fds[1], STDOUT_FILENO) == -1)
+		shell_perror(ctx->shell, "dup2() failed", SRC_LOCATION);
+	close(fds[1]);
+	eval(ctx->shell, ctx->program);
+	ctx_free(ctx);
+	shell_exit(ctx->shell, ctx->shell->last_status);
+}
+
+static void
+	evaluator_parent(t_shell *shell, pid_t pid, int *fds, t_string_buffer *buf)
+{
+	int		status;
+	int		waitst;
 
 	stringbuf_init(buf, 1024);
 	waitst = 0;
@@ -85,12 +63,12 @@ int		waitst;
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	shell->last_status = WEXITSTATUS(status);
 	close(fds[0]);
-	return (shell->last_status);
 }
 
-int
-	repl_to_string(t_shell *shell, char *input, t_string_buffer *buf)
+static void
+	evaluator(t_ctx *ctx, void *cookie)
 {
+	t_string_buffer *const	buf = cookie;
 	pid_t	pid;
 	int		fds[2];
 	char	*err;
@@ -98,18 +76,30 @@ int
 	if (pipe(fds) == -1)
 	{
 		ft_asprintf(&err, "pipe() failed: %m");
-		shell_error(shell, err, SRC_LOCATION);
-		return (-1);
+		shell_error(ctx->shell, err, SRC_LOCATION);
+		return ;
 	}
-	pid = shell_fork(shell, SRC_LOCATION);
+	pid = shell_fork(ctx->shell, SRC_LOCATION);
 	if (pid == -1)
 	{
 		ft_asprintf(&err, "fork() failed: %m");
-		shell_error(shell, err, SRC_LOCATION);
-		return (-1);
+		shell_error(ctx->shell, err, SRC_LOCATION);
+		return ;
 	}
 	if (!pid)
-		repl_to_string_child(shell, input, fds);
+		evaluator_child(ctx, fds);
 	close(fds[1]);
-	return (repl_to_string_parent(shell, buf, fds, pid));
+	evaluator_parent(ctx->shell, pid, fds, buf);
+	ctx_free(ctx);
+}
+
+t_string_buffer
+	ctx_eval_string(t_shell *shell, char *prompt, char *info)
+{
+	t_string_buffer	buf;
+	t_ctx			ctx;
+
+	ctx = ctx_new(shell, info);
+	ctx_eval(&ctx, prompt, evaluator, &buf);
+	return (buf);
 }

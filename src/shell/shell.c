@@ -27,10 +27,6 @@ t_shell
 	shell.errors.errors = NULL;
 	shell.last_status = 0;
 	shell.is_child = 0;
-	shell.prompt = NULL;
-	shell.token_list = NULL;
-	shell.parser = NULL;
-	shell.program = NULL;
 
 	shell.is_interactive = 1;
 	e = envp;
@@ -47,21 +43,6 @@ t_shell
 }
 
 void
-	shell_parser_free(t_shell *shell)
-{
-	free(shell->prompt);
-	if (shell->token_list)
-		token_list_free(shell->token_list);
-	if (shell->parser)
-		parser_free(shell->parser);
-	ast_free(shell->program);
-	shell->prompt = NULL;
-	shell->token_list = NULL;
-	shell->parser = NULL;
-	shell->program = NULL;
-}
-
-void
 	shell_free(t_shell *shell)
 {
 	builtin_deinit(shell);
@@ -71,7 +52,6 @@ void
 	rb_free(&shell->path_cache);
 	rb_free(&shell->reg_builtins);
 	rb_free(&shell->options);
-	shell_parser_free(shell);
 	funs_deinit(shell);
 	temporaries_cleanup(shell);
 	free(shell->errors.errors);

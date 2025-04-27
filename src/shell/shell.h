@@ -22,6 +22,7 @@
 # include <shell/fds/fds.h>
 # include <shell/funs/funs.h>
 # include <shell/expand/expand.h>
+# include <shell/ctx/ctx.h>
 
 # include <ft_printf.h>
 # include <gnl.h>
@@ -76,14 +77,6 @@ typedef struct s_shell
 	 * If the data member for a node is set, it will be used as the cleanup
 	 * function instead of `free`. */
 	t_rbtree			temporaries;
-	/** @brief Current program prompt */
-	char				*prompt;
-	/** @brief Current token list (Non-owning) */
-	t_token_list		*token_list;
-	/** @brief Current parser (Non-owning) */
-	t_parser			*parser;
-	/** @brief Currently executed program (Non-owning) */
-	t_ast_node			*program;
 
 	/** @brief Evaluation stack for proceduces */
 	t_eval_stack		eval_stack;
@@ -111,21 +104,6 @@ typedef struct s_shell
  */
 t_shell
 shell_new(const char **envp);
-/**
- * @brief Destroys parsing-related data
- *
- * This function frees and sets to null the following members of `t_shell`
- *  - `prompt`
- *  - `token_list`
- *  - `parser`
- *  - `program`
- *
- * This function is called by @ref shell_free
- *
- * @param shell Session to delete parser-related data
- */
-void
-shell_parser_free(t_shell *shell);
 /**
  * @brief Destroys a session
  *

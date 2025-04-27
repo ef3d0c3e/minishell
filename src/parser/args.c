@@ -54,7 +54,7 @@ void
 			free(arg->items[i].param.name);
 		}
 		else
-			stringbuf_free(&arg->items[i++].text);
+			stringbuf_free(&arg->items[i].text);
 		++i;
 	}
 	free(arg->items);
