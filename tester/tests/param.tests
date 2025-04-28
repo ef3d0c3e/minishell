@@ -2,6 +2,7 @@
 #include "tests.def"
 
 DO_TEST(param,
+// TODO: Set experr to 0
 	SHELL_TEST("echo $",  "", "$\n",  "", 0)
 	//SHELL_TEST("echo $$", "", "$$\n", "", 0) TODO: getpid
 	SHELL_TEST("echo $@", "", "\n", "", 0)
