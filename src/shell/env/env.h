@@ -68,8 +68,9 @@ path_populate(t_shell *shell);
  * @returns
  *  - (-1) on error
  *  - (0) if `name` refers to an executable
- *  - (1) if `name` refers to a function
- *  - (2) if `name` refers to a builtin
+ *  - (1) if `name` refers to a special builtin
+ *  - (2) if `name` refers to a function
+ *  - (3) if `name` refers to a builtin
  */
 int
 resolve_eval(t_shell *shell, const char *name, char **result);

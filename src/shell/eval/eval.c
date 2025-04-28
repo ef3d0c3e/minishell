@@ -11,31 +11,38 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
+t_eval_result
 	eval(t_shell *shell, t_ast_node* program)
 {
-	size_t	i;
+	t_eval_result	result;
+	size_t			i;
 
+	result = (t_eval_result){RES_NONE, 0};
 	if (!program)
-		return ;
+		return (result);
 	if (program->type == NODE_LIST)
 	{
 		i = 0;
 		while (i < program->list.ncmds)
-			eval(shell, program->list.cmds[i++]);
+		{
+			result = eval(shell, program->list.cmds[i++]);
+			if (result.type != RES_NONE)
+				break ;
+		}
 	}
 	else if (program->type == NODE_BLOCK)
-		eval(shell, program->block.inner);
+		return (eval(shell, program->block.inner));
 	else if (program->type == NODE_COMMAND)
-		eval_cmd(shell, program);
+		return (eval_cmd(shell, program));
 	else if (program->type == NODE_LOGIC)
 		if (!ft_strcmp(program->logic.token.reserved_word, "|")
 			|| !ft_strcmp(program->logic.token.reserved_word, "|&"))
-			eval_pipeline(shell, program);
+			return (eval_pipeline(shell, program));
 		else
-			eval_sequence(shell, program);
+			return (eval_sequence(shell, program));
 	else if (program->type == NODE_SUBSHELL)
-		eval_subshell(shell, program);
+		return (eval_subshell(shell, program));
 	else if (program->type == NODE_FUNCTION)
-		eval_function_definition(shell, program);
+		return (eval_function_definition(shell, program));
+	return (result);
 }

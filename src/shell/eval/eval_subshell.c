@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
+t_eval_result
 	eval_subshell(t_shell *shell, t_ast_node *program)
 {
 	pid_t			pid;
@@ -35,4 +35,5 @@ void
 		undo_redir(shell, &stack);
 		shell_exit(shell, shell->last_status);
 	}
+	return ((t_eval_result){RES_NONE, 0});
 }

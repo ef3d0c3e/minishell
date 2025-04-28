@@ -9,10 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
-/** @brief Frees a NULL-terminated array of strings */
-static void
+void
 	args_free(char **cmd)
 {
 	size_t	i;
@@ -90,7 +90,7 @@ static void
 }
 
 
-int
+t_eval_result
 	eval_cmd(t_shell *shell, t_ast_node *program)
 {
 	int		status;
@@ -101,13 +101,15 @@ int
 	path = NULL;
 	argv = arg_expansion(shell, &program->cmd);
 	if (!argv)
-		return (0);
+		return ((t_eval_result){RES_NONE, 0});
 	status = 0;
 	if (argv[0])
 		status = resolve_eval(shell, argv[0], &path);
 	if (status == 1)
-		return (eval_function(shell, program, argv), 1);
+		return (eval_special(shell, program, argv));
 	else if (status == 2)
+		return (eval_function(shell, program, argv));
+	else if (status == 3)
 		eval_builtin(shell, program, argv);
 	else if (status == 0)
 		eval_exec_parent(shell, program, path, argv);
@@ -117,5 +119,5 @@ int
 		shell_error(shell, err, SRC_LOCATION);
 	}
 	args_free(argv);
-	return (status != -1);
+	return ((t_eval_result){RES_NONE, 0});
 }

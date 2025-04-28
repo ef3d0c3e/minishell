@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
+t_eval_result
 	eval_function_definition(t_shell *shell, t_ast_node *def)
 {
 	char	*name;
@@ -19,12 +19,13 @@ void
 	name = stringbuf_cstr(&def->function.name);
 	def->function.registered = 1;
 	rb_insert(&shell->reg_fns, ft_strdup(name), def);
-
+	return ((t_eval_result){RES_NONE, 0});
 }
 
-void
+t_eval_result
 	eval_function(t_shell *shell, t_ast_node *cmd, char **argv)
 {
+	t_eval_result		result;
 	t_ast_node *const	function = rb_find(&shell->reg_fns, argv[0]);
 	t_redirs_stack		stack;
 	
@@ -33,8 +34,11 @@ void
 	if (shell_error_flush(shell))
 	{
 		funs_stack_push(shell, function, argv);
-		eval(shell, function->function.body);
+		result = eval(shell, function->function.body);
+		if (result.type == RES_RETURN)
+			shell->last_status = result.param;
 		funs_stack_pop(shell);
 	}
 	undo_redir(shell, &stack);
+	return ((t_eval_result){RES_NONE, 0});
 }

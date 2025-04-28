@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 /** @brief Closes fds and waits for pipes execution */
@@ -102,24 +103,25 @@ static void
 	pipe_wait(shell, fds, pids, 1);
 }
 
-void
+t_eval_result
 	eval_pipeline(t_shell *shell, t_ast_node* pipeline)
 {
-	const int	redir_stderr = pipeline->logic.token.reserved_word[1] == '&';
-	int			status;
-	pid_t		pid;
-	char		*err;
+	const int		r_stderr = pipeline->logic.token.reserved_word[1] == '&';
+	t_eval_result	result;
+	int				status;
+	pid_t			pid;
+	char			*err;
 
 	pid = fork();
 	if (pid == -1)
 	{
 		ft_asprintf(&err, "fork() failed: %m");
 		shell_error(shell, err, SRC_LOCATION);
-		return ;
+		return ((t_eval_result){RES_NONE, 0});
 	}
 	if (!pid)
 	{
-		if (redir_stderr)
+		if (r_stderr)
 			pipe_stdout_stderr(shell, pipeline);
 		else
 			pipe_stdout(shell, pipeline);
@@ -127,4 +129,5 @@ void
 	if (waitpid(pid, &status, 0) == -1)
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	shell->last_status = WEXITSTATUS(status);
+	return ((t_eval_result){RES_NONE, 0});
 }

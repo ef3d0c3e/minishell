@@ -64,16 +64,19 @@ static char
 int
 	resolve_eval(t_shell *shell, const char *name, char **result)
 {
+	static const char	*specials[] = {"continue", "break", "return"};
 	char		*cwd;
 	char		*err;
 	int			status;
 
 	if (!ft_strchr(name, '/'))
 	{
-		if (rb_find(&shell->reg_fns, name))
+		if (str_alternatives((t_string){name, ft_strlen(name)}, specials))
 			return (1);
-		else if (rb_find(&shell->reg_builtins, name))
+		else if (rb_find(&shell->reg_fns, name))
 			return (2);
+		else if (rb_find(&shell->reg_builtins, name))
+			return (3);
 		*result = resolve_from_path(shell, name);
 		if (!*result)
 			return (-1);
