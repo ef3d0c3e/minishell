@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_keyword.c                                    :+:      :+:    :+:   */
+/*   eval_if.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,28 +9,28 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <tokenizer/tokenizer.h>
+#include <shell/shell.h>
 
-int
-	token_keyword(t_token_list *list, t_u8_iterator *it)
+t_eval_result
+	eval_if(t_shell *shell, t_ast_node *cmd)
 {
-	static const char	*keywords[] = {
-	//"[[", "]]", "[", "]", "((", "))",
-	"done",
-	"if", "then", "elif", "else", "fi", "time",
-	"for", "in", "until", "while", "do",
-	"case", "esac", "coproc", "select", "function",
-	NULL};
-	const char			*keyword = str_alternatives(it_substr(it, 8), keywords);
-
-	if (list->size
-			&& list->tokens[list->size - 1].type != TOK_SPACE
-			&& list->tokens[list->size - 1].type != TOK_SEQUENCE)
-		return (0);
-	if (!keyword)
-		return (0);
-	token_list_push(list, TOK_KEYWORD, it->byte_pos,
-		it->byte_pos + ft_strlen(keyword))->reserved_word = keyword;
-	it_advance(it, ft_strlen(keyword));
-	return (1);
+	size_t			i;
+	t_eval_result	result;
+	
+	i = 0;
+	while (i < cmd->st_if.nconds)
+	{
+		result = eval(shell, cmd->st_if.conds[i]);
+		if (result.type != RES_NONE)
+			return (result);
+		if (shell->last_status)
+		{
+			++i;
+			continue;
+		}
+		return (eval(shell, cmd->st_if.bodies[i]));
+	}
+	if (i < cmd->st_if.nbodies)
+		return (eval(shell, cmd->st_if.bodies[i]));
+	return ((t_eval_result){RES_NONE, 0});
 }

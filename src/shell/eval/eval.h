@@ -98,6 +98,11 @@ eval_subshell(t_shell *shell, t_ast_node* subshell);
  */
 t_eval_result
 eval_subexpr(t_shell *shell, t_ast_node* subexpr);
+/**
+ * @brief Evaluates if cmd_list then cmd_list [elif cmd_list then cmd_list]* fi
+ */
+t_eval_result
+eval_if(t_shell *shell, t_ast_node* node_if);
 
 /******************************************************************************/
 /* Arguments handling                                                         */

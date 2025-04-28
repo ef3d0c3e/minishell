@@ -44,5 +44,7 @@ t_eval_result
 		return (eval_subshell(shell, program));
 	else if (program->type == NODE_FUNCTION)
 		return (eval_function_definition(shell, program));
+	else if (program->type == NODE_IF)
+		return (eval_if(shell, program));
 	return (result);
 }
