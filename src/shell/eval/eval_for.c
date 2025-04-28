@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 /** @brief Sets the variable for the for loop, if there exists a local variable
@@ -46,9 +47,12 @@ t_eval_result
 	{
 		set_variable(shell, cmd->st_for.ident, ft_strdup(argv[i]));
 		result = eval(shell, cmd->st_for.body);
-		if (result.type != RES_NONE && result.type != RES_CONTINUE)
+		if ((result.type == RES_BREAK && result.param > 0)
+			|| result.type == RES_RETURN)
 		{
 			args_free(argv);
+			if (result.type == RES_BREAK)
+				--result.type;
 			return (result);
 		}
 		++i;

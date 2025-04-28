@@ -17,7 +17,9 @@ t_ast_node
 	t_ast_node	*node;
 
 	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_LOGIC;
+	node->type = NODE_BINARY;
+	if (!ft_strcmp(op.reserved_word, "|") || !ft_strcmp(op.reserved_word, "|&"))
+		node->type = NODE_PIPE;
 	node->logic.token = op;
 	node->logic.left = left;
 	node->logic.right = right;

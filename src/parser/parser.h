@@ -150,8 +150,10 @@ enum e_node_type
 	NODE_COMMAND,
 	/** @brief Command list */
 	NODE_LIST,
-	/** @brief Binary logic operator, e.g `||`, `|&`, `>` */
-	NODE_LOGIC,
+	/** @brief Binary logic operators, e.g `||`, `&&` */
+	NODE_BINARY,
+	/** @brief Pipe logic operators: `|`, `|&` */
+	NODE_PIPE,
 	/** @brief Function definition node */
 	NODE_FUNCTION,
 	/** @brief If statement node */

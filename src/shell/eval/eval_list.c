@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval.c                                             :+:      :+:    :+:   */
+/*   eval_list.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,29 +12,19 @@
 #include "shell/eval/eval.h"
 #include <shell/shell.h>
 
-static t_eval_result
-	eval_block(t_shell *shell, t_ast_node *program)
-{
-	return (eval(shell, program->block.inner));
-}
-
 t_eval_result
-	eval(t_shell *shell, t_ast_node* program)
+	eval_list(t_shell *shell, t_ast_node *cmd)
 {
-	static t_eval_result(*const evaluators[])(t_shell *, t_ast_node *) = {
-	[NODE_LIST] = eval_list,
-	[NODE_BLOCK] = eval_block,
-	[NODE_COMMAND] = eval_cmd,
-	[NODE_PIPE] = eval_pipeline,
-	[NODE_BINARY] = eval_binary,
-	[NODE_SUBSHELL] = eval_subshell,
-	[NODE_FUNCTION] = eval_function_definition,
-	[NODE_IF] = eval_if,
-	[NODE_WHILE] = eval_while,
-	[NODE_FOR] = eval_for,
-	};
+	size_t			i;
+	t_eval_result	result;
 
-	if (!program)
-		return ((t_eval_result){RES_NONE, 0});
-	return (evaluators[program->type](shell, program));
+	// TODO: Apply separator logic
+	i = 0;
+	while (i < cmd->list.ncmds)
+	{
+		result = eval(shell, cmd->list.cmds[i++]);
+		if (result.type != RES_NONE)
+			break ;
+	}
+	return (result);
 }

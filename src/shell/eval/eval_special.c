@@ -43,7 +43,7 @@ static t_eval_result
 	int		num;
 	char	*err;
 
-	num = 0;
+	num = 1;
 	// TODO: Loop context...
 	//if (!shell->eval_stack.size)
 	//{
@@ -60,6 +60,7 @@ static t_eval_result
 			ft_asprintf(&err, "break: expected one numeric argument");
 			shell_error(shell, err, SRC_LOCATION);
 		}
+		num = 1;
 	}
 	return ((t_eval_result){RES_BREAK, num});
 }

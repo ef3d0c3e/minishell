@@ -12,7 +12,7 @@
 #include <shell/shell.h>
 
 t_eval_result
-	eval_sequence(t_shell *shell, t_ast_node *program)
+	eval_binary(t_shell *shell, t_ast_node *program)
 {
 	t_eval_result	result;
 

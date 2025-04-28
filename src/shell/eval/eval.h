@@ -43,12 +43,18 @@ typedef struct s_eval_result
 t_eval_result
 eval(t_shell *shell, t_ast_node* program);
 /**
+ * @brief Evaluates a list of commands, separated by `;` `\n` and `&`
+ *
+ * @param shell The shell session
+ * @param The command list node
+ */
+t_eval_result
+eval_list(t_shell *shell, t_ast_node* cmd);
+/**
  * @brief Evaluates command node
  *
  * @param shell The shell session
  * @param The command node
- *
- * @returns 1 On success, 0 if failed to resolve executable
  */
 t_eval_result
 eval_cmd(t_shell *shell, t_ast_node* cmd);
@@ -60,6 +66,46 @@ eval_cmd(t_shell *shell, t_ast_node* cmd);
  */
 t_eval_result
 eval_function_definition(t_shell *shell, t_ast_node *definition);
+/**
+ * @brief Evaluates a pipeline operator `|` or `|&`
+ */
+t_eval_result
+eval_pipeline(t_shell *shell, t_ast_node* pipeline);
+/**
+ * @brief Evaluates a binary operator `||` or `&&`
+ */
+t_eval_result
+eval_binary(t_shell *shell, t_ast_node* pipeline);
+/**
+ * @brief Evaluates a subshell `(...)`
+ */
+t_eval_result
+eval_subshell(t_shell *shell, t_ast_node* subshell);
+/**
+ * @brief Evaluates subexpressions `$(...)`
+ */
+t_eval_result
+eval_subexpr(t_shell *shell, t_ast_node* subexpr);
+/**
+ * @brief Evaluates if cmd_list then cmd_list [elif cmd_list then cmd_list]* fi
+ */
+t_eval_result
+eval_if(t_shell *shell, t_ast_node* node_if);
+/**
+ * @brief Evaluates while
+ */
+t_eval_result
+eval_while(t_shell *shell, t_ast_node* node_while);
+/**
+ * @brief Evaluates if word in wordlist do cmd_list done 
+ */
+t_eval_result
+eval_for(t_shell *shell, t_ast_node* node_if);
+
+/******************************************************************************/
+/* Commands evaluators                                                        */
+/******************************************************************************/
+
 /**
  * @brief Evaluates a function call
  *
@@ -78,36 +124,6 @@ eval_function(t_shell *shell, t_ast_node *function, char **argv);
  */
 t_eval_result
 eval_special(t_shell *shell, t_ast_node *cmd, char **argv);
-/**
- * @brief Evaluates a pipeline `|` or `|&`
- */
-t_eval_result
-eval_pipeline(t_shell *shell, t_ast_node* pipeline);
-/**
- * @brief Evaluates a sequence `||` or `&&`
- */
-t_eval_result
-eval_sequence(t_shell *shell, t_ast_node* pipeline);
-/**
- * @brief Evaluates a subshell `(...)`
- */
-t_eval_result
-eval_subshell(t_shell *shell, t_ast_node* subshell);
-/**
- * @brief Evaluates subexpressions `$(...)`
- */
-t_eval_result
-eval_subexpr(t_shell *shell, t_ast_node* subexpr);
-/**
- * @brief Evaluates if cmd_list then cmd_list [elif cmd_list then cmd_list]* fi
- */
-t_eval_result
-eval_if(t_shell *shell, t_ast_node* node_if);
-/**
- * @brief Evaluates if word in wordlist do cmd_list done 
- */
-t_eval_result
-eval_for(t_shell *shell, t_ast_node* node_if);
 
 /******************************************************************************/
 /* Arguments handling                                                         */
