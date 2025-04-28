@@ -22,6 +22,7 @@ t_eval_result
 		return (result);
 	if (program->type == NODE_LIST)
 	{
+		// TODO: Apply separator logic
 		i = 0;
 		while (i < program->list.ncmds)
 		{

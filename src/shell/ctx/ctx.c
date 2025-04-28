@@ -86,7 +86,7 @@ int
 	}
 	ctx->parser = &parser;
 	*ctx->parser = parser_init(input, *ctx->list);
-	ctx->program = parse(ctx->parser, 0, ctx->list->size, 0);
+	ctx->program = parse(ctx->parser);
 	if (option_value(shell, "dbg_parser"))
 	{
 		ft_dprintf(2, " -- Parsing --\n");

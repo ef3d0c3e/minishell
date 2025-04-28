@@ -62,17 +62,6 @@ void
 }
 
 void
-	arglist_free(struct s_argument *list, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < size)
-		arg_free(&list[i++]);
-	free(list);
-}
-
-void
 	arg_print(size_t depth, struct s_argument *arg)
 {
 	size_t	i;
@@ -98,17 +87,4 @@ void
 		++i;
 	}
 	ft_dprintf(2, "\n");
-}
-
-void
-	arglist_print(size_t depth, struct s_argument *list, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < size)
-	{
-		arg_print(depth, &list[i]);
-		++i;
-	}
 }

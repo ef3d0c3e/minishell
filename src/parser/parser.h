@@ -102,6 +102,15 @@ arglist_free(struct s_argument *list, size_t size);
 /** @brief Displays an array of arguments to stderr */
 void
 arglist_print(size_t depth, struct s_argument *list, size_t size);
+/**
+ * @brief Pushes the current token to the argument list
+ *
+ * @param parser The parser
+ * @param list Pointer to the array of arguments
+ * @param len Pointer to the array's length
+ */
+void
+arglist_push(t_parser *parser, struct s_argument **list, size_t *len);
 
 /******************************************************************************/
 /* Assignment nodes                                                           */
@@ -418,14 +427,11 @@ parser_free(t_parser *parser);
  * @brief Parser entry point
  *
  * @param parser The parser
- * @param start Start position in token list
- * @param end End position in token list
- * @param min_prec Operator precedence for this parsing pass [0, 3]
  *
  * @return The parsed node, may be NULL (e.g empty expressions)
  */
 t_ast_node
-*parse(t_parser *parser, size_t start, size_t end, int min_prec);
+*parse(t_parser *parser);
 /**
  * @brief Appends an error to the parser
  *
@@ -449,35 +455,122 @@ parser_error_flush(t_parser *parser);
 /* Individual parsers                                                         */
 /******************************************************************************/
 
-/** @brief Command parser */
-t_ast_node
-*parse_cmd(t_parser *parser, size_t start, size_t end);
-
-/** @brief Parses sub-shell expression: `(...)` */
-t_ast_node
-*parse_subshell(t_parser *parser, size_t start, size_t end);
-
-/******************************************************************************/
-/* Individual parsers                                                         */
-/******************************************************************************/
-
 /**
- * @brief Utility function to get the next logic (binary) operator in the list
+ * @brief Parses a list of commands:
+ *
+ * <list_of_commands> ::= <and_or> ( (';' | '&' | NEWLINE) <list_of_commands> )?
  *
  * @param parser The parser
- * @param start Start position in the list
- * @param end End position in the list
- * @param min_prec A value indicating the minimum required precedence of the
- * operator to parse
+ * @return The parsed node
+*/
+t_ast_node
+*parse_cmdlist(t_parser *parser);
+/**
+ * @brief Parses a compound command clause:
  *
- * @returns The position of the operator if found `(size_t)-1` if not found
+ * <compound_command> ::= '(' <list_of_commands> ')'
+ *                        | '{' <list_of_commands> '}'
+ *                        | <if_clause>
+ *                        | <while_clause>
+ *                        | <until_clause>
+ *                        | <for_clause>
+ *                        | <case_clause>
+ *
+ * @param parser The parser
+ * @return The parsed node
  */
-size_t
-parser_next_operator(
-	t_parser *parser,
-	size_t start,
-	size_t end,
-	int min_prec);
+t_ast_node
+*parse_compound_command(t_parser *parser);
+/**
+ * @brief Parses a command clause:
+ *
+ * <command> ::= <simple_command>
+ *               | <compound_command>
+ *               | <function_def>
+ *
+ * @param parser The parser
+ * @return The parsed node
+ */
+t_ast_node
+*parse_command(t_parser *parser);
+/**
+ * @brief Parses a simple command clause:
+ *
+ * <simple_command> ::= cmd_prefix cmd_word?
+ * <cmd_prefix>     ::= io_redirect
+ *                      | cmd_prefix io_redirect
+ *                      | ASSIGNMENT_WORD
+ *                      | cmd_prefix ASSIGNMENT_WORD
+ *
+ * @param parser The parser
+ * @return The parsed node
+ */
+t_ast_node
+*parse_simple_command(t_parser *parser);
+/**
+ * @brief Parses an and or or cllaus:
+ *
+ * <and_or> ::= <pipeline> ( ('&&' | '||') <pipeline> )*
+ *
+ * @param parser The parser
+ * @return The parsed node
+*/
+t_ast_node
+*parse_and_or(t_parser *parser);
+/**
+ * @brief Parses a pipeline cllaus:
+ *
+ * <pipeline> ::= <command> ( ('|' | '|&') <command> )*
+ *
+ * @param parser The parser
+ * @return The parsed node
+*/
+t_ast_node
+*parse_pipeline(t_parser *parser);
+/**
+ * @brief Parses a function definition clause:
+ *
+ * <function_def> ::= WORD '()' <compound_command>
+ *
+ * @param parser The parser
+ * @return The parsed node
+*/
+t_ast_node
+*parse_function_def(t_parser *parser);
+/**
+ * @brief Parses an if clause:
+ *
+ * <if_clause> ::= 'if' <list_of_commands> 'then' <list_of_commands>
+ *                 ('elif' <list_of_commands> 'then' <list_of_commands>)*
+ *                 ['else' <list_of_commands>]
+ *                 'fi'
+ *
+ * @param parser The parser
+ * @return The parsed node
+*/
+t_ast_node
+*parse_if(t_parser *parser);
+/**
+ * @brief Parses a while clause:
+ *
+ * <while_clause> ::= 'while' <list_of_commands> 'do' <list_of_commands> 'done'
+ *
+ * @param parser The parser
+ * @return The parsed node
+*/
+t_ast_node
+*parse_while(t_parser *parser);
+/**
+ * @brief Parses a for clause:
+ *
+ * <for_clause> ::= 'for' WORD 'in' WORD* 'do' <list_of_commands> 'done'
+ *
+ * @param parser The parser
+ * @return The parsed node
+*/
+t_ast_node
+*parse_for(t_parser *parser);
+
 
 /******************************************************************************/
 /* Parsing helpers                                                            */
@@ -543,7 +636,6 @@ expect(t_parser *parser, int offset, const char *word);
  */
 int
 token_atoi(t_parser *parser, size_t pos, int *value);
-
 /**
  * @brief Prints `pad` `n` times
  *
