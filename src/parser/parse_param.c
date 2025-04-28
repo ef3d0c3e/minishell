@@ -15,11 +15,11 @@
 #include <shell/shell.h>
 
 void
-	parse_param(t_parser *parser, struct s_arg_item *arg, size_t pos)
+	parse_param(t_parser *parser, struct s_arg_item *arg)
 {
 	static const char	*ops[] = {":-", "-", ":=", "=", ":?", "?", ":+", "+",
 	"##", "#", "%%", "%", ":", NULL};
-	t_token *const		token = &parser->list.tokens[pos];
+	t_token *const		token = &parser->list.tokens[parser->pos];
 	char				*name;
 	char				*err;
 	size_t				sep;
@@ -63,7 +63,7 @@ void
 	if (!arg->param.op)
 	{
 		ft_asprintf(&err, "Invalid parameter expansion: `%s`", name);
-		parser_error(parser, err, pos, pos + 1);
+		parser_error(parser, err, parser->pos, parser->pos + 1);
 	}
 	// TODO: Call parser recursively on content & set context for errors
 }

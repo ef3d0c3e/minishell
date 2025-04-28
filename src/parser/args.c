@@ -9,18 +9,17 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 void
-	arg_push(t_parser *parser, struct s_argument *arg, size_t pos)
+	arg_push(t_parser *parser, struct s_argument *arg)
 {
-	const t_token	*token = &parser->list.tokens[pos];
+	const t_token	*token = &parser->list.tokens[parser->pos];
 
 	arg->items = ft_realloc(arg->items, sizeof(arg->items[0]) * arg->nitems,
 		sizeof(arg->items[0]) * (arg->nitems + 1));
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
-		parse_param(parser, &arg->items[arg->nitems], pos);
+		parse_param(parser, &arg->items[arg->nitems]);
 	else if (token->type == TOK_CMD_SUB)
 		arg->items[arg->nitems] = (struct s_arg_item){
 			.type = ARG_SUBEXPR,

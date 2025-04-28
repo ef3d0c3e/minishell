@@ -10,8 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
+#include "parser/parser.h"
 #include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
+#include <stddef.h>
 
 /** @brief Performs expansion on literals */
 void
@@ -67,7 +69,7 @@ static int
 }
 
 char
-	**arg_expansion(t_shell *shell, const struct s_cmd_node *cmd)
+	**arg_expansion(t_shell *shell, struct s_argument *words, size_t size)
 {
 	size_t			i;
 	t_fragment_list	list;
@@ -79,9 +81,9 @@ char
 	if (!ifs || ifs[0] == 0)
 		ifs = " \t\n";
 	fraglist_init(&list);
-	while (i < cmd->nargs)
+	while (i < size)
 	{
-		if (!expand_arg(shell, &list, &cmd->args[i++], ifs))
+		if (!expand_arg(shell, &list, &words[i++], ifs))
 			return (NULL);
 	}
 	list = word_split(shell, &list, ifs);

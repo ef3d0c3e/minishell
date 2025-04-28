@@ -99,7 +99,7 @@ t_eval_result
 	char	*path;
 
 	path = NULL;
-	argv = arg_expansion(shell, &program->cmd);
+	argv = arg_expansion(shell, program->cmd.args, program->cmd.nargs);
 	if (!argv)
 		return ((t_eval_result){RES_NONE, 0});
 	status = 0;

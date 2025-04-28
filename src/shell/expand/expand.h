@@ -88,12 +88,13 @@ fraglist_append(t_fragment_list *list, t_string_buffer word);
  * argument expansion
  *
  * @param shell The shell session
- * @param cmd Command to create an array of string from
+ * @param list Word list to expand
+ * @param size Size of the word list
  *
  * @returns A null-terminated array of strings to be passed to `execve`
  */
 char
-**arg_expansion(t_shell *shell, const struct s_cmd_node *cmd);
+**arg_expansion(t_shell *shell, struct s_argument *list, size_t size);
 
 /******************************************************************************/
 /* Individual expanders                                                       */

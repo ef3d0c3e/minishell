@@ -272,14 +272,13 @@ tokenizer_tokenize(t_string prompt);
 /* ************************************************************************** */
 
 /**
- * @brief Check if a given character is a special parameter identifier. For
- * simple parameters, the matching must stop after this character.
+ * @brief Check if a given word is a valid identifier
  *
- * @param c The character to check
- * @return 1 if c is a special parameter
+ * @param word The work to check
+ * @return 1 if word is a valid identifier
  */
 int
-is_param_ident_special(char codepoint);
+is_valid_identifier(const char *word);
 /**
  * @brief Check if a given character can be the start of a parameter identifier
  *

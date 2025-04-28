@@ -64,7 +64,7 @@
 */
 
 static void
-	cmd_arg_push(t_parser *parser, t_ast_node *cmd, size_t arg_pos, size_t pos)
+	cmd_arg_push(t_parser *parser, t_ast_node *cmd, size_t arg_pos)
 {
 	while (cmd->cmd.nargs <= arg_pos)
 	{
@@ -75,8 +75,55 @@ static void
 		cmd->cmd.args[cmd->cmd.nargs].nitems = 0;
 		++cmd->cmd.nargs;
 	}
-	arg_push(parser, &cmd->cmd.args[arg_pos], pos);
+	arg_push(parser, &cmd->cmd.args[arg_pos]);
 }
+
+/** @brief Pushes the current token to the argument list */
+static void
+	arglist_push(
+	t_parser *parser,
+	struct s_argument **list,
+	size_t *len)
+{
+	*list = ft_realloc(*list, sizeof(struct s_argument) * *len,
+			sizeof(struct s_argument) * (*len + 1));
+	(*list)[*len].items = NULL;
+	(*list)[*len].nitems = 0;
+	(*len)++;
+	arg_push(parser, &(*list)[*len - 1]);
+}
+
+void
+	parse_arglist(t_parser *parser, struct s_argument **args, size_t *len)
+{
+	const t_token	*tok;
+	size_t			arg_pos;
+
+	if (parser->pos < parser->list.size
+		&& parser->list.tokens[parser->pos].type == TOK_SPACE)
+		++parser->pos;
+	arg_pos = 0;
+	while (parser->pos < parser->list.size)
+	{
+		tok = &parser->list.tokens[parser->pos];
+		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
+			|| tok->type == TOK_CMD_SUB
+			|| (arg_pos != 0 && token_isword(tok->type))
+			|| accept_word(parser, 0))
+		{
+			if (arg_pos >= *len)
+				arglist_push(parser, args, len);
+			else
+				arg_push(parser, &(*args)[*len - 1]);
+		}
+		else if (tok->type == TOK_SPACE)
+			++arg_pos;
+		else
+			break ;
+		++parser->pos;
+	}
+}
+
 
 t_ast_node
 	*parse_simple_command(t_parser *parser)
@@ -121,7 +168,7 @@ t_ast_node
 			|| (arg_pos != 0 && token_isword(tok->type))
 			|| accept_word(parser, 0))
 		{
-			cmd_arg_push(parser, cmd, arg_pos, parser->pos);
+			cmd_arg_push(parser, cmd, arg_pos);
 			++parser->pos;
 		}
 		else if (tok->type == TOK_SPACE)
@@ -217,6 +264,57 @@ t_ast_node
 }
 
 t_ast_node
+	*parse_for_stmt(t_parser *parser)
+{
+	int				in_stmt = !parser->allow_reserved;
+	t_ast_node		*stmt;
+	t_string_buffer	buf;
+
+	if (!accept_tok(parser, 1, TOK_SPACE) && !accept(parser, 1, "\n"))
+	{
+		parser_error(parser, ft_strdup("Expected a space after `for`"),
+			parser->pos + 1, parser->pos + 2);
+		return (NULL);
+	}
+	parser->pos += 2;
+	if (!accept_word(parser, 0))
+	{
+		parser_error(parser, ft_strdup("Expected word"),
+			parser->pos, parser->pos + 1);
+		return (NULL);
+	}
+	stringbuf_init(&buf, 64);
+	token_wordcontent(&buf, &parser->list.tokens[parser->pos]);
+	if (!is_valid_identifier(stringbuf_cstr(&buf)))
+	{
+		parser_error(parser, ft_strdup("Not a valid identifier"),
+			parser->pos, parser->pos + 1);
+		stringbuf_free(&buf);
+		return (NULL);
+	}
+	++parser->pos;
+	if (!accept_tok(parser, 0, TOK_SPACE) && !accept(parser, 0, "\n"))
+		parser_error(parser, ft_strdup("Expected a space after identifier"),
+			parser->pos, parser->pos + 1);
+	++parser->pos;
+	stmt = make_for_node(stringbuf_cstr(&buf));
+	expect(parser, 0, "in");
+	++parser->pos;
+	parser->allow_reserved = 0;
+	parse_arglist(parser, &stmt->st_for.args, &stmt->st_for.nargs);
+	if (!accept(parser, 0, ";") && !accept(parser, 0, "\n"))
+		parser_error(parser, ft_strdup("Expected separator after word list"),
+			parser->pos, parser->pos + 1);
+	expect(parser, 1, "do");
+	parser->pos += 2;
+	stmt->st_for.body = parse_cmdlist(parser);
+	parser->allow_reserved = !in_stmt;
+	expect(parser, 0, "done");
+	++parser->pos;
+	return (stmt);
+}
+
+t_ast_node
 	*parse_compound_command(t_parser *parser)
 {
 	const size_t	begin = parser->pos;
@@ -245,6 +343,8 @@ t_ast_node
 		return (parse_if_stmt(parser));
 	else if (accept(parser, 0, "while"))
 		return (parse_while_stmt(parser));
+	else if (accept(parser, 0, "for"))
+		return (parse_for_stmt(parser));
 	else
 	{
 		parser_error(parser, ft_strdup("Unexpected token"),

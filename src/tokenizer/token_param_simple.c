@@ -12,18 +12,16 @@
 #include <tokenizer/tokenizer.h>
 
 int
-	is_param_ident_special(char c)
+	is_valid_identifier(const char *ident)
 {
-	return (c == '#' || c == '@' || c == '*' || c == '$' || c == '-'
-		|| c == '?');
+	if (!ident[0] || !is_param_ident_start(ident[0]))
+		return (0);
+	++ident;
+	while (*ident && is_param_ident(*ident))
+		++ident;
+	return (!*ident);
 }
 
-
-int
-	is_param_ident_start(char c)
-{
-	return ((c >= '0' && c <= '9') || is_param_ident(c));
-}
 int
 	is_param_ident(char c)
 {
@@ -33,12 +31,21 @@ int
 		|| (c >= 'a' && c <= 'z'));
 }
 
+int
+	is_param_ident_start(char c)
+{
+	return (c == '_'
+		|| (c >= 'A' && c <= 'Z')
+		|| (c >= 'a' && c <= 'z'));
+}
+
 static int
 	handle_special_param(t_token_list *list, t_u8_iterator *it, t_string *next)
 {
 	const size_t	start = it->byte_pos;
+	const char		c = next->str[1];
 
-	if (!is_param_ident_special(next->str[1]))
+	if (c != '#' && c != '@' && c != '*' && c != '$' && c != '-' && c != '?')
 		return (0);
 	it_advance(it, 2);
 	token_list_push(list, TOK_PARAM_SIMPLE, start, it->byte_pos)->word

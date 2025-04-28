@@ -12,6 +12,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+#include "util/util.h"
 # include <tokenizer/tokenizer.h>
 # include <parser/redir_parser.h>
 
@@ -82,14 +83,13 @@ struct s_argument
  *
  * @param parser The parser
  * @param arg Argument to parse into
- * @param pos Position of the token to parse
  */
 void
-parse_param(t_parser *parser, struct s_arg_item *arg, size_t pos);
+parse_param(t_parser *parser, struct s_arg_item *arg);
 
 /** @brief Pushes a token to an argument */
 void
-arg_push(t_parser *parser, struct s_argument *arg, size_t pos);
+arg_push(t_parser *parser, struct s_argument *arg);
 /** @brief Frees an argument structure */
 void
 arg_free(struct s_argument *arg);
@@ -149,6 +149,8 @@ enum e_node_type
 	NODE_IF,
 	/** @brief While statement node */
 	NODE_WHILE,
+	/** @brief For statement node */
+	NODE_FOR,
 };
 
 /** @brief A block node */
@@ -324,6 +326,29 @@ free_while_node(t_ast_node *node);
 void
 print_while_node(size_t depth, const t_ast_node *node);
 
+/** @brief While statement node */
+struct s_for_node
+{
+	/** @brief Loop identifier, must be valid */
+	char				*ident;
+	/** @brief Word list (must undergo expansion) */
+	struct s_argument	*args;
+	/** @brief Number of words */
+	size_t				nargs;
+	/** @brief For body */
+	t_ast_node			*body;
+};
+
+/** @brief Creates a for node */
+t_ast_node
+*make_for_node(char *ident);
+/** @brief Frees a for node */
+void
+free_for_node(t_ast_node *node);
+/** @brief Prints a for node */
+void
+print_for_node(size_t depth, const t_ast_node *node);
+
 /** @brief AST Node type */
 typedef struct s_ast_node
 {
@@ -347,6 +372,8 @@ typedef struct s_ast_node
 		struct s_if_node		st_if;
 		/** @brief While node */
 		struct s_while_node		st_while;
+		/** @brief For node */
+		struct s_for_node		st_for;
 	};
 }	t_ast_node;
 
@@ -478,6 +505,17 @@ accept(t_parser *parser, int offset, const char *word);
  */
 int
 accept_word(t_parser *parser, int offset);
+/**
+ * @brief Checks if the current token is a token of type `type`
+ *
+ * @param parser The parser
+ * @param offset Offset from current position
+ * @param type The type to check for
+ *
+ * @returns 1 If the condition is fulfilled. 0 otherwise
+ */
+int
+accept_tok(t_parser *parser, int offset, enum e_token_type type);
 /**
  * @brief Checks if the current token is a control token and it's content
  * matches against `word`. If it doesn't match an error is reported

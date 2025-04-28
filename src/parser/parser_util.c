@@ -70,6 +70,18 @@ int
 }
 
 int
+	accept_tok(t_parser *parser, int offset, enum e_token_type type)
+{
+	if (offset > 0 && parser->pos + offset >= parser->list.size)
+		return (0);
+	else if (offset < 0 && (size_t)-offset > parser->pos)
+		return (0);
+	if (parser->pos + offset >= parser->list.size)
+		return (0);
+	return (parser->list.tokens[parser->pos + offset].type == type);
+}
+
+int
 	token_atoi(t_parser *parser, size_t start, int *value)
 {
 	const t_token	*tok = &parser->list.tokens[start];

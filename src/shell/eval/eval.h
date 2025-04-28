@@ -103,6 +103,11 @@ eval_subexpr(t_shell *shell, t_ast_node* subexpr);
  */
 t_eval_result
 eval_if(t_shell *shell, t_ast_node* node_if);
+/**
+ * @brief Evaluates if word in wordlist do cmd_list done 
+ */
+t_eval_result
+eval_for(t_shell *shell, t_ast_node* node_if);
 
 /******************************************************************************/
 /* Arguments handling                                                         */
