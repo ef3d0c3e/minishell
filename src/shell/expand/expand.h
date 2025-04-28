@@ -30,11 +30,21 @@ typedef struct s_fragment
 /** @brief A list of fragment */
 typedef struct s_fragment_list
 {
+	/** @brief The fragments */
 	t_fragment	*fragments;
+	/** @brief Number of fragments */
 	size_t		size;
+	/** @brief Capacity of this list */
 	size_t		capacity;
 }	t_fragment_list;
 
+/**
+ * @brief Initializes an empty fragment list
+ *
+ * @param list List to initialize
+ */
+void
+fraglist_init(t_fragment_list *list);
 /**
  * @brief Pushes a word to the fragment list
  *
@@ -44,6 +54,20 @@ typedef struct s_fragment_list
  */
 void
 fraglist_push(t_fragment_list *list, t_string_buffer word, int flags);
+/**
+ * @brief Appends content to the last member of the fragment list
+ *
+ * If the list is empty, this is equivalent to `fraglist_push(list, word, 0)`.
+ *
+ * @param list List to append to
+ * @param word Content to append to the last element of `list`
+ */
+void
+fraglist_append(t_fragment_list *list, t_string_buffer word);
+
+/******************************************************************************/
+/* Arg expansion                                                              */
+/******************************************************************************/
 
 /**
  * @brief Resolves command arguments to an array of strings while performing
@@ -57,6 +81,10 @@ fraglist_push(t_fragment_list *list, t_string_buffer word, int flags);
 char
 **arg_expansion(t_shell *shell, const struct s_cmd_node *cmd);
 
+/******************************************************************************/
+/* Individual expanders                                                       */
+/******************************************************************************/
+
 /**
  * @brief Resolves a parameter in the current context
  *
@@ -68,25 +96,26 @@ char
  *  - Check for global variables in the environment
  *
  * @param shell The shell session
- * @param param Parameter to expand
- * @param argv Argument list to expand into
- * @param size Size of `argv`
+ * @param list Fragment list to insert into
+ * @param param Sub expression to expand
+ * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
  *
- * @returns 1 On success, 0 on failure. In `expfail` mode, the error should be
+ * @returns 1 On success, 0 on failure. In `experr` mode, the error should be
  * reported and evaluation should stop.
  */
 int
 expand_param(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param);
-
+	struct s_arg_item *param,
+	const char *ifs);
 /**
  * @brief Expands sub expressions
  *
  * @param shell The shell session
  * @param list Fragment list to insert into
  * @param param Sub expression to expand
+ * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
  *
  * @returns 1 On success, 0 on failure.
  */
@@ -94,6 +123,18 @@ int
 expand_subexpr(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param);
+	struct s_arg_item *param,
+	const char *ifs);
+/**
+ * @brief Performs word splitting
+ *
+ * @param shell The shell session
+ * @param list The original word list (will be consumed)
+ * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
+ *
+ * @returns The list of words after performing splitting
+ */
+t_fragment_list
+word_split(t_shell *shell, t_fragment_list *list, const char *ifs);
 
 #endif // EXPAND_H

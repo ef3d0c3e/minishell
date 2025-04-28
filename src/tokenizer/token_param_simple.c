@@ -9,16 +9,21 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include "util/util.h"
+#include <tokenizer/tokenizer.h>
+
+int
+	is_param_ident_special(char c)
+{
+	return (c == '#' || c == '@' || c == '*' || c == '$' || c == '-'
+		|| c == '?');
+}
+
 
 int
 	is_param_ident_start(char c)
 {
-	return (c == '#' || c == '@' || c == '*' || c == '$' || c == '-'
-		|| is_param_ident(c));
+	return ((c >= '0' && c <= '9') || is_param_ident(c));
 }
-
 int
 	is_param_ident(char c)
 {
@@ -28,24 +33,18 @@ int
 		|| (c >= 'a' && c <= 'z'));
 }
 
-/** @brief Handles special parameters that will be resolved at evaluation
- * time */
 static int
-	param_special(t_token_list *list, t_u8_iterator *it)
+	handle_special_param(t_token_list *list, t_u8_iterator *it, t_string *next)
 {
-	static const char	*special[] = {
-		"$?", NULL
-	};
-	const char			*kind = str_alternatives(it_substr(it, 2), special);
+	const size_t	start = it->byte_pos;
 
-	if (kind)
-	{
-		token_list_push(list, TOK_PARAM_SIMPLE, it->byte_pos + 1,
-			it->byte_pos + ft_strlen(kind))->word = stringbuf_from(kind + 1);
-		it_advance(it, ft_strlen(kind));
-		return (1);
-	}
-	return (0);
+	if (!is_param_ident_special(next->str[1]))
+		return (0);
+	it_advance(it, 2);
+	token_list_push(list, TOK_PARAM_SIMPLE, start, it->byte_pos)->word
+		= stringbuf_from_range(it->str.str + start + 1,
+		it->str.str + it->byte_pos);
+	return (1);
 }
 
 int
@@ -55,11 +54,14 @@ int
 	t_string		next;
 	t_string_buffer	buf;
 
-
 	if (it->codepoint.str[0] != '$')
 		return (0);
 	next = it_substr(it, 2);
-	if (next.len != 2 || !is_param_ident_start(next.str[1]))
+	if (next.len != 2)
+		return (0);
+	if (handle_special_param(list, it, &next))
+		return (1);
+	else if (!is_param_ident_start(next.str[1]))
 		return (0);
 	it_advance(it, 2);
 	stringbuf_init(&buf, 64);

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   subexpr.c                                          :+:      :+:    :+:   */
+/*   fraglist.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,30 +11,39 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-int
-	expand_subexpr(
-	t_shell *shell,
-	t_fragment_list *list,
-	struct s_arg_item *param,
-	const char *ifs)
+void
+	fraglist_init(t_fragment_list *list)
 {
-	char			*info;
-	t_string_buffer	result;
+	list->fragments = NULL;
+	list->size = 0;
+	list->capacity = 0;
+}
 
-	(void)ifs;
-	ft_asprintf(&info, "$(%s)", stringbuf_cstr(&param->text));
-	// Right here, the program will be forked then the fork will exit, so every
-	// local heap-allocated variables are going to be the source of memory leaks.
-	// This preventable, either via extensive bookkeeping or by using execve tricks
-	result = ctx_eval_string(shell, ft_strdup(stringbuf_cstr(&param->text)), info);
-	if (shell->last_status != 0)
+void
+	fraglist_push(t_fragment_list *list, t_string_buffer word, int flags)
+{
+	if (list->size + 1 >= list->capacity)
 	{
-		// An error happened
-		stringbuf_free(&result);
-		return (0);
+		list->capacity = list->capacity * 2 + !list->capacity * 4;
+		list->fragments = ft_realloc(list->fragments,
+			sizeof(t_fragment) * list->size,
+			sizeof(t_fragment) * list->capacity);
 	}
-	while (result.len && result.str[result.len - 1] == '\n')
-		--result.len;
-	fraglist_push(list, result, param->flags);
-	return (1);
+	list->fragments[list->size++] = (t_fragment){
+		.word = word,
+		.flags = flags,
+	};
+}
+
+void
+	fraglist_append(t_fragment_list *list, t_string_buffer word)
+{
+	if (!list->size)
+	{
+		fraglist_push(list, word, 0);
+		return ;
+	}
+	stringbuf_append(&list->fragments[list->size - 1].word, (t_string){word.str,
+		word.len});
+	stringbuf_free(&word);
 }

@@ -16,10 +16,10 @@
 
 static int
 	param_special_glob(
-	t_shell *shell,
 	t_fragment_list *list,
 	struct s_arg_item *param,
-	const t_stack_frame *frame)
+	const t_stack_frame *frame,
+	const char *ifs)
 {
 	t_string_buffer	buf;
 	size_t			i;
@@ -31,7 +31,7 @@ static int
 		while (i < frame->nargs)
 		{
 			if (i > 1)
-				stringbuf_append(&buf, (t_string){" ", 1});
+				stringbuf_append(&buf, (t_string){ifs, 1});
 			stringbuf_append(&buf, (t_string){frame->args[i],
 				ft_strlen(frame->args[i])});
 			++i;
@@ -55,7 +55,8 @@ static int
 	param_special(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param)
+	struct s_arg_item *param,
+	const char *ifs)
 {
 	const t_stack_frame	*frame = &shell->eval_stack.frames
 		[shell->eval_stack.size - 1];
@@ -76,7 +77,7 @@ static int
 		return (1);
 	}
 	else if (shell->eval_stack.size)
-		return (param_special_glob(shell, list, param, frame));
+		return (param_special_glob(list, param, frame, ifs));
 	return (0);
 }
 
@@ -141,16 +142,16 @@ static int
 	return (1);
 }
 
-// FIXME: This doesn't handle word splitting...
 int
 expand_param(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param)
+	struct s_arg_item *param,
+	const char *ifs)
 {
 	int				status;
 
-	status = param_special(shell, list, param);
+	status = param_special(shell, list, param, ifs);
 	if (!status)
 		status = param_positional(shell, list, param);
 	if (!status)
