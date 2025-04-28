@@ -38,6 +38,13 @@ typedef struct s_fragment_list
 	size_t		capacity;
 }	t_fragment_list;
 
+/** @brief Performs expansion over literals */
+void
+expand_literal(
+	t_shell *shell,
+	t_fragment_list *list,
+	struct s_arg_item *param,
+	const char *ifs);
 /**
  * @brief Initializes an empty fragment list
  *
@@ -45,6 +52,13 @@ typedef struct s_fragment_list
  */
 void
 fraglist_init(t_fragment_list *list);
+/**
+ * @brief Frees a fragment list
+ *
+ * @param list List to free
+ */
+void
+fraglist_free(t_fragment_list *list);
 /**
  * @brief Pushes a word to the fragment list
  *
@@ -100,11 +114,27 @@ char
  * @param param Sub expression to expand
  * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
  *
- * @returns 1 On success, 0 on failure. In `experr` mode, the error should be
- * reported and evaluation should stop.
+ * @returns 1 On success, 0 on failure. In `experr` mode, an error will be
+ * reported, further processing should stop.
  */
 int
 expand_param(
+	t_shell *shell,
+	t_fragment_list *list,
+	struct s_arg_item *param,
+	const char *ifs);
+/**
+ * @brief Performs tilde `~` expansion
+ *
+ * @param shell The shell session
+ * @param list Fragment list to insert into
+ * @param param Sub expression to expand
+ * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
+ *
+ * @returns -1 if not expandable, 1 on success, 0 on failure.
+ */
+int
+expand_tilde(
 	t_shell *shell,
 	t_fragment_list *list,
 	struct s_arg_item *param,

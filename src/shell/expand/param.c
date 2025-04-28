@@ -149,14 +149,19 @@ expand_param(
 	struct s_arg_item *param,
 	const char *ifs)
 {
-	int				status;
+	int		status;
+	char	*err;
 
 	status = param_special(shell, list, param, ifs);
 	if (!status)
 		status = param_positional(shell, list, param);
 	if (!status)
 		status = param_local_env(shell, list, param);
-	
 	// TODO: custom processing according to the parameter's rules and status
+	if (!status && option_value(shell, "experr"))
+	{
+		ft_asprintf(&err, "Error: %s: Unbound variable", param->param.name);
+		shell_error(shell, err, SRC_LOCATION);
+	}
 	return (status);
 }

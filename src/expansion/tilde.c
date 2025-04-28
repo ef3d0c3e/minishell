@@ -70,7 +70,7 @@ static inline int
 }
 
 int
-	expand_tilde(t_shell *shell, t_token *token, t_token_list *result)
+	_expand_tilde(t_shell *shell, t_token *token, t_token_list *result)
 {
 	t_string	str;
 	size_t		end;

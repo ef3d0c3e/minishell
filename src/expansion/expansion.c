@@ -67,6 +67,8 @@ static int
 
 	if (!token_isword(first->type) || !token_isword(second->type))
 		return (0);
+	if (first->flags != second->flags)
+		return (0);
 	if (first->type == TOK_DIGIT && second->type == TOK_MINUS)
 		return (0);
 	stringbuf_init(&content, second->end - first->start);

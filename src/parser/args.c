@@ -22,14 +22,12 @@ void
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
 		parse_param(parser, &arg->items[arg->nitems], pos);
 	else if (token->type == TOK_CMD_SUB)
-	{
 		arg->items[arg->nitems] = (struct s_arg_item){
 			.type = ARG_SUBEXPR,
 			.flags = token->flags,
 			.text = stringbuf_from_range(token->word.str,
 				token->word.str + token->word.len),
 		};
-	}
 	else
 	{
 		arg->items[arg->nitems] = (struct s_arg_item){
@@ -39,6 +37,8 @@ void
 		stringbuf_init(&arg->items[arg->nitems].text, 64);
 		token_wordcontent(&arg->items[arg->nitems].text, token);
 	}
+	if (arg->nitems)
+		arg->items[arg->nitems - 1].next = &arg->items[arg->nitems];
 	++arg->nitems;
 }
 

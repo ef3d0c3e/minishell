@@ -64,6 +64,8 @@ struct s_arg_item
 		/** @brief Param data */
 		struct s_arg_param	param;
 	};
+	/** @brief Reference to the next argument, NULL for none */
+	struct s_arg_item		*next;
 };
 
 /** @brief Data for command arguments */

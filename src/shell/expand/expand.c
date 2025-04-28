@@ -9,12 +9,27 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/expand/expand.h"
 #include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
-static void
+/** @brief Performs expansion on literals */
+void
+	expand_literal(
+	t_shell *shell,
+	t_fragment_list *list,
+	struct s_arg_item *param,
+	const char *ifs)
+{
+	if ((param->flags & (FL_DQUOTED | FL_SQUOTED)) == 0
+		&& expand_tilde(shell, list, param, ifs) != -1)
+		return ;
+	else
+		fraglist_push(list, stringbuf_from_range(param->text.str,
+			param->text.str + param->text.len), param->flags);
+}
+
+/** @brief Performs expansion of a single argument */
+static int
 	expand_arg(
 	t_shell *shell,
 	t_fragment_list *list,
@@ -28,16 +43,22 @@ static void
 	while (i < arg->nitems)
 	{
 		if (arg->items[i].type == ARG_LITERAL)
-			fraglist_push(list, stringbuf_from_range(arg->items[i].text.str,
-				arg->items[i].text.str + arg->items[i].text.len),
-				arg->items[i].flags);
+			expand_literal(shell, list, &arg->items[i], ifs);
 		else if (arg->items[i].type == ARG_SUBEXPR)
 			expand_subexpr(shell, list, &arg->items[i], ifs);
 		else if (arg->items[i].type == ARG_PARAMETER)
-			expand_param(shell, list, &arg->items[i], ifs);
+		{
+			if (!expand_param(shell, list, &arg->items[i], ifs)
+				&& option_value(shell, "experr"))
+			{
+				fraglist_free(&list);
+				return (0);
+			}
+		}
 		++i;
 	}
 	list->fragments[start_size].force_split = 1;
+	return (1);
 }
 
 char
@@ -54,7 +75,11 @@ char
 		ifs = " \t\n";
 	fraglist_init(&list);
 	while (i < cmd->nargs)
-		expand_arg(shell, &list, &cmd->args[i++], ifs);
+	{
+		if (!expand_arg(shell, &list, &cmd->args[i++], ifs))
+			return (NULL);
+		
+	}
 	list = word_split(shell, &list, ifs);
 	argv = xmalloc(sizeof(char *) * (list.size + 1));
 	i = 0;

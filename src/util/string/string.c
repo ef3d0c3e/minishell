@@ -40,9 +40,9 @@ size_t
 	size_t			i;
 
 	i = 0;
-	while (i + len < str.len)
+	while (i + len <= str.len)
 	{
-		if (!str_cmp((t_string){.str = str.str + i, .len = len}, token))
+		if (!str_cmp((t_string){str.str + i, len}, token))
 			return (i);
 		++i;
 	}

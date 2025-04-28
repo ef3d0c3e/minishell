@@ -20,6 +20,20 @@ void
 }
 
 void
+	fraglist_free(t_fragment_list *list)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < list->size)
+		stringbuf_free(&list->fragments[i++].word);
+	free(list->fragments);
+	list->fragments = NULL;
+	list->size = 0;
+	list->capacity = 0;
+}
+
+void
 	fraglist_push(t_fragment_list *list, t_string_buffer word, int flags)
 {
 	if (list->size + 1 >= list->capacity)
