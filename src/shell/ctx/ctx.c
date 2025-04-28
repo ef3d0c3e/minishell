@@ -65,7 +65,6 @@ int
 	if (option_value(ctx->shell, "dbg_parser") && ctx->info)
 		ft_dprintf(2, "[Entering context %s]\n", ctx->info);
 	ctx->list = &list;
-	ctx->parser = &parser;
 	ctx->prompt = prompt;
 	input.str = prompt;
 	input.len = ft_strlen(prompt);
@@ -85,6 +84,7 @@ int
 		ft_dprintf(2, " -- Expanded tokens --\n");
 		token_list_print(input, &list);
 	}
+	ctx->parser = &parser;
 	*ctx->parser = parser_init(input, *ctx->list);
 	ctx->program = parse(ctx->parser, 0, ctx->list->size, 0);
 	if (option_value(shell, "dbg_parser"))

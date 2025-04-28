@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
@@ -21,11 +22,14 @@ void
 	const char *ifs)
 {
 	if ((param->flags & (FL_DQUOTED | FL_SQUOTED)) == 0
-		&& expand_tilde(shell, list, param, ifs) != -1)
+		&& expand_tilde(shell, list, param, ifs) != 0)
 		return ;
 	else
+	{
+		//ft_dprintf(2, "exp list fl=%d '%.*s'\n", param->flags, param->text.len, param->text.str);
 		fraglist_push(list, stringbuf_from_range(param->text.str,
-			param->text.str + param->text.len), param->flags);
+					param->text.str + param->text.len), param->flags);
+	}
 }
 
 /** @brief Performs expansion of a single argument */
@@ -37,27 +41,28 @@ static int
 	const char *ifs)
 {
 	const size_t	start_size = list->size;
-	size_t	i;
+	size_t			i;
+	int				status;
 
 	i = 0;
 	while (i < arg->nitems)
 	{
+		status = 1;
 		if (arg->items[i].type == ARG_LITERAL)
 			expand_literal(shell, list, &arg->items[i], ifs);
 		else if (arg->items[i].type == ARG_SUBEXPR)
-			expand_subexpr(shell, list, &arg->items[i], ifs);
+			status = expand_subexpr(shell, list, &arg->items[i], ifs);
 		else if (arg->items[i].type == ARG_PARAMETER)
+			status = expand_param(shell, list, &arg->items[i], ifs);
+		if (status == -1)
 		{
-			if (!expand_param(shell, list, &arg->items[i], ifs)
-				&& option_value(shell, "experr"))
-			{
-				fraglist_free(&list);
-				return (0);
-			}
+			fraglist_free(list);
+			return (0);
 		}
 		++i;
 	}
-	list->fragments[start_size].force_split = 1;
+	if (status)
+		list->fragments[start_size].force_split = 1;
 	return (1);
 }
 
@@ -78,7 +83,6 @@ char
 	{
 		if (!expand_arg(shell, &list, &cmd->args[i++], ifs))
 			return (NULL);
-		
 	}
 	list = word_split(shell, &list, ifs);
 	argv = xmalloc(sizeof(char *) * (list.size + 1));
@@ -86,7 +90,7 @@ char
 	while (i < list.size)
 	{
 		argv[i] = stringbuf_cstr(&list.fragments[i].word);
-		ft_dprintf(2, "argv[%zu] = '%s'\n", i, argv[i]);
+		//ft_dprintf(2, "argv[%zu] = '%s'\n", i, argv[i]);
 		++i;
 	}
 	argv[i] = NULL;

@@ -29,6 +29,7 @@ int
 					.len = it->byte_pos - start - 1});
 			token_list_push(list,
 				TOK_SINGLE_QUOTE, start + 1, it->byte_pos)->word = buf;
+			list->tokens[list->size - 1].flags |= FL_SQUOTED;
 			it_advance(it, 1);
 			return (1);
 		}

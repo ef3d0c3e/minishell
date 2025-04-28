@@ -76,11 +76,11 @@ t_fragment_list
 	i = 0;
 	while (i < list->size)
 	{
-		ft_dprintf(2, "word[%zu] = `%.*s` %d\n", i, list->fragments[i].word.len, list->fragments[i].word.str, list->fragments[i].force_split);
-		if ((list->fragments[i].flags & (FL_DQUOTED | FL_DQUOTED)) == 0 &&
+		//ft_dprintf(2, "word[%zu] = `%.*s` %d fl=%d\n", i, list->fragments[i].word.len, list->fragments[i].word.str, list->fragments[i].force_split, list->fragments[i].flags & (FL_SQUOTED | FL_DQUOTED));
+		if ((list->fragments[i].flags & (FL_SQUOTED | FL_DQUOTED)) == 0 &&
 			list->fragments[i].force_split)
 			split_force(&new, ifs, &list->fragments[i].word);
-		else if ((list->fragments[i].flags & (FL_DQUOTED | FL_DQUOTED)) == 0)
+		else if ((list->fragments[i].flags & (FL_SQUOTED | FL_DQUOTED)) == 0)
 			split(&new, ifs, &list->fragments[i].word);
 		else if (list->fragments[i].force_split)
 			fraglist_push(&new, list->fragments[i].word, 0);

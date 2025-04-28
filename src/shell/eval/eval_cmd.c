@@ -100,6 +100,8 @@ int
 
 	path = NULL;
 	argv = arg_expansion(shell, &program->cmd);
+	if (!argv)
+		return (0);
 	status = 0;
 	if (argv[0])
 		status = resolve_eval(shell, argv[0], &path);

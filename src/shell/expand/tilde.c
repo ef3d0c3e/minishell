@@ -38,9 +38,9 @@ static int
 		ft_asprintf(&err, "Failed to perform tilde expansion: variable `%s`"
 			" not set", varname);
 		shell_error(shell, err, SRC_LOCATION);
-		return (0);
+		return (-1);
 	}
-	return (-1);
+	return (0);
 }
 
 static struct s_arg_item
@@ -83,10 +83,10 @@ static int
 			" not found (in /etc/passwd)", (int)username.len, username.str);
 		shell_error(shell, err, SRC_LOCATION);
 		stringbuf_free(&username);
-		return (0);
+		return (-1);
 	}
 	stringbuf_free(&username);
-	return (-1);
+	return (0);
 }
 
 int
@@ -102,21 +102,21 @@ int
 	int					status;
 
 	if (param->text.len == 0 || param->text.str[0] != '~') // Must be the start of a word
-		return (-1);
+		return (0);
 	str = (t_string){.str = param->text.str, .len = param->text.len};
 	end = str_find(str, "/");
 	if (end == (size_t) - 1 && param->next
 		&& param->next->flags != param->flags)
-		return (-1);
+		return (0);
 	str.len = min_sz(end, str.len);
-	status = -1;
+	status = 0;
 	if (!str_cmp(str, "~-"))
 		status = expand_from_var(shell, list, param, "OLDPWD");
 	else if (!str_cmp(str, "~+"))
 		status = expand_from_var(shell, list, param, "PWD");
 	else
 		status = expand_home(shell, list, param, str);
-	if (status > 0)
+	if (status >= 0)
 	{
 		leftover = split_arg(param, str.len);
 		expand_literal(shell, list, &leftover, ifs);

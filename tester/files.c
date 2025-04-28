@@ -40,23 +40,23 @@ void
 	eval_in_tempdir(const char *name, void (*fn)(void *), void *cookie)
 {
 	char	*dirname;
-	char	*curpath;
+	char	curpath[1024];
 
-	curpath = getcwd(NULL, 0);
-	if (!curpath)
+	if (!getcwd(curpath, 1024))
 		perror("getcwd");
 	ft_asprintf(&dirname, "/tmp/shelltest-%s", name);
 	if (mkdir(dirname, 0700) < 0)
 		perror("mkdir");
 	if (chdir(dirname) < 0)
 		perror("chdir");
+	free(dirname);
 	fn(cookie);
+	ft_asprintf(&dirname, "/tmp/shelltest-%s", name);
 	if (chdir(curpath) < 0)
 		perror("chdir");
 	if (nftw(dirname, delete, 2, FTW_DEPTH | FTW_MOUNT | FTW_PHYS) < 0)
 		perror("nftw");
 	free(dirname);
-	free(curpath);
 }
 
 static int

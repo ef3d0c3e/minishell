@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "tester.h"
 #include "ft_printf.h"
+#include "shell/ctx/ctx.h"
 
 void
 	run_test_child(t_eval_test *test, int *fds)
@@ -27,7 +28,7 @@ void
 	dup2(fds[0], STDIN_FILENO);
 	close(fds[0]);
 	shell = shell_new(test->envp);
-	repl(&shell, ft_strdup(stringbuf_cstr(&test->expr)));
+	ctx_eval_stdout(&shell, ft_strdup(stringbuf_cstr(&test->expr)));
 	test_free(test);
 	shell_exit(&shell, shell.last_status);
 }

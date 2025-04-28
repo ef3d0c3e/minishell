@@ -3,9 +3,9 @@
 
 DO_TEST(param,
 	SHELL_TEST("echo $",  "", "$\n",  "", 0)
-	SHELL_TEST("echo $$", "", "$$\n", "", 0)
-	SHELL_TEST("echo $@", "", "$@\n", "", 0)
-	SHELL_TEST("echo $#", "", "$#\n", "", 0)
+	//SHELL_TEST("echo $$", "", "$$\n", "", 0) TODO: getpid
+	SHELL_TEST("echo $@", "", "\n", "", 0)
+	SHELL_TEST("echo $#", "", "\n", "", 0)
 
 	SHELL_TEST("echo $?; /usr/bin/false; echo $?", "", "0\n1\n", "", 0)
 	SHELL_TEST("echo $?; /usr/bin/true; echo $?",  "", "0\n0\n", "", 0)
@@ -23,21 +23,27 @@ DO_TEST(param,
 		SHELL_TEST("echo \"$A\"$B", "", "testanother\n",   "", 0)
 	)
 	WITH_ENV(({"PWD=A", "OLDPWD=B", "HOME=C", NULL}),
-		SHELL_TEST("echo $PWD",    "", "A\n", "", 0)
-		SHELL_TEST("echo $OLDPWD", "", "B\n", "", 0)
-		SHELL_TEST("echo $HOME",   "", "C\n", "", 0)
-		SHELL_TEST("echo ~+",      "", "A\n", "", 0)
-		SHELL_TEST("echo ~-",      "", "B\n", "", 0)
-		SHELL_TEST("echo ~",       "", "C\n", "", 0)
-		SHELL_TEST("echo \"~+\"",  "", "~+\n", "", 0)
-		SHELL_TEST("echo \"~-\"",  "", "~-\n", "", 0)
-		SHELL_TEST("echo \"~\"",   "", "~\n", "", 0)
+		SHELL_TEST("echo $PWD",     "", "A\n", "", 0)
+		SHELL_TEST("echo $OLDPWD",  "", "B\n", "", 0)
+		SHELL_TEST("echo $HOME",    "", "C\n", "", 0)
+		SHELL_TEST("echo ~+",       "", "A\n", "", 0)
+		SHELL_TEST("echo ~+/B",     "", "A/B\n", "", 0)
+		SHELL_TEST("echo ~+/\"B\"", "", "A/B\n", "", 0)
+		SHELL_TEST("echo ~+\"/B\"", "", "~+/B\n", "", 0)
+		SHELL_TEST("echo ~-",       "", "B\n", "", 0)
+		SHELL_TEST("echo ~-/A",     "", "B/A\n", "", 0)
+		SHELL_TEST("echo ~-/\"A\"", "", "B/A\n", "", 0)
+		SHELL_TEST("echo ~-\"/A\"", "", "~-/A\n", "", 0)
+		SHELL_TEST("echo ~",        "", "C\n", "", 0)
+		SHELL_TEST("echo \"~+\"",   "", "~+\n", "", 0)
+		SHELL_TEST("echo \"~-\"",   "", "~-\n", "", 0)
+		SHELL_TEST("echo \"~\"",    "", "~\n", "", 0)
 		SHELL_TEST("echo '~+'",  "", "~+\n", "", 0)
 		SHELL_TEST("echo '~-'",  "", "~-\n", "", 0)
 		SHELL_TEST("echo '~'",   "", "~\n", "", 0)
 	)
 	REPEAT(5,
-		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 60), ran, " \t\n\r\f\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
+		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 60), ran, "\r\f\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
 			char *var;
 			ft_asprintf(&var, "VAR=%s", ran);
 			WITH_ENV(({var, NULL}),

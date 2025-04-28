@@ -162,6 +162,7 @@ expand_param(
 	{
 		ft_asprintf(&err, "Error: %s: Unbound variable", param->param.name);
 		shell_error(shell, err, SRC_LOCATION);
+		status = -1;
 	}
 	return (status);
 }

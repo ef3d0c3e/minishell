@@ -114,8 +114,8 @@ char
  * @param param Sub expression to expand
  * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
  *
- * @returns 1 On success, 0 on failure. In `experr` mode, an error will be
- * reported, further processing should stop.
+ * @returns 1 On success, 0 on unmatched. Or -1 In `experr` mode and expansion
+ * fails. An error will be reported, further processing should stop.
  */
 int
 expand_param(
@@ -131,7 +131,8 @@ expand_param(
  * @param param Sub expression to expand
  * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
  *
- * @returns -1 if not expandable, 1 on success, 0 on failure.
+ * @returns 1 On success, 0 on unmatched. Or -1 In `experr` mode and expansion
+ * fails. An error will be reported, further processing should stop.
  */
 int
 expand_tilde(
