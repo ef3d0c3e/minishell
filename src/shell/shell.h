@@ -78,6 +78,9 @@ typedef struct s_shell
 	 * function instead of `free`. */
 	t_rbtree			temporaries;
 
+	/** @brief Chain of active contexts */
+	t_ctx				*context;
+
 	/** @brief Evaluation stack for proceduces */
 	t_eval_stack		eval_stack;
 

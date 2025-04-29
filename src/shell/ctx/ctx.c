@@ -30,6 +30,10 @@ t_ctx
 void
 	ctx_free(t_ctx *context)
 {
+	if (context != context->shell->context)
+		shell_fail(context->shell, "Context popped in the wrong order",
+			SRC_LOCATION);
+	context->shell->context = context->prev;
 	if (context->list)
 		token_list_free(context->list);
 	if (context->parser)
@@ -44,10 +48,11 @@ void
 	context->program = NULL;
 }
 
-static void	cleanup(void *ptr)
+static void
+	ctx_set(t_shell *shell, t_ctx *ctx)
 {
-	ft_dprintf(2, "HERE\n");
-	ast_free(ptr, 1);
+	ctx->prev = shell->context;
+	shell->context = ctx;
 }
 
 int
@@ -62,6 +67,7 @@ int
 	t_token_list	list;
 	t_parser		parser;
 
+	ctx_set(shell, ctx);
 	if (option_value(ctx->shell, "dbg_parser") && ctx->info)
 		ft_dprintf(2, "[Entering context %s]\n", ctx->info);
 	ctx->list = &list;

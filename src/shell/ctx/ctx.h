@@ -23,6 +23,8 @@ typedef struct s_ctx
 	t_shell			*shell;
 	/** @brief Context information string */
 	char			*info;
+	/** @brief Previous active context */
+	struct s_ctx	*prev;
 
 	/** @brief Current program prompt */
 	char			*prompt;
@@ -37,11 +39,25 @@ typedef struct s_ctx
 /** @brief Initializes an empty new context */
 t_ctx
 ctx_new(t_shell *shell, char *info);
-/** @brief Cleans a context */
+/**
+ * @brief Cleans a context
+ *
+ * If there were a previous active context, the shell's current context is
+ * updated to it's previous contextx.
+ *
+ * @note In case the context being freed is not the active context, an exception
+ * is thrown.
+ *
+ * @param context Context to free
+ */
 void
 ctx_free(t_ctx *context);
 /**
  * @brief Evaluates the given prompt in the given context
+ *
+ * The context is pushed into the shell, and it's previous field is set to the
+ * previous active context (or NULL if none). When cleaning up, contexts have
+ * to be popped and freed in order.
  *
  * In case an error happens, `evaluator` is still called, but the `ctx->program`
  * field will be NULL. This means that it will have to be cleaned up.
