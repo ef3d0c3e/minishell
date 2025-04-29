@@ -31,6 +31,16 @@ t_ast_node
 void
 	free_cmd_node(t_ast_node *node)
 {
+	size_t	i;
+
+	i = 0;
+	while (i < node->cmd.nassigns)
+	{
+		arg_free(&node->cmd.assigns[i].value);
+		stringbuf_free(&node->cmd.assigns[i].variable);
+		++i;
+	}
+	free(node->cmd.assigns);
 	arglist_free(node->cmd.args, node->cmd.nargs);
 	redirs_free(&node->cmd.redirs);
 }
@@ -38,8 +48,26 @@ void
 void
 	print_cmd_node(size_t depth, const t_ast_node *node)
 {
+	size_t	i;
+
 	print_pad(" | ", depth);
 	ft_dprintf(2, "COMMAND\n");
+	if (node->cmd.nassigns)
+	{
+		print_pad(" | ", depth);
+		ft_dprintf(2, "(ASSIGNS)\n");
+		i = 0;
+		while (i < node->cmd.nassigns)
+		{
+			print_pad(" | ", depth);
+			ft_dprintf(2, "%.*s=", node->cmd.assigns[i].variable.len,
+					node->cmd.assigns[i].variable.str);
+			arg_print(0, &node->cmd.assigns[i].value);
+			++i;
+		}
+		print_pad(" | ", depth);
+		ft_dprintf(2, "(ARGS)\n");
+	}
 	arglist_print(depth + 1, node->cmd.args, node->cmd.nargs);
 	print_redir(&node->cmd.redirs, depth + 1);
 }

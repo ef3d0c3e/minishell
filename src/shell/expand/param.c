@@ -107,6 +107,7 @@ static int
 	t_fragment_list *list,
 	struct s_arg_item *param)
 {
+	// FIXME Search locals in previous frames until root frame
 	t_stack_frame *const	frame = &shell->eval_stack.frames
 		[shell->eval_stack.size - 1];
 	const char				*found;

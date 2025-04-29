@@ -11,14 +11,7 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-/*
-<script>                ::= <list_of_commands>
-
-
-
-
-<until_clause>            ::= 'until' <list_of_commands> 'do' <list_of_commands> 'done'
-
+/* TODO:
 <case_clause>            ::= 'case' WORD 'in'
                         ( PATTERN ')' <list_of_commands> ';;' )+
 						'esac'

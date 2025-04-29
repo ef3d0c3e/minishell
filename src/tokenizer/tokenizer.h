@@ -192,6 +192,13 @@ enum e_token_type
 	 * https://www.gnu.org/software/bash/manual/bash.html#Single-Quotes
 	 */
 	TOK_SINGLE_QUOTE,
+	/**
+	 * @brief Assignment token
+	 *
+	 * A legal variable identifier followed by an `=` sign. Must be preceded
+	 * by s space/newline/;/& or the beginning of the token list.
+	 */
+	TOK_ASSIGN,
 	/** @brief Leftover content from tokenization */
 	TOK_WORD,
 	/**
@@ -377,6 +384,7 @@ int	token_single_quote(t_token_list *list, t_u8_iterator *it);
 int	token_word(t_token_list *list, t_u8_iterator *it);
 int	token_arith(t_token_list *list, t_u8_iterator *it);
 int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
+int	token_assign(t_token_list *list, t_u8_iterator *it);
 int	token_param_simple(t_token_list *list, t_u8_iterator *it);
 int	token_param(t_token_list *list, t_u8_iterator *it);
 

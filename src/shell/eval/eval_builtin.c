@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval_if.c                                          :+:      :+:    :+:   */
+/*   eval_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,31 +11,22 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+
 t_eval_result
-	eval_for(t_shell *shell, t_ast_node *cmd)
+	eval_builtin(t_shell *shell, t_ast_node *cmd, char **argv)
 {
-	size_t			i;
-	t_eval_result	result;
-	char			**argv;
+	const t_builtin			*builtin = rb_find(&shell->reg_builtins, argv[0]);
+	int						argc;
+	t_redirs_stack			stack;
 	
-	argv = arg_expansion(shell, cmd->st_for.args, cmd->st_for.nargs);
-	if (!argv)
-		return ((t_eval_result){RES_NONE, 0});
-	i = 0;
-	while (argv[i])
-	{
-		set_variable(shell, cmd->st_for.ident, ft_strdup(argv[i]), 1);
-		result = eval(shell, cmd->st_for.body);
-		if ((result.type == RES_BREAK && result.param > 0)
-			|| result.type == RES_RETURN)
-		{
-			args_free(argv);
-			if (result.type == RES_BREAK)
-				--result.type;
-			return (result);
-		}
-		++i;
-	}
+	argc = 0;
+	while (argv[argc])
+		++argc;
+	redir_stack_init(&stack);
+	do_redir(shell, &stack, &cmd->cmd.redirs);
+	if (shell_error_flush(shell))
+		shell->last_status = builtin->run(shell, argc, argv);
+	undo_redir(shell, &stack);
 	args_free(argv);
 	return ((t_eval_result){RES_NONE, 0});
 }

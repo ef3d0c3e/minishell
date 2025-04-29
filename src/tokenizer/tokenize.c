@@ -24,6 +24,7 @@ static inline const t_tokenizer_fn
 		token_operator,
 		token_sequence,
 		token_pipeline,
+		token_assign,
 		token_keyword,
 		token_grouping,
 		token_double_quote,

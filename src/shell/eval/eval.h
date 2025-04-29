@@ -107,6 +107,15 @@ eval_for(t_shell *shell, t_ast_node* node_if);
 /******************************************************************************/
 
 /**
+ * @brief Evaluates special builtins
+ *
+ * @param shell The shell session
+ * @param cmd The command node
+ * @param argv Function arguments
+ */
+t_eval_result
+eval_special(t_shell *shell, t_ast_node *cmd, char **argv);
+/**
  * @brief Evaluates a function call
  *
  * @param shell The shell session
@@ -116,14 +125,24 @@ eval_for(t_shell *shell, t_ast_node* node_if);
 t_eval_result
 eval_function(t_shell *shell, t_ast_node *function, char **argv);
 /**
- * @brief Evaluates special builtins
+ * @brief Evaluates a builtin command
  *
  * @param shell The shell session
  * @param cmd The command node
  * @param argv Function arguments
  */
 t_eval_result
-eval_special(t_shell *shell, t_ast_node *cmd, char **argv);
+eval_builtin(t_shell *shell, t_ast_node *cmd, char **argv);
+/**
+ * @brief Evaluates an executable
+ *
+ * @param shell The shell session
+ * @param cmd The command node
+ * @param path Path to the executable
+ * @param argv Function arguments
+ */
+t_eval_result
+eval_exec(t_shell *shell, t_ast_node *cmd, char *path, char **argv);
 
 /******************************************************************************/
 /* Arguments handling                                                         */

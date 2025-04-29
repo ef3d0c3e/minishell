@@ -100,6 +100,7 @@ passwd_free(struct s_passwd_ent *ent);
 /**
  * @brief Query from `/etc/passwd`
  *
+ * @param shell The shell session
  * @param username Username to query from. On success this function takes
  * ownership of `username`.
  * @param ent The passwd entry to store the result
@@ -109,5 +110,40 @@ passwd_free(struct s_passwd_ent *ent);
  */
 int
 passwd_query(t_shell *shell, char *username, struct s_passwd_ent *ent);
+
+/******************************************************************************/
+/* Variables handling                                                         */
+/******************************************************************************/
+
+/**
+ * @brief Sets a variable's value
+ *
+ * This function first looks if a variable named `name` exists in each stack
+ * frames. If it is not found, the variable will be set in the global
+ * environment.
+ *
+ * @param shell The shell session
+ * @param name Variable name
+ * @param value Variable value
+ * @param local Will try to set the variable locally, otherwise it will be set
+ * in the environment
+ */
+void
+set_variable(t_shell *shell, const char *name, char *value, int local);
+
+/**
+ * @brief Gets a variable's value
+ *
+ * This function first looks if a variable named `name` exists in each stack
+ * frames. If it is not found, the variable will be searched in the global
+ * environment.
+ *
+ * @param shell The shell session
+ * @param name Variable name
+ *
+ * @returns The variable if foundq, NULL otherwise.
+ */
+char
+*get_variable(t_shell *shell, const char *name);
 
 #endif // ENV_H

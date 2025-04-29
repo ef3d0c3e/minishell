@@ -32,6 +32,7 @@ void
 	[TOK_PARAM_SIMPLE] = "PARAM_SIMPLE",
 	[TOK_PARAM] = "PARAM",
 	[TOK_ARITH] = "ARITH",
+	[TOK_ASSIGN] = "ASSIGN",
 	[TOK_WORD] = "WORD",
 	[TOK_ERROR] = "ERROR",
 	};
@@ -51,6 +52,7 @@ void
 		|| token->type == TOK_SINGLE_QUOTE
 		|| token->type == TOK_DIGIT
 		|| token->type == TOK_CMD_SUB
+		|| token->type == TOK_ASSIGN
 		|| token->type == TOK_PARAM_SIMPLE
 		|| token->type == TOK_PARAM)
 		stringbuf_free(&token->word);

@@ -9,25 +9,22 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include "util/util.h"
-#include <stdio.h>
+#include <tokenizer/tokenizer.h>
 
 int
 	token_isword(enum e_token_type type)
 {
-	// TODO
 	return (type == TOK_WORD
 		|| type == TOK_SINGLE_QUOTE
 		|| type == TOK_DIGIT
 		|| type == TOK_MINUS
+		|| type == TOK_ASSIGN
 		|| type == TOK_KEYWORD);
 }
 
 int
 	token_wordcontent(t_string_buffer *buf, const t_token *tok)
 {
-	// TODO
 	if (tok->type == TOK_WORD
 		|| tok->type == TOK_SINGLE_QUOTE
 		|| tok->type == TOK_DIGIT)
@@ -42,7 +39,13 @@ int
 				.len = ft_strlen(tok->reserved_word) });
 		return (1);
 	}
-	return 0;
+	else if (tok->type == TOK_ASSIGN)
+	{
+		stringbuf_append(buf, (t_string){tok->word.str, tok->word.len});
+		stringbuf_append(buf, (t_string){"=", 1});
+		return (1);
+	}
+	return (0);
 }
 
 int

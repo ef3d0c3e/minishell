@@ -120,7 +120,7 @@ arglist_push(t_parser *parser, struct s_argument **list, size_t *len);
 struct s_assignment
 {
 	/** @brief Name of the variable being assigned to */
-	t_string_buffer		*variable;
+	t_string_buffer		variable;
 	/** @brief Value to assign to `variable`, may require lazy expansion */
 	struct s_argument	value;
 };

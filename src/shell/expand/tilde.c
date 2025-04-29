@@ -30,7 +30,7 @@ static int
 	if (expanded)
 	{
 		fraglist_push(list, stringbuf_from_range(expanded,
-			expanded + ft_strlen(expanded)), param->flags);
+			expanded + ft_strlen(expanded)), param->flags | FL_SQUOTED);
 		return (1);
 	}
 	if (option_value(shell, "experr"))
