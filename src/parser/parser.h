@@ -158,8 +158,8 @@ enum e_node_type
 	NODE_FUNCTION,
 	/** @brief If statement node */
 	NODE_IF,
-	/** @brief While statement node */
-	NODE_WHILE,
+	/** @brief While or until loop statement node */
+	NODE_LOOP,
 	/** @brief For statement node */
 	NODE_FOR,
 };
@@ -318,24 +318,26 @@ free_if_node(t_ast_node *node);
 void
 print_if_node(size_t depth, const t_ast_node *node);
 
-/** @brief While statement node */
-struct s_while_node
+/** @brief Loop statement node */
+struct s_loop_node
 {
-	/** @brief While condition */
+	/** @brief Set to 1 for until node, 0 for while */
+	int			until;
+	/** @brief Loop condition */
 	t_ast_node	*cond;
-	/** @brief While body */
+	/** @brief Loop body */
 	t_ast_node	*body;
 };
 
-/** @brief Creates a while node */
+/** @brief Creates a loop node */
 t_ast_node
-*make_while_node(t_ast_node *cond, t_ast_node *body);
-/** @brief Frees a while node */
+*make_loop_node(t_ast_node *cond, t_ast_node *body, int until);
+/** @brief Frees a loop node */
 void
-free_while_node(t_ast_node *node);
-/** @brief Prints a while node */
+free_loop_node(t_ast_node *node);
+/** @brief Prints a loop node */
 void
-print_while_node(size_t depth, const t_ast_node *node);
+print_loop_node(size_t depth, const t_ast_node *node);
 
 /** @brief While statement node */
 struct s_for_node
@@ -381,8 +383,8 @@ typedef struct s_ast_node
 		struct s_function_node	function;
 		/** @brief If node */
 		struct s_if_node		st_if;
-		/** @brief While node */
-		struct s_while_node		st_while;
+		/** @brief Loop (until or while) node */
+		struct s_loop_node		st_loop;
 		/** @brief For node */
 		struct s_for_node		st_for;
 	};
@@ -562,6 +564,16 @@ t_ast_node
 */
 t_ast_node
 *parse_while(t_parser *parser);
+/**
+ * @brief Parses an until clause:
+ *
+ * <until_clause> ::= 'until' <list_of_commands> 'do' <list_of_commands> 'done'
+ *
+ * @param parser The parser
+ * @return The parsed node
+*/
+t_ast_node
+*parse_until(t_parser *parser);
 /**
  * @brief Parses a for clause:
  *

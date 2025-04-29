@@ -92,10 +92,10 @@ eval_subexpr(t_shell *shell, t_ast_node* subexpr);
 t_eval_result
 eval_if(t_shell *shell, t_ast_node* node_if);
 /**
- * @brief Evaluates while
+ * @brief Evaluates a while or until loopp
  */
 t_eval_result
-eval_while(t_shell *shell, t_ast_node* node_while);
+eval_loop(t_shell *shell, t_ast_node* node_loop);
 /**
  * @brief Evaluates if word in wordlist do cmd_list done 
  */

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_while.c                                      :+:      :+:    :+:   */
+/*   eval_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,21 +11,32 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-t_ast_node
-	*parse_while(t_parser *parser)
+t_eval_result
+	eval_loop(t_shell *shell, t_ast_node *cmd)
 {
-	int			in_stmt = !parser->allow_reserved;
-	t_ast_node	*cond;
-	t_ast_node	*body;
-
-	++parser->pos;
-	parser->allow_reserved = 0;
-	cond = parse_cmdlist(parser);
-	expect(parser, 0, "do");
-	++parser->pos;
-	body = parse_cmdlist(parser);
-	expect(parser, 0, "done");
-	++parser->pos;
-	parser->allow_reserved = !in_stmt;
-	return (make_while_node(cond, body));
+	t_eval_result	result;
+	
+	while (1)
+	{
+		result = eval(shell, cmd->st_loop.cond);
+		if ((result.type == RES_BREAK && result.param > 0)
+			|| result.type == RES_RETURN)
+		{
+			if (result.type == RES_BREAK)
+				--result.type;
+			return (result);
+		}
+		if ((cmd->st_loop.until && !shell->last_status)
+			|| (!cmd->st_loop.until && shell->last_status))
+			break;
+		result = eval(shell, cmd->st_loop.body);
+		if ((result.type == RES_BREAK && result.param > 0)
+			|| result.type == RES_RETURN)
+		{
+			if (result.type == RES_BREAK)
+				--result.type;
+			return (result);
+		}
+	}
+	return ((t_eval_result){RES_NONE, 0});
 }

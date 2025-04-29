@@ -24,8 +24,8 @@ void
 	[NODE_BINARY] = free_logic_node,
 	[NODE_FUNCTION] = free_function_node,
 	[NODE_IF] = free_if_node,
-	[NODE_WHILE] = free_while_node,
-	[NODE_FOR] = free_for_node,
+	[NODE_LOOP] = free_loop_node,
+	[NODE_FOR] = free_for_node
 	};
 
 	if (!node)
@@ -50,7 +50,7 @@ void
 	[NODE_BINARY] = print_logic_node,
 	[NODE_FUNCTION] = print_function_node,
 	[NODE_IF] = print_if_node,
-	[NODE_WHILE] = print_while_node,
+	[NODE_LOOP] = print_loop_node,
 	[NODE_FOR] = print_for_node,
 	};
 

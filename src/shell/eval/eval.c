@@ -30,7 +30,7 @@ t_eval_result
 	[NODE_SUBSHELL] = eval_subshell,
 	[NODE_FUNCTION] = eval_function_definition,
 	[NODE_IF] = eval_if,
-	[NODE_WHILE] = eval_while,
+	[NODE_LOOP] = eval_loop,
 	[NODE_FOR] = eval_for,
 	};
 

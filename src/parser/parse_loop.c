@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval_while.c                                          :+:      :+:    :+:   */
+/*   parse_loop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,31 +11,31 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-t_eval_result
-	eval_while(t_shell *shell, t_ast_node *cmd)
+t_ast_node
+	*parse_while(t_parser *parser)
 {
-	t_eval_result	result;
-	
-	while (1)
-	{
-		result = eval(shell, cmd->st_while.cond);
-		if ((result.type == RES_BREAK && result.param > 0)
-			|| result.type == RES_RETURN)
-		{
-			if (result.type == RES_BREAK)
-				--result.type;
-			return (result);
-		}
-		if (shell->last_status)
-			break;
-		result = eval(shell, cmd->st_while.body);
-		if ((result.type == RES_BREAK && result.param > 0)
-			|| result.type == RES_RETURN)
-		{
-			if (result.type == RES_BREAK)
-				--result.type;
-			return (result);
-		}
-	}
-	return ((t_eval_result){RES_NONE, 0});
+	int			in_stmt = !parser->allow_reserved;
+	t_ast_node	*cond;
+	t_ast_node	*body;
+
+	++parser->pos;
+	parser->allow_reserved = 0;
+	cond = parse_cmdlist(parser);
+	expect(parser, 0, "do");
+	++parser->pos;
+	body = parse_cmdlist(parser);
+	expect(parser, 0, "done");
+	++parser->pos;
+	parser->allow_reserved = !in_stmt;
+	return (make_loop_node(cond, body, 0));
+}
+
+t_ast_node
+	*parse_until(t_parser *parser)
+{
+	t_ast_node	*stmt;
+
+	stmt = parse_while(parser);
+	stmt->st_loop.until = 1;
+	return (stmt);
 }

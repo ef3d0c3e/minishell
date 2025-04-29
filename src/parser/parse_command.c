@@ -40,6 +40,8 @@ t_ast_node
 		return (parse_if(parser));
 	else if (accept(parser, 0, "while"))
 		return (parse_while(parser));
+	else if (accept(parser, 0, "until"))
+		return (parse_until(parser));
 	else if (accept(parser, 0, "for"))
 		return (parse_for(parser));
 	else

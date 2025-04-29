@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   node_while.c                                       :+:      :+:    :+:   */
+/*   node_loop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,33 +12,34 @@
 #include <shell/shell.h>
 
 t_ast_node
-	*make_while_node(t_ast_node *cond, t_ast_node *body)
+	*make_loop_node(t_ast_node *cond, t_ast_node *body, int until)
 {
 	t_ast_node	*node;
 
 	node = xmalloc(sizeof(t_ast_node));
-	node->type = NODE_WHILE;
-	node->st_while.cond = cond;
-	node->st_while.body = body;
+	node->type = NODE_LOOP;
+	node->st_loop.until = until;
+	node->st_loop.cond = cond;
+	node->st_loop.body = body;
 	return (node);
 }
 
 void
-	free_while_node(t_ast_node *node)
+	free_loop_node(t_ast_node *node)
 {
-	ast_free(node->st_while.cond, 0);
-	ast_free(node->st_while.body, 0);
+	ast_free(node->st_loop.cond, 0);
+	ast_free(node->st_loop.body, 0);
 }
 
 void
-	print_while_node(size_t depth, const t_ast_node *node)
+	print_loop_node(size_t depth, const t_ast_node *node)
 {
 	print_pad(" | ", depth);
-	ft_dprintf(2, "WHILE\n");
+	ft_dprintf(2, "%s\n", &"WHILE\0UNTIL"[node->st_loop.until * 6]);
 	print_pad(" | ", depth);
 	ft_dprintf(2, "(COND)\n");
-	ast_print(depth + 1, node->st_while.cond);
+	ast_print(depth + 1, node->st_loop.cond);
 	print_pad(" | ", depth);
 	ft_dprintf(2, "(BODY)\n");
-	ast_print(depth + 1, node->st_while.body);
+	ast_print(depth + 1, node->st_loop.body);
 }
