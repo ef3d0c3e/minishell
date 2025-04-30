@@ -9,11 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/expand/expand.h"
 #include "ft_printf.h"
 #include "parser/parser.h"
 #include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <shell/shell.h>
 #include <stddef.h>
+#include <string.h>
 
 /** @brief Performs expansion on literals */
 void
@@ -77,7 +80,7 @@ char
 	const char		*ifs;
 
 	i = 0;
-	ifs = rb_find(&shell->reg_env, "IFS");
+	ifs = get_variable_value(shell, "IFS");
 	if (!ifs || ifs[0] == 0)
 		ifs = " \t\n";
 	fraglist_init(&list);
@@ -99,3 +102,34 @@ char
 	free(list.fragments);
 	return (argv);
 }
+
+char
+	*arg_expansion_single(t_shell *shell, struct s_argument *arg)
+{
+	t_fragment_list	list;
+	const char		*ifs;
+	char			*result;
+	size_t			i;
+	size_t			size;
+	
+	ifs = get_variable_value(shell, "IFS");
+	if (!ifs || ifs[0] == 0)
+		ifs = " \t\n";
+	fraglist_init(&list);
+	if (!expand_arg(shell, &list, arg, ifs))
+		return (NULL);
+	size = 0;
+	i = 0;
+	while (i < list.size)
+		size += list.fragments[i++].word.len;
+	result = xmalloc(size + 1);
+	size = 0;
+	i = 0;
+	while (i < list.size)
+	{
+		ft_memcpy(&result[size], list.fragments[i].word.str, list.fragments[i].word.len);
+		size += list.fragments[i++].word.len;
+	}
+	return (result[size] = 0, result);
+}
+

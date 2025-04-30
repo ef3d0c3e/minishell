@@ -81,6 +81,9 @@ typedef struct s_shell
 	/** @brief Chain of active contexts */
 	t_ctx				*context;
 
+	/** @brief Prefix assignment stack */
+	t_prefix_stack		prefix_stack;
+
 	/** @brief Evaluation stack for proceduces */
 	t_eval_stack		eval_stack;
 

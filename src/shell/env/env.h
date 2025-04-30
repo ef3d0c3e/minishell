@@ -12,6 +12,7 @@
 #ifndef ENV_H
 # define ENV_H
 
+#include "parser/parser.h"
 # include <util/util.h>
 
 typedef struct s_shell t_shell;
@@ -115,27 +116,39 @@ passwd_query(t_shell *shell, char *username, struct s_passwd_ent *ent);
 /* Variables handling                                                         */
 /******************************************************************************/
 
+/** @brief A shell variable */
+typedef struct s_shell_var
+{
+	/** @brief The variable's name */
+	const char	*name;
+	/** @brief The variable's value */
+	char		*value;
+	/** @brief Whether this variable is exported */
+	int			exported;
+}	t_shell_var;
+
 /**
  * @brief Sets a variable's value
  *
  * This function first looks if a variable named `name` exists in each stack
- * frames. If it is not found, the variable will be set in the global
+ * frames. Then it will search in the prefix stack.
+ * If it is not found, the variable will be set in the global
  * environment.
  *
  * @param shell The shell session
  * @param name Variable name
  * @param value Variable value
- * @param local Will try to set the variable locally, otherwise it will be set
- * in the environment
+ * @param export If set to 1, the value will be inserted in the environment and
+ * be exported
  */
 void
-set_variable(t_shell *shell, const char *name, char *value, int local);
-
+set_variable(t_shell *shell, const char *name, char *value, int export);
 /**
  * @brief Gets a variable's value
  *
  * This function first looks if a variable named `name` exists in each stack
- * frames. If it is not found, the variable will be searched in the global
+ * frames. Then it will search in the prefix stack.
+ * If it is not found, the variable will be searched in the global
  * environment.
  *
  * @param shell The shell session
@@ -144,6 +157,72 @@ set_variable(t_shell *shell, const char *name, char *value, int local);
  * @returns The variable if foundq, NULL otherwise.
  */
 char
-*get_variable(t_shell *shell, const char *name);
+*get_variable_value(t_shell *shell, const char *name);
+/**
+ * @brief Gets a variable
+ *
+ * This function first looks if a variable named `name` exists in each stack
+ * frames. Then it will search in the prefix stack.
+ * If it is not found, the variable will be searched in the global
+ * environment.
+ *
+ * @param shell The shell session
+ * @param name Variable name
+ * @param var Variable to populate
+ *
+ * @returns 1 if found, 0 otherwise
+ */
+int
+get_variable(t_shell *shell, const char *name, t_shell_var *var);
+
+/******************************************************************************/
+/* Prefix assignment handling                                                 */
+/******************************************************************************/
+
+/** @brief Variable from prefix assignment */
+typedef struct s_prefix_var
+{
+	/** @brief Variable name (non owrning) */
+	const char	*name;
+	/** @brief Variable value */
+	char		*value;
+	/** @brief Previous value if a variable is shadowed */
+	char		*old_value;
+	
+}	t_prefix_var;
+
+/** @brief Stack for prefix assignments */
+typedef struct s_prefix_stack
+{
+	/** @brief Saved variables, e.g list of variable to reinstall when the stack
+	 * is popped */
+	t_rbtree	*variables;
+	/** @brief Number of assignment stack */
+	size_t		size;
+	/** @brief Capacity of assignment stack */
+	size_t		capacity;
+}	t_prefix_stack;
+
+/** @brief Initializes prefix stack data for the shell */
+void
+prefix_stack_init(t_shell *shell);
+/** @brief Frees the prefix stack for the shell */
+void
+prefix_stack_deinit(t_shell *shell);
+/**
+ * @brief Pushes a new assignments frame in the stack
+ *
+ * @param shell The shell session
+ * @param assigns Assignments to push
+ * @param size Number of assignments
+ */
+void
+prefix_stack_push(
+	t_shell *shell,
+	struct s_assignment *assigns,
+	size_t size);
+/** @brief Pops a frame in the prefix assignments stack */
+void
+prefix_stack_pop(t_shell *shell);
 
 #endif // ENV_H

@@ -72,7 +72,7 @@ static void
 static void
 	read_path(t_shell *shell)
 {
-	const char	*path = rb_find(&shell->reg_env, "PATH");
+	const char	*path = get_variable_value(shell, "PATH");
 	const char	*prev = path;
 	const char	*sep;
 	char		*dirname;

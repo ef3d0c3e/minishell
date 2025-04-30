@@ -9,16 +9,21 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
+#include "util/util.h"
 #include <shell/shell.h>
+#include <stddef.h>
 
 void
-	set_variable(t_shell *shell, const char *name, char *value, int local)
+	set_variable(t_shell *shell, const char *name, char *value, int export)
 {
+	t_shell_var		*var;
+	char			*name_cpy;
 	t_stack_frame	*frame;
 	size_t			i;
 
 	i = 0;
-	while (local && i < shell->eval_stack.size)
+	while (!export && i < shell->eval_stack.size)
 	{
 		frame = &shell->eval_stack.frames[shell->eval_stack.size - i - 1];
 		if (rb_find(&frame->locals, name))
@@ -28,24 +33,54 @@ void
 		}
 		++i;
 	}
-	rb_insert(&shell->reg_env, ft_strdup(name), value);
+	var = rb_find(&shell->reg_env, name);
+	if (var)
+	{
+		var->value = value;
+		return ;
+	}
+	name_cpy = ft_strdup(name);
+	var = xmalloc(sizeof(t_shell_var));
+	var->name = name_cpy;
+	var->value = value;
+	var->exported = export;
+	rb_insert(&shell->reg_env, name_cpy, var);
 }
 
 char
-	*get_variable(t_shell *shell, const char *name)
+	*get_variable_value(t_shell *shell, const char *name)
 {
+	t_shell_var	var;
+
+	if (!get_variable(shell, name, &var))
+		return (NULL);
+	return (var.value);
+}
+
+int
+	get_variable(t_shell *shell, const char *name, t_shell_var *var)
+{
+	t_shell_var		*found;
 	t_stack_frame	*frame;
-	char			*found;
 	size_t			i;
 
+	var->name = name;
+	var->exported = 0;
+	var->value = NULL;
 	i = 0;
 	while (i < shell->eval_stack.size)
 	{
 		frame = &shell->eval_stack.frames[shell->eval_stack.size - i - 1];
-		found = rb_find(&frame->locals, name);
-		if (found)
-			return (found);
+		var->value = rb_find(&frame->locals, name);
+		if (var->value)
+			return (1);
 		++i;
 	}
-	return (rb_find(&shell->reg_env, name));
+	found = rb_find(&shell->reg_env, name);
+	if (found)
+	{
+		var->exported = found->exported;
+		var->value = found->value;
+	}
+	return (var->value != NULL);
 }

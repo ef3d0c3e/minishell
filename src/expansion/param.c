@@ -43,7 +43,7 @@ static inline int
 		stringbuf_free(&name);
 		return (0);
 	}
-	expanded = rb_find(&shell->reg_env, stringbuf_cstr(&name));
+	expanded = get_variable_value(shell, stringbuf_cstr(&name));
 	if (!expanded)
 		expanded = "";
 	stringbuf_free(&token->word);
@@ -64,7 +64,7 @@ int
 	{
 		if (expand_special(stringbuf_cstr(&token->word)))
 			return (0);
-		expanded = rb_find(&shell->reg_env, stringbuf_cstr(&token->word));
+		expanded = get_variable_value(shell,  stringbuf_cstr(&token->word));
 		if (!expanded)
 			expanded = "";
 		stringbuf_free(&token->word);

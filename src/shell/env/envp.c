@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
 #include <shell/shell.h>
 
 void
@@ -17,6 +18,7 @@ void
 	const char		*sep = ft_strchr(s, '=');
 	t_string_buffer	key;
 	t_string_buffer	value;
+	t_shell_var		*var;
 	char			*err;
 
 	if (!sep)
@@ -27,7 +29,12 @@ void
 	}
 	key = stringbuf_from_range(s, sep);
 	value = stringbuf_from(sep + 1);
-	rb_insert(&shell->reg_env, stringbuf_cstr(&key), stringbuf_cstr(&value));
+
+	var = xmalloc(sizeof(t_shell_var));
+	var->value = stringbuf_cstr(&value);
+	var->name = stringbuf_cstr(&key);
+	var->exported = 1;
+	rb_insert(&shell->reg_env, stringbuf_cstr(&key), var);
 }
 
 /** @brief Formats environ variables to the `VARIABLE=VALUE` format */
@@ -35,10 +42,13 @@ static inline void
 	format_environ(size_t depth, t_rbnode *node, void *data)
 {
 	struct s_envp_traversal	*t = data;
+	const t_shell_var		*var = node->data;
 
 	(void)depth;
+	if (!var->exported)
+		return ;
 	ft_asprintf(&t->envp[t->index], "%s=%s",
-		(char *)node->key, (char *)node->data);
+		(char *)node->key, var->value);
 	++t->index;
 }
 

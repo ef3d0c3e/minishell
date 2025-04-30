@@ -26,7 +26,7 @@ static int
 	char			*expanded;
 	char			*err;
 
-	expanded = rb_find(&shell->reg_env, varname);
+	expanded = get_variable_value(shell, varname);
 	if (expanded)
 	{
 		fraglist_push(list, stringbuf_from_range(expanded,

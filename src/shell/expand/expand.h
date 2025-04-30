@@ -96,6 +96,18 @@ fraglist_append(t_fragment_list *list, t_string_buffer word);
 char
 **arg_expansion(t_shell *shell, struct s_argument *list, size_t size);
 
+/**
+ * @brief Expands a single argument and concatenate the resulting words into
+ * a single string separated by `ifs[0]`.
+ *
+ * @param shell The shell session
+ * @param arg Argument to expand and concatenate
+ *
+ * @returns The resulting expansion
+ */
+char
+*arg_expansion_single(t_shell *shell, struct s_argument *list);
+
 /******************************************************************************/
 /* Individual expanders                                                       */
 /******************************************************************************/

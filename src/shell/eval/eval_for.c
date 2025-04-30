@@ -24,7 +24,7 @@ t_eval_result
 	i = 0;
 	while (argv[i])
 	{
-		set_variable(shell, cmd->st_for.ident, ft_strdup(argv[i]), 1);
+		set_variable(shell, cmd->st_for.ident, ft_strdup(argv[i]), 0);
 		result = eval(shell, cmd->st_for.body);
 		if ((result.type == RES_BREAK && result.param > 0)
 			|| result.type == RES_RETURN)

@@ -10,8 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "shell/ctx/ctx.h"
+#include "shell/env/env.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
+static void
+	var_free(void *ptr)
+{
+	t_shell_var *var = ptr;
+
+	free(var->value);
+	free(var);
+}
 
 t_shell
 	shell_new(const char **envp)
@@ -20,7 +30,7 @@ t_shell
 	t_shell	shell;
 
 	shell.reg_env = rb_new((int (*)(const void *, const void *))ft_strcmp,
-			free, free);
+			free, var_free);
 	shell.path_cache = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			free, free);
 	shell.errors.capacity = 0;
@@ -36,10 +46,11 @@ t_shell
 	temporaries_init(&shell);
 	options_init(&shell);
 	fd_data_init(&shell);
-	path_populate(&shell);
 	shell_error_flush(&shell);
 	builtin_init(&shell);
 	funs_init(&shell);
+	prefix_stack_init(&shell);
+	path_populate(&shell);
 	shell.context = NULL;
 	return (shell);
 }
@@ -57,6 +68,7 @@ void
 	rb_free(&shell->reg_builtins);
 	rb_free(&shell->options);
 	funs_deinit(shell);
+	prefix_stack_deinit(shell);
 	temporaries_cleanup(shell);
 	free(shell->errors.errors);
 }

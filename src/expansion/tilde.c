@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
 #include <shell/shell.h>
 
 /** @brief Expands from the content of a variable */
@@ -22,7 +23,7 @@ static inline int
 	char			*expanded;
 	char			*err;
 
-	expanded = rb_find(&shell->reg_env, varname);
+	expanded = get_variable_value(shell, varname);
 	if (expanded)
 	{
 		token->type = TOK_SINGLE_QUOTE;

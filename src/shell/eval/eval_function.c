@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
 #include <shell/shell.h>
 
 t_eval_result
@@ -34,9 +35,11 @@ t_eval_result
 	if (shell_error_flush(shell))
 	{
 		funs_stack_push(shell, function, argv);
+		prefix_stack_push(shell, cmd->cmd.assigns, cmd->cmd.nassigns);
 		result = eval(shell, function->function.body);
 		if (result.type == RES_RETURN)
 			shell->last_status = result.param;
+		prefix_stack_pop(shell);
 		funs_stack_pop(shell);
 	}
 	undo_redir(shell, &stack);
