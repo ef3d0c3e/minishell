@@ -28,5 +28,5 @@ int main(int ac, char **av, const char **envp)
 	ctx_eval_stdout(&shell, ft_strdup(av[1]));
 	shell_free(&shell);
 
-	return (0);
+	return (shell.last_status);
 }

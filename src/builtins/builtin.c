@@ -30,6 +30,8 @@ void
 	insert_builtin(shell, builtin_fds());
 	insert_builtin(shell, builtin_source());
 	insert_builtin(shell, builtin_unset());
+	insert_builtin(shell, builtin_export());
+	insert_builtin(shell, builtin_cd());
 }
 
 /** @brief Calls the builtin's deinit function */

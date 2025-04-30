@@ -64,10 +64,10 @@ static char
 int
 	resolve_eval(t_shell *shell, const char *name, char **result)
 {
-	static const char	*specials[] = {"continue", "break", "return"};
-	char		*cwd;
-	char		*err;
-	int			status;
+	static const char	*specials[] = {"continue", "break", "return", "exit"};
+	char				*cwd;
+	char				*err;
+	int					status;
 
 	if (!ft_strchr(name, '/'))
 	{

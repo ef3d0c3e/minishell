@@ -45,4 +45,50 @@ DO_TEST(pipe, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	SHELL_TEST("echo ABCDEF 1>&2 | grep N", "", "", "ABCDEF\n", 1);
 	SHELL_TEST("echo ABCDEF 1>&2 |& grep A", "", "ABCDEF\n", "", 0);
 	SHELL_TEST("echo ABCDEF 1>&2 |& grep N", "", "", "", 1);
+
+	// -- 2. Pipeline with builtins that change state (only last stage can affect shell state) --
+	SHELL_TEST("true | export A=5", "", "", "", 0)
+	SHELL_TEST("export A=0; export A=3 | true; echo $A", "", "0\n", "", 0) // export in pipe has no effect
+
+	// -- 3. Variable scope: changes inside a pipeline should not affect parent shell --
+	SHELL_TEST("A=init; A=val | cat; echo $A", "", "init\n", "", 0) // $A remains 'init'
+
+	// -- 4. SIGPIPE test: Grep exits before cat finishes writing (shouldn't crash) --
+	SHELL_TEST("yes | head -n 1", "", "y\n", "", 0)
+
+	// -- 5. Builtins and external mixed pipelines --
+	SHELL_TEST("echo a | cat | wc -l", "", "1\n", "", 0)
+	SHELL_TEST("cd / ; pwd", "", "/\n", "", 0)
+
+	// -- 6. Redirection with pipeline stages --
+	SHELL_TEST("echo abc | cat - > /dev/null", "", "", "", 0)
+	SHELL_TEST("echo abc | cat - 2>&1", "", "abc\n", "", 0)
+
+	// -- 7. Quoting and special chars across pipes --
+	SHELL_TEST("echo 'A | B' | grep B", "", "A | B\n", "", 0)
+	SHELL_TEST("echo 'a  b  c' | tr -s ' ' | wc -w", "", "3\n", "", 0)
+
+	// -- 8. Side-effect only in last stage --
+	SHELL_TEST("true | false", "", "", "", 1)
+	SHELL_TEST("true | true", "", "", "", 0)
+
+	// -- 9. Return status with pipefail --
+	WITH_OPTS(({{"pipefail", 1}, {NULL, 0}}),
+			SHELL_TEST("true | false | true", "", "", "", 1)
+			SHELL_TEST("false | true | false", "", "", "", 1)
+			SHELL_TEST("true | true | true", "", "", "", 0)
+	)
+
+	// -- 10. Subshell inside a pipeline --
+	SHELL_TEST("(echo sub) | cat", "", "sub\n", "", 0)
+	SHELL_TEST("(exit 42)", "", "", "", 42)
+	SHELL_TEST("(exit 42) | cat", "", "", "", 0)
+
+	// -- 11. Multiple pipelines in sequence --
+	SHELL_TEST("echo 1 | cat ; echo 2 | cat", "", "1\n2\n", "", 0)
+
+	// -- 12. Stress: long pipeline --
+	REPEAT(5,
+			SHELL_TEST("yes | cat | cat | cat | head -n 1", "", "y\n", "", 0)
+	)
 ))

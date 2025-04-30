@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/expand/expand.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Performs expansion on literals */
@@ -65,6 +67,13 @@ static int
 	return (1);
 }
 
+static void cleanup(void *ptr)
+{
+	t_fragment_list *const	list = ptr;
+
+	fraglist_free(list);
+}
+
 char
 	**arg_expansion(t_shell *shell, struct s_argument *words, size_t size)
 {
@@ -73,6 +82,7 @@ char
 	char			**argv;
 	const char		*ifs;
 
+	rb_insert(&shell->temporaries, &list, (void *)cleanup);
 	i = 0;
 	ifs = get_variable_value(shell, "IFS");
 	if (!ifs || ifs[0] == 0)
@@ -94,6 +104,7 @@ char
 	}
 	argv[i] = NULL;
 	free(list.fragments);
+	rb_delete(&shell->temporaries, &list);
 	return (argv);
 }
 
@@ -106,12 +117,16 @@ char
 	size_t			i;
 	size_t			size;
 	
+	rb_insert(&shell->temporaries, &list, (void *)cleanup);
 	ifs = get_variable_value(shell, "IFS");
 	if (!ifs || ifs[0] == 0)
 		ifs = " \t\n";
 	fraglist_init(&list);
 	if (!expand_arg(shell, &list, arg, ifs))
+	{
+		rb_delete(&shell->temporaries, &list);
 		return (NULL);
+	}
 	size = 0;
 	i = 0;
 	while (i < list.size)
@@ -125,6 +140,7 @@ char
 		size += list.fragments[i++].word.len;
 	}
 	fraglist_free(&list);
+	rb_delete(&shell->temporaries, &list);
 	return (result[size] = 0, result);
 }
 

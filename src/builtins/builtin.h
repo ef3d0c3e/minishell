@@ -46,26 +46,23 @@ builtin_init(t_shell *shell);
 void
 builtin_deinit(t_shell *shell);
 
-/**
- * @brief The `echo` builtin
- */
+/** @brief The `echo` builtin */
 const t_builtin
 *builtin_echo(void);
-/**
- * @brief The `source` builtin
- */
+/** @brief The `source` builtin */
 const t_builtin
 *builtin_source(void);
-/**
- * @brief The `fds` builtin
- */
+/** @brief The `fds` builtin */
 const t_builtin
 *builtin_fds(void);
-/**
- * @brief The `unset` builtin
- */
+/** @brief The `unset` builtin */
 const t_builtin
 *builtin_unset(void);
-
+/** @brief The `export` builtin */
+const t_builtin
+*builtin_export(void);
+/** @brief The `cd` builtin */
+const t_builtin
+*builtin_cd(void);
 
 #endif // BUILTIN_H

@@ -20,14 +20,14 @@ t_ast_node
 	t_token		op;
 
 	left = parse_command(parser);
-	if (!left)
-	{
-		parser_error(parser, ft_strdup("Expected token before operator"),
-				0, parser->pos);
-		return (NULL);
-	}
 	while (accept(parser, 0, "|") || accept(parser, 0, "|&"))
 	{
+		if (!left)
+		{
+			parser_error(parser, ft_strdup("Expected token before operator"),
+					0, parser->pos);
+			return (NULL);
+		}
 		op = parser->list.tokens[parser->pos];
 		++parser->pos;
 		right = parse_command(parser);

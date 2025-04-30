@@ -26,13 +26,14 @@ enum e_result_type
 	RES_RETURN,
 	RES_BREAK,
 	RES_CONTINUE,
+	RES_EXIT,
 };
 
 typedef struct s_eval_result
 {
 	/** @brief Result type */
 	enum e_result_type	type;
-	/** @brief Optional parameter, e.g for return or break */
+	/** @brief Optional parameter, e.g for return, exit or break */
 	int					param;
 }	t_eval_result;
 

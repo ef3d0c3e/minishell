@@ -12,6 +12,7 @@
 #ifndef CTX_H
 # define CTX_H
 
+#include "shell/eval/eval.h"
 typedef struct s_shell	t_shell;
 
 # include <parser/parser.h>
@@ -75,7 +76,7 @@ ctx_eval(
 	void *cookie);
 
 /** @brief Evaluates to stdout */
-void
+t_eval_result
 ctx_eval_stdout(t_shell *shell, char *prompt);
 /** @brief Evaluates to a string */
 t_string_buffer
