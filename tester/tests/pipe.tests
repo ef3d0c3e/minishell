@@ -91,4 +91,54 @@ DO_TEST(pipe, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	REPEAT(5,
 			SHELL_TEST("yes | cat | cat | cat | head -n 1", "", "y\n", "", 0)
 	)
+
+	// -- 1. Pipe where the second process exits before first finishes (broken pipe) --
+	SHELL_TEST("yes | head -n 1", "", "y\n", "", 0) // SIGPIPE must not crash or hang
+
+	// -- 2. Pipeline with stderr-only output in first stage --
+	SHELL_TEST("(echo ERR 1>&2) | cat", "", "", "ERR\n", 0)
+
+	// -- 3. Combine stdout + stderr over pipes manually (no |&) --
+	SHELL_TEST("bash -c 'echo out; echo err 1>&2' |& cat", "", "out\nerr\n", "", 0)
+
+	// -- 4. Read from pipeline inside command substitution --
+	SHELL_TEST("echo $(echo hi | tr a-z A-Z)", "", "HI\n", "", 0)
+
+	// -- 5. Pipeline with function in middle --
+	SHELL_TEST("f() { tr a-z A-Z; }; echo foo | f | cat", "", "FOO\n", "", 0)
+
+	// -- 6. Pipe with read built-in: should only affect subshell --
+	//SHELL_TEST("echo abc | { read a; echo $a; }; echo $a", "", "abc\n\n", "", 0)
+
+	// -- 7. Pipe with exec modifying descriptors --
+	//SHELL_TEST("exec 3>&1 | cat", "", "", "", 0) // should not crash
+
+	// -- 10. Pipeline that reads from a file on the left side --
+	SHELL_TEST("echo 123 > tmp_pipefile; cat tmp_pipefile | grep 2", "", "123\n", "", 0)
+
+	// -- 11. Pipe with process that sleeps (for zombie race testing) --
+	SHELL_TEST("echo hi | (sleep 0.1; cat)", "", "hi\n", "", 0)
+
+	// -- 12. Read from stdin and pipe it to two consumers (tee) --
+	SHELL_TEST("echo input | tee /dev/null | cat", "", "input\n", "", 0)
+
+	// -- 13. Side-effect testing: echo writes, but later pipe fails --
+	SHELL_TEST("echo OUTPUT | false", "", "", "", 1)
+
+	// -- 14. Mixing file descriptor closures --
+	SHELL_TEST("echo hi 1>&- | cat", "", "", "", 1) // stdout closed
+
+	// -- 15. A pipeline where all processes fail (with pipefail) --
+	WITH_OPTS(({{"pipefail", 1}, {NULL, 0}}),
+			SHELL_TEST("false | false | false", "", "", "", 1)
+			)
+
+	// -- 16. Multiple pipeline stages with final failure --
+	SHELL_TEST("echo OK | cat | false", "", "", "", 1)
+
+	// -- 17. Redirecting output in middle stage of a pipeline --
+	SHELL_TEST("echo abc | tee tmpfile | cat", "", "abc\n", "", 0)
+
+	// -- 19. Bash: a=b command1 | command2 — should not leak a to outer shell --
+	SHELL_TEST("a=x; a=y echo z | cat; echo $a", "", "z\nx\n", "", 0)
 ))
