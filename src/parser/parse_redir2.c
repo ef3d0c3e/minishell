@@ -22,12 +22,20 @@ static int
 
 	if (!token_atoi(parser, parser->pos + 1, &num))
 		return (0);
-	if (!ft_strcmp(tok->reserved_word, "<&") && parser->pos++ && ++parser->pos)
+	if (!ft_strcmp(tok->reserved_word, "<&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
+	{
 		make_redirection(redirs, (t_redirectee){.fd = 0},
-			(t_redirectee){.fd = num}, R_DUPLICATING_INPUT);
-	else if (!ft_strcmp(tok->reserved_word, ">&") && parser->pos++ && ++parser->pos)
+				(t_redirectee){.fd = num}, R_DUPLICATING_INPUT);
+		parser->pos += 2;
+	}
+	else if (!ft_strcmp(tok->reserved_word, ">&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
+	{
 		make_redirection(redirs, (t_redirectee){.fd = 1},
-			(t_redirectee){.fd = num}, R_DUPLICATING_OUTPUT);
+				(t_redirectee){.fd = num}, R_DUPLICATING_OUTPUT);
+		parser->pos += 2;
+	}
 	else
 		return (0);
 	return (1);
@@ -41,12 +49,20 @@ static int
 {
 	const t_token	*tok = &parser->list.tokens[parser->pos];
 
-	if (!ft_strcmp(tok->reserved_word, "<&") && ++parser->pos && ++parser->pos)
+	if (!ft_strcmp(tok->reserved_word, "<&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
+	{
 		make_redirection(redirs, (t_redirectee){.fd = 1},
-			(t_redirectee){.fd = 0}, R_CLOSE_THIS);
-	else if (!ft_strcmp(tok->reserved_word, ">&") && ++parser->pos && ++parser->pos)
+				(t_redirectee){.fd = 0}, R_CLOSE_THIS);
+		parser->pos += 2;
+	}
+	else if (!ft_strcmp(tok->reserved_word, ">&")
+			|| !ft_strcmp(tok->reserved_word, "&>"))
+	{
 		make_redirection(redirs, (t_redirectee){.fd = 0},
-			(t_redirectee){.fd = 0}, R_CLOSE_THIS);
+				(t_redirectee){.fd = 0}, R_CLOSE_THIS);
+		parser->pos += 2;
+	}
 	else
 		return (0);
 	return (1);
@@ -72,12 +88,12 @@ static int
 			parser->list.tokens[parser->pos].reserved_word);
 	if (found && ++parser->pos)
 		return (make_redirection(redirs, (t_redirectee){.fd = 1},
-			(t_redirectee){.filename = arg_parse(parser)}, found->type), 1);
+			(t_redirectee){.filename = arg_parse(parser, 0)}, found->type), 1);
 	found = redir_alternatives(ins, 6,
 			parser->list.tokens[parser->pos].reserved_word);
 	if (found && ++parser->pos)
 		return (make_redirection(redirs, (t_redirectee){.fd = 0},
-			(t_redirectee){.filename = arg_parse(parser)}, found->type), 1);
+			(t_redirectee){.filename = arg_parse(parser, 0)}, found->type), 1);
 	return (0);
 }
 
@@ -94,7 +110,8 @@ int
 		status = parse_redir_number(parser, redirs);
 	else if (right->type == TOK_MINUS)
 		status = parse_redir_minus(parser, redirs);
-	if (status == 0)
-		status = parse_redir_word(parser, redirs);
+	if (status == 0 && parse_redir_word(parser, redirs))
+		return (redirs->redirs[redirs->redirs_size - 1]
+			.redirectee.filename.nitems != 0);
 	return (status);
 }

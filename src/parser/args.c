@@ -12,7 +12,7 @@
 #include <shell/shell.h>
 
 struct s_argument
-	arg_parse(t_parser *parser)
+	arg_parse(t_parser *parser, int eat_minus)
 {
 	const t_token	*tok;
 	struct s_argument	arg;
@@ -25,12 +25,11 @@ struct s_argument
 	while (parser->pos < parser->list.size)
 	{
 		tok = &parser->list.tokens[parser->pos];
-		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
+		if ((tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
 				|| tok->type == TOK_CMD_SUB
 				|| accept_word(parser, 0))
-		{
+				&& (!eat_minus || tok->type != TOK_MINUS))
 			arg_push(parser, &arg);
-		}
 		else
 			break ;
 		++parser->pos;

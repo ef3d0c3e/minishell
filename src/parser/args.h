@@ -95,7 +95,7 @@ void
 arg_print(size_t depth, const struct s_argument *arg);
 /** @brief Parses a single argument */
 struct s_argument
-arg_parse(t_parser *parser);
+arg_parse(t_parser *parser, int eat_minus);
 
 /******************************************************************************/
 /* Arguments list                                                             */

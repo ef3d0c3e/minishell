@@ -78,6 +78,16 @@ typedef struct s_redirection
  */
 int
 redir_dest_word(const t_redirection *redir);
+/**
+ * @brief Checks if there's a minus token after the current word
+ *
+ * @param parser The parser
+ * @param offset Start offset
+ *
+ * @returns 1 if there's a `-` at the end of the current word
+ */
+int
+redir_has_minus(t_parser *parser, int offset);
 
 /** @brief Stores multiple redirections */
 typedef struct s_redirections

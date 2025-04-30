@@ -14,7 +14,7 @@
 #include <shell/shell.h>
 
 int
-	has_minus(t_parser *parser, int offset)
+	redir_has_minus(t_parser *parser, int offset)
 {
 	size_t	i;
 
@@ -41,7 +41,7 @@ int
 	status = 0;
 	if (left >= 2 && list[0].type == TOK_DIGIT && list[1].type == TOK_REDIR)
 	{
-		if (left >= 4 && has_minus(parser, 2))
+		if (left >= 4 && redir_has_minus(parser, 2))
 			status = redir_parser4(parser, redirs);
 		if (left >= 3 && !status)
 			status = redir_parser3(parser, redirs);
@@ -54,7 +54,7 @@ int
 	}
 	else if (list[0].type == TOK_REDIR)
 	{
-		if (left >= 3 && has_minus(parser, 1))
+		if (left >= 3 && redir_has_minus(parser, 1))
 			status = redir_parser3_move(parser, redirs);
 		if (left >= 2 && !status)
 			status = redir_parser2(parser, redirs);

@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/args.h"
 #include <shell/shell.h>
 
 /** @brief Parses [NUM][REDIR][NUM][-] */
@@ -24,17 +23,19 @@ static int
 
 	if (!token_atoi(parser, parser->pos + 2, &num))
 		return (0);
-	if (!ft_strcmp(tok->reserved_word, "<&"))
+	if (!ft_strcmp(tok->reserved_word, "<&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
-		parser->pos += 4;
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
 				R_MOVE_INPUT);
-	}
-	else if (!ft_strcmp(tok->reserved_word, ">&"))
-	{
 		parser->pos += 4;
+	}
+	else if (!ft_strcmp(tok->reserved_word, ">&")
+			|| !ft_strcmp(tok->reserved_word, "&>"))
+	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
 				R_MOVE_OUTPUT);
+		parser->pos += 4;
 	}
 	else
 		return (0);
@@ -58,7 +59,7 @@ static int
 		return (0);
 	parser->pos += 2;
 	make_redirection(redirs, source,
-			(t_redirectee){.filename = arg_parse(parser)}, found->type);
+			(t_redirectee){.filename = arg_parse(parser, 0)}, found->type);
 	parser->pos += 1;
 	return (1);
 }
@@ -77,7 +78,9 @@ int
 	status = 0;
 	if (right->type == TOK_DIGIT)
 		status = parse_redir_number(parser, redirs, source);
-	if (status == 0 && token_isword(right->type) && right->type != TOK_MINUS)
-		status = parse_redir_word(parser, redirs, source);
+	if (status == 0 && redir_has_minus(parser, 2)
+		&& parse_redir_word(parser, redirs, source))
+		return (redirs->redirs[redirs->redirs_size - 1]
+			.redirectee.filename.nitems != 0);
 	return (status);
 }

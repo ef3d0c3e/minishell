@@ -23,13 +23,15 @@ static int
 
 	if (!token_atoi(parser, parser->pos + 2, &num))
 		return (0);
-	if (!ft_strcmp(tok->reserved_word, "<&"))
+	if (!ft_strcmp(tok->reserved_word, "<&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
 				R_DUPLICATING_INPUT);
 		parser->pos += 3;
 	}
-	else if (!ft_strcmp(tok->reserved_word, ">&"))
+	else if (!ft_strcmp(tok->reserved_word, ">&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
 				R_DUPLICATING_OUTPUT);
@@ -47,15 +49,17 @@ static int
 	t_redirections *redirs,
 	t_redirectee source)
 {
-	const t_token	*tok = &parser->list.tokens[parser->pos];
+	const t_token	*tok = &parser->list.tokens[parser->pos + 1];
 
-	if (!ft_strcmp(tok->reserved_word, "<&"))
+	if (!ft_strcmp(tok->reserved_word, "<&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = 1},
 				R_CLOSE_THIS);
 		parser->pos += 3;
 	}
-	else if (!ft_strcmp(tok->reserved_word, ">&"))
+	else if (!ft_strcmp(tok->reserved_word, ">&")
+			|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = 0},
 				R_CLOSE_THIS);
@@ -81,13 +85,13 @@ static int
 	{"<&", R_DUPLICATING_INPUT_WORD}};
 	const t_redir_tok_type			*found;
 
-	found = redir_alternatives(tokens, 11,
+	found = redir_alternatives(tokens, 10,
 			parser->list.tokens[parser->pos + 1].reserved_word);
 	if (!found)
 		return (0);
 	parser->pos += 2;
 	make_redirection(redirs, source,
-			(t_redirectee){.filename = arg_parse(parser)}, found->type);
+			(t_redirectee){.filename = arg_parse(parser, 0)}, found->type);
 	return (1);
 }
 
@@ -107,7 +111,10 @@ int
 		status = parse_redir_number(parser, redirs, source);
 	else if (right->type == TOK_MINUS)
 		status = parse_redir_minus(parser, redirs, source);
-	if (status == 0 && token_isword(right->type))
-		status = parse_redir_word(parser, redirs, source);
+	if (status == 0 && parse_redir_word(parser, redirs, source))
+	{
+		return (redirs->redirs[redirs->redirs_size - 1]
+			.redirectee.filename.nitems != 0);
+	}
 	return (status);
 }

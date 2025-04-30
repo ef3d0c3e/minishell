@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/redir_parser.h"
 #include <shell/shell.h>
 
 /** @brief Parses [REDIR][NUM][-] */
@@ -22,13 +23,15 @@ static int
 
 	if (!token_atoi(parser, parser->pos + 1, &num))
 		return (0);
-	if (!ft_strcmp(tok->reserved_word, "<&"))
+	if (!ft_strcmp(tok->reserved_word, "<&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, (t_redirectee){.fd = 0},
 				(t_redirectee){.fd = num}, R_MOVE_INPUT);
 		parser->pos += 3;
 	}
-	else if (!ft_strcmp(tok->reserved_word, ">&"))
+	else if (!ft_strcmp(tok->reserved_word, ">&")
+			|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		make_redirection(redirs, (t_redirectee){.fd = 1},
 				(t_redirectee){.fd = num}, R_MOVE_INPUT);
@@ -47,18 +50,20 @@ static int
 {
 	const t_token	*tok = &parser->list.tokens[parser->pos];
 
-	if (!ft_strcmp(tok->reserved_word, "<&"))
+	if (!ft_strcmp(tok->reserved_word, "<&")
+			|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		++parser->pos;
 		make_redirection(redirs, (t_redirectee){.fd = 0},
-				(t_redirectee){.filename = arg_parse(parser)}, R_MOVE_INPUT_WORD);
+				(t_redirectee){.filename = arg_parse(parser,0 )}, R_MOVE_INPUT_WORD);
 		++parser->pos;
 	}
-	else if (!ft_strcmp(tok->reserved_word, ">&"))
+	else if (!ft_strcmp(tok->reserved_word, ">&")
+			|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		++parser->pos;
 		make_redirection(redirs, (t_redirectee){.fd = 1},
-				(t_redirectee){.filename = arg_parse(parser)}, R_MOVE_INPUT_WORD);
+				(t_redirectee){.filename = arg_parse(parser, 0)}, R_MOVE_INPUT_WORD);
 		++parser->pos;
 	}
 	else
@@ -78,9 +83,10 @@ int
 	status = 0;
 	if (right->type == TOK_DIGIT)
 		status = parse_redir_number(parser, redirs);
-	else if (token_isword(right->type) && right->type != TOK_MINUS)
-		status = parse_redir_word(parser, redirs);
-	if (!status)
-		return (0);
-	return (3);
+	else if (status == 0 && redir_has_minus(parser, 1)
+			&& parse_redir_word(parser, redirs))
+		return (redirs->redirs[redirs->redirs_size - 1]
+			.redirectee.filename.nitems != 0);
+			
+	return (status);
 }
