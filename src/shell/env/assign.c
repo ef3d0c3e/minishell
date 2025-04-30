@@ -9,8 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
 #include "util/util.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 void
 	prefix_stack_init(t_shell *shell)
@@ -25,6 +27,48 @@ void
 	while (shell->prefix_stack.size)
 		prefix_stack_pop(shell);
 	free(shell->prefix_stack.variables);
+}
+
+static void
+	prefix_var_free(void *ptr)
+{
+	t_prefix_var	*var = ptr;
+
+	free(var);
+}
+
+static void
+	install_var(t_shell *shell, t_rbtree *saved, const char *name, char *value)
+{
+	t_shell_var		prev;
+	t_prefix_var	*var;
+
+	var = xmalloc(sizeof(t_prefix_var));
+	var->saved_value = NULL;
+	var->exported = 0;
+	if (get_variable(shell, name, &prev))
+	{
+		var->exported = prev.exported;
+		var->saved_value = ft_strdup(prev.value);
+		set_variable(shell, name, value, prev.exported);
+	}
+	else
+	{
+		set_variable(shell, name, value, 0);
+	}
+	rb_insert(saved, ft_strdup(name), var);
+}
+
+static void
+	uninstall_var(size_t depth, t_rbnode *node, void *cookie)
+{
+	t_shell *const	shell = cookie;
+	t_prefix_var	*var = node->data;
+
+	unset_variable(shell, node->key);
+	if (!var->saved_value)
+		return ;
+	set_variable(shell, node->key, var->saved_value, var->exported);
 }
 
 void
@@ -46,33 +90,25 @@ void
 		stack->capacity = stack->capacity * 2 + !stack->capacity;
 	}
 	stack->variables[stack->size] = rb_new(
-		(int(*)(const void *, const void *))ft_strcmp, free, free);
+		(int(*)(const void *, const void *))ft_strcmp, free, prefix_var_free);
 	i = 0;
 	while (i < size)
 	{
 		result = arg_expansion_single(shell, &assigns[i].value);
 		if (result)
-			rb_insert(&stack->variables[stack->size],
-					ft_strdup(stringbuf_cstr(&assigns[i].variable)), result);
+			install_var(shell, &stack->variables[stack->size],
+					stringbuf_cstr(&assigns[i].variable), result);
 		++i;
 	}
 	++stack->size;
 }
 
-static void
-	reinstall(size_t depth, t_rbnode *node, void *cookie)
-{
-	t_shell *const	shell = cookie;
-
-}
-
 void
 	prefix_stack_pop(t_shell *shell)
 {
-	printf("POP\n");
 	if (!shell->prefix_stack.size)
 		shell_fail(shell, "Attempted to pop empty prefix stack", SRC_LOCATION);
 	rb_apply(&shell->prefix_stack.variables[--shell->prefix_stack.size],
-			reinstall, shell);
+			uninstall_var, shell);
 	rb_free(&shell->prefix_stack.variables[shell->prefix_stack.size]);
 }

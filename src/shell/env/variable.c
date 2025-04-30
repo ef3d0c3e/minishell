@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/env/env.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
 
 void
 	set_variable(t_shell *shell, const char *name, char *value, int export)
@@ -36,6 +33,7 @@ void
 	var = rb_find(&shell->reg_env, name);
 	if (var)
 	{
+		free(var->value);
 		var->value = value;
 		return ;
 	}
@@ -83,4 +81,21 @@ int
 		var->value = found->value;
 	}
 	return (var->value != NULL);
+}
+
+int
+	unset_variable(t_shell *shell, const char *name)
+{
+	t_stack_frame	*frame;
+	size_t			i;
+
+	i = 0;
+	while (i < shell->eval_stack.size)
+	{
+		frame = &shell->eval_stack.frames[shell->eval_stack.size - i - 1];
+		if (rb_delete(&frame->locals, name))
+			return (1);
+		++i;
+	}
+	return (rb_delete(&shell->reg_env, name));
 }

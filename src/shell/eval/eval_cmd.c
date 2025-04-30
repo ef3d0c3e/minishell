@@ -9,69 +9,48 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
+#include "shell/expand/expand.h"
+#include "shell/redir/redir.h"
+#include "util/util.h"
 #include <shell/shell.h>
-
-void
-	args_free(char **cmd)
-{
-	size_t	i;
-
-	i = 0;
-	while (cmd[i])
-	{
-		free(cmd[i]);
-		++i;
-	}
-	free(cmd);
-}
+#include <stdio.h>
 
 static void
-	eval_exec_child(t_shell *shell, t_ast_node *cmd, char *path, char **argv)
+	install_var(t_shell *shell, const char *name, char *value)
 {
-	char					**shellp;
-	char					*err;
-	t_redirs_stack			stack;
-	
-	if (argv[0] && !path)
-		shell_exit(shell, 127);
-	shellp = environ_to_envp(shell);
-	redir_stack_init(&stack);
-	do_redir(shell, &stack, &cmd->cmd.redirs);
-	if (shell_error_flush(shell) && argv[0])
-		shell->last_status = execve(path, argv, shellp);
-	undo_redir(shell, &stack);
-	args_free(shellp);
-	args_free(argv);
-	if (!path)
-		shell_exit(shell, EXIT_SUCCESS);
-	ft_asprintf(&err, "Failed to execute `%s`: %m", path);
-	free(path);
-	shell_error(shell, err, SRC_LOCATION);
-	shell_exit(shell, EXIT_FAILURE);
-}
+	t_shell_var	var;
 
-static void
-	eval_exec_parent(t_shell *shell, t_ast_node *cmd, char *path, char **argv)
-{
-	pid_t	pid;
-	int		status;
-
-	pid = shell_fork(shell, SRC_LOCATION);
-	if (pid == -1)
-		shell_perror(shell, "fork() failed", SRC_LOCATION);
-	if (pid)
-	{
-		if (waitpid(pid, &status, 0) == -1)
-			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
-		shell->last_status = WEXITSTATUS(status);
-		if (argv[0])
-			free(path);
-	}
+	if (get_variable(shell, name, &var))
+		set_variable(shell, name, value, var.exported);
 	else
-		eval_exec_child(shell, cmd, path, argv);
+		set_variable(shell, name, value, 0);
 }
 
+/** @brief Evaluates command with no arguments */
+static t_eval_result
+	eval_empty(t_shell *shell, t_ast_node *cmd)
+{
+	t_redirs_stack	stack;
+	size_t			i;
+	char			*result;
 
+	redir_stack_init(&stack);
+	if (do_redir(shell, &stack, &cmd->cmd.redirs))
+	{
+		i = 0;
+		while (i < cmd->cmd.nassigns)
+		{
+			result = arg_expansion_single(shell, &cmd->cmd.assigns[i].value);
+			if (result)
+				install_var(shell,
+						stringbuf_cstr(&cmd->cmd.assigns[i].variable), result);
+			++i;
+		}
+	}
+	undo_redir(shell, &stack);
+	return ((t_eval_result){RES_NONE, 0});
+}
 
 t_eval_result
 	eval_cmd(t_shell *shell, t_ast_node *program)
@@ -86,8 +65,9 @@ t_eval_result
 	if (!argv)
 		return ((t_eval_result){RES_NONE, 0});
 	status = 0;
-	if (argv[0])
-		status = resolve_eval(shell, argv[0], &path);
+	if (!argv[0])
+		return (free(argv), eval_empty(shell, program));
+	status = resolve_eval(shell, argv[0], &path);
 	if (status == 1)
 		return (eval_special(shell, program, argv));
 	else if (status == 2)
@@ -95,7 +75,7 @@ t_eval_result
 	else if (status == 3)
 		return (eval_builtin(shell, program, argv));
 	else if (status == 0)
-		eval_exec_parent(shell, program, path, argv);
+		return (eval_exec(shell, program, path, argv));
 	else
 	{
 		ft_asprintf(&err, "%s: command not found", argv[0]);

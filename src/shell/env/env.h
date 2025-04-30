@@ -174,6 +174,21 @@ char
  */
 int
 get_variable(t_shell *shell, const char *name, t_shell_var *var);
+/**
+ * @brief Unsets a variable
+ *
+ * This function first looks if a variable named `name` exists in each stack
+ * frames. Then it will search in the prefix stack.
+ * If it is not found, the variable will be searched in the global
+ * environment.
+ *
+ * @param shell The shell session
+ * @param name Variable name
+ *
+ * @returns 1 if found, 0 otherwise
+ */
+int
+unset_variable(t_shell *shell, const char *name);
 
 /******************************************************************************/
 /* Prefix assignment handling                                                 */
@@ -182,13 +197,10 @@ get_variable(t_shell *shell, const char *name, t_shell_var *var);
 /** @brief Variable from prefix assignment */
 typedef struct s_prefix_var
 {
-	/** @brief Variable name (non owrning) */
-	const char	*name;
-	/** @brief Variable value */
-	char		*value;
 	/** @brief Previous value if a variable is shadowed */
-	char		*old_value;
-	
+	char		*saved_value;
+	/** @brief Set to 1 if the variable was exported */
+	int			exported;
 }	t_prefix_var;
 
 /** @brief Stack for prefix assignments */

@@ -130,6 +130,7 @@ char
 		ft_memcpy(&result[size], list.fragments[i].word.str, list.fragments[i].word.len);
 		size += list.fragments[i++].word.len;
 	}
+	fraglist_free(&list);
 	return (result[size] = 0, result);
 }
 

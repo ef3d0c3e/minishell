@@ -76,7 +76,7 @@ redir_open(t_shell *shell, t_redirection *redir);
  * @param stack The redirection unwind stack
  * @param redir The redirection
  */
-void
+int
 redir_internal(t_shell *shell, t_redirs_stack *stack, t_redirection *redir);
 
 /**
@@ -85,8 +85,10 @@ redir_internal(t_shell *shell, t_redirs_stack *stack, t_redirection *redir);
  * @param shell The shell session
  * @param stack The redirection unwind stack
  * @param redir The redirections to perform
+ *
+ * @returns 0 on failure, 1 on success
  */
-void
+int
 do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs);
 /**
  * @brief Undoes redirections from the redirection stack

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
+int
 	do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs)
 {
 	size_t	i;
@@ -19,9 +19,11 @@ void
 	i = 0;
 	while (i < redirs->redirs_size)
 	{
-		redir_internal(shell, stack, &redirs->redirs[i]);
+		if (!redir_internal(shell, stack, &redirs->redirs[i]))
+			return (0);
 		++i;
 	}
+	return (1);
 }
 
 void

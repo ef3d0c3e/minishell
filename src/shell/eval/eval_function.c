@@ -31,8 +31,7 @@ t_eval_result
 	t_redirs_stack		stack;
 	
 	redir_stack_init(&stack);
-	do_redir(shell, &stack, &cmd->cmd.redirs);
-	if (shell_error_flush(shell))
+	if (do_redir(shell, &stack, &cmd->cmd.redirs))
 	{
 		funs_stack_push(shell, function, argv);
 		prefix_stack_push(shell, cmd->cmd.assigns, cmd->cmd.nassigns);

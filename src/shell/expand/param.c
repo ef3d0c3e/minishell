@@ -9,10 +9,12 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
 #include "shell/expand/expand.h"
 #include "shell/funs/funs.h"
 #include "util/util.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 static int
 	param_special_glob(
@@ -107,21 +109,9 @@ static int
 	t_fragment_list *list,
 	struct s_arg_item *param)
 {
-	// FIXME Search locals in previous frames until root frame
-	t_stack_frame *const	frame = &shell->eval_stack.frames
-		[shell->eval_stack.size - 1];
-	const char				*found;
+	char	*found;
 
-	if (shell->eval_stack.size != 0)
-	{
-		found = rb_find(&frame->locals, param->param.name);
-		if (found)
-		{
-			fraglist_push(list, stringbuf_from(found), param->flags);
-			return (1);
-		}
-	}
-	found = rb_find(&shell->reg_env, param->param.name);
+	found = get_variable_value(shell, param->param.name);
 	if (!found)
 		return (0);
 	fraglist_push(list, stringbuf_from(found), param->flags);

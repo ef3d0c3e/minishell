@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
 #include <shell/shell.h>
 
 
@@ -23,9 +24,13 @@ t_eval_result
 	while (argv[argc])
 		++argc;
 	redir_stack_init(&stack);
-	do_redir(shell, &stack, &cmd->cmd.redirs);
-	if (shell_error_flush(shell))
+	
+	if (do_redir(shell, &stack, &cmd->cmd.redirs))
+	{
+		prefix_stack_push(shell, cmd->cmd.assigns, cmd->cmd.nassigns);
 		shell->last_status = builtin->run(shell, argc, argv);
+		prefix_stack_pop(shell);
+	}
 	undo_redir(shell, &stack);
 	args_free(argv);
 	return ((t_eval_result){RES_NONE, 0});
