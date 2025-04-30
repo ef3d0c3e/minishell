@@ -9,38 +9,63 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/redir_parser.h"
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
+
+int
+	has_minus(t_parser *parser, int offset)
+{
+	size_t	i;
+
+	i = parser->pos + offset;
+	while (i < parser->list.size && (token_isword(parser->list.tokens[i].type)
+		|| parser->list.tokens[i].type == TOK_CMD_SUB
+		|| parser->list.tokens[i].type == TOK_PARAM_SIMPLE
+		|| parser->list.tokens[i].type == TOK_PARAM))
+		++i;
+	if (i == parser->list.size)
+		return (0);
+	return (parser->list.tokens[i].type == TOK_MINUS);
+}
 
 int
 	parse_redir(
 	t_parser *parser,
 	t_redirections *redirs)
 {
-	const size_t	end = parser->list.size;
+	const size_t	left = parser->list.size - parser->pos;
 	const t_token	*list = parser->list.tokens + parser->pos;
-	size_t			skip;
+	int				status;
 
-	skip = 0;
-	if (end - parser->pos >= 3 && list[0].type == TOK_REDIR
-		&& token_isword(list[1].type) && list[2].type == TOK_MINUS)
-		skip = redir_parser3_move(parser, parser->pos, redirs);
-	if (!skip && end - parser->pos >= 2 && list[0].type == TOK_REDIR
-		&& token_isword(list[1].type))
-		skip = redir_parser2(parser, parser->pos, redirs);
-	if (!skip && end - parser->pos >= 4 && list[0].type == TOK_DIGIT
-		&& list[1].type == TOK_REDIR && token_isword(list[2].type) 
-		&& list[3].type == TOK_MINUS)
-		skip = redir_parser4(parser, parser->pos, redirs);
-	if (!skip && end - parser->pos >= 3 && list[0].type == TOK_DIGIT
-		&& list[1].type == TOK_REDIR && token_isword(list[2].type))
-		skip = redir_parser3(parser, parser->pos, redirs);
-	if (list[0].type == TOK_REDIR && !skip)
+	status = 0;
+	if (left >= 2 && list[0].type == TOK_DIGIT && list[1].type == TOK_REDIR)
 	{
-		parser_error(parser, ft_strdup("Invalid redirections"),
-			parser->pos, parser->pos + 1);
-		skip = 1;
+		if (left >= 4 && has_minus(parser, 2))
+			status = redir_parser4(parser, redirs);
+		if (left >= 3 && !status)
+			status = redir_parser3(parser, redirs);
+		if (!status)
+		{
+			parser_error(parser, ft_strdup("Invalid redirections"),
+					parser->pos, parser->pos + 1);
+			parser->pos += 2;
+		}
 	}
-	return (parser->pos += skip, skip != 0);
+	else if (list[0].type == TOK_REDIR)
+	{
+		if (left >= 3 && has_minus(parser, 1))
+			status = redir_parser3_move(parser, redirs);
+		if (left >= 2 && !status)
+			status = redir_parser2(parser, redirs);
+		if (!status)
+		{
+			parser_error(parser, ft_strdup("Invalid redirections"),
+					parser->pos, parser->pos + 1);
+			parser->pos += 1;
+		}
+	}
+	return (status != 0);
 }
 
 void

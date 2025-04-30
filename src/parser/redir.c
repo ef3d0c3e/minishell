@@ -9,13 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/args.h"
 #include <shell/shell.h>
 
 static void
 	redir_free(t_redirection *redir)
 {
 	if (redir_dest_word(redir))
-		stringbuf_free(&redir->redirectee.filename);
+		arg_free(&redir->redirectee.filename);
 }
 
 void

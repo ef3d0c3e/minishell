@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 int
@@ -68,7 +69,8 @@ int
 	if (!data)
 	{
 		ft_asprintf(&err, "Attempt to dup unregistered fd: %d", fd);
-		shell_fail(shell, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
+		return (-1);
 	}
 	newfd = dup(fd);
 	if (newfd == -1)
@@ -77,7 +79,8 @@ int
 	{
 		close(newfd);
 		ft_asprintf(&err, "Attempt to dup to already existing fd: %d", newfd);
-		shell_fail(shell, err, SRC_LOCATION);
+		shell_error(shell, err, SRC_LOCATION);
+		return (-1);
 	}
 	newdata = xmalloc(sizeof(t_fd_data));
 	*newdata = fd_data_clone(data);

@@ -29,7 +29,8 @@ static int
 	prev = &list->tokens[*i - 1];
 	next = &list->tokens[*i + 1];
 	if ((token_isword(next->type) || next->type == TOK_PARAM
-		|| next->type == TOK_PARAM_SIMPLE || next->type == TOK_CMD_SUB)
+		|| next->type == TOK_PARAM_SIMPLE || next->type == TOK_CMD_SUB
+		|| next->type == TOK_REDIR)
 		&& (token_isword(prev->type) || prev->type == TOK_PARAM
 		|| prev->type == TOK_PARAM_SIMPLE || prev->type == TOK_CMD_SUB))
 		return (0);

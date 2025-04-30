@@ -11,6 +11,33 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+struct s_argument
+	arg_parse(t_parser *parser)
+{
+	const t_token	*tok;
+	struct s_argument	arg;
+
+	arg.items = NULL;
+	arg.nitems = 0;
+	if (parser->pos < parser->list.size
+			&& parser->list.tokens[parser->pos].type == TOK_SPACE)
+		++parser->pos;
+	while (parser->pos < parser->list.size)
+	{
+		tok = &parser->list.tokens[parser->pos];
+		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
+				|| tok->type == TOK_CMD_SUB
+				|| accept_word(parser, 0))
+		{
+			arg_push(parser, &arg);
+		}
+		else
+			break ;
+		++parser->pos;
+	}
+	return (arg);
+}
+
 void
 	arg_push(t_parser *parser, struct s_argument *arg)
 {
@@ -62,7 +89,7 @@ void
 }
 
 void
-	arg_print(size_t depth, struct s_argument *arg)
+	arg_print(size_t depth, const struct s_argument *arg)
 {
 	size_t	i;
 

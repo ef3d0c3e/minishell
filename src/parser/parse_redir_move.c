@@ -15,20 +15,25 @@
 static int
 	parse_redir_number(
 	t_parser *parser,
-	size_t start,
 	t_redirections *redirs)
 {
-	const t_token	*tok = &parser->list.tokens[start];
+	const t_token	*tok = &parser->list.tokens[parser->pos];
 	int				num;
 
-	if (!token_atoi(parser, start + 1, &num))
+	if (!token_atoi(parser, parser->pos + 1, &num))
 		return (0);
 	if (!ft_strcmp(tok->reserved_word, "<&"))
+	{
 		make_redirection(redirs, (t_redirectee){.fd = 0},
-			(t_redirectee){.fd = num}, R_MOVE_INPUT);
+				(t_redirectee){.fd = num}, R_MOVE_INPUT);
+		parser->pos += 3;
+	}
 	else if (!ft_strcmp(tok->reserved_word, ">&"))
+	{
 		make_redirection(redirs, (t_redirectee){.fd = 1},
-			(t_redirectee){.fd = num}, R_MOVE_INPUT);
+				(t_redirectee){.fd = num}, R_MOVE_INPUT);
+		parser->pos += 3;
+	}
 	else
 		return (0);
 	return (1);
@@ -38,43 +43,43 @@ static int
 static int
 	parse_redir_word(
 	t_parser *parser,
-	size_t start,
 	t_redirections *redirs)
 {
-	const t_token	*tok = &parser->list.tokens[start];
-	t_string_buffer	word;
+	const t_token	*tok = &parser->list.tokens[parser->pos];
 
-	stringbuf_init(&word, 64);
-	token_wordcontent(&word, &parser->list.tokens[start + 1]);
 	if (!ft_strcmp(tok->reserved_word, "<&"))
-		make_redirection(redirs, (t_redirectee){.fd = 0},
-			(t_redirectee){.filename = word}, R_MOVE_INPUT_WORD);
-	else if (!ft_strcmp(tok->reserved_word, ">&"))
-		make_redirection(redirs, (t_redirectee){.fd = 1},
-			(t_redirectee){.filename = word}, R_MOVE_INPUT_WORD);
-	else
 	{
-		stringbuf_free(&word);
-		return (0);
+		++parser->pos;
+		make_redirection(redirs, (t_redirectee){.fd = 0},
+				(t_redirectee){.filename = arg_parse(parser)}, R_MOVE_INPUT_WORD);
+		++parser->pos;
 	}
+	else if (!ft_strcmp(tok->reserved_word, ">&"))
+	{
+		++parser->pos;
+		make_redirection(redirs, (t_redirectee){.fd = 1},
+				(t_redirectee){.filename = arg_parse(parser)}, R_MOVE_INPUT_WORD);
+		++parser->pos;
+	}
+	else
+		return (0);
 	return (1);
 }
 
 // [REDIR][WORD|NUM][-]
-size_t
+int
 	redir_parser3_move(
 	t_parser *parser,
-	size_t start,
 	t_redirections *redirs)
 {
-	const t_token	*right = &parser->list.tokens[start + 1];
+	const t_token	*right = &parser->list.tokens[parser->pos + 1];
 	int				status;
 
 	status = 0;
 	if (right->type == TOK_DIGIT)
-		status = parse_redir_number(parser, start, redirs);
+		status = parse_redir_number(parser, redirs);
 	else if (token_isword(right->type) && right->type != TOK_MINUS)
-		status = parse_redir_word(parser, start, redirs);
+		status = parse_redir_word(parser, redirs);
 	if (!status)
 		return (0);
 	return (3);

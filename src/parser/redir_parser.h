@@ -13,6 +13,7 @@
 # define REDIR_PARSER_H
 
 # include <tokenizer/tokenizer.h>
+# include <parser/args.h>
 
 typedef struct s_parser	t_parser;
 
@@ -48,9 +49,9 @@ enum e_redir_type
 typedef union u_redirectee
 {
 	/** @brief Redirect to/from file descriptor */
-	int				fd;
+	int					fd;
 	/** @brief Redirect to/from file */
-	t_string_buffer	filename;
+	struct s_argument	filename;
 }	t_redirectee;
 
 /** @brief Stores a redirection */
@@ -261,15 +262,13 @@ const t_redir_tok_type
  * @endcode
  *
  * @param parser The parser
- * @param start Redirection start position
  * @param redirs The redirections to store to
  *
- * @returns The number of skipped tokens
+ * @returns 1 On success, 0 on failure
 */
-size_t
+int
 redir_parser2(
 	t_parser *parser,
-	size_t start,
 	t_redirections *redirs);
 /**
  * @brief Parses redirections of the form `[NUM][REDIR][WORD|NUM|-]`,
@@ -368,43 +367,37 @@ redir_parser2(
  * @endcode
  *
  * @param parser The parser
- * @param start Redirection start position
  * @param redirs The redirections to store to
  *
- * @returns The number of skipped tokens
+ * @returns 1 On success, 0 on failure
 */
-size_t
+int
 redir_parser3(
 	t_parser *parser,
-	size_t start,
 	t_redirections *redirs);
 /**
  * @brief Parses redirections of the form `[REDIR][NUM|WORD][-]`,
  *
  * @param parser The parser
- * @param start Redirection start position
  * @param redirs The redirections to store to
  *
- * @returns The number of skipped tokens
+ * @returns 1 On success, 0 on failure
  */
-size_t
+int
 redir_parser3_move(
 	t_parser *parser,
-	size_t start,
 	t_redirections *redirs);
 /**
  * @brief Parses redirections of the form `[NUM][REDIR][NUM|WORD][-]`,
  *
  * @param parser The parser
- * @param start Redirection start position
  * @param redirs The redirections to store to
  *
- * @returns The number of skipped tokens
+ * @returns 1 On success, 0 on failure
  */
-size_t
+int
 redir_parser4(
 	t_parser *parser,
-	size_t start,
 	t_redirections *redirs);
 
 /**

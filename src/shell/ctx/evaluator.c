@@ -21,12 +21,12 @@ static void
 	t_eval_result *const	result = cookie;
 
 	(void)cookie;
-	*result = eval(ctx->shell, ctx->program);
+	//*result = eval(ctx->shell, ctx->program);
 	ctx_free(ctx);
 	if (!shell_error_flush(shell))
 		shell->last_status = 1;
-	else if (result->type == RES_EXIT)
-		shell->last_status = result->param;
+	//else if (result->type == RES_EXIT)
+	//	shell->last_status = result->param;
 }
 
 t_eval_result

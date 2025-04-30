@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/args.h"
 #include <shell/shell.h>
 
 const t_redir_tok_type
@@ -88,7 +89,8 @@ void
 		redir = &redirs->redirs[i];
 		if (redir_dest_word(redir))
 		{
-			ft_dprintf(2, "%s fl=%05o %d:'%.*s'\n", redir_name(redir->type), redir->flags, redir->redirector.fd, (int)redir->redirectee.filename.len, redir->redirectee.filename.str);
+			ft_dprintf(2, "%s fl=%05o %d:", redir_name(redir->type), redir->flags, redir->redirector.fd);
+			arg_print(0, &redir->redirectee.filename);
 		}
 		else
 		{

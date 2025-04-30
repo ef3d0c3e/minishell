@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "shell/eval/eval.h"
 #include <shell/shell.h>
 
@@ -20,11 +21,6 @@ static void
 
 	close(fds[0]);
 	close(fds[1]);
-	if (redir_stderr)
-	{
-		close(fds[2]);
-		close(fds[3]);
-	}
 	if (waitpid(pids[0], &status[0], 0) == -1
 		|| waitpid(pids[1], &status[1], 0) == -1)
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
@@ -69,21 +65,19 @@ static void
 static void
 	pipe_stdout_stderr(t_shell *shell, t_ast_node* pipeline)
 {
-	int		fds[4];
+	int		fds[2];
 	pid_t	pids[2];
 
-	if (pipe(fds) == -1 || pipe(fds + 2) == -1)
+	if (pipe(fds) == -1)
 		shell_perror(shell, "pipe() failed", SRC_LOCATION);
 	pids[0] = shell_fork(shell, SRC_LOCATION);
 	if (pids[0] == 0)
 	{
 		close(fds[0]);
-		close(fds[2]);
 		if (dup2(fds[1], STDOUT_FILENO) == -1
-			|| dup2(fds[3], STDERR_FILENO) == -1)
+			|| dup2(fds[1], STDERR_FILENO) == -1)
 			shell_perror(shell, "dup2() failed", SRC_LOCATION);
 		close(fds[1]);
-		close(fds[3]);
 		eval(shell, pipeline->logic.left);
 		shell_exit(shell, shell->last_status);
 	}
@@ -91,16 +85,13 @@ static void
 	if (pids[1] == 0)
 	{
 		close(fds[1]);
-		close(fds[3]);
-		if (dup2(fds[0], STDIN_FILENO) == -1
-			|| dup2(fds[2], STDIN_FILENO) == -1)
+		if (dup2(fds[0], STDIN_FILENO) == -1)
 			shell_perror(shell, "dup2() failed", SRC_LOCATION);
 		close(fds[0]);
-		close(fds[2]);
 		eval(shell, pipeline->logic.right);
 		shell_exit(shell, shell->last_status);
 	}
-	pipe_wait(shell, fds, pids, 1);
+	pipe_wait(shell, fds, pids, 0);
 }
 
 t_eval_result
