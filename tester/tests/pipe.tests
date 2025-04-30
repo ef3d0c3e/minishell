@@ -7,6 +7,10 @@ DO_TEST(pipe,
 
 		SHELL_TEST("false | true", "", "", "", 0)
 		SHELL_TEST("true | false", "", "", "", 1)
+		WITH_OPTS(({{"pipefail", 1}, {NULL, 0}}),
+			SHELL_TEST("false | true", "", "", "", 1)
+			SHELL_TEST("true | false", "", "", "", 1)
+		)
 
 		REPEAT(10,
 			char	*cmd;

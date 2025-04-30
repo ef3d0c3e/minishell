@@ -25,26 +25,35 @@ enum e_eval_flags
 	FLAG_NO_STDERR = (1<<1),
 };
 
+
+typedef struct s_option_value
+{
+	const char *name;
+	int			value;
+}	t_option_value;
+
 typedef struct s_eval_test
 {
 	/** @brief Source file of the test */
-	const char		*file;
+	const char				*file;
 	/** @brief Source line of the test */
-	size_t			line;
+	size_t					line;
 	/** @brief Expression to evaluate */
-	t_string_buffer	expr;
+	t_string_buffer			expr;
 	/** @brief Input stdin (empty for none) */
-	t_string_buffer	stdin;
+	t_string_buffer			stdin;
 	/** @brief Expected stdout (empty for none) */
-	t_string_buffer	stdout;
+	t_string_buffer			stdout;
 	/** @brief Expected stderr (empty for none) */
-	t_string_buffer	stderr;
+	t_string_buffer			stderr;
 	/** @brief Environment (empty for none) */
-	const char		**envp;
+	const char				**envp;
+	/** @brief Options (empty for none) */
+	const t_option_value	*opts;
 	/** @brief Expected exit status */
-	int				status;
+	int						status;
 	/** @brief Flags */
-	int				flags;
+	int						flags;
 }	t_eval_test;
 
 typedef struct s_file_test

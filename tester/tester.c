@@ -12,11 +12,13 @@
 #include "tester.h"
 #include "ft_printf.h"
 #include "shell/ctx/ctx.h"
+#include <stdio.h>
 
 void
 	run_test_child(t_eval_test *test, int *fds)
 {
 	t_shell	shell;
+	size_t	i;
 
 	close(fds[1]);
 	close(fds[2]);
@@ -28,6 +30,12 @@ void
 	dup2(fds[0], STDIN_FILENO);
 	close(fds[0]);
 	shell = shell_new(test->envp);
+	i = 0;
+	while (test->opts[i].name)
+	{
+		option_set(&shell, test->opts[i].name, test->opts[i].value);
+		++i;
+	}
 	ctx_eval_stdout(&shell, ft_strdup(stringbuf_cstr(&test->expr)));
 	test_free(test);
 	shell_exit(&shell, shell.last_status);

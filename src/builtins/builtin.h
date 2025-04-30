@@ -61,6 +61,11 @@ const t_builtin
  */
 const t_builtin
 *builtin_fds(void);
+/**
+ * @brief The `unset` builtin
+ */
+const t_builtin
+*builtin_unset(void);
 
 
 #endif // BUILTIN_H

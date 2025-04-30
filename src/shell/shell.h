@@ -304,7 +304,6 @@ struct s_option
  */
 void
 options_init(t_shell *shell);
-
 /**
  * @brief Gets the value of an option
  *
@@ -317,5 +316,16 @@ options_init(t_shell *shell);
  */
 int
 option_value(t_shell *shell, const char *name);
+/**
+ * @brief Sets the value of an option
+ *
+ * @param shell The shell session
+ * @param name Name of the option to set
+ * @param value Option value: 0 or 1
+ *
+ * @returns 1 On success, 0 on failure
+ */
+int
+option_set(t_shell *shell, const char *name, int value);
 
 #endif // SHELL_H

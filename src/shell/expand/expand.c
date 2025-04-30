@@ -9,14 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/expand/expand.h"
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
-#include <string.h>
 
 /** @brief Performs expansion on literals */
 void
@@ -66,7 +59,8 @@ static int
 		}
 		++i;
 	}
-	if (status)
+	//printf("HERE: st=%zu\n", start_size);
+	//if (status)
 		list->fragments[start_size].force_split = 1;
 	return (1);
 }

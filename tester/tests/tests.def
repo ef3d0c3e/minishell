@@ -33,12 +33,17 @@ typedef struct s_evaluator_data
 	t_runner_data		*runner;
 }	t_evaluator_data;
 
-
 #define EXPAND(...) __VA_ARGS__
 
 #define WITH_ENV(__envp, ...) \
 { \
 	char	*__env[] = EXPAND __envp; \
+	{ __VA_ARGS__ } \
+}
+
+#define WITH_OPTS(__optsp, ...) \
+{ \
+	t_option_value	__opts[] = EXPAND __optsp; \
 	{ __VA_ARGS__ } \
 }
 
@@ -115,6 +120,7 @@ typedef struct s_evaluator_data
 			.stderr = stringbuf_from(__stderr), \
 			.status = __status, \
 			.envp = (const char **)__env, \
+			.opts = __opts, \
 			.flags = 0, \
 		}; \
 		++total; \
@@ -138,6 +144,7 @@ typedef struct s_evaluator_data
 			.stderr = stringbuf_from(""), \
 			.status = __status, \
 			.envp = (const char **)__env, \
+			.opts = __opts, \
 			.flags = FLAG_NO_STDERR, \
 		}; \
 		++total; \
@@ -150,11 +157,12 @@ typedef struct s_evaluator_data
 #define DO_TEST(__label, ...) \
 static void __test_##__label##_eval(t_runner_data *__runner_data, uint32_t seed) \
 { \
-	static const char	*__env[] = {NULL}; \
-	static const char	*__test_name = #__label; \
-	int					total; \
-	int					passed; \
-	uint32_t			__random_state; \
+	static const char			*__env[] = {NULL}; \
+	static const t_option_value	__opts[] = {(t_option_value){NULL, 0}}; \
+	static const char			*__test_name = #__label; \
+	int							total; \
+	int							passed; \
+	uint32_t					__random_state; \
 	__random_state = seed; \
 	if (!__runner_data->id_filter) \
 		ft_dprintf(2, "> Running \033[0;34m%s\033[0;0m tests...\n", #__label); \

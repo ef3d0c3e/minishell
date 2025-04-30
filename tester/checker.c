@@ -97,11 +97,11 @@ int
 	{
 		status = 0 * ft_dprintf(2, "Exit status do not match! (%d != %d)\n",
 				test->status, status);
+		success = 0;
 	}
 	if (success)
-		ft_dprintf(2, "\033[0;32mOK\033[0;0m\n");
-	else
-		ft_dprintf(2, "\033[0;31mFailed\033[0;0m (%s#%zu)\n",
-			test->file, test->line);
+		return (ft_dprintf(2, "\033[0;32mOK\033[0;0m\n"), success);
+	ft_dprintf(2, "\033[0;31mFailed\033[0;0m (%s#%zu)\n",
+		test->file, test->line);
 	return (success);
 }
