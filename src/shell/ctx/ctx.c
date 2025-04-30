@@ -107,5 +107,4 @@ int
 	t_ast_node *program = ctx->program;
 	evaluator(ctx, cookie);
 	return (1);
-
 }

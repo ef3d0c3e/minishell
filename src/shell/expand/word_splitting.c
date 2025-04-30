@@ -26,6 +26,8 @@ static void
 			++i;
 			continue ;
 		}
+		if (last)
+			fraglist_push(list, stringbuf_from(""), 0);
 		fraglist_append(list, stringbuf_from_range(word->str + last,
 			word->str + i));
 		++i;

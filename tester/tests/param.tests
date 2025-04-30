@@ -2,7 +2,6 @@
 #include "tests.def"
 
 DO_TEST(param,
-// TODO: Set experr to 0
 	SHELL_TEST("echo $",  "", "$\n",  "", 0)
 	//SHELL_TEST("echo $$", "", "$$\n", "", 0) TODO: getpid
 	SHELL_TEST("echo $@", "", "\n", "", 0)
@@ -55,5 +54,17 @@ DO_TEST(param,
 			)
 			free(var);
 		)
+	)
+
+	WITH_OPTS(({{"experr", 1}, {NULL, 0}}),
+		SHELL_TEST_ERR("echo -n $UNK", "", "", 1)
+		SHELL_TEST_ERR("echo -n ${UNK}", "", "", 1)
+	)
+	WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
+		SHELL_TEST("foo() { printf \"<%s>\" 1$@2; }; foo A B C", "", "<1A><B><C2>", "", 0)
+		SHELL_TEST("foo() { printf \"<%s>\" 1$@2; }; foo \"A a\" B \"c C\"", "", "<1A><a><B><c><C2>", "", 0)
+
+		SHELL_TEST("foo() { printf \"<%s>\" 1$*2; }; foo A B C", "", "<1A><B><C2>", "", 0)
+		SHELL_TEST("foo() { printf \"<%s>\" 1$*2; }; foo \"A a\" B \"c C\"", "", "<1A><a><B><c><C2>", "", 0)
 	)
 )

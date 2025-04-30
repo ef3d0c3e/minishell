@@ -23,7 +23,7 @@ typedef struct s_ctx
 	t_shell			*shell;
 	/** @brief Context information string */
 	char			*info;
-	/** @brief Previous active context */
+	/** @brief Previous active context, used for cleanup in forked shells */
 	struct s_ctx	*prev;
 
 	/** @brief Current program prompt */

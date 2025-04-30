@@ -16,9 +16,12 @@
 static void
 	evaluator(t_ctx *ctx, void *cookie)
 {
+	t_shell *const	shell = ctx->shell;
 	(void)cookie;
 	eval(ctx->shell, ctx->program);
 	ctx_free(ctx);
+	if (!shell_error_flush(shell))
+		shell->last_status = 1;
 }
 
 void

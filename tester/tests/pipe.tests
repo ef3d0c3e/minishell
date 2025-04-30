@@ -1,41 +1,48 @@
 // vi:syntax=c
 #include "tests.def"
 
-DO_TEST(pipe,
-	WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
-		SHELL_TEST("cat -", "HELLO", "HELLO", "", 0)
+DO_TEST(pipe, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
+	SHELL_TEST_ERR("|", "", "", 2)
+	SHELL_TEST_ERR("true |", "", "", 2)
+	SHELL_TEST_ERR("| true", "", "", 2)
 
-		SHELL_TEST("false | true", "", "", "", 0)
+	SHELL_TEST("false | true", "", "", "", 0)
+	SHELL_TEST("true | false", "", "", "", 1)
+	WITH_OPTS(({{"pipefail", 1}, {NULL, 0}}),
+		SHELL_TEST("false | true", "", "", "", 1)
 		SHELL_TEST("true | false", "", "", "", 1)
-		WITH_OPTS(({{"pipefail", 1}, {NULL, 0}}),
-			SHELL_TEST("false | true", "", "", "", 1)
-			SHELL_TEST("true | false", "", "", "", 1)
-		)
+	)
 
-		REPEAT(10,
-			char	*cmd;
-			WITH_RANDOM_TEXT(RANDOM_VALUE(10, 60), ran, " \t\n\r\f\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
-				ft_asprintf(&cmd, "echo -n '%s' | cat -", ran);
-				SHELL_TEST(cmd, "", ran, "", 0)
-				free(cmd);
-				ft_asprintf(&cmd, "echo -n '%s' | cat - | cat", ran);
-				SHELL_TEST(cmd, "", ran, "", 0)
-				free(cmd);
-				ft_asprintf(&cmd, "echo -n '%s' | cat - | cat | cat ", ran);
-				SHELL_TEST(cmd, "", ran, "", 0)
-				free(cmd);
-			)
-		)
-
-		WITH_RANDOM_TEXT(50, ran, "0123456789ABCDEF",
-			REPEAT(10,
-				size_t	idx = RANDOM_VALUE(1, 30);
-				char	*cmd;
-				ft_asprintf(&cmd, "cat - | head -c %zu | tail -c 1", idx);
-				char str[2] = {ran[idx - 1], 0};
-				SHELL_TEST(cmd, ran, str, "", 0);
-				free(cmd);
-			)
+	REPEAT(10,
+		char	*cmd;
+		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 60), ran, " \t\n\r\f\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
+			ft_asprintf(&cmd, "echo -n '%s' | cat -", ran);
+			SHELL_TEST(cmd, "", ran, "", 0)
+			free(cmd);
+			ft_asprintf(&cmd, "echo -n '%s' | cat - | cat", ran);
+			SHELL_TEST(cmd, "", ran, "", 0)
+			free(cmd);
+			ft_asprintf(&cmd, "echo -n '%s' | cat - | cat | cat ", ran);
+			SHELL_TEST(cmd, "", ran, "", 0)
+			free(cmd);
 		)
 	)
-)
+
+	WITH_RANDOM_TEXT(50, ran, "0123456789ABCDEF",
+		REPEAT(10,
+			size_t	idx = RANDOM_VALUE(1, 30);
+			char	*cmd;
+			ft_asprintf(&cmd, "cat - | head -c %zu | tail -c 1", idx);
+			char str[2] = {ran[idx - 1], 0};
+			SHELL_TEST(cmd, ran, str, "", 0);
+			free(cmd);
+		)
+	)
+
+	SHELL_TEST("echo ABCDEF | grep A", "", "ABCDEF\n", "", 0);
+	SHELL_TEST("echo ABCDEF | grep N", "", "", "", 1);
+	SHELL_TEST("echo ABCDEF 1>&2", "", "", "ABCDEF\n", 0);
+	SHELL_TEST("echo ABCDEF 1>&2 | grep N", "", "", "ABCDEF\n", 1);
+	SHELL_TEST("echo ABCDEF 1>&2 |& grep A", "", "ABCDEF\n", "", 0);
+	SHELL_TEST("echo ABCDEF 1>&2 |& grep N", "", "", "", 1);
+))

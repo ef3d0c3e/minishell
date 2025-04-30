@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_ast_node
@@ -89,6 +91,12 @@ t_ast_node
 t_ast_node
 	*parse_command(t_parser *parser)
 {
+	if (parser->pos >= parser->list.size)
+	{
+		parser_error(parser, ft_strdup("Expected tokens near newline"),
+				parser->list.size - 1, parser->list.size);
+		return (NULL);
+	}
 	if (token_isword(parser->list.tokens[parser->pos].type)
 		&& accept(parser, 1, "(")
 		&& accept(parser, 2, ")"))
