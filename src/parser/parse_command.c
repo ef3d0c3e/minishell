@@ -18,6 +18,7 @@
 t_ast_node
 	*parse_compound_command(t_parser *parser)
 {
+	const int		in_stmt = parser->allow_reserved;
 	const size_t	begin = parser->pos;
 	t_ast_node		*inner;
 	t_ast_node		*node;
@@ -35,7 +36,11 @@ t_ast_node
 	else if (accept(parser, 0, "{"))
 	{
 		++parser->pos;
+		if (parser->list.tokens[parser->pos].type == TOK_SPACE)
+			++parser->pos;
+		parser->allow_reserved = 0;
 		inner = parse_cmdlist(parser);
+		parser->allow_reserved = in_stmt;
 		expect(parser, 0, "}");
 		++parser->pos;
 		node = make_block_node(inner);

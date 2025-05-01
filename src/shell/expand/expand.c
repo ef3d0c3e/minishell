@@ -47,6 +47,7 @@ static int
 	size_t			i;
 	int				status;
 
+	//expand_braces(shell, arg);
 	i = 0;
 	while (i < arg->nitems)
 	{
@@ -66,6 +67,7 @@ static int
 	}
 	//printf("HERE: st=%zu\n", start_size);
 	//if (status)
+	if (start_size < list->size)
 		list->fragments[start_size].force_split = 1;
 	return (1);
 }
@@ -94,7 +96,10 @@ char
 	while (i < size)
 	{
 		if (!expand_arg(shell, &list, &words[i++], ifs))
+		{
+			rb_delete(&shell->temporaries, &list);
 			return (NULL);
+		}
 	}
 	list = word_split(shell, &list, ifs);
 	argv = xmalloc(sizeof(char *) * (list.size + 1));

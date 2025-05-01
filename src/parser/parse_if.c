@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
+#include <stdio.h>
 
 static void
 	if_push(t_parser *parser, t_ast_node *stmt, int with_cond)

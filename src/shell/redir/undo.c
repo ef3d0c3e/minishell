@@ -15,8 +15,8 @@ void
 	redir_stack_init(t_redirs_stack *stack)
 {
 	stack->size = 0;
-	stack->capacity = 16;
-	stack->fds = xmalloc(stack->capacity * sizeof(t_redir_fd));
+	stack->capacity = 0;
+	stack->fds = NULL;
 }
 
 static void
