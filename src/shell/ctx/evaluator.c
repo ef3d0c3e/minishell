@@ -21,6 +21,7 @@ static void
 	t_eval_result *const	result = cookie;
 
 	(void)cookie;
+	*result = (t_eval_result){RES_NONE, 0};
 	*result = eval(ctx->shell, ctx->program);
 	ctx_free(ctx);
 	if (!shell_error_flush(shell))

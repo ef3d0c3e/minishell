@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <unistd.h>
 
 static int
 	cd_var(t_shell *shell, const char *varname)

@@ -16,16 +16,11 @@
 int
 	token_grouping(t_token_list *list, t_u8_iterator *it)
 {
-	static const char	*groupings[] = {"{", "(", ")", "}", NULL};
+	static const char	*groupings[] = {"(", ")", NULL};
 	const char			*grouping;
 
 	grouping = str_alternatives(it_substr(it, 1), groupings);
 	if (!grouping)
-		return (0);
-	if ((grouping[0] == '{' || grouping[0] == '}')
-			&& list->size
-			&& list->tokens[list->size - 1].type != TOK_SPACE
-			&& list->tokens[list->size - 1].type != TOK_SEQUENCE)
 		return (0);
 	token_list_push(list, TOK_GROUPING, it->byte_pos,
 		it->byte_pos + ft_strlen(grouping))->reserved_word = grouping;

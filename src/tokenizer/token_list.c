@@ -50,6 +50,9 @@ t_token
 		.end = end,
 		.flags = FL_NONE,
 	};
+	if (type == TOK_SINGLE_QUOTE)
+		list->tokens[list->size - 1].flags |= FL_SQUOTED;
+
 	return (&list->tokens[list->size - 1]);
 }
 

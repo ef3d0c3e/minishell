@@ -12,6 +12,7 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
+#include "parser/args.h"
 #include "util/util.h"
 typedef struct s_shell	t_shell;
 
@@ -113,6 +114,20 @@ char
 /******************************************************************************/
 
 /**
+ * @brief Performs braces expansion
+ *
+ * @param shell The shell session
+ * @param arg Argument to exppand
+ *
+ * Invalid brace expansions are left unchanged.
+ *
+ * @returns 1 On success, 0 on unmatched.
+ */
+int
+expand_braces(
+	t_shell *shell,
+	struct s_argument *arg);
+/**
  * @brief Resolves a parameter in the current context
  *
  * Resolution is done in the following order
@@ -124,7 +139,7 @@ char
  *
  * @param shell The shell session
  * @param list Fragment list to insert into
- * @param param Sub expression to expand
+ * @param param Word to expand
  * @param ifs The shell's IFS variables, fallback to ` \t\n` if unset or invalid
  *
  * @returns 1 On success, 0 on unmatched. Or -1 In `experr` mode and expansion

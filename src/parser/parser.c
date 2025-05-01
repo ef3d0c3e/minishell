@@ -40,7 +40,7 @@ void
 static char
 	*error_format(t_parser *parser, char *msg, size_t start, size_t end)
 {
-	const t_token	*tok_start = &parser->list.tokens[start];
+	const t_token	*tok_start;
 	size_t			end_pos;
 	size_t			i;
 	char			*indicator;
@@ -50,6 +50,9 @@ static char
 		end_pos = parser->input.len;
 	else
 		end_pos = parser->list.tokens[end].end;
+	if (start >= end)
+		start = (end - 1) * !!end;
+	tok_start = &parser->list.tokens[start];
 	indicator = xmalloc(tok_start->start + 2);
 	i = 0;
 	while (i < tok_start->start)
@@ -75,6 +78,7 @@ void
 	parser_error(t_parser *parser, char *msg, size_t start, size_t end)
 {
 	size_t	new_cap;
+	char	*err;
 
 	new_cap = parser->errors_cap + !parser->errors_cap * 16;
 	while (new_cap < parser->errors_size + 1)
@@ -83,8 +87,15 @@ void
 			parser->errors_cap * sizeof(char **),
 			new_cap * sizeof(char **));
 	parser->errors_cap = new_cap;
-	parser->errors[parser->errors_size++]
-		= error_format(parser, msg, start, end);
+	if (parser->list.size)
+		parser->errors[parser->errors_size++]
+			= error_format(parser, msg, start, end);
+	else
+	{
+		ft_asprintf(&err, "[ Parse error ]\n%s\n", msg);
+		parser->errors[parser->errors_size++]
+			= err;
+	}
 }
 
 int

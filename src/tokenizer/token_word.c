@@ -10,15 +10,28 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
 
 int
 	token_word(t_token_list *list, t_u8_iterator *it)
 {
 	t_string_buffer	buf;
+	int				escaped;
 
-	if (it->codepoint.str[0] == '\\')
+	while (it->codepoint.len == 1 && it->codepoint.str[0] == '\\')
+	{
 		it_next(it);
-	if (!list->size || list->tokens[list->size - 1].type != TOK_WORD)
+		if (it->codepoint.len) // TODO: else read from stdin
+		{
+			stringbuf_init(&buf, 8);
+			stringbuf_append(&buf, it->codepoint);
+			token_list_push(list, TOK_SINGLE_QUOTE,
+				it->byte_pos, it->byte_pos + it->codepoint.len)->word = buf;
+			it_next(it);
+		}
+	}
+	if ((!list->size || list->tokens[list->size - 1].type != TOK_WORD)
+		&& it->codepoint.len)
 	{
 		stringbuf_init(&buf, 8);
 		stringbuf_append(&buf, it->codepoint);

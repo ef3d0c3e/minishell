@@ -10,8 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser/parser.h"
+#include "tokenizer/tokenizer.h"
 #include "util/util.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 t_ast_node
 	*parse_compound_command(t_parser *parser)
@@ -73,7 +75,8 @@ t_ast_node
 	if (parser->pos < parser->list.size)
 		cmd = parse_and_or(parser);
 	list = make_list_node();
-	list_node_push(list, cmd, '\0');
+	if (cmd)
+		list_node_push(list, cmd, '\0');
 	while (accept(parser, 0, ";") || accept(parser, 0, "\n")
 		|| accept(parser, 0, "&"))
 	{
@@ -81,9 +84,16 @@ t_ast_node
 		++parser->pos;
 		if (parser->pos >= parser->list.size)
 			break ;
+		if (parser->list.tokens[parser->pos].type == TOK_GROUPING)
+			break ;
 		cmd = parse_and_or(parser);
 		if (cmd)
 			list_node_push(list, cmd, sep->reserved_word[0]);
+	}
+	if (list->list.ncmds == 0 && parser->list.size)
+	{
+		parser_error(parser, ft_strdup("Expected tokens near newline"),
+				parser->list.size - 1, parser->list.size);
 	}
 	return (list);
 }

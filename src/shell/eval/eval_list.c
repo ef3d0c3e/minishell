@@ -20,6 +20,7 @@ t_eval_result
 
 	// TODO: Apply separator logic
 	i = 0;
+	result = (t_eval_result){RES_NONE, 0};
 	while (i < cmd->list.ncmds)
 	{
 		result = eval(shell, cmd->list.cmds[i++]);
