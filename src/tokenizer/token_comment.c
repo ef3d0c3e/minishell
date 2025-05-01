@@ -16,6 +16,8 @@ int
 {
 	const size_t	start = it->byte_pos;
 
+	if (list->size && token_isword(list->tokens[list->size - 1].type))
+		return (0);
 	if (it->codepoint.str[0] != '#')
 		return (0);
 	while (it->codepoint.len && it->codepoint.str[0] != '\n')

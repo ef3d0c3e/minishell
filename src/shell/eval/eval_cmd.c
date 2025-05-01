@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "shell/env/env.h"
+#include "shell/eval/eval.h"
 #include "shell/expand/expand.h"
 #include "shell/redir/redir.h"
 #include "util/util.h"

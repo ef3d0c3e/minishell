@@ -27,9 +27,7 @@ t_ast_node
 
 	list = parse_cmdlist(parser);
 	if (parser->pos != parser->list.size)
-	{
 		parser_error(parser, ft_strdup("Leftover tokens"), parser->pos,
 				parser->list.size);
-	}
 	return (list);
 }
