@@ -47,7 +47,7 @@ static int
 	size_t			i;
 	int				status;
 
-	//expand_braces(shell, arg);
+	expand_braces(shell, arg);
 	i = 0;
 	while (i < arg->nitems)
 	{
