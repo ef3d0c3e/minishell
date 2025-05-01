@@ -93,7 +93,7 @@ void
 	size_t	i;
 
 	i = 0;
-	while (i++ < depth)
+	while (arg->nitems && i++ < depth )
 		ft_dprintf(2, " | ");
 	i = 0;
 	while (i < arg->nitems)
