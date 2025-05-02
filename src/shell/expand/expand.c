@@ -47,6 +47,7 @@ static int
 	size_t			i;
 	int				status;
 
+	// This yields a list of arguments
 	expand_braces(shell, arg);
 	i = 0;
 	while (i < arg->nitems)
