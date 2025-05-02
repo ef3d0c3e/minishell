@@ -18,7 +18,7 @@ void
 	expand_literal(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param,
+	struct s_word *param,
 	const char *ifs)
 {
 	if ((param->flags & (FL_DQUOTED | FL_SQUOTED)) == 0
@@ -40,7 +40,7 @@ static int
 	expand_arg(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_argument *arg,
+	struct s_wordlist *arg,
 	const char *ifs)
 {
 	const size_t	start_size = list->size;
@@ -81,7 +81,7 @@ static void cleanup(void *ptr)
 }
 
 char
-	**arg_expansion(t_shell *shell, struct s_argument *words, size_t size)
+	**arg_expansion(t_shell *shell, struct s_wordlist *words, size_t size)
 {
 	size_t			i;
 	t_fragment_list	list;
@@ -118,7 +118,7 @@ char
 }
 
 char
-	*arg_expansion_single(t_shell *shell, struct s_argument *arg)
+	*arg_expansion_single(t_shell *shell, struct s_wordlist *arg)
 {
 	t_fragment_list	list;
 	const char		*ifs;

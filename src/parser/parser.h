@@ -28,15 +28,15 @@ struct s_assignment
 	/** @brief Name of the variable being assigned to */
 	t_string_buffer		variable;
 	/** @brief Value to assign to `variable`, may require lazy expansion */
-	struct s_argument	value;
+	struct s_wordlist	value;
 };
 
 /** @brief Frees an array of assignments */
 void
-assignlist_free(struct s_argument *list, size_t size);
+assignlist_free(struct s_wordlist *list, size_t size);
 /** @brief Displays an array of assignments to stderr */
 void
-assignlist_print(size_t depth, struct s_argument *list, size_t size);
+assignlist_print(size_t depth, struct s_wordlist *list, size_t size);
 
 /******************************************************************************/
 /* The AST                                                                    */
@@ -110,7 +110,7 @@ print_subshell_node(size_t depth, const t_ast_node *node);
 struct s_cmd_node
 {
 	/** @brief Program arguments */
-	struct s_argument	*args;
+	struct s_wordlist	*args;
 	/** @brief Number of arguments */
 	size_t				nargs;
 	/** @brief Assignments for this command */
@@ -251,7 +251,7 @@ struct s_for_node
 	/** @brief Loop identifier, must be valid */
 	char				*ident;
 	/** @brief Word list (must undergo expansion) */
-	struct s_argument	*args;
+	struct s_wordlist	*args;
 	/** @brief Number of words */
 	size_t				nargs;
 	/** @brief For body */

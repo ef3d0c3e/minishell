@@ -11,11 +11,11 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-struct s_argument
+struct s_wordlist
 	arg_parse(t_parser *parser, int eat_minus)
 {
 	const t_token	*tok;
-	struct s_argument	arg;
+	struct s_wordlist	arg;
 
 	arg.items = NULL;
 	arg.nitems = 0;
@@ -38,7 +38,7 @@ struct s_argument
 }
 
 void
-	arg_push(t_parser *parser, struct s_argument *arg)
+	arg_push(t_parser *parser, struct s_wordlist *arg)
 {
 	const t_token	*token = &parser->list.tokens[parser->pos];
 
@@ -47,7 +47,7 @@ void
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
 		parse_param(parser, &arg->items[arg->nitems]);
 	else if (token->type == TOK_CMD_SUB)
-		arg->items[arg->nitems] = (struct s_arg_item){
+		arg->items[arg->nitems] = (struct s_word){
 			.type = ARG_SUBEXPR,
 			.flags = token->flags,
 			.text = stringbuf_from_range(token->word.str,
@@ -55,7 +55,7 @@ void
 		};
 	else
 	{
-		arg->items[arg->nitems] = (struct s_arg_item){
+		arg->items[arg->nitems] = (struct s_word){
 			.flags = token->flags,
 			.type = ARG_LITERAL,
 		};
@@ -68,7 +68,7 @@ void
 }
 
 void
-	arg_free(struct s_argument *arg)
+	arg_free(struct s_wordlist *arg)
 {
 	size_t	i;
 
@@ -88,7 +88,7 @@ void
 }
 
 void
-	arg_print(size_t depth, const struct s_argument *arg)
+	arg_print(size_t depth, const struct s_wordlist *arg)
 {
 	size_t	i;
 

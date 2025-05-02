@@ -12,11 +12,9 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
-#include "parser/args.h"
-#include "util/util.h"
-typedef struct s_shell	t_shell;
-
 #include <parser/parser.h>
+
+typedef struct s_shell	t_shell;
 
 /** @brief A fragment */
 typedef struct s_fragment
@@ -44,7 +42,7 @@ void
 expand_literal(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param,
+	struct s_word *param,
 	const char *ifs);
 /**
  * @brief Initializes an empty fragment list
@@ -95,7 +93,7 @@ fraglist_append(t_fragment_list *list, t_string_buffer word);
  * @returns A null-terminated array of strings to be passed to `execve`
  */
 char
-**arg_expansion(t_shell *shell, struct s_argument *list, size_t size);
+**arg_expansion(t_shell *shell, struct s_wordlist *list, size_t size);
 
 /**
  * @brief Expands a single argument and concatenate the resulting words into
@@ -107,7 +105,7 @@ char
  * @returns The resulting expansion
  */
 char
-*arg_expansion_single(t_shell *shell, struct s_argument *list);
+*arg_expansion_single(t_shell *shell, struct s_wordlist *list);
 
 /******************************************************************************/
 /* Individual expanders                                                       */
@@ -126,7 +124,7 @@ char
 int
 expand_braces(
 	t_shell *shell,
-	struct s_argument *arg);
+	struct s_wordlist *arg);
 /**
  * @brief Resolves a parameter in the current context
  *
@@ -149,7 +147,7 @@ int
 expand_param(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param,
+	struct s_word *param,
 	const char *ifs);
 /**
  * @brief Performs tilde `~` expansion
@@ -166,7 +164,7 @@ int
 expand_tilde(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param,
+	struct s_word *param,
 	const char *ifs);
 /**
  * @brief Expands sub expressions
@@ -182,7 +180,7 @@ int
 expand_subexpr(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_arg_item *param,
+	struct s_word *param,
 	const char *ifs);
 /**
  * @brief Performs word splitting

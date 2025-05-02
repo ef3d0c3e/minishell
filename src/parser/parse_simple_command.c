@@ -18,8 +18,8 @@ static void
 	while (cmd->cmd.nargs <= arg_pos)
 	{
 		cmd->cmd.args = ft_realloc(cmd->cmd.args,
-			sizeof(struct s_argument) * cmd->cmd.nargs,
-			sizeof(struct s_argument) * (cmd->cmd.nargs + 1));
+			sizeof(struct s_wordlist) * cmd->cmd.nargs,
+			sizeof(struct s_wordlist) * (cmd->cmd.nargs + 1));
 		cmd->cmd.args[cmd->cmd.nargs].items = NULL;
 		cmd->cmd.args[cmd->cmd.nargs].nitems = 0;
 		++cmd->cmd.nargs;
@@ -32,7 +32,7 @@ static void
 	push_assign(
 	t_ast_node *cmd,
 	t_string_buffer ident,
-	struct s_argument arg)
+	struct s_wordlist arg)
 {
 	cmd->cmd.assigns = ft_realloc(cmd->cmd.assigns,
 		sizeof(struct s_assignment) * cmd->cmd.nassigns,
@@ -49,7 +49,7 @@ static void
 {
 	const t_token		*tok;
 	size_t				assign_ident;
-	struct s_argument	arg;
+	struct s_wordlist	arg;
 
 	if (parser->pos < parser->list.size
 		&& parser->list.tokens[parser->pos].type == TOK_SPACE)
