@@ -50,15 +50,15 @@ static int
 	// This yields a list of arguments
 	expand_braces(shell, arg);
 	i = 0;
-	while (i < arg->nitems)
+	while (i < arg->nwords)
 	{
 		status = 1;
-		if (arg->items[i].type == ARG_LITERAL)
-			expand_literal(shell, list, &arg->items[i], ifs);
-		else if (arg->items[i].type == ARG_SUBEXPR)
-			status = expand_subexpr(shell, list, &arg->items[i], ifs);
-		else if (arg->items[i].type == ARG_PARAMETER)
-			status = expand_param(shell, list, &arg->items[i], ifs);
+		if (arg->words[i].type == W_LITERAL)
+			expand_literal(shell, list, &arg->words[i], ifs);
+		else if (arg->words[i].type == W_SUBEXPR)
+			status = expand_subexpr(shell, list, &arg->words[i], ifs);
+		else if (arg->words[i].type == W_PARAMETER)
+			status = expand_param(shell, list, &arg->words[i], ifs);
 		if (status == -1)
 		{
 			fraglist_free(list);

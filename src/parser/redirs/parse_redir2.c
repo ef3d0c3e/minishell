@@ -9,7 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <parser/parser.h>
+#include <shell/shell.h>
 
 /** @brief Parses [REDIR][NUMBER] */
 static int
@@ -112,6 +112,6 @@ int
 		status = parse_redir_minus(parser, redirs);
 	if (status == 0 && parse_redir_word(parser, redirs))
 		return (redirs->redirs[redirs->redirs_size - 1]
-			.redirectee.filename.nitems != 0);
+			.redirectee.filename.nwords != 0);
 	return (status);
 }

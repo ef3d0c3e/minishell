@@ -17,8 +17,8 @@ struct s_wordlist
 	const t_token	*tok;
 	struct s_wordlist	arg;
 
-	arg.items = NULL;
-	arg.nitems = 0;
+	arg.words = NULL;
+	arg.nwords = 0;
 	if (parser->pos < parser->list.size
 			&& parser->list.tokens[parser->pos].type == TOK_SPACE)
 		++parser->pos;
@@ -42,29 +42,29 @@ void
 {
 	const t_token	*token = &parser->list.tokens[parser->pos];
 
-	arg->items = ft_realloc(arg->items, sizeof(arg->items[0]) * arg->nitems,
-		sizeof(arg->items[0]) * (arg->nitems + 1));
+	arg->words = ft_realloc(arg->words, sizeof(arg->words[0]) * arg->nwords,
+		sizeof(arg->words[0]) * (arg->nwords + 1));
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
-		parse_param(parser, &arg->items[arg->nitems]);
+		parse_param(parser, &arg->words[arg->nwords]);
 	else if (token->type == TOK_CMD_SUB)
-		arg->items[arg->nitems] = (struct s_word){
-			.type = ARG_SUBEXPR,
+		arg->words[arg->nwords] = (struct s_word){
+			.type = W_SUBEXPR,
 			.flags = token->flags,
 			.text = stringbuf_from_range(token->word.str,
 				token->word.str + token->word.len),
 		};
 	else
 	{
-		arg->items[arg->nitems] = (struct s_word){
+		arg->words[arg->nwords] = (struct s_word){
 			.flags = token->flags,
-			.type = ARG_LITERAL,
+			.type = W_LITERAL,
 		};
-		stringbuf_init(&arg->items[arg->nitems].text, 64);
-		token_wordcontent(&arg->items[arg->nitems].text, token);
+		stringbuf_init(&arg->words[arg->nwords].text, 64);
+		token_wordcontent(&arg->words[arg->nwords].text, token);
 	}
-	if (arg->nitems)
-		arg->items[arg->nitems - 1].next = &arg->items[arg->nitems];
-	++arg->nitems;
+	if (arg->nwords)
+		arg->words[arg->nwords - 1].next = &arg->words[arg->nwords];
+	++arg->nwords;
 }
 
 void
@@ -73,18 +73,18 @@ void
 	size_t	i;
 
 	i = 0;
-	while (i < arg->nitems)
+	while (i < arg->nwords)
 	{
-		if (arg->items[i].type == ARG_PARAMETER)
+		if (arg->words[i].type == W_PARAMETER)
 		{
-			ast_free(arg->items[i].param.word, 0);
-			free(arg->items[i].param.name);
+			ast_free(arg->words[i].param.word, 0);
+			free(arg->words[i].param.name);
 		}
 		else
-			stringbuf_free(&arg->items[i].text);
+			stringbuf_free(&arg->words[i].text);
 		++i;
 	}
-	free(arg->items);
+	free(arg->words);
 }
 
 void
@@ -93,22 +93,22 @@ void
 	size_t	i;
 
 	i = 0;
-	while (arg->nitems && i++ < depth )
+	while (arg->nwords && i++ < depth )
 		ft_dprintf(2, " | ");
 	i = 0;
-	while (i < arg->nitems)
+	while (i < arg->nwords)
 	{
 		if (i)
 			ft_dprintf(2, " ");
-		if (arg->items[i].type == ARG_LITERAL)
+		if (arg->words[i].type == W_LITERAL)
 			ft_dprintf(2, "'%.*s'",
-				(int)arg->items[i].text.len, arg->items[i].text.str);
-		else if (arg->items[i].type == ARG_PARAMETER)
+				(int)arg->words[i].text.len, arg->words[i].text.str);
+		else if (arg->words[i].type == W_PARAMETER)
 			ft_dprintf(2, "${%s} (op=%s)",
-				arg->items[i].param.name, arg->items[i].param.op);
-		else if (arg->items[i].type == ARG_SUBEXPR)
+				arg->words[i].param.name, arg->words[i].param.op);
+		else if (arg->words[i].type == W_SUBEXPR)
 			ft_dprintf(2, "$(%.*s)",
-				(int)arg->items[i].text.len, arg->items[i].text.str);
+				(int)arg->words[i].text.len, arg->words[i].text.str);
 
 		++i;
 	}

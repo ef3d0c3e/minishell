@@ -25,16 +25,16 @@ typedef struct s_parser	t_parser;
 enum e_word_type
 {
 	/** @brief Content is to be interpreted as literal text */
-	ARG_LITERAL,
+	W_LITERAL,
 	/** @brief Content is to be interpreted as a variable needing expansion
 	 * at run-time */
-	ARG_PARAMETER,
+	W_PARAMETER,
 	/** @brief Sub expression, needs evaluation at run-time */
-	ARG_SUBEXPR,
+	W_SUBEXPR,
 };
 
 /** @brief Data for parameter expansion */
-struct s_arg_param
+struct s_word_param
 {
 	/** @brief Parameter name */
 	char			*name;
@@ -55,25 +55,25 @@ typedef struct s_word
 	/** @brief Flags of the source token */
 	int						flags;
 	/** @brief Type of arugment */
-	enum e_word_type			type;
+	enum e_word_type		type;
 	union
 	{
 		/** @brief Text data */
 		t_string_buffer		text;
 		/** @brief Param data */
-		struct s_arg_param	param;
+		struct s_word_param	param;
 	};
 	/** @brief Reference to the next argument, NULL for none */
-	struct s_word		*next;
+	struct s_word			*next;
 }	t_word;
 
 /** @brief Data for command arguments */
 typedef struct s_wordlist
 {
 	/** @brief Items in this argument */
-	struct s_word	*items;
+	struct s_word	*words;
 	/** @brief Number of items in this argument */
-	size_t				nitems;
+	size_t			nwords;
 }	t_wordlist;
 
 /**

@@ -9,16 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/args.h"
-#include "parser/parser.h"
-#include "parser/redir_parser.h"
-#include "shell/expand/expand.h"
-#include "shell/redir/redir.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
-#include <stdio.h>
 
 typedef struct s_brace_canditate
 {
@@ -38,7 +29,7 @@ static void
 
 	print_pad(" | ", depth);
 	ft_dprintf(2, "PREFIX ");
-	if (cand->prefix.nitems)
+	if (cand->prefix.nwords)
 		arg_print(0, &cand->prefix);
 	else
 		ft_dprintf(2, "\n");
@@ -66,31 +57,31 @@ static struct s_wordlist
 	size_t				i;
 	
 	printf("range = {%zu %zu %zu %zu}\n", range[0], range[1], range[2], range[3]);
-	new.nitems = (range[2] - range[0]);
-	new.items = xmalloc(sizeof(struct s_word) * new.nitems);
+	new.nwords = (range[2] - range[0]);
+	new.words = xmalloc(sizeof(struct s_word) * new.nwords);
 	i = range[0];
 	while (i < range[2])
 	{
-		if (i == range[0] && arg->items[i].type == ARG_LITERAL)
+		if (i == range[0] && arg->words[i].type == W_LITERAL)
 		{
-			current = &arg->items[i].text;
-			new.items[i - range[0]] = (struct s_word){
-				.type = ARG_LITERAL,
-				.flags = arg->items[i].flags,
+			current = &arg->words[i].text;
+			new.words[i - range[0]] = (struct s_word){
+				.type = W_LITERAL,
+				.flags = arg->words[i].flags,
 			};
 			if (i + 1 == range[2])
-				new.items[i - range[0]].text = stringbuf_from_range(current->str + range[1],
+				new.words[i - range[0]].text = stringbuf_from_range(current->str + range[1],
 						current->str + range[3]);
 			else
-				new.items[i - range[0]].text = stringbuf_from_range(current->str + range[1],
+				new.words[i - range[0]].text = stringbuf_from_range(current->str + range[1],
 						current->str + current->len);
 		}
 		else if (i + 1 == range[2])
 		{
-			current = &arg->items[i].text;
-			new.items[i - range[0]] = (struct s_word){
-				.type = ARG_LITERAL,
-				.flags = arg->items[i].flags,
+			current = &arg->words[i].text;
+			new.words[i - range[0]] = (struct s_word){
+				.type = W_LITERAL,
+				.flags = arg->words[i].flags,
 				.text = stringbuf_from_range(current->str,
 						current->str + range[3])
 			};
@@ -98,7 +89,7 @@ static struct s_wordlist
 		else
 		{
 			// TODO: Deep copy
-			new.items[i - range[0]] = arg->items[i];
+			new.words[i - range[0]] = arg->words[i];
 		}
 		++i;
 	}
@@ -130,20 +121,20 @@ static void
 	count = 1;
 	i = 0;
 	balance = 0;
-	while (i < inner->nitems)
+	while (i < inner->nwords)
 	{
-		if ((inner->items[i].type != ARG_LITERAL
-			|| inner->items[i].flags & (FL_SQUOTED | FL_SQUOTED))
+		if ((inner->words[i].type != W_LITERAL
+			|| inner->words[i].flags & (FL_SQUOTED | FL_SQUOTED))
 			&& ++i)
 			continue ;
 		j = 0;
-		while (j < inner->items[i].text.len)
+		while (j < inner->words[i].text.len)
 		{
-			if (inner->items[i].text.str[j] == '{')
+			if (inner->words[i].text.str[j] == '{')
 				++balance;
-			if (inner->items[i].text.str[j] == '}')
+			if (inner->words[i].text.str[j] == '}')
 				--balance;
-			if (inner->items[i].text.str[j] == ',' && !balance)
+			if (inner->words[i].text.str[j] == ',' && !balance)
 				++count;
 			++j;
 		}
@@ -158,20 +149,20 @@ static void
 	balance = 0;
 	last[0] = 0;
 	last[1] = 0;
-	while (i < inner->nitems)
+	while (i < inner->nwords)
 	{
-		if ((inner->items[i].type != ARG_LITERAL
-			|| inner->items[i].flags & (FL_SQUOTED | FL_SQUOTED))
+		if ((inner->words[i].type != W_LITERAL
+			|| inner->words[i].flags & (FL_SQUOTED | FL_SQUOTED))
 			&& ++i)
 			continue ;
 		j = 0;
-		while (j < inner->items[i].text.len)
+		while (j < inner->words[i].text.len)
 		{
-			if (inner->items[i].text.str[j] == '{')
+			if (inner->words[i].text.str[j] == '{')
 				++balance;
-			if (inner->items[i].text.str[j] == '}')
+			if (inner->words[i].text.str[j] == '}')
 				--balance;
-			if (inner->items[i].text.str[j] == ',' && !balance)
+			if (inner->words[i].text.str[j] == ',' && !balance)
 			{
 				arg = arg_from_range(inner, (const size_t[4]){last[0], last[1], i + 1, j});
 				arg_print(2, &arg);
@@ -192,8 +183,8 @@ static void
 	}
 
 	size_t end = 0;
-	if (inner->items[inner->nitems - 1].type == ARG_LITERAL)
-		end = inner->items[inner->nitems - 1].text.len;
+	if (inner->words[inner->nwords - 1].type == W_LITERAL)
+		end = inner->words[inner->nwords - 1].text.len;
 	arg = arg_from_range(inner, (const size_t[4]){last[0], last[1], i, end});
 	arg_print(2, &arg);
 	if (!parse_candidate(&arg, &cand->alternatives[cand->nalternatives++]))
@@ -217,16 +208,16 @@ static t_brace_candidate
 	cand.selector = 0;
 	cand.prefix = arg_from_range(arg, (const size_t[4]){0, 0, delims[0] + 1, delims[1]});
 	end = 0;
-	if (arg->items[arg->nitems - 1].type == ARG_LITERAL)
-		end = arg->items[arg->nitems - 1].text.len;
+	if (arg->words[arg->nwords - 1].type == W_LITERAL)
+		end = arg->words[arg->nwords - 1].text.len;
 	inner = arg_from_range(arg, (const size_t[4]){delims[0], delims[1] + 1, delims[2] + 1, delims[3]});
 	ft_dprintf(2, "inner\n");
 	arg_print(1, &inner);
 	split_inner(&cand, &inner);
 	cand.next = NULL;
-	if (delims[2] < arg->nitems)
+	if (delims[2] < arg->nwords)
 	{
-		suffix = arg_from_range(arg, (const size_t[4]){delims[2], delims[3] + 1, arg->nitems, end});
+		suffix = arg_from_range(arg, (const size_t[4]){delims[2], delims[3] + 1, arg->nwords, end});
 		ft_dprintf(2, "Suffix\n");
 		arg_print(0, &suffix);
 		cand.next = xmalloc(sizeof(t_brace_candidate));
@@ -254,16 +245,16 @@ int
 	delims[0] = -1;
 	delims[2] = -1;
 	balance = 0;
-	while (i < arg->nitems)
+	while (i < arg->nwords)
 	{
-		if ((arg->items[i].type != ARG_LITERAL
-			|| arg->items[i].flags & (FL_SQUOTED | FL_SQUOTED))
+		if ((arg->words[i].type != W_LITERAL
+			|| arg->words[i].flags & (FL_SQUOTED | FL_SQUOTED))
 			&& ++i)
 			continue ;
 		j = 0;
-		while (j < arg->items[i].text.len)	
+		while (j < arg->words[i].text.len)	
 		{
-			if (arg->items[i].text.str[j] == '{')
+			if (arg->words[i].text.str[j] == '{')
 			{
 				if (!balance)
 				{
@@ -272,7 +263,7 @@ int
 				}
 				++balance;
 			}
-			if (arg->items[i].text.str[j] == '}')
+			if (arg->words[i].text.str[j] == '}')
 			{
 				--balance;
 				if (!balance)
@@ -299,12 +290,12 @@ static void
 {
 	size_t	i;
 
-	result->items = ft_realloc(result->items,
-		sizeof(struct s_word) * result->nitems,
-		sizeof(struct s_word) * (result->nitems + source->nitems));
+	result->words = ft_realloc(result->words,
+		sizeof(struct s_word) * result->nwords,
+		sizeof(struct s_word) * (result->nwords + source->nwords));
 	i = 0;
-	while (i < source->nitems)
-		result->items[result->nitems++] = source->items[i++];
+	while (i < source->nwords)
+		result->words[result->nwords++] = source->words[i++];
 }
 
 static int
@@ -331,8 +322,8 @@ static int
 int
 	expand_candidate(t_brace_candidate *cand, struct s_wordlist *out)
 {
-	out->items = NULL;
-	out->nitems = 0;
+	out->words = NULL;
+	out->nwords = 0;
 	return (expand_impl(cand, out));
 }
 
@@ -344,8 +335,8 @@ int
 	t_brace_candidate cand;
 	struct s_wordlist out;
 
-	out.items = NULL;
-	out.nitems = 0;
+	out.words = NULL;
+	out.nwords = 0;
 	if (parse_candidate(arg, &cand))
 	{
 		print_cand(0, &cand);
