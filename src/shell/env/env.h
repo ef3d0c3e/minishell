@@ -147,14 +147,14 @@ set_variable(t_shell *shell, const char *name, char *value, int export);
  * @brief Gets a variable's value
  *
  * This function first looks if a variable named `name` exists in each stack
- * frames. Then it will search in the prefix stack.
+ * frames.
  * If it is not found, the variable will be searched in the global
  * environment.
  *
  * @param shell The shell session
  * @param name Variable name
  *
- * @returns The variable if foundq, NULL otherwise.
+ * @returns The variable if found, NULL otherwise.
  */
 char
 *get_variable_value(t_shell *shell, const char *name);
@@ -162,7 +162,7 @@ char
  * @brief Gets a variable
  *
  * This function first looks if a variable named `name` exists in each stack
- * frames. Then it will search in the prefix stack.
+ * frames.
  * If it is not found, the variable will be searched in the global
  * environment.
  *

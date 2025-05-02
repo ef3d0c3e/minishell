@@ -12,6 +12,8 @@
 #include "ft_printf.h"
 #include "parser/args.h"
 #include "parser/parser.h"
+#include "parser/redir_parser.h"
+#include "shell/expand/expand.h"
 #include "shell/redir/redir.h"
 #include "util/util.h"
 #include <shell/shell.h>
@@ -24,6 +26,8 @@ typedef struct s_brace_canditate
 	struct s_brace_canditate	*alternatives;
 	size_t						nalternatives;
 	struct s_brace_canditate	*next;
+
+	size_t						selector;
 
 }	t_brace_candidate;
 
@@ -175,6 +179,7 @@ static void
 				{
 					cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
 					cand->alternatives[cand->nalternatives - 1].nalternatives = 0;
+					cand->alternatives[cand->nalternatives - 1].selector = 0;
 					cand->alternatives[cand->nalternatives - 1].prefix = arg;
 					cand->alternatives[cand->nalternatives - 1].next = NULL;
 				}
@@ -195,6 +200,7 @@ static void
 	{
 		cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
 		cand->alternatives[cand->nalternatives - 1].nalternatives = 0;
+		cand->alternatives[cand->nalternatives - 1].selector = 0;
 		cand->alternatives[cand->nalternatives - 1].prefix = arg;
 		cand->alternatives[cand->nalternatives - 1].next = NULL;
 	}
@@ -208,6 +214,7 @@ static t_brace_candidate
 	struct s_argument	suffix;
 	struct s_argument	inner;
 	
+	cand.selector = 0;
 	cand.prefix = arg_from_range(arg, (const size_t[4]){0, 0, delims[0] + 1, delims[1]});
 	end = 0;
 	if (arg->items[arg->nitems - 1].type == ARG_LITERAL)
@@ -227,6 +234,7 @@ static t_brace_candidate
 		{
 			cand.next->alternatives = NULL;
 			cand.next->nalternatives = 0;
+			cand.next->selector = 0;
 			cand.next->prefix = suffix;
 			cand.next->next = NULL;
 		}
@@ -286,16 +294,72 @@ int
 	return (0);
 }
 
+static void
+	merge_segments(struct s_argument *result, struct s_argument *source)
+{
+	size_t	i;
+
+	result->items = ft_realloc(result->items,
+		sizeof(struct s_arg_item) * result->nitems,
+		sizeof(struct s_arg_item) * (result->nitems + source->nitems));
+	i = 0;
+	while (i < source->nitems)
+		result->items[result->nitems++] = source->items[i++];
+}
+
+static int
+	expand_impl(t_brace_candidate *cand, struct s_argument *out)
+{
+	if (!cand)
+		return (0);
+	merge_segments(out, &cand->prefix);
+
+	if (cand->nalternatives)
+		cand->selector %= cand->nalternatives;
+	if (cand->selector < cand->nalternatives)
+	{
+		if (!expand_impl(&cand->alternatives[cand->selector], out))
+			++cand->selector;
+		if (expand_impl(cand->next, out))
+			--cand->selector;
+		return (cand->selector < cand->nalternatives);
+	}
+	else
+		return (expand_impl(cand->next, out));
+}
+
+int
+	expand_candidate(t_brace_candidate *cand, struct s_argument *out)
+{
+	out->items = NULL;
+	out->nitems = 0;
+	return (expand_impl(cand, out));
+}
+
 int
 	expand_braces(
 	t_shell *shell,
 	struct s_argument *arg)
 {
 	t_brace_candidate cand;
+	struct s_argument out;
 
+	out.items = NULL;
+	out.nitems = 0;
 	if (parse_candidate(arg, &cand))
 	{
 		print_cand(0, &cand);
+		expand_candidate(&cand, &out);
+		ft_dprintf(2, "result=\n");
+		arg_print(0, &out);
+
+		expand_candidate(&cand, &out);
+		ft_dprintf(2, "result=\n");
+		arg_print(0, &out);
+
+		expand_candidate(&cand, &out);
+		ft_dprintf(2, "result=\n");
+		arg_print(0, &out);
 	}
 	// TODO...
 	return (0);
