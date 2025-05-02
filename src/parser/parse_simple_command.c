@@ -20,8 +20,8 @@ static void
 		cmd->cmd.args = ft_realloc(cmd->cmd.args,
 			sizeof(struct s_wordlist) * cmd->cmd.nargs,
 			sizeof(struct s_wordlist) * (cmd->cmd.nargs + 1));
-		cmd->cmd.args[cmd->cmd.nargs].items = NULL;
-		cmd->cmd.args[cmd->cmd.nargs].nitems = 0;
+		cmd->cmd.args[cmd->cmd.nargs].words = NULL;
+		cmd->cmd.args[cmd->cmd.nargs].nwords = 0;
 		++cmd->cmd.nargs;
 	}
 	arg_push(parser, &cmd->cmd.args[arg_pos]);
@@ -60,8 +60,8 @@ static void
 		if (!accept_tok(parser, 0, TOK_ASSIGN))
 			break ;
 		assign_ident = parser->pos++;
-		arg.items = NULL;
-		arg.nitems = 0;
+		arg.words = NULL;
+		arg.nwords = 0;
 		tok = &parser->list.tokens[parser->pos];
 		while (parser->pos < parser->list.size
 			&& (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE

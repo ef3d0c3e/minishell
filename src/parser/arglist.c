@@ -43,8 +43,8 @@ void
 {
 	*list = ft_realloc(*list, sizeof(struct s_wordlist) * *len,
 			sizeof(struct s_wordlist) * (*len + 1));
-	(*list)[*len].items = NULL;
-	(*list)[*len].nitems = 0;
+	(*list)[*len].words = NULL;
+	(*list)[*len].nwords = 0;
 	(*len)++;
 	arg_push(parser, &(*list)[*len - 1]);
 }

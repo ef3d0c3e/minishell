@@ -13,7 +13,7 @@
 # define REDIR_PARSER_H
 
 # include <tokenizer/tokenizer.h>
-# include <parser/words.h>
+# include <parser/words/words.h>
 
 typedef struct s_parser	t_parser;
 

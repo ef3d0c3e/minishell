@@ -24,7 +24,7 @@ void
 	char				*err;
 	size_t				sep;
 
-	arg->type = ARG_PARAMETER;
+	arg->type = W_PARAMETER;
 	arg->flags = token->flags;
 	arg->param.op = NULL;
 	arg->param.word = NULL;
