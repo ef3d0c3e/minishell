@@ -17,6 +17,16 @@ void
 	free(s->str);
 }
 
+t_string_buffer
+	stringbuf_copy(const t_string_buffer *orig)
+{
+	t_string_buffer	copy;
+
+	copy = *orig;
+	copy.str = ft_memcpy(xmalloc(copy.len), orig->str, copy.len);
+	return (copy);
+}
+
 void
 	stringbuf_append(t_string_buffer *s, t_string str)
 {

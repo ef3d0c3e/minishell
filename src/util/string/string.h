@@ -100,6 +100,16 @@ void
 stringbuf_init(t_string_buffer *buf, size_t initial_capacity);
 
 /**
+ * @brief Makes a copy of `orig` and returns it
+ *
+ * @param orig String buffer to create a copy of
+ *
+ * @returns A copy of `orig`
+ */
+t_string_buffer
+stringbuf_copy(const t_string_buffer *orig);
+
+/**
  * @brief Creates a new string buffer from a literal
  *
  * @param msg Literal message for the stringbuf

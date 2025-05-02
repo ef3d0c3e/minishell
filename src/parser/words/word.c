@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/words/words.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 void
@@ -89,11 +91,28 @@ void
 	ft_dprintf(2, "\n");
 }
 
-struct s_word
+t_word
+	word_copy(const t_word *in)
+{
+	size_t	i;
+	t_word	out;
+
+	out.natoms = in->natoms;
+	out.atoms = xmalloc(sizeof(t_atom) * out.natoms);
+	i = 0;
+	while (i < out.natoms)
+	{
+		out.atoms[i] = atom_copy(&in->atoms[i]);
+		++i;
+	}
+	return (out);
+}
+
+t_word
 	parse_word(t_parser *parser, int eat_minus)
 {
 	const t_token	*tok;
-	struct s_word	arg;
+	t_word			arg;
 
 	arg.atoms = NULL;
 	arg.natoms = 0;

@@ -9,11 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "shell/expand/expand.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static int

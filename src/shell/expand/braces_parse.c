@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   strdup.c                                           :+:      :+:    :+:   */
+/*   braces_parse.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,19 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <util/util.h>
+#include <shell/shell.h>
 
-char
-	*ft_strdup(const char *s)
-{
-	size_t	len;
-	char	*buf;
+/**
+ * @file Parser for brace expansion
+ */
 
-	if (!s)
-		return (NULL);
-	len = ft_strlen(s);
-	buf = xmalloc(len + 1);
-	ft_memcpy(buf, s, len);
-	buf[len] = 0;
-	return (buf);
-}
+
