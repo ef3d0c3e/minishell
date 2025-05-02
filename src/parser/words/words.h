@@ -51,8 +51,8 @@ struct s_atom_param
 	/** @brief The special operator: ":-", "-", ":=", "=", ":?", "?", ":+", "+",
 	 * "#", "##", "%", "%%", ":offset", ":offset:length" (or NULL) */
 	const char		*op;
-	/** @brief Ast for the special operator */
-	t_ast_node		*word;
+	/** @brief Content for the special operator */
+	char			*word;
 	/** @brief Offset for substring */
 	size_t			offset;
 	/** @brief Length for substring */
@@ -78,6 +78,16 @@ typedef struct s_atom
 }	t_atom;
 
 /**
+ * @brief Makes a copy of an atom
+ *
+ * @param in Atom to copy
+ *
+ * @returns A copy of `in`
+ */
+t_atom
+atom_copy(const t_atom *in);
+
+/**
  * @brief Parses parameter token into parameter atom
  *
  * Attempts to parse the parameter token under cursor as a parameter atom.
@@ -99,9 +109,9 @@ parse_param_aton(t_parser *parser, t_atom *arg);
 typedef struct s_word
 {
 	/** @brief Items in this argument */
-	struct s_atom	*atoms;
+	t_atom	*atoms;
 	/** @brief Number of items in this argument */
-	size_t			natoms;
+	size_t	natoms;
 }	t_word;
 
 /**
@@ -122,6 +132,15 @@ word_push(t_parser *parser, t_word *word);
 void
 word_free(t_word *word);
 /**
+ * @brief Makes a copy of a word
+ *
+ * @param in Word to copy
+ *
+ * @returns A copy of `in`
+ */
+t_word
+word_copy(const t_word *in);
+/**
  * @brief Prints a word
  *
  * @param depth Depth padding
@@ -129,6 +148,20 @@ word_free(t_word *word);
  */
 void
 word_print(size_t depth, const t_word *word);
+
+
+/**
+ * @brief Builds a subword from another word
+ *
+ * @param word Original word
+ * @param range Start and end position in the start and end atoms respectively
+ *
+ * @retruns A word constructed from `(range[0], range[1])` to
+ * `(range[2], range[3])`
+ */
+t_word
+word_sub(t_word *word, const size_t range[4]);
+
 /**
  * @brief Parses word under cursor until word delimited is encountered
  *

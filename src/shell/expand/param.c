@@ -9,12 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/env/env.h"
-#include "shell/expand/expand.h"
-#include "shell/funs/funs.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 static int
 	param_special_glob(

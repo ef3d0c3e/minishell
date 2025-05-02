@@ -107,6 +107,61 @@ char
 *arg_expansion_single(t_shell *shell, struct s_word *list);
 
 /******************************************************************************/
+/* Brace expansion                                                            */
+/******************************************************************************/
+
+/** @brief A candidate for brace-expansion, tree-like structure */
+typedef struct s_brace_canditate
+{
+	/** @brief Prefix for this brace group */
+	t_word						prefix;
+	/** @brief All alternatives sub-group for this brace group */
+	struct s_brace_canditate	*alternatives;
+	/** @brief Number of alternative sub-groups */
+	size_t						nalternatives;
+	/** @brief Next brace sub-group */
+	struct s_brace_canditate	*next;
+
+	/** @brief Position for the iteration code, initially `0` */
+	size_t						selector;
+}	t_brace_candidate;
+
+/**
+ * @brief Frees a brace candidate
+ *
+ * @param cand Brace candidate to free
+ * @param root Whether this is the root node
+ */
+void
+brace_candidate_free(t_brace_candidate *cand, int root);
+/**
+ * @brief Prints a brace candidate
+ *
+ * @param depth Print pad depth
+ * @param cand Brace candidate to print
+ */
+void
+brace_candidate_print(size_t depth, const t_brace_candidate *cand);
+
+//int
+//candidate_parse();
+
+/**
+ * @brief Performs a single expansion of a @ref t_brace_candidate
+ *
+ * Expands the candidate once and store the resulting expansion into `out`.
+ * The counter for `cand` is increased.
+ *
+ * @param cand Candidate to expand once
+ * @param out Output word
+ *
+ * @returns 1 if further expansions can be made, 0 if no more expansions are
+ * possible
+ */
+int
+candidate_expand(t_brace_candidate *cand, t_word *out);
+
+/******************************************************************************/
 /* Individual expanders                                                       */
 /******************************************************************************/
 
@@ -114,16 +169,16 @@ char
  * @brief Performs braces expansion
  *
  * @param shell The shell session
- * @param arg Argument to exppand
+ * @param wordlist Wordlist to expand
+ * @param len Length of `wordlist`
  *
  * Invalid brace expansions are left unchanged.
- *
- * @returns 1 On success, 0 on unmatched.
  */
-int
+void
 expand_braces(
 	t_shell *shell,
-	struct s_word *arg);
+	t_word **wordlist,
+	size_t *len);
 /**
  * @brief Resolves a parameter in the current context
  *

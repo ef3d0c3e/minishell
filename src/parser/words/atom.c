@@ -11,6 +11,22 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+t_atom
+	atom_copy(const t_atom *in)
+{
+	t_atom	out;
+
+	out = *in;
+	if (out.type == W_PARAMETER)
+	{
+		out.param.name = ft_strdup(out.param.name);
+		out.param.word = ft_strdup(out.param.word);
+	}
+	else
+		out.text = stringbuf_copy(&out.text);
+	return (out);
+}
+
 void
 	parse_param_aton(t_parser *parser, struct s_atom *arg)
 {

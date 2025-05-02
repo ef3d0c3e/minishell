@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "shell/expand/expand.h"
+#include "parser/words/words.h"
 #include "util/util.h"
 #include <shell/shell.h>
 
@@ -40,32 +41,45 @@ static int
 	expand_arg(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *arg,
+	t_word *arg,
 	const char *ifs)
 {
 	const size_t	start_size = list->size;
+	size_t			tmp;
+	size_t			j;
 	size_t			i;
 	int				status;
+	size_t			len;
 
 	// This yields a list of arguments
-	expand_braces(shell, arg);
+	len = 1;
+	expand_braces(shell, &arg, &len);
 	i = 0;
-	while (i < arg->natoms)
+	while (i < len)
 	{
-		status = 1;
-		if (arg->atoms[i].type == W_LITERAL)
-			expand_literal(shell, list, &arg->atoms[i], ifs);
-		else if (arg->atoms[i].type == W_SUBEXPR)
-			status = expand_subexpr(shell, list, &arg->atoms[i], ifs);
-		else if (arg->atoms[i].type == W_PARAMETER)
-			status = expand_param(shell, list, &arg->atoms[i], ifs);
-		if (status == -1)
+		tmp = list->size;
+		j = 0;
+		while (j < arg[i].natoms)
 		{
-			fraglist_free(list);
-			return (0);
+			status = 1;
+			if (arg[i].atoms[j].type == W_LITERAL)
+				expand_literal(shell, list, &arg[i].atoms[j], ifs);
+			else if (arg[i].atoms[j].type == W_SUBEXPR)
+				status = expand_subexpr(shell, list, &arg[i].atoms[j], ifs);
+			else if (arg[i].atoms[j].type == W_PARAMETER)
+				status = expand_param(shell, list, &arg[i].atoms[j], ifs);
+			if (status == -1)
+			{
+				fraglist_free(list);
+				return (0);
+			}
+			++j;
 		}
+		if (tmp < list->size)
+			list->fragments[tmp].force_split = 1;
 		++i;
 	}
+	wordlist_free(arg, len);
 	//printf("HERE: st=%zu\n", start_size);
 	//if (status)
 	if (start_size < list->size)
