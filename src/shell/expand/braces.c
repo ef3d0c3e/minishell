@@ -22,7 +22,7 @@
 
 typedef struct s_brace_canditate
 {
-	struct s_argument			prefix;
+	struct s_wordlist			prefix;
 	struct s_brace_canditate	*alternatives;
 	size_t						nalternatives;
 	struct s_brace_canditate	*next;
@@ -58,23 +58,23 @@ static void
 	}
 }
 
-static struct s_argument
-	arg_from_range(struct s_argument *arg, const size_t range[4])
+static struct s_wordlist
+	arg_from_range(struct s_wordlist *arg, const size_t range[4])
 {
 	t_string_buffer		*current;
-	struct s_argument	new;
+	struct s_wordlist	new;
 	size_t				i;
 	
 	printf("range = {%zu %zu %zu %zu}\n", range[0], range[1], range[2], range[3]);
 	new.nitems = (range[2] - range[0]);
-	new.items = xmalloc(sizeof(struct s_arg_item) * new.nitems);
+	new.items = xmalloc(sizeof(struct s_word) * new.nitems);
 	i = range[0];
 	while (i < range[2])
 	{
 		if (i == range[0] && arg->items[i].type == ARG_LITERAL)
 		{
 			current = &arg->items[i].text;
-			new.items[i - range[0]] = (struct s_arg_item){
+			new.items[i - range[0]] = (struct s_word){
 				.type = ARG_LITERAL,
 				.flags = arg->items[i].flags,
 			};
@@ -88,7 +88,7 @@ static struct s_argument
 		else if (i + 1 == range[2])
 		{
 			current = &arg->items[i].text;
-			new.items[i - range[0]] = (struct s_arg_item){
+			new.items[i - range[0]] = (struct s_word){
 				.type = ARG_LITERAL,
 				.flags = arg->items[i].flags,
 				.text = stringbuf_from_range(current->str,
@@ -115,17 +115,17 @@ static struct s_argument
 //}
 
 int
-	parse_candidate(struct s_argument *arg, t_brace_candidate *cand);
+	parse_candidate(struct s_wordlist *arg, t_brace_candidate *cand);
 
 static void
-	split_inner(t_brace_candidate *cand, struct s_argument *inner)
+	split_inner(t_brace_candidate *cand, struct s_wordlist *inner)
 {
 	size_t	count;
 	size_t	i;
 	size_t	j;
 	size_t	last[2];
 	int		balance;
-	struct s_argument	arg;
+	struct s_wordlist	arg;
 
 	count = 1;
 	i = 0;
@@ -207,12 +207,12 @@ static void
 }
 
 static t_brace_candidate
-	cand_split(struct s_argument *arg, const size_t delims[4])
+	cand_split(struct s_wordlist *arg, const size_t delims[4])
 {
 	t_brace_candidate	cand;
 	size_t				end;
-	struct s_argument	suffix;
-	struct s_argument	inner;
+	struct s_wordlist	suffix;
+	struct s_wordlist	inner;
 	
 	cand.selector = 0;
 	cand.prefix = arg_from_range(arg, (const size_t[4]){0, 0, delims[0] + 1, delims[1]});
@@ -243,7 +243,7 @@ static t_brace_candidate
 }
 
 int
-	parse_candidate(struct s_argument *arg, t_brace_candidate *cand)
+	parse_candidate(struct s_wordlist *arg, t_brace_candidate *cand)
 {
 	size_t	i;
 	size_t	j;
@@ -295,20 +295,20 @@ int
 }
 
 static void
-	merge_segments(struct s_argument *result, struct s_argument *source)
+	merge_segments(struct s_wordlist *result, struct s_wordlist *source)
 {
 	size_t	i;
 
 	result->items = ft_realloc(result->items,
-		sizeof(struct s_arg_item) * result->nitems,
-		sizeof(struct s_arg_item) * (result->nitems + source->nitems));
+		sizeof(struct s_word) * result->nitems,
+		sizeof(struct s_word) * (result->nitems + source->nitems));
 	i = 0;
 	while (i < source->nitems)
 		result->items[result->nitems++] = source->items[i++];
 }
 
 static int
-	expand_impl(t_brace_candidate *cand, struct s_argument *out)
+	expand_impl(t_brace_candidate *cand, struct s_wordlist *out)
 {
 	if (!cand)
 		return (0);
@@ -329,7 +329,7 @@ static int
 }
 
 int
-	expand_candidate(t_brace_candidate *cand, struct s_argument *out)
+	expand_candidate(t_brace_candidate *cand, struct s_wordlist *out)
 {
 	out->items = NULL;
 	out->nitems = 0;
@@ -339,10 +339,10 @@ int
 int
 	expand_braces(
 	t_shell *shell,
-	struct s_argument *arg)
+	struct s_wordlist *arg)
 {
 	t_brace_candidate cand;
-	struct s_argument out;
+	struct s_wordlist out;
 
 	out.items = NULL;
 	out.nitems = 0;

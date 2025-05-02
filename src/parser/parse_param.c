@@ -15,7 +15,7 @@
 #include <shell/shell.h>
 
 void
-	parse_param(t_parser *parser, struct s_arg_item *arg)
+	parse_param(t_parser *parser, struct s_word *arg)
 {
 	static const char	*ops[] = {":-", "-", ":=", "=", ":?", "?", ":+", "+",
 	"##", "#", "%%", "%", ":", NULL};

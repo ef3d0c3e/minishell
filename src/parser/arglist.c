@@ -12,7 +12,7 @@
 #include <shell/shell.h>
 
 void
-	arglist_free(struct s_argument *list, size_t size)
+	arglist_free(struct s_wordlist *list, size_t size)
 {
 	size_t	i;
 
@@ -23,7 +23,7 @@ void
 }
 
 void
-	arglist_print(size_t depth, struct s_argument *list, size_t size)
+	arglist_print(size_t depth, struct s_wordlist *list, size_t size)
 {
 	size_t	i;
 
@@ -38,11 +38,11 @@ void
 void
 	arglist_push(
 	t_parser *parser,
-	struct s_argument **list,
+	struct s_wordlist **list,
 	size_t *len)
 {
-	*list = ft_realloc(*list, sizeof(struct s_argument) * *len,
-			sizeof(struct s_argument) * (*len + 1));
+	*list = ft_realloc(*list, sizeof(struct s_wordlist) * *len,
+			sizeof(struct s_wordlist) * (*len + 1));
 	(*list)[*len].items = NULL;
 	(*list)[*len].nitems = 0;
 	(*len)++;

@@ -13,7 +13,7 @@
 # define REDIR_PARSER_H
 
 # include <tokenizer/tokenizer.h>
-# include <parser/args.h>
+# include <parser/words.h>
 
 typedef struct s_parser	t_parser;
 
@@ -51,7 +51,7 @@ typedef union u_redirectee
 	/** @brief Redirect to/from file descriptor */
 	int					fd;
 	/** @brief Redirect to/from file */
-	struct s_argument	filename;
+	struct s_wordlist	filename;
 }	t_redirectee;
 
 /** @brief Stores a redirection */

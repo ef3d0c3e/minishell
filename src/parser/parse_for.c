@@ -13,7 +13,7 @@
 
 /** @brief Parses a list of whitespace/newline delimited words */
 static void
-	parse_arglist(t_parser *parser, struct s_argument **args, size_t *len)
+	parse_arglist(t_parser *parser, struct s_wordlist **args, size_t *len)
 {
 	const t_token	*tok;
 	size_t			arg_pos;
