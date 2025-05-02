@@ -162,7 +162,7 @@ static void
 				++balance;
 			if (inner->atoms[i].text.str[j] == '}')
 				--balance;
-			if (inner->atoms[i].text.str[j] == ',' && !balance)
+			if (inner->atoms[i].text.str[j] == ',' && !balance && count > 1)
 			{
 				arg = arg_from_range(inner, (const size_t[4]){last[0], last[1], i + 1, j});
 				word_print(2, &arg);
@@ -295,7 +295,14 @@ static void
 		sizeof(struct s_atom) * (result->natoms + source->natoms));
 	i = 0;
 	while (i < source->natoms)
+	{
+		if (source->atoms[i].type == W_LITERAL && !source->atoms[i].text.len)
+		{
+			++i;
+			continue ;
+		}
 		result->atoms[result->natoms++] = source->atoms[i++];
+	}
 }
 
 static int
@@ -340,18 +347,11 @@ int
 	if (parse_candidate(arg, &cand))
 	{
 		print_cand(0, &cand);
-		expand_candidate(&cand, &out);
-		ft_dprintf(2, "result=\n");
-		word_print(0, &out);
-
-		expand_candidate(&cand, &out);
-		ft_dprintf(2, "result=\n");
-		word_print(0, &out);
-
-		expand_candidate(&cand, &out);
-		ft_dprintf(2, "result=\n");
+		while (expand_candidate(&cand, &out))
+		{
+			word_print(0, &out);
+		}
 		word_print(0, &out);
 	}
-	// TODO...
 	return (0);
 }
