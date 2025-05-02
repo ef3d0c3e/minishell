@@ -18,13 +18,13 @@ static void
 	while (cmd->cmd.nargs <= arg_pos)
 	{
 		cmd->cmd.args = ft_realloc(cmd->cmd.args,
-			sizeof(struct s_wordlist) * cmd->cmd.nargs,
-			sizeof(struct s_wordlist) * (cmd->cmd.nargs + 1));
-		cmd->cmd.args[cmd->cmd.nargs].words = NULL;
-		cmd->cmd.args[cmd->cmd.nargs].nwords = 0;
+			sizeof(struct s_word) * cmd->cmd.nargs,
+			sizeof(struct s_word) * (cmd->cmd.nargs + 1));
+		cmd->cmd.args[cmd->cmd.nargs].atoms = NULL;
+		cmd->cmd.args[cmd->cmd.nargs].natoms = 0;
 		++cmd->cmd.nargs;
 	}
-	arg_push(parser, &cmd->cmd.args[arg_pos]);
+	word_push(parser, &cmd->cmd.args[arg_pos]);
 }
 
 /** @brief Pushes into a command's assignments list */
@@ -32,7 +32,7 @@ static void
 	push_assign(
 	t_ast_node *cmd,
 	t_string_buffer ident,
-	struct s_wordlist arg)
+	struct s_word arg)
 {
 	cmd->cmd.assigns = ft_realloc(cmd->cmd.assigns,
 		sizeof(struct s_assignment) * cmd->cmd.nassigns,
@@ -49,7 +49,7 @@ static void
 {
 	const t_token		*tok;
 	size_t				assign_ident;
-	struct s_wordlist	arg;
+	struct s_word	arg;
 
 	if (parser->pos < parser->list.size
 		&& parser->list.tokens[parser->pos].type == TOK_SPACE)
@@ -60,15 +60,15 @@ static void
 		if (!accept_tok(parser, 0, TOK_ASSIGN))
 			break ;
 		assign_ident = parser->pos++;
-		arg.words = NULL;
-		arg.nwords = 0;
+		arg.atoms = NULL;
+		arg.natoms = 0;
 		tok = &parser->list.tokens[parser->pos];
 		while (parser->pos < parser->list.size
 			&& (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
 				|| tok->type == TOK_CMD_SUB
 				|| token_isword(tok->type)))
 		{
-			arg_push(parser, &arg);
+			word_push(parser, &arg);
 			++parser->pos;
 			tok = &parser->list.tokens[parser->pos];
 		}

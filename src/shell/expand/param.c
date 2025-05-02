@@ -19,7 +19,7 @@
 static int
 	param_special_glob(
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const t_stack_frame *frame,
 	const char *ifs)
 {
@@ -57,7 +57,7 @@ static int
 	param_special(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs)
 {
 	const t_stack_frame	*frame = &shell->eval_stack.frames
@@ -87,7 +87,7 @@ static int
 	param_positional(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param)
+	struct s_atom *param)
 {
 	const t_stack_frame	*frame = &shell->eval_stack.frames
 		[shell->eval_stack.size - 1];
@@ -107,7 +107,7 @@ static int
 	param_local_env(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param)
+	struct s_atom *param)
 {
 	char	*found;
 
@@ -122,7 +122,7 @@ static int
 	param_env(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param)
+	struct s_atom *param)
 {
 	const char				*found;
 
@@ -137,7 +137,7 @@ int
 expand_param(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs)
 {
 	int		status;

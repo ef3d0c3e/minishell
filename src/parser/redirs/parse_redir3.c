@@ -91,7 +91,7 @@ static int
 		return (0);
 	parser->pos += 2;
 	make_redirection(redirs, source,
-			(t_redirectee){.filename = arg_parse(parser, 0)}, found->type);
+			(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
 	return (1);
 }
 
@@ -114,7 +114,7 @@ int
 	if (status == 0 && parse_redir_word(parser, redirs, source))
 	{
 		return (redirs->redirs[redirs->redirs_size - 1]
-			.redirectee.filename.nwords != 0);
+			.redirectee.filename.natoms != 0);
 	}
 	return (status);
 }

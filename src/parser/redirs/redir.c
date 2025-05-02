@@ -15,7 +15,7 @@ static void
 	redir_free(t_redirection *redir)
 {
 	if (redir_dest_word(redir))
-		arg_free(&redir->redirectee.filename);
+		word_free(&redir->redirectee.filename);
 }
 
 void

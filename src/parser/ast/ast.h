@@ -13,6 +13,7 @@
 # define AST_H
 
 # include <parser/words/words.h>
+# include <parser/redirs/redir_parser.h>
 
 /******************************************************************************/
 /* The AST                                                                    */
@@ -86,7 +87,7 @@ print_subshell_node(size_t depth, const t_ast_node *node);
 struct s_cmd_node
 {
 	/** @brief Program arguments */
-	struct s_wordlist	*args;
+	struct s_word	*args;
 	/** @brief Number of arguments */
 	size_t				nargs;
 	/** @brief Assignments for this command */
@@ -227,7 +228,7 @@ struct s_for_node
 	/** @brief Loop identifier, must be valid */
 	char				*ident;
 	/** @brief Word list (must undergo expansion) */
-	struct s_wordlist	*args;
+	struct s_word	*args;
 	/** @brief Number of words */
 	size_t				nargs;
 	/** @brief For body */

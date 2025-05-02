@@ -13,7 +13,7 @@
 
 typedef struct s_brace_canditate
 {
-	struct s_wordlist			prefix;
+	struct s_word			prefix;
 	struct s_brace_canditate	*alternatives;
 	size_t						nalternatives;
 	struct s_brace_canditate	*next;
@@ -29,8 +29,8 @@ static void
 
 	print_pad(" | ", depth);
 	ft_dprintf(2, "PREFIX ");
-	if (cand->prefix.nwords)
-		arg_print(0, &cand->prefix);
+	if (cand->prefix.natoms)
+		word_print(0, &cand->prefix);
 	else
 		ft_dprintf(2, "\n");
 	i = 0;
@@ -49,39 +49,39 @@ static void
 	}
 }
 
-static struct s_wordlist
-	arg_from_range(struct s_wordlist *arg, const size_t range[4])
+static struct s_word
+	arg_from_range(struct s_word *arg, const size_t range[4])
 {
 	t_string_buffer		*current;
-	struct s_wordlist	new;
+	struct s_word	new;
 	size_t				i;
 	
 	printf("range = {%zu %zu %zu %zu}\n", range[0], range[1], range[2], range[3]);
-	new.nwords = (range[2] - range[0]);
-	new.words = xmalloc(sizeof(struct s_word) * new.nwords);
+	new.natoms = (range[2] - range[0]);
+	new.atoms = xmalloc(sizeof(struct s_atom) * new.natoms);
 	i = range[0];
 	while (i < range[2])
 	{
-		if (i == range[0] && arg->words[i].type == W_LITERAL)
+		if (i == range[0] && arg->atoms[i].type == W_LITERAL)
 		{
-			current = &arg->words[i].text;
-			new.words[i - range[0]] = (struct s_word){
+			current = &arg->atoms[i].text;
+			new.atoms[i - range[0]] = (struct s_atom){
 				.type = W_LITERAL,
-				.flags = arg->words[i].flags,
+				.flags = arg->atoms[i].flags,
 			};
 			if (i + 1 == range[2])
-				new.words[i - range[0]].text = stringbuf_from_range(current->str + range[1],
+				new.atoms[i - range[0]].text = stringbuf_from_range(current->str + range[1],
 						current->str + range[3]);
 			else
-				new.words[i - range[0]].text = stringbuf_from_range(current->str + range[1],
+				new.atoms[i - range[0]].text = stringbuf_from_range(current->str + range[1],
 						current->str + current->len);
 		}
 		else if (i + 1 == range[2])
 		{
-			current = &arg->words[i].text;
-			new.words[i - range[0]] = (struct s_word){
+			current = &arg->atoms[i].text;
+			new.atoms[i - range[0]] = (struct s_atom){
 				.type = W_LITERAL,
-				.flags = arg->words[i].flags,
+				.flags = arg->atoms[i].flags,
 				.text = stringbuf_from_range(current->str,
 						current->str + range[3])
 			};
@@ -89,7 +89,7 @@ static struct s_wordlist
 		else
 		{
 			// TODO: Deep copy
-			new.words[i - range[0]] = arg->words[i];
+			new.atoms[i - range[0]] = arg->atoms[i];
 		}
 		++i;
 	}
@@ -106,35 +106,35 @@ static struct s_wordlist
 //}
 
 int
-	parse_candidate(struct s_wordlist *arg, t_brace_candidate *cand);
+	parse_candidate(struct s_word *arg, t_brace_candidate *cand);
 
 static void
-	split_inner(t_brace_candidate *cand, struct s_wordlist *inner)
+	split_inner(t_brace_candidate *cand, struct s_word *inner)
 {
 	size_t	count;
 	size_t	i;
 	size_t	j;
 	size_t	last[2];
 	int		balance;
-	struct s_wordlist	arg;
+	struct s_word	arg;
 
 	count = 1;
 	i = 0;
 	balance = 0;
-	while (i < inner->nwords)
+	while (i < inner->natoms)
 	{
-		if ((inner->words[i].type != W_LITERAL
-			|| inner->words[i].flags & (FL_SQUOTED | FL_SQUOTED))
+		if ((inner->atoms[i].type != W_LITERAL
+			|| inner->atoms[i].flags & (FL_SQUOTED | FL_SQUOTED))
 			&& ++i)
 			continue ;
 		j = 0;
-		while (j < inner->words[i].text.len)
+		while (j < inner->atoms[i].text.len)
 		{
-			if (inner->words[i].text.str[j] == '{')
+			if (inner->atoms[i].text.str[j] == '{')
 				++balance;
-			if (inner->words[i].text.str[j] == '}')
+			if (inner->atoms[i].text.str[j] == '}')
 				--balance;
-			if (inner->words[i].text.str[j] == ',' && !balance)
+			if (inner->atoms[i].text.str[j] == ',' && !balance)
 				++count;
 			++j;
 		}
@@ -149,23 +149,23 @@ static void
 	balance = 0;
 	last[0] = 0;
 	last[1] = 0;
-	while (i < inner->nwords)
+	while (i < inner->natoms)
 	{
-		if ((inner->words[i].type != W_LITERAL
-			|| inner->words[i].flags & (FL_SQUOTED | FL_SQUOTED))
+		if ((inner->atoms[i].type != W_LITERAL
+			|| inner->atoms[i].flags & (FL_SQUOTED | FL_SQUOTED))
 			&& ++i)
 			continue ;
 		j = 0;
-		while (j < inner->words[i].text.len)
+		while (j < inner->atoms[i].text.len)
 		{
-			if (inner->words[i].text.str[j] == '{')
+			if (inner->atoms[i].text.str[j] == '{')
 				++balance;
-			if (inner->words[i].text.str[j] == '}')
+			if (inner->atoms[i].text.str[j] == '}')
 				--balance;
-			if (inner->words[i].text.str[j] == ',' && !balance)
+			if (inner->atoms[i].text.str[j] == ',' && !balance)
 			{
 				arg = arg_from_range(inner, (const size_t[4]){last[0], last[1], i + 1, j});
-				arg_print(2, &arg);
+				word_print(2, &arg);
 				if (!parse_candidate(&arg, &cand->alternatives[cand->nalternatives++]))
 				{
 					cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
@@ -183,10 +183,10 @@ static void
 	}
 
 	size_t end = 0;
-	if (inner->words[inner->nwords - 1].type == W_LITERAL)
-		end = inner->words[inner->nwords - 1].text.len;
+	if (inner->atoms[inner->natoms - 1].type == W_LITERAL)
+		end = inner->atoms[inner->natoms - 1].text.len;
 	arg = arg_from_range(inner, (const size_t[4]){last[0], last[1], i, end});
-	arg_print(2, &arg);
+	word_print(2, &arg);
 	if (!parse_candidate(&arg, &cand->alternatives[cand->nalternatives++]))
 	{
 		cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
@@ -198,28 +198,28 @@ static void
 }
 
 static t_brace_candidate
-	cand_split(struct s_wordlist *arg, const size_t delims[4])
+	cand_split(struct s_word *arg, const size_t delims[4])
 {
 	t_brace_candidate	cand;
 	size_t				end;
-	struct s_wordlist	suffix;
-	struct s_wordlist	inner;
+	struct s_word	suffix;
+	struct s_word	inner;
 	
 	cand.selector = 0;
 	cand.prefix = arg_from_range(arg, (const size_t[4]){0, 0, delims[0] + 1, delims[1]});
 	end = 0;
-	if (arg->words[arg->nwords - 1].type == W_LITERAL)
-		end = arg->words[arg->nwords - 1].text.len;
+	if (arg->atoms[arg->natoms - 1].type == W_LITERAL)
+		end = arg->atoms[arg->natoms - 1].text.len;
 	inner = arg_from_range(arg, (const size_t[4]){delims[0], delims[1] + 1, delims[2] + 1, delims[3]});
 	ft_dprintf(2, "inner\n");
-	arg_print(1, &inner);
+	word_print(1, &inner);
 	split_inner(&cand, &inner);
 	cand.next = NULL;
-	if (delims[2] < arg->nwords)
+	if (delims[2] < arg->natoms)
 	{
-		suffix = arg_from_range(arg, (const size_t[4]){delims[2], delims[3] + 1, arg->nwords, end});
+		suffix = arg_from_range(arg, (const size_t[4]){delims[2], delims[3] + 1, arg->natoms, end});
 		ft_dprintf(2, "Suffix\n");
-		arg_print(0, &suffix);
+		word_print(0, &suffix);
 		cand.next = xmalloc(sizeof(t_brace_candidate));
 		if (!parse_candidate(&suffix, cand.next))
 		{
@@ -234,7 +234,7 @@ static t_brace_candidate
 }
 
 int
-	parse_candidate(struct s_wordlist *arg, t_brace_candidate *cand)
+	parse_candidate(struct s_word *arg, t_brace_candidate *cand)
 {
 	size_t	i;
 	size_t	j;
@@ -245,16 +245,16 @@ int
 	delims[0] = -1;
 	delims[2] = -1;
 	balance = 0;
-	while (i < arg->nwords)
+	while (i < arg->natoms)
 	{
-		if ((arg->words[i].type != W_LITERAL
-			|| arg->words[i].flags & (FL_SQUOTED | FL_SQUOTED))
+		if ((arg->atoms[i].type != W_LITERAL
+			|| arg->atoms[i].flags & (FL_SQUOTED | FL_SQUOTED))
 			&& ++i)
 			continue ;
 		j = 0;
-		while (j < arg->words[i].text.len)	
+		while (j < arg->atoms[i].text.len)	
 		{
-			if (arg->words[i].text.str[j] == '{')
+			if (arg->atoms[i].text.str[j] == '{')
 			{
 				if (!balance)
 				{
@@ -263,7 +263,7 @@ int
 				}
 				++balance;
 			}
-			if (arg->words[i].text.str[j] == '}')
+			if (arg->atoms[i].text.str[j] == '}')
 			{
 				--balance;
 				if (!balance)
@@ -286,20 +286,20 @@ int
 }
 
 static void
-	merge_segments(struct s_wordlist *result, struct s_wordlist *source)
+	merge_segments(struct s_word *result, struct s_word *source)
 {
 	size_t	i;
 
-	result->words = ft_realloc(result->words,
-		sizeof(struct s_word) * result->nwords,
-		sizeof(struct s_word) * (result->nwords + source->nwords));
+	result->atoms = ft_realloc(result->atoms,
+		sizeof(struct s_atom) * result->natoms,
+		sizeof(struct s_atom) * (result->natoms + source->natoms));
 	i = 0;
-	while (i < source->nwords)
-		result->words[result->nwords++] = source->words[i++];
+	while (i < source->natoms)
+		result->atoms[result->natoms++] = source->atoms[i++];
 }
 
 static int
-	expand_impl(t_brace_candidate *cand, struct s_wordlist *out)
+	expand_impl(t_brace_candidate *cand, struct s_word *out)
 {
 	if (!cand)
 		return (0);
@@ -320,37 +320,37 @@ static int
 }
 
 int
-	expand_candidate(t_brace_candidate *cand, struct s_wordlist *out)
+	expand_candidate(t_brace_candidate *cand, struct s_word *out)
 {
-	out->words = NULL;
-	out->nwords = 0;
+	out->atoms = NULL;
+	out->natoms = 0;
 	return (expand_impl(cand, out));
 }
 
 int
 	expand_braces(
 	t_shell *shell,
-	struct s_wordlist *arg)
+	struct s_word *arg)
 {
 	t_brace_candidate cand;
-	struct s_wordlist out;
+	struct s_word out;
 
-	out.words = NULL;
-	out.nwords = 0;
+	out.atoms = NULL;
+	out.natoms = 0;
 	if (parse_candidate(arg, &cand))
 	{
 		print_cand(0, &cand);
 		expand_candidate(&cand, &out);
 		ft_dprintf(2, "result=\n");
-		arg_print(0, &out);
+		word_print(0, &out);
 
 		expand_candidate(&cand, &out);
 		ft_dprintf(2, "result=\n");
-		arg_print(0, &out);
+		word_print(0, &out);
 
 		expand_candidate(&cand, &out);
 		ft_dprintf(2, "result=\n");
-		arg_print(0, &out);
+		word_print(0, &out);
 	}
 	// TODO...
 	return (0);

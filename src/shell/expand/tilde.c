@@ -20,7 +20,7 @@ static int
 	expand_from_var(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *varname)
 {
 	char			*expanded;
@@ -43,10 +43,10 @@ static int
 	return (0);
 }
 
-static struct s_word
-	split_arg(struct s_word *item, size_t start)
+static struct s_atom
+	split_arg(struct s_atom *item, size_t start)
 {
-	struct s_word new;
+	struct s_atom new;
 
 	new.flags = item->flags;
 	new.type = item->type;
@@ -59,7 +59,7 @@ static int
 	expand_home(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	t_string str)
 {
 	struct s_passwd_ent	ent;
@@ -93,12 +93,12 @@ int
 	expand_tilde(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs)
 {
 	t_string			str;
 	size_t				end;
-	struct s_word	leftover;
+	struct s_atom	leftover;
 	int					status;
 
 	if (param->text.len == 0 || param->text.str[0] != '~') // Must be the start of a word
