@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   arglist.c                                          :+:      :+:    :+:   */
+/*   wordlist.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,39 @@
 #include <shell/shell.h>
 
 void
-	arglist_free(struct s_wordlist *list, size_t size)
+	wordlist_free(t_word *list, size_t size)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < size)
-		arg_free(&list[i++]);
+		word_free(&list[i++]);
 	free(list);
 }
 
 void
-	arglist_print(size_t depth, struct s_wordlist *list, size_t size)
+	wordlist_print(size_t depth, const t_word *list, size_t size)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < size)
 	{
-		arg_print(depth, &list[i]);
+		word_print(depth, &list[i]);
 		++i;
 	}
 }
 
 void
-	arglist_push(
+	wordlist_push(
 	t_parser *parser,
-	struct s_wordlist **list,
+	t_word **list,
 	size_t *len)
 {
-	*list = ft_realloc(*list, sizeof(struct s_wordlist) * *len,
-			sizeof(struct s_wordlist) * (*len + 1));
-	(*list)[*len].words = NULL;
-	(*list)[*len].nwords = 0;
+	*list = ft_realloc(*list, sizeof(t_word) * *len,
+			sizeof(t_word) * (*len + 1));
+	(*list)[*len].atoms = NULL;
+	(*list)[*len].natoms = 0;
 	(*len)++;
-	arg_push(parser, &(*list)[*len - 1]);
+	word_push(parser, &(*list)[*len - 1]);
 }

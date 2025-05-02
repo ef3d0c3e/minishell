@@ -88,12 +88,12 @@ static int
 			parser->list.tokens[parser->pos].reserved_word);
 	if (found && ++parser->pos)
 		return (make_redirection(redirs, (t_redirectee){.fd = 1},
-			(t_redirectee){.filename = arg_parse(parser, 0)}, found->type), 1);
+			(t_redirectee){.filename = parse_word(parser, 0)}, found->type), 1);
 	found = redir_alternatives(ins, 6,
 			parser->list.tokens[parser->pos].reserved_word);
 	if (found && ++parser->pos)
 		return (make_redirection(redirs, (t_redirectee){.fd = 0},
-			(t_redirectee){.filename = arg_parse(parser, 0)}, found->type), 1);
+			(t_redirectee){.filename = parse_word(parser, 0)}, found->type), 1);
 	return (0);
 }
 
@@ -112,6 +112,6 @@ int
 		status = parse_redir_minus(parser, redirs);
 	if (status == 0 && parse_redir_word(parser, redirs))
 		return (redirs->redirs[redirs->redirs_size - 1]
-			.redirectee.filename.nwords != 0);
+			.redirectee.filename.natoms != 0);
 	return (status);
 }

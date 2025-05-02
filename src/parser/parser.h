@@ -29,15 +29,15 @@ struct s_assignment
 	/** @brief Name of the variable being assigned to */
 	t_string_buffer		variable;
 	/** @brief Value to assign to `variable`, may require lazy expansion */
-	struct s_wordlist	value;
+	t_word				value;
 };
 
 /** @brief Frees an array of assignments */
 void
-assignlist_free(struct s_wordlist *list, size_t size);
+assignlist_free(t_word *list, size_t size);
 /** @brief Displays an array of assignments to stderr */
 void
-assignlist_print(size_t depth, struct s_wordlist *list, size_t size);
+assignlist_print(size_t depth, t_word *list, size_t size);
 
 /******************************************************************************/
 /* The parser                                                                 */

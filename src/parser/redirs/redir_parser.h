@@ -51,7 +51,7 @@ typedef union u_redirectee
 	/** @brief Redirect to/from file descriptor */
 	int					fd;
 	/** @brief Redirect to/from file */
-	struct s_wordlist	filename;
+	struct s_word	filename;
 }	t_redirectee;
 
 /** @brief Stores a redirection */

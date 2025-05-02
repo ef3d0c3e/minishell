@@ -29,7 +29,7 @@ void
 	free_for_node(t_ast_node *node)
 {
 	if (node->st_for.args)
-		arglist_free(node->st_for.args, node->st_for.nargs);
+		wordlist_free(node->st_for.args, node->st_for.nargs);
 	free(node->st_for.ident);
 	ast_free(node->st_for.body, 0);
 }
@@ -41,7 +41,7 @@ void
 	ft_dprintf(2, "FOR '%s'\n", node->st_for.ident);
 	print_pad(" | ", depth);
 	ft_dprintf(2, "(WORDLIST)\n");
-	arglist_print(depth + 1, node->st_for.args, node->st_for.nargs);
+	wordlist_print(depth + 1, node->st_for.args, node->st_for.nargs);
 	print_pad(" | ", depth);
 	ft_dprintf(2, "(BODY)\n");
 	ast_print(depth + 1, node->st_for.body);

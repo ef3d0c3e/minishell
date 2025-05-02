@@ -15,7 +15,7 @@ int
 	expand_subexpr(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs)
 {
 	char			*info;

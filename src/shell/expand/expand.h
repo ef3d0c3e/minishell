@@ -42,7 +42,7 @@ void
 expand_literal(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs);
 /**
  * @brief Initializes an empty fragment list
@@ -93,8 +93,7 @@ fraglist_append(t_fragment_list *list, t_string_buffer word);
  * @returns A null-terminated array of strings to be passed to `execve`
  */
 char
-**arg_expansion(t_shell *shell, struct s_wordlist *list, size_t size);
-
+**arg_expansion(t_shell *shell, struct s_word *list, size_t size);
 /**
  * @brief Expands a single argument and concatenate the resulting words into
  * a single string separated by `ifs[0]`.
@@ -105,7 +104,7 @@ char
  * @returns The resulting expansion
  */
 char
-*arg_expansion_single(t_shell *shell, struct s_wordlist *list);
+*arg_expansion_single(t_shell *shell, struct s_word *list);
 
 /******************************************************************************/
 /* Individual expanders                                                       */
@@ -124,7 +123,7 @@ char
 int
 expand_braces(
 	t_shell *shell,
-	struct s_wordlist *arg);
+	struct s_word *arg);
 /**
  * @brief Resolves a parameter in the current context
  *
@@ -147,7 +146,7 @@ int
 expand_param(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs);
 /**
  * @brief Performs tilde `~` expansion
@@ -164,7 +163,7 @@ int
 expand_tilde(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs);
 /**
  * @brief Expands sub expressions
@@ -180,7 +179,7 @@ int
 expand_subexpr(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs);
 /**
  * @brief Performs word splitting

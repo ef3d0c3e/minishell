@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_param.c                                      :+:      :+:    :+:   */
+/*   atom.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,13 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 void
-	parse_param(t_parser *parser, struct s_word *arg)
+	parse_param_aton(t_parser *parser, struct s_atom *arg)
 {
 	static const char	*ops[] = {":-", "-", ":=", "=", ":?", "?", ":+", "+",
 	"##", "#", "%%", "%", ":", NULL};

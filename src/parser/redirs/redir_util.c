@@ -89,7 +89,7 @@ void
 		if (redir_dest_word(redir))
 		{
 			ft_dprintf(2, "%s fl=%05o %d:", redir_name(redir->type), redir->flags, redir->redirector.fd);
-			arg_print(0, &redir->redirectee.filename);
+			word_print(0, &redir->redirectee.filename);
 		}
 		else
 		{

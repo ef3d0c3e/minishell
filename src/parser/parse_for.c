@@ -13,7 +13,7 @@
 
 /** @brief Parses a list of whitespace/newline delimited words */
 static void
-	parse_arglist(t_parser *parser, struct s_wordlist **args, size_t *len)
+	parse_arglist(t_parser *parser, struct s_word **args, size_t *len)
 {
 	const t_token	*tok;
 	size_t			arg_pos;
@@ -31,9 +31,9 @@ static void
 			|| accept_word(parser, 0))
 		{
 			if (arg_pos >= *len)
-				arglist_push(parser, args, len);
+				wordlist_push(parser, args, len);
 			else
-				arg_push(parser, &(*args)[*len - 1]);
+				word_push(parser, &(*args)[*len - 1]);
 		}
 		else if (tok->type == TOK_SPACE)
 			++arg_pos;

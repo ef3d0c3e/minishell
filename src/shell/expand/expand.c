@@ -18,7 +18,7 @@ void
 	expand_literal(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_word *param,
+	struct s_atom *param,
 	const char *ifs)
 {
 	if ((param->flags & (FL_DQUOTED | FL_SQUOTED)) == 0
@@ -40,7 +40,7 @@ static int
 	expand_arg(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_wordlist *arg,
+	struct s_word *arg,
 	const char *ifs)
 {
 	const size_t	start_size = list->size;
@@ -50,15 +50,15 @@ static int
 	// This yields a list of arguments
 	expand_braces(shell, arg);
 	i = 0;
-	while (i < arg->nwords)
+	while (i < arg->natoms)
 	{
 		status = 1;
-		if (arg->words[i].type == W_LITERAL)
-			expand_literal(shell, list, &arg->words[i], ifs);
-		else if (arg->words[i].type == W_SUBEXPR)
-			status = expand_subexpr(shell, list, &arg->words[i], ifs);
-		else if (arg->words[i].type == W_PARAMETER)
-			status = expand_param(shell, list, &arg->words[i], ifs);
+		if (arg->atoms[i].type == W_LITERAL)
+			expand_literal(shell, list, &arg->atoms[i], ifs);
+		else if (arg->atoms[i].type == W_SUBEXPR)
+			status = expand_subexpr(shell, list, &arg->atoms[i], ifs);
+		else if (arg->atoms[i].type == W_PARAMETER)
+			status = expand_param(shell, list, &arg->atoms[i], ifs);
 		if (status == -1)
 		{
 			fraglist_free(list);
@@ -81,7 +81,7 @@ static void cleanup(void *ptr)
 }
 
 char
-	**arg_expansion(t_shell *shell, struct s_wordlist *words, size_t size)
+	**arg_expansion(t_shell *shell, struct s_word *words, size_t size)
 {
 	size_t			i;
 	t_fragment_list	list;
@@ -118,7 +118,7 @@ char
 }
 
 char
-	*arg_expansion_single(t_shell *shell, struct s_wordlist *arg)
+	*arg_expansion_single(t_shell *shell, struct s_word *arg)
 {
 	t_fragment_list	list;
 	const char		*ifs;

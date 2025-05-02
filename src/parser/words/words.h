@@ -12,17 +12,27 @@
 #ifndef WORDS_H
 #define WORDS_H
 
+/**
+ * @file Words definitions
+ *
+ * `cmd arg1$par1 $(subexp)`
+ *  |   |   |     ` Subexpr atom ── Word 3 ┐
+ *  |   |   ` Parameter atom  ───┐         ├ Word list
+ *  |   ` Literal atom  ─────────┴─ Word 2 │
+ *  ` Literal atom ──────────────── Word 1 ┘
+ */
+
 # include <tokenizer/tokenizer.h>
 
 typedef struct s_ast_node	t_ast_node;
 typedef struct s_parser	t_parser;
 
 /******************************************************************************/
-/* Arguments                                                                  */
+/* Atoms                                                                      */
 /******************************************************************************/
 
 /** @brief The type of an argument item */
-enum e_word_type
+enum e_atom_type
 {
 	/** @brief Content is to be interpreted as literal text */
 	W_LITERAL,
@@ -34,7 +44,7 @@ enum e_word_type
 };
 
 /** @brief Data for parameter expansion */
-struct s_word_param
+struct s_atom_param
 {
 	/** @brief Parameter name */
 	char			*name;
@@ -50,71 +60,115 @@ struct s_word_param
 };
 
 /** @brief A single argument item */
-typedef struct s_word
+typedef struct s_atom
 {
 	/** @brief Flags of the source token */
 	int						flags;
 	/** @brief Type of arugment */
-	enum e_word_type		type;
+	enum e_atom_type		type;
 	union
 	{
 		/** @brief Text data */
 		t_string_buffer		text;
 		/** @brief Param data */
-		struct s_word_param	param;
+		struct s_atom_param	param;
 	};
 	/** @brief Reference to the next argument, NULL for none */
-	struct s_word			*next;
-}	t_word;
-
-/** @brief Data for command arguments */
-typedef struct s_wordlist
-{
-	/** @brief Items in this argument */
-	struct s_word	*words;
-	/** @brief Number of items in this argument */
-	size_t			nwords;
-}	t_wordlist;
+	struct s_atom			*next;
+}	t_atom;
 
 /**
- * @brief Parses parameter token into argument
+ * @brief Parses parameter token into parameter atom
+ *
+ * Attempts to parse the parameter token under cursor as a parameter atom.
+ *
+ * This function expects the current token to be a parameter token.
+ * The parser's cursor will not be advanced by this function.
  *
  * @param parser The parser
- * @param arg Argument to parse into
+ * @param arg Atom to parse into
  */
 void
-parse_param(t_parser *parser, t_word *arg);
-/** @brief Pushes a token to an argument */
-void
-arg_push(t_parser *parser, t_wordlist *arg);
-/** @brief Frees an argument structure */
-void
-arg_free(t_wordlist *arg);
-/** @brief Displays an argument to stderr */
-void
-arg_print(size_t depth, const t_wordlist *arg);
-/** @brief Parses a single argument */
-t_wordlist
-arg_parse(t_parser *parser, int eat_minus);
+parse_param_aton(t_parser *parser, t_atom *arg);
 
 /******************************************************************************/
-/* Arguments list                                                             */
+/* Words                                                                      */
 /******************************************************************************/
 
-/** @brief Frees an array of arguments */
-void
-arglist_free(t_wordlist *list, size_t size);
-/** @brief Displays an array of arguments to stderr */
-void
-arglist_print(size_t depth, t_wordlist *list, size_t size);
+/** @brief Data for command arguments */
+typedef struct s_word
+{
+	/** @brief Items in this argument */
+	struct s_atom	*atoms;
+	/** @brief Number of items in this argument */
+	size_t			natoms;
+}	t_word;
+
 /**
- * @brief Pushes the current token to the argument list
+ * @brief Pushes current token to word
+ *
+ * This function does not advance the parser's cursor
+ *
+ * @param parser Parser to read from
+ * @param word Word to push to
+ */
+void
+word_push(t_parser *parser, t_word *word);
+/**
+ * @brief Frees a word
+ *
+ * @param word Word to free
+ */
+void
+word_free(t_word *word);
+/**
+ * @brief Prints a word
+ *
+ * @param depth Depth padding
+ * @param word Word to print
+ */
+void
+word_print(size_t depth, const t_word *word);
+/**
+ * @brief Parses word under cursor until word delimited is encountered
+ *
+ * @param parser Parser to read from
+ * @param eat_minus Whether to treat `-` (@ref TOK_MINUS) as an atom
+ *
+ * @returns The parsed word
+ */
+t_word
+parse_word(t_parser *parser, int eat_minus);
+
+/******************************************************************************/
+/* Words list                                                                 */
+/******************************************************************************/
+
+/**
+ * @brief Frees an array of words
+ *
+ * @param list The array of words
+ * @param size Size of the array
+ */
+void
+wordlist_free(t_word *list, size_t size);
+/**
+ * @brief Displays an array of words to stderr
+ *
+ * @param depth Depth padding
+ * @param list List of words
+ * @param size Of the word list
+ */
+void
+wordlist_print(size_t depth, const t_word *list, size_t size);
+/**
+ * @brief Pushes the current token to the word list
  *
  * @param parser The parser
- * @param list Pointer to the array of arguments
+ * @param list Pointer to the array of words
  * @param len Pointer to the array's length
  */
 void
-arglist_push(t_parser *parser, t_wordlist **list, size_t *len);
+wordlist_push(t_parser *parser, t_word **list, size_t *len);
 
 #endif // WORDS_H
