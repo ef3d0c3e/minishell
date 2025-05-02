@@ -71,7 +71,7 @@ static void
 				++balance;
 			if (inner->atoms[i].text.str[j] == '}')
 				--balance;
-			if (inner->atoms[i].text.str[j] == ',' && balance)
+			if (inner->atoms[i].text.str[j] == ',' && balance == 1)
 				++count;
 			++j;
 		}
@@ -80,11 +80,11 @@ static void
 	// TODO: if count == 1, do not recurse
 	printf("ncands: %zu\n", count);
 
-	if (count == 1)
-	{
-		split_inner_1(cand, inner);
-		return ;
-	}
+	//if (count == 1)
+	//{
+	//	split_inner_1(cand, inner);
+	//	return ;
+	//}
 	cand->alternatives = xmalloc(sizeof(t_brace_candidate) * count);
 	cand->nalternatives = 0;
 	i = 0;
@@ -103,7 +103,9 @@ static void
 			if (inner->atoms[i].text.str[j] == '{')
 				++balance;
 			if (inner->atoms[i].text.str[j] == '}')
+			{
 				--balance;
+			}
 			if (inner->atoms[i].text.str[j] == ',' && !balance)
 			{
 				arg = word_sub(inner, (const size_t[4]){last[0], last[1], i + 1, j});
@@ -117,6 +119,8 @@ static void
 					cand->alternatives[cand->nalternatives - 1].prefix = arg;
 					cand->alternatives[cand->nalternatives - 1].next = NULL;
 				}
+				else
+					word_free(&arg);
 				last[0] = i;
 				last[1] = j + 1;
 			}
@@ -138,6 +142,8 @@ static void
 		cand->alternatives[cand->nalternatives - 1].prefix = arg;
 		cand->alternatives[cand->nalternatives - 1].next = NULL;
 	}
+	else
+		word_free(&arg);
 }
 
 static t_brace_candidate
@@ -211,14 +217,12 @@ int
 			}
 			if (arg->atoms[i].text.str[j] == '}')
 			{
-				--balance;
-				if (!balance)
+				if (balance == 1)
 				{
 					delims[2] = i;
 					delims[3] = j;
 				}
-				if (balance < 0)
-					balance = 0;
+				--balance;
 			}
 			if (delims[0] != (size_t) - 1 && delims[2] != (size_t) - 1)
 			{
