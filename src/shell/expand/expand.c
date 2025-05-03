@@ -12,6 +12,7 @@
 #include "shell/expand/expand.h"
 #include "parser/words/words.h"
 #include "util/util.h"
+#include <math.h>
 #include <shell/shell.h>
 
 /** @brief Performs expansion on literals */
@@ -42,33 +43,36 @@ static int
 	const char *ifs)
 {
 	const size_t	start_size = list->size;
+	t_wordlist		expanded;
 	size_t			tmp;
 	size_t			j;
 	size_t			i;
 	int				status;
-	size_t			len;
 
 	// This yields a list of arguments
-	len = 1;
-	expand_braces(&arg, &len);
+	expand_braces(arg, &expanded);
 	i = 0;
-	while (i < len)
+	while (i < expanded.size)
 	{
 		tmp = list->size;
 		j = 0;
-		while (j < arg[i].natoms)
+		while (j < expanded.list[i].natoms)
 		{
 			status = 1;
-			if (arg[i].atoms[j].type == W_LITERAL)
-				expand_literal(shell, list, &arg[i].atoms[j], ifs);
-			else if (arg[i].atoms[j].type == W_SUBEXPR)
-				status = expand_subexpr(shell, list, &arg[i].atoms[j], ifs);
-			else if (arg[i].atoms[j].type == W_PARAMETER)
-				status = expand_param(shell, list, &arg[i].atoms[j], ifs);
+			if (expanded.list[i].atoms[j].type == W_LITERAL)
+				expand_literal(shell, list, &expanded.list[i].atoms[j], ifs);
+			else if (expanded.list[i].atoms[j].type == W_SUBEXPR)
+			{
+				rb_insert(&shell->temporaries, &expanded, (void *)wordlist_free);
+				status = expand_subexpr(shell, list, &expanded.list[i].atoms[j], ifs);
+				rb_delete(&shell->temporaries, &expanded);
+			}
+			else if (expanded.list[i].atoms[j].type == W_PARAMETER)
+				status = expand_param(shell, list, &expanded.list[i].atoms[j], ifs);
 			if (status == -1)
 			{
 				fraglist_free(list);
-				wordlist_free(arg, len);
+				wordlist_free(&expanded);
 				return (0);
 			}
 			++j;
@@ -77,7 +81,7 @@ static int
 			list->fragments[tmp].force_split = 1;
 		++i;
 	}
-	wordlist_free(arg, len);
+	wordlist_free(&expanded);
 	//printf("HERE: st=%zu\n", start_size);
 	//if (status)
 	if (start_size < list->size)
@@ -93,7 +97,7 @@ static void cleanup(void *ptr)
 }
 
 char
-	**arg_expansion(t_shell *shell, struct s_word *words, size_t size)
+	**arg_expansion(t_shell *shell, t_wordlist *words)
 {
 	size_t			i;
 	t_fragment_list	list;
@@ -106,9 +110,9 @@ char
 	if (!ifs || ifs[0] == 0)
 		ifs = " \t\n";
 	fraglist_init(&list);
-	while (i < size)
+	while (i < words->size)
 	{
-		if (!expand_arg(shell, &list, &words[i++], ifs))
+		if (!expand_arg(shell, &list, &words->list[i++], ifs))
 		{
 			rb_delete(&shell->temporaries, &list);
 			return (NULL);
@@ -130,7 +134,40 @@ char
 }
 
 char
-	*arg_expansion_single(t_shell *shell, struct s_word *arg)
+	**word_expansion_single(t_shell *shell, t_word *word)
+{
+	t_fragment_list	list;
+	size_t			i;
+	char			**argv;
+	const char		*ifs;
+
+	rb_insert(&shell->temporaries, &list, (void *)cleanup);
+	ifs = get_variable_value(shell, "IFS");
+	if (!ifs || ifs[0] == 0)
+		ifs = " \t\n";
+	fraglist_init(&list);
+	if (!expand_arg(shell, &list, word, ifs))
+	{
+		rb_delete(&shell->temporaries, &list);
+		return (NULL);
+	}
+	list = word_split(shell, &list, ifs);
+	argv = xmalloc(sizeof(char *) * (list.size + 1));
+	i = 0;
+	while (i < list.size)
+	{
+		argv[i] = stringbuf_cstr(&list.fragments[i].word);
+		//ft_dprintf(2, "argv[%zu] = '%s'\n", i, argv[i]);
+		++i;
+	}
+	argv[i] = NULL;
+	free(list.fragments);
+	rb_delete(&shell->temporaries, &list);
+	return (argv);
+}
+
+char
+	*arg_expansion_cat(t_shell *shell, struct s_word *arg)
 {
 	t_fragment_list	list;
 	const char		*ifs;

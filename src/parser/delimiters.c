@@ -49,7 +49,13 @@ int
 {
 	char	*err;
 
-	if (parser->pos >= parser->list.size
+	if (parser->pos < parser->list.size && !accept(parser, 0, delim))
+	{
+		ft_asprintf(&err, "Expected `%s` token", delim);
+		parser_error(parser, err, parser->pos, parser->pos + 1);
+		return (0);
+	}
+	else if (parser->pos >= parser->list.size
 		|| !parser_delimiter_pop(parser, delim))
 	{
 		ft_asprintf(&err, "Expected `%s` token", delim);

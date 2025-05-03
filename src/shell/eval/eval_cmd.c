@@ -9,13 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/env/env.h"
-#include "shell/eval/eval.h"
-#include "shell/expand/expand.h"
-#include "shell/redir/redir.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 static void
 	install_var(t_shell *shell, const char *name, char *value)
@@ -42,7 +36,7 @@ static t_eval_result
 		i = 0;
 		while (i < cmd->cmd.nassigns)
 		{
-			result = arg_expansion_single(shell, &cmd->cmd.assigns[i].value);
+			result = arg_expansion_cat(shell, &cmd->cmd.assigns[i].value);
 			if (result)
 				install_var(shell,
 						stringbuf_cstr(&cmd->cmd.assigns[i].variable), result);
@@ -62,7 +56,7 @@ t_eval_result
 	char	*path;
 
 	path = NULL;
-	argv = arg_expansion(shell, program->cmd.args, program->cmd.nargs);
+	argv = arg_expansion(shell, &program->cmd.args);
 	if (!argv)
 		return ((t_eval_result){RES_NONE, 0});
 	status = 0;

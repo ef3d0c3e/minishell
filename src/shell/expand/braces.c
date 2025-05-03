@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "parser/words/words.h"
 #include "shell/expand/expand.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Merge parameter (result) with a @ref W_LITERAL @ref t_atom */
@@ -105,46 +106,31 @@ static int
 static int
 	try_expand(
 	t_word *word,
-	t_brace_group *group,
-	t_word **result,
-	size_t *result_len)
+	t_wordlist *result)
 {
-	if (!brace_parse(word, group))
+	t_brace_group	group;
+
+	if (!brace_parse(word, &group))
 		return (0);
 	while (1)
 	{
-		*result = ft_realloc(*result, sizeof(t_word) * *result_len,
-				sizeof(t_word) * (*result_len + 1));
-		if (!brace_expand(group, &(*result)[(*result_len)++]))
+		result->list = ft_realloc(result->list, sizeof(t_word) * result->size,
+				sizeof(t_word) * (result->size + 1));
+		if (!brace_expand(&group, &result->list[result->size++]))
 			break ;
 	}
-	brace_group_free(group, 1);
+	brace_group_free(&group, 1);
 	return (1);
 }
 
 void
-	expand_braces(
-	t_word **wordlist,
-	size_t *len)
+	expand_braces(t_word *word, t_wordlist *list)
 {
-	size_t			i;
-	t_word			*result;
-	size_t			result_len;
-	t_brace_group	group;
-
-	result = NULL;
-	result_len = 0;
-	i = 0;
-	while (i < *len)
+	list->list = NULL;
+	list->size = 0;
+	if (!try_expand(word, list))
 	{
-		if (!try_expand(wordlist[i], &group, &result, &result_len))
-		{
-			result = ft_realloc(result, sizeof(t_word) * result_len,
-					sizeof(t_word) * (result_len + 1));
-			result[result_len++] = word_copy(wordlist[i]);
-		}
-		++i;
+		list->list = xmalloc(sizeof(t_word));
+		list->list[list->size++] = word_copy(word);
 	}
-	*wordlist = result;
-	*len = result_len;
 }

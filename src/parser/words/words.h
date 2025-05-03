@@ -196,31 +196,37 @@ parse_word(t_parser *parser, int eat_minus);
 /* Words list                                                                 */
 /******************************************************************************/
 
+/** @brief A list of words */
+typedef struct s_wordlist
+{
+	/** @brief Words */
+	t_word	*list;
+	/** @brief Number of words */
+	size_t	size;
+}	t_wordlist;
+
 /**
  * @brief Frees an array of words
  *
- * @param list The array of words
- * @param size Size of the array
+ * @param list Wordlist to free
  */
 void
-wordlist_free(t_word *list, size_t size);
+wordlist_free(t_wordlist *list);
 /**
  * @brief Displays an array of words to stderr
  *
  * @param depth Depth padding
- * @param list List of words
- * @param size Of the word list
+ * @param list List of words to print to print
  */
 void
-wordlist_print(size_t depth, const t_word *list, size_t size);
+wordlist_print(size_t depth, const t_wordlist *list);
 /**
  * @brief Pushes the current token to the word list
  *
  * @param parser The parser
- * @param list Pointer to the array of words
- * @param len Pointer to the array's length
+ * @param list Word list to push to
  */
 void
-wordlist_push(t_parser *parser, t_word **list, size_t *len);
+wordlist_push(t_parser *parser, t_wordlist *list);
 
 #endif // WORDS_H
