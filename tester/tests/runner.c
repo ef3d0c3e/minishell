@@ -29,6 +29,7 @@ static void
 		test_sub,
 		test_redir,
 		test_expand,
+		test_control,
 	};
 	size_t						i;
 	t_evaluator_data			eval;

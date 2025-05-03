@@ -1,0 +1,118 @@
+// vi:syntax=c
+#include "tests.def"
+
+DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
+	SHELL_TEST("for i in {1..5..2}; do echo \"$i\"; done",  "", "1\n3\n5\n",  "", 0)
+	SHELL_TEST("for\ni in {1..5..2}; do echo \"$i\"; done",  "", "1\n3\n5\n",  "", 0)
+	SHELL_TEST("for i\nin {1..5..2}; do echo \"$i\"; done",  "", "1\n3\n5\n",  "", 0)
+	SHELL_TEST("for i in {1..5..2}\ndo echo \"$i\"; done",  "", "1\n3\n5\n",  "", 0)
+	SHELL_TEST("for i in {1..5..2}; do echo \"$i\"\n done",  "", "1\n3\n5\n",  "", 0)
+	SHELL_TEST("for i in; do echo \"$i\"\n done",  "", "",  "", 0)
+	SHELL_TEST("for i in\n do echo \"$i\"\n done",  "", "",  "", 0)
+	SHELL_TEST("for i in        ; do echo \"$i\"\n done",  "", "",  "", 0)
+
+	SHELL_TEST_ERR("for 6i in {1..5..2}; do echo \"$i\"; done",  "", "", 2)
+	SHELL_TEST_ERR("for i in {1..5..2}; do echo \"$i\"",  "", "", 2)
+	SHELL_TEST_ERR("for i in {1..5..2}; do echo test done",  "", "", 2)
+	SHELL_TEST_ERR("for i in {1..5..2}; do; echo test done",  "", "", 2)
+	SHELL_TEST_ERR("for i in {1..5..2} do echo test; done",  "", "", 2)
+
+	// simple literal list
+	SHELL_TEST("for i in 1 2 3; do echo $i; done",     "", "1\n2\n3\n",   "", 0)
+
+	// alphabetic range
+	SHELL_TEST("for c in a b c; do echo $c; done",     "", "a\nb\nc\n",   "", 0)
+
+	// numeric range with increment
+	SHELL_TEST("for n in {1..10..3}; do echo $n; done", "", "1\n4\n7\n10\n", "", 0)
+
+	// quoted words in list (should not split inside quotes)
+	SHELL_TEST("for i in \"a b\" c; do echo \"<$i>\"; done",
+			"", "<a b>\n<c>\n", "", 0)
+
+	// nested loops
+	SHELL_TEST("for i in A B; do for j in 1 2; do echo $i$j; done; done",
+			"", "A1\nA2\nB1\nB2\n", "", 0)
+
+	// break stops the loop
+	SHELL_TEST("for i in 1 2 3; do if [ $i -eq 2 ]; then break; fi; echo $i; done",
+			"", "1\n", "", 0)
+
+	// continue skips to next iteration
+	SHELL_TEST("for i in 1 2 3; do if [ $i -eq 1 ]; then continue; fi; echo $i; done",
+			"", "2\n3\n", "", 0)
+
+	// empty list yields zero iterations
+	SHELL_TEST("for i in; do echo never; done; echo done",
+			"", "done\n", "", 0)
+
+	// newline/semicolon tolerance
+	SHELL_TEST("for i in 1 2 3\ndo echo $i; done",
+			"", "1\n2\n3\n", "", 0)
+	SHELL_TEST("for i in 1 2 3; do echo $i; done\n",
+			"", "1\n2\n3\n", "", 0)
+
+	// invalid identifier
+	SHELL_TEST_ERR("for 1var in x y; do echo $1var; done",
+			"", "", 2)
+
+	// missing do/done
+	SHELL_TEST_ERR("for i in 1 2; echo $i; done", "", "", 2)
+	SHELL_TEST_ERR("for i in 1 2; do echo $i;",     "", "", 2)
+
+	// Invalid “for” syntax
+	SHELL_TEST_ERR("for i j; do echo hi; done",            "", "", 2)
+	SHELL_TEST_ERR("for in 1 2; do echo hi; done",         "", "", 2)
+	SHELL_TEST_ERR("for i in 1 2 echo hi; done",            "", "", 2)
+	SHELL_TEST_ERR("for i in 1 2; echo hi; done",           "", "", 2)
+	SHELL_TEST_ERR("for i in 1 2; do echo hi",              "", "", 2)
+
+	// Whitespace and comments robustness
+	SHELL_TEST("for\ti\tin\t1\t2;\tdo\techo $i;\tdone",    "", "1\n2\n", "", 0)
+	SHELL_TEST("for i # comment\n in 3 4; do echo $i; done", "", "3\n4\n", "", 0)
+
+	// Multiple loop variables (bash extension)
+	SHELL_TEST_ERR("for i j in 1 2 3 4; do echo $i,$j; done", "", "", 2)
+
+	// Continue/break with numeric arguments in nested loops
+	SHELL_TEST(
+			"for i in 1 2; do\n"
+			"  for j in a b; do\n"
+			"    if [ $i$j == 2b ]; then break 2; fi\n"
+			"    echo $i$j\n"
+			"  done\n"
+			"done",
+			"", "1a\n1b\n2a\n", "", 0)
+
+	SHELL_TEST(
+			"for i in 1 2; do\n"
+			"  for j in a b; do\n"
+			"    if [ $j == a ]; then continue 2; fi\n"
+			"    echo $i$j\n"
+			"  done\n"
+			"done",
+			"", "1b\n2b\n", "", 0)
+
+	// break count > depth exits all loops
+	// TODO: Fix continue/break
+	//SHELL_TEST("for i in 1 2; do break 5; echo X; done; echo DONE",
+	//		"", "DONE\n", "", 0)
+
+	// Pipelines and redirections inside loop
+	SHELL_TEST("for i in 1 2; do echo $i | wc -c; done",
+			"", "2\n2\n", "", 0)
+	SHELL_TEST("for i in 1; do echo hi > /dev/null; done; echo OK",
+			"", "OK\n", "", 0)
+
+	// exit inside loop exits the shell
+	SHELL_TEST("for i in 1 2; do exit 3; done; echo after",
+			"", "", "", 3)
+
+	// Complex combination with command substitution
+	SHELL_TEST("for f in $(echo a b); do echo $f; done",
+			"", "a\nb\n", "", 0)
+
+	// Using reserved words as list items
+	SHELL_TEST("for then in do else; do echo $then; done",
+			"", "do\nelse\n", "", 0)
+))
