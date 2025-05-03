@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   braces_parse.c                                     :+:      :+:    :+:   */
+/*                                                         :::      ::::::::   */
+/*   brace_parse.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
-#include <stddef.h>
 
 /**
  * @file Parser for brace groups
@@ -40,8 +39,6 @@ static int
 			*balance = 0;
 	}
 	return (delims[0] != (size_t) - 1 && delims[2] != (size_t) - 1);
-		return (1);
-	return (0);
 }
 
 int
@@ -57,12 +54,10 @@ int
 	balance = 0;
 	while (i[0] < arg->natoms)
 	{
-		if ((arg->atoms[i[0]].type != W_LITERAL
-			|| arg->atoms[i[0]].flags & (FL_SQUOTED | FL_SQUOTED))
-			&& ++i[0])
-			continue ;
 		i[1] = 0;
-		while (i[1] < arg->atoms[i[0]].text.len)	
+		while ((arg->atoms[i[0]].type == W_LITERAL
+				&& !(arg->atoms[i[0]].flags & (FL_SQUOTED | FL_SQUOTED)))
+			&& i[1] < arg->atoms[i[0]].text.len)
 		{
 			if (brace_parse_inner(arg, i, delims, &balance))
 			{

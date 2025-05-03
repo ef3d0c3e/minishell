@@ -36,19 +36,18 @@ static size_t
 	while (inds[0] < inner->natoms)
 	{
 		if ((inner->atoms[inds[0]].type != W_LITERAL
-			|| inner->atoms[inds[0]].flags & (FL_SQUOTED | FL_SQUOTED))
+				|| inner->atoms[inds[0]].flags & (FL_SQUOTED | FL_SQUOTED))
 			&& ++inds[0])
 			continue ;
 		inds[1] = 0;
-		while (inds[1] < inner->atoms[inds[0]].text.len)
+		while (inds[1]++ < inner->atoms[inds[0]].text.len)
 		{
-			if (inner->atoms[inds[0]].text.str[inds[1]] == '{')
+			if (inner->atoms[inds[0]].text.str[inds[1] - 1] == '{')
 				++balance;
-			if (inner->atoms[inds[0]].text.str[inds[1]] == '}')
+			if (inner->atoms[inds[0]].text.str[inds[1] - 1] == '}')
 				--balance;
-			if (inner->atoms[inds[0]].text.str[inds[1]] == ',' && balance == 0)
+			if (inner->atoms[inds[0]].text.str[inds[1] - 1] == ',' && !balance)
 				++inds[2];
-			++inds[1];
 		}
 		++inds[0];
 	}
@@ -97,8 +96,8 @@ static void
 	while (i[0]++ < inner->natoms)
 	{
 		i[1] = 0;
-		while((inner->atoms[i[0] - 1].type == W_LITERAL
-			&& !(inner->atoms[i[0] - 1].flags & (FL_SQUOTED | FL_DQUOTED)))
+		while ((inner->atoms[i[0] - 1].type == W_LITERAL
+				&& !(inner->atoms[i[0] - 1].flags & (FL_SQUOTED | FL_DQUOTED)))
 			&& i[1]++ < inner->atoms[i[0] - 1].text.len)
 		{
 			((inner->atoms[i[0] - 1].text.str[i[1] - 1] == '{') && ++balance);
@@ -106,7 +105,7 @@ static void
 			if (inner->atoms[i[0] - 1].text.str[i[1] - 1] == ',' && !balance)
 			{
 				split_alternative(inner, group,
-						(size_t[4]){i[2], i[3], i[0], i[1] - 1});
+					(size_t[4]){i[2], i[3], i[0], i[1] - 1});
 				i[2] = i[0] - 1;
 				i[3] = i[1];
 			}
@@ -144,14 +143,13 @@ static void
 		word_free(&suffix);
 }
 
-
 t_brace_group
 	brace_split(t_word *arg, const size_t delims[4])
 {
 	t_brace_group	group;
 	t_word			inner;
 	size_t			count;
-	
+
 	group.selector = 0;
 	inner = word_sub(arg, (const size_t[4]){delims[0], delims[1] + 1,
 			delims[2] + 1, delims[3]});

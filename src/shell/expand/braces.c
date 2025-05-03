@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   braces.c                                            :+:      :+:    :+:   */
+/*   braces.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/words/words.h"
+#include "shell/expand/expand.h"
 #include <shell/shell.h>
 
 /** @brief Merge parameter (result) with a @ref W_LITERAL @ref t_atom */
@@ -32,39 +34,31 @@ static void
 			atom->text.str + len, atom->text.str + atom->text.len - len);
 }
 
-/** @brief Merges prefix (result) with expanded word (source) */
-static void
-	merge_prefix(t_word *result, t_word *source)
-{
-	size_t	i;
-
-	result->atoms = ft_realloc(result->atoms,
-		sizeof(struct s_atom) * result->natoms,
-		sizeof(struct s_atom) * (result->natoms + source->natoms));
-	i = 0;
-	while (i < source->natoms)
-	{
-		if (source->atoms[i].type == W_LITERAL && !source->atoms[i].text.len
-			&& (++i))
-			continue ;
-		if (result->natoms
-			&& source->atoms[i].type == W_LITERAL
-			&& !(source->atoms[i].flags & (FL_SQUOTED | FL_DQUOTED))
-			&& result->atoms[result->natoms - 1].type == W_PARAMETER
-			&& result->atoms[result->natoms - 1].param.simple_param)
-			merge_parameters(result, &source->atoms[i++]);
-		else
-			result->atoms[result->natoms++] = atom_copy(&source->atoms[i++]);
-	}
-}
-
 /** @brief Gather prefixes recursively, according to the current selectors */
 static void
 	gather_prefixes(t_brace_group *node, t_word *out)
 {
+	size_t	i;
+
 	if (!node)
 		return ;
-	merge_prefix(out, &node->prefix);
+	out->atoms = ft_realloc(out->atoms, sizeof(struct s_atom) * out->natoms,
+			sizeof(struct s_atom) * (out->natoms + node->prefix.natoms));
+	i = 0;
+	while (i < node->prefix.natoms)
+	{
+		if (node->prefix.atoms[i].type == W_LITERAL
+			&& !node->prefix.atoms[i].text.len && (++i))
+			continue ;
+		if (out->natoms
+			&& node->prefix.atoms[i].type == W_LITERAL
+			&& !(node->prefix.atoms[i].flags & (FL_SQUOTED | FL_DQUOTED))
+			&& out->atoms[out->natoms - 1].type == W_PARAMETER
+			&& out->atoms[out->natoms - 1].param.simple_param)
+			merge_parameters(out, &node->prefix.atoms[i++]);
+		else
+			out->atoms[out->natoms++] = atom_copy(&node->prefix.atoms[i++]);
+	}
 	if (node->nalternatives > 0 && node->selector < node->nalternatives)
 		gather_prefixes(&node->alternatives[node->selector], out);
 	gather_prefixes(node->next, out);
@@ -107,9 +101,29 @@ static int
 	return (0);
 }
 
+/** @brief Attempts to expand word */
+static int
+	try_expand(
+	t_word *word,
+	t_brace_group *group,
+	t_word **result,
+	size_t *result_len)
+{
+	if (!brace_parse(word, group))
+		return (0);
+	while (1)
+	{
+		*result = ft_realloc(*result, sizeof(t_word) * *result_len,
+				sizeof(t_word) * (*result_len + 1));
+		if (!brace_expand(group, &(*result)[(*result_len)++]))
+			break ;
+	}
+	brace_group_free(group, 1);
+	return (1);
+}
+
 void
 	expand_braces(
-	t_shell *shell,
 	t_word **wordlist,
 	size_t *len)
 {
@@ -123,18 +137,7 @@ void
 	i = 0;
 	while (i < *len)
 	{
-		if (brace_parse(wordlist[i], &group))
-		{
-			while (1)
-			{
-				result = ft_realloc(result, sizeof(t_word) * result_len,
-						sizeof(t_word) * (result_len + 1));
-				if (!brace_expand(&group, &result[result_len++]))
-					break ;
-			}
-			brace_group_free(&group, 1);
-		}
-		else
+		if (!try_expand(wordlist[i], &group, &result, &result_len))
 		{
 			result = ft_realloc(result, sizeof(t_word) * result_len,
 					sizeof(t_word) * (result_len + 1));

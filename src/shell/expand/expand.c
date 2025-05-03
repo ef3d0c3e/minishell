@@ -50,7 +50,7 @@ static int
 
 	// This yields a list of arguments
 	len = 1;
-	expand_braces(shell, &arg, &len);
+	expand_braces(&arg, &len);
 	i = 0;
 	while (i < len)
 	{

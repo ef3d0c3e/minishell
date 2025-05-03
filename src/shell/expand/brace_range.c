@@ -17,20 +17,14 @@ static void
 	int		i;
 	size_t	size;
 
-	if (!incr)
-		incr = 1;
-	if (incr < 0)
-		incr *= -1;
-	size = (end - start) / incr + 1;
-	if (end <= start)
-		size = (start - end) / incr + 1;
+	incr = (!incr) + incr * ((incr > 0) - (incr < 0));
+	size = ((end - start) / incr + 1) * (end >= start)
+		+ ((start - end) / incr + 1) * (end < start);
 	group->nalternatives = 0;
-	group->alternatives = xmalloc(sizeof(t_brace_group)
-			* size);
+	group->alternatives = xmalloc(sizeof(t_brace_group) * size);
 	i = start;
 	while (1)
 	{
-		//printf("i=%d\n", i);
 		group->alternatives[group->nalternatives++] = (t_brace_group){
 			.prefix = word_from_int(i, 0),
 			.nalternatives = 0,
@@ -38,15 +32,8 @@ static void
 			.next = NULL,
 			.selector = 0,
 		};
-		if (start <= end)
-		{
-			i += incr;
-			if (i > end)
-				break ;
-			continue ;
-		}
-		i -= incr;
-		if (i < end)
+		i = i + incr * ((start <= end) - (end < start));
+		if ((start <= end && i > end) || (start >= end && i < end))
 			break ;
 	}
 }
@@ -63,13 +50,12 @@ int
 		return (0);
 	s = (t_string){inner->atoms[0].text.str, inner->atoms[0].text.len};
 	i = str_find(s, "..");
-	if (i == (size_t ) - 1 || !atoi_range_checked(s.str, s.str + i, &v[0]))
+	if (i == (size_t)-1 || !atoi_range_checked(s.str, s.str + i, &v[0]))
 		return (0);
-	s.str += i + 2;
-	s.len -= i + 2;
+	s = (t_string){s.str + i + 2, s.len - i - 2};
 	i = str_find(s, "..");
 	incr = 1;
-	if (i == (size_t ) - 1)
+	if (i == (size_t)-1)
 	{
 		incr = 0;
 		i = s.len;
@@ -77,13 +63,7 @@ int
 	if (!atoi_range_checked(s.str, s.str + i, &v[1]))
 		return (0);
 	v[2] = 1;
-	if (incr)
-	{
-		s.str += i + 2;
-		s.len -= i + 2;
-		if (!atoi_range_checked(s.str, s.str + s.len, &v[2]))
-			return (0);
-	}
-	expand_range(group, v[0], v[1], v[2]);
-	return (1);
+	if (incr && !atoi_range_checked(s.str + i + 2, s.str + s.len, &v[2]))
+		return (0);
+	return (expand_range(group, v[0], v[1], v[2]), 1);
 }
