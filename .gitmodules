@@ -5,3 +5,6 @@
 	path = libs/ft_gnl
 	url = https://github.com/ef3d0c3e/ft_getnextline
 	branch = auto-free
+[submodule "libs/libopts"]
+	path = libs/libopts
+	url = https://github.com/cheldux/libopts

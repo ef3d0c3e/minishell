@@ -34,14 +34,16 @@ LIB_PRINTF := ./libs/ft_printf/libftprintf.a
 IFLAGS += -I$(dir $(LIB_PRINTF))includes/
 LIB_GNL := ./libs/ft_gnl/libgnl.a
 IFLAGS += -I$(dir $(LIB_GNL))includes/
+LIB_OPTS := ./libs/libopts/libopts.a
+IFLAGS += -I$(dir $(LIB_OPTS))includes/
 
 build/%.o: %.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
 
 # Default target
-$(NAME): LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
-$(NAME): $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS)
+$(NAME): LFLAGS += $(LIB_PRINTF) $(LIB_GNL) $(LIB_OPTS)
+$(NAME): $(LIB_PRINTF) $(LIB_GNL) $(LIB_OPTS) $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
 
 # Tester
@@ -67,6 +69,11 @@ $(LIB_PRINTF):
 $(LIB_GNL):
 	echo "Building gnl..."
 	$(MAKE) -C $(dir $(LIB_GNL))
+
+# libots
+$(LIB_OPTS):
+	echo "Building libopts..."
+	$(MAKE) -C $(dir $(LIB_OPTS))
 
 # Create compile commands
 .PHONY: clangd
