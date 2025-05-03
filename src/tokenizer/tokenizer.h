@@ -245,7 +245,7 @@ typedef struct s_token
 
 /** @brief Displays token */
 void
-token_print_debug(int fd, t_string prompt, const t_token *token);
+token_print_debug(t_string prompt, const t_token *token);
 
 /* ************************************************************************** */
 /* Tokenizer                                                                  */

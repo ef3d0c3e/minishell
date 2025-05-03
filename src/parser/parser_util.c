@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 int
@@ -33,6 +34,7 @@ int
 int
 	accept_word(t_parser *parser, int offset)
 {
+	size_t			i;
 	const t_token	*tok;
 
 	if (offset > 0 && parser->pos + offset >= parser->list.size)
@@ -42,8 +44,17 @@ int
 	if (parser->pos + offset >= parser->list.size)
 		return (0);
 	tok = &parser->list.tokens[parser->pos + offset];
-	if (tok->type == TOK_KEYWORD && !parser->allow_reserved)
-		return (0);
+	if (tok->type == TOK_KEYWORD && parser->delim_stack.size)
+	{
+		i = 0;
+		while (i < parser->delim_stack.size)
+		{
+			if (!ft_strcmp(parser->delim_stack.delimiters[i],
+					tok->reserved_word))
+				return (0);
+			++i;
+		}
+	}
 	return (token_isword(tok->type));
 }
 

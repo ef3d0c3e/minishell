@@ -21,9 +21,30 @@ static int
 	return (redir->type == R_OUTPUT_DIRECTION || redir->type == R_ERR_AND_OUT);
 }
 
+/** @brief Utility to expand a redirectee word */
+static char
+	*redir_expand(t_shell *shell, t_redirection *redir)
+{
+	char	*err;
+	char	**result;
+	char	*filename;
+
+	result = arg_expansion(shell, &redir->redirectee.filename, 1);
+	if (!result || !result[0] || result[1])
+	{
+		args_free(result);
+		ft_asprintf(&err, "Ambiguous redirect");
+		shell_error(shell, err, SRC_LOCATION);
+		return (NULL);
+	}
+	filename = result[0];
+	free(result);
+	return (filename);
+}
+
 /** @brief Opens a file in noclobber moder, returns -1 and reports on failure */
 static int
-	noclobber_open(t_shell *shell, t_redirection *redir, int flags, char *file)
+	noclobber_open(t_shell *shell, int flags, char *file)
 {
 	struct stat	sb[2];
 	int			status;
@@ -58,27 +79,6 @@ static int
 		" mode", file), shell_error(shell, err, SRC_LOCATION), -1);
 }
 
-/** @brief Utility to expand a redirectee word */
-static char
-	*redir_expand(t_shell *shell, t_redirection *redir)
-{
-	char	*err;
-	char	**result;
-	char	*filename;
-
-	result = arg_expansion(shell, &redir->redirectee.filename, 1);
-	if (!result || !result[0] || result[1])
-	{
-		args_free(result);
-		ft_asprintf(&err, "Ambiguous redirect");
-		shell_error(shell, err, SRC_LOCATION);
-		return (NULL);
-	}
-	filename = result[0];
-	free(result);
-	return (filename);
-}
-
 int
 	redir_open(t_shell *shell, t_redirection *redir)
 {
@@ -91,7 +91,7 @@ int
 		return (-1);
 	if (option_value(shell, "noclobber") && redir_is_clobbering(redir))
 	{
-		fd = noclobber_open(shell, redir, redir->flags, filename);
+		fd = noclobber_open(shell, redir->flags, filename);
 		free(filename);
 		return (fd);
 	}

@@ -80,11 +80,11 @@ static void
 	// TODO: if count == 1, do not recurse
 	printf("ncands: %zu\n", count);
 
-	//if (count == 1)
-	//{
-	//	split_inner_1(cand, inner);
-	//	return ;
-	//}
+	if (count == 1)
+	{
+		split_inner_1(cand, inner);
+		return ;
+	}
 	cand->alternatives = xmalloc(sizeof(t_brace_candidate) * count);
 	cand->nalternatives = 0;
 	i = 0;

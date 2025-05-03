@@ -53,7 +53,7 @@ void
 	{
 		if (arg->atoms[i].type == W_PARAMETER)
 		{
-			ast_free(arg->atoms[i].param.word, 0);
+			free(arg->atoms[i].param.word);
 			free(arg->atoms[i].param.name);
 		}
 		else

@@ -21,7 +21,9 @@ t_parser
 		.errors_size = 0,
 		.errors_cap = 16,
 		.pos = 0,
-		.allow_reserved = 1,
+		.delim_stack.delimiters = NULL,
+		.delim_stack.size = 0,
+		.delim_stack.capacity = 0,
 	});
 }
 
@@ -34,6 +36,7 @@ void
 	while (i < parser->errors_size)
 		free(parser->errors[i++]);
 	free(parser->errors);
+	free(parser->delim_stack.delimiters);
 }
 
 /** @brief Formats the error */
@@ -50,8 +53,8 @@ static char
 		end_pos = parser->input.len;
 	else
 		end_pos = parser->list.tokens[end].end;
-	if (start >= end)
-		start = (end - 1) * !!end;
+	if (start >= parser->list.size)
+		start = (parser->list.size - 1) * !!parser->list.size;
 	tok_start = &parser->list.tokens[start];
 	indicator = xmalloc(tok_start->start + 2);
 	i = 0;

@@ -14,7 +14,6 @@
 t_ast_node
 	*parse_function_def(t_parser *parser)
 {
-	const int		in_stmt = parser->allow_reserved;
 	size_t			start;
 	t_string_buffer	name;
 	t_ast_node		*body;
@@ -25,11 +24,9 @@ t_ast_node
 	while (accept(parser, 0, "\n"))
 		++parser->pos;
 	start = parser->pos;
-	parser->allow_reserved = 0;
 	body = parse_compound_command(parser);
 	if (!body  || (body->type != NODE_BLOCK && body->type != NODE_SUBSHELL))
 		parser_error(parser, ft_strdup("Expected a block or subshell"),
 		start, parser->pos);
-	parser->allow_reserved = in_stmt;
 	return (make_function_node(name, body));
 }
