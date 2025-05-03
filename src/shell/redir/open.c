@@ -29,7 +29,7 @@ static char
 	char	**result;
 	char	*filename;
 
-	result = arg_expansion(shell, &redir->redirectee.filename, 1);
+	result = word_expansion_single(shell, &redir->redirectee.filename);
 	if (!result || !result[0] || result[1])
 	{
 		args_free(result);

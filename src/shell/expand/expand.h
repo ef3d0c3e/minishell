@@ -79,7 +79,7 @@ void
 fraglist_append(t_fragment_list *list, t_string_buffer word);
 
 /******************************************************************************/
-/* Arg expansion                                                              */
+/* Word expansion                                                              */
 /******************************************************************************/
 
 /**
@@ -88,12 +88,21 @@ fraglist_append(t_fragment_list *list, t_string_buffer word);
  *
  * @param shell The shell session
  * @param list Word list to expand
- * @param size Size of the word list
  *
  * @returns A null-terminated array of strings to be passed to `execve`
  */
 char
-**arg_expansion(t_shell *shell, struct s_word *list, size_t size);
+**arg_expansion(t_shell *shell, t_wordlist *list);
+/**
+ * @brief Expands a single word to a list of argument
+ *
+ * @param shell The shell session
+ * @param word Single word to expand
+ *
+ * @returns A null-terminated array of strings
+ */
+char
+**word_expansion_single(t_shell *shell, t_word *word);
 /**
  * @brief Expands a single argument and concatenate the resulting words into
  * a single string separated by `ifs[0]`.
@@ -104,7 +113,7 @@ char
  * @returns The resulting expansion
  */
 char
-*arg_expansion_single(t_shell *shell, struct s_word *list);
+*arg_expansion_cat(t_shell *shell, t_word *list);
 
 /******************************************************************************/
 /* Brace expansion                                                            */
@@ -176,13 +185,13 @@ brace_parse_range(t_brace_group *group, t_word *inner);
  * This function calls itself recursively in order to parse the subsequent brace
  * group
  *
- * @param arg Word to parse braces in
+ * @param word Word to parse braces in
  * @param group Resulting brace group parsed
  *
  * @returns 1 on success, 0 if no valid brace groups are found in `arg`
  */
 int
-brace_parse(t_word *arg, t_brace_group *group);
+brace_parse(t_word *word, t_brace_group *group);
 
 /******************************************************************************/
 /* Individual expanders                                                       */
@@ -191,16 +200,13 @@ brace_parse(t_word *arg, t_brace_group *group);
 /**
  * @brief Performs braces expansion
  *
- * @param shell The shell session
- * @param wordlist Wordlist to expand
- * @param len Length of `wordlist`
+ * @param word Word to expand
+ * @param list Resulting @ref t_wordlist
  *
  * Invalid brace expansions are left unchanged.
  */
 void
-expand_braces(
-	t_word **wordlist,
-	size_t *len);
+expand_braces(t_word *word, t_wordlist *list);
 /**
  * @brief Resolves a parameter in the current context
  *

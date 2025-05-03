@@ -18,7 +18,7 @@ t_eval_result
 	t_eval_result	result;
 	char			**argv;
 	
-	argv = arg_expansion(shell, cmd->st_for.args, cmd->st_for.nargs);
+	argv = arg_expansion(shell, &cmd->st_for.args);
 	if (!argv)
 		return ((t_eval_result){RES_NONE, 0});
 	i = 0;

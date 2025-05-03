@@ -15,16 +15,16 @@
 static void
 	cmd_arg_push(t_parser *parser, t_ast_node *cmd, size_t arg_pos)
 {
-	while (cmd->cmd.nargs <= arg_pos)
+	while (cmd->cmd.args.size <= arg_pos)
 	{
-		cmd->cmd.args = ft_realloc(cmd->cmd.args,
-			sizeof(struct s_word) * cmd->cmd.nargs,
-			sizeof(struct s_word) * (cmd->cmd.nargs + 1));
-		cmd->cmd.args[cmd->cmd.nargs].atoms = NULL;
-		cmd->cmd.args[cmd->cmd.nargs].natoms = 0;
-		++cmd->cmd.nargs;
+		cmd->cmd.args.list = ft_realloc(cmd->cmd.args.list,
+			sizeof(t_word) * cmd->cmd.args.size,
+			sizeof(t_word) * (cmd->cmd.args.size + 1));
+		cmd->cmd.args.list[cmd->cmd.args.size].atoms = NULL;
+		cmd->cmd.args.list[cmd->cmd.args.size].natoms = 0;
+		++cmd->cmd.args.size;
 	}
-	word_push(parser, &cmd->cmd.args[arg_pos]);
+	word_push(parser, &cmd->cmd.args.list[arg_pos]);
 }
 
 /** @brief Pushes into a command's assignments list */
@@ -105,7 +105,8 @@ t_ast_node
 			break ;
 		++parser->pos;
 	}
-	if (!cmd->cmd.args && !cmd->cmd.assigns && !cmd->cmd.redirs.redirs_size)
+	if (!cmd->cmd.args.size && !cmd->cmd.assigns
+		&& !cmd->cmd.redirs.redirs_size)
 		return (free(cmd), NULL);
 	return (cmd);
 }

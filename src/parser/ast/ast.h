@@ -87,9 +87,7 @@ print_subshell_node(size_t depth, const t_ast_node *node);
 struct s_cmd_node
 {
 	/** @brief Program arguments */
-	struct s_word	*args;
-	/** @brief Number of arguments */
-	size_t				nargs;
+	t_wordlist			args;
 	/** @brief Assignments for this command */
 	struct s_assignment	*assigns;
 	/** @brief Number of assignments */
@@ -228,9 +226,7 @@ struct s_for_node
 	/** @brief Loop identifier, must be valid */
 	char				*ident;
 	/** @brief Word list (must undergo expansion) */
-	struct s_word	*args;
-	/** @brief Number of words */
-	size_t				nargs;
+	t_wordlist			args;
 	/** @brief For body */
 	t_ast_node			*body;
 };

@@ -18,8 +18,8 @@ t_ast_node
 
 	node = xmalloc(sizeof(t_ast_node));
 	node->type = NODE_COMMAND;
-	node->cmd.args = NULL;
-	node->cmd.nargs = 0;
+	node->cmd.args.list = NULL;
+	node->cmd.args.size = 0;
 	node->cmd.assigns = NULL;
 	node->cmd.nassigns = 0;
 	node->cmd.redirs.redirs = NULL;
@@ -41,7 +41,7 @@ void
 		++i;
 	}
 	free(node->cmd.assigns);
-	wordlist_free(node->cmd.args, node->cmd.nargs);
+	wordlist_free(&node->cmd.args);
 	redirs_free(&node->cmd.redirs);
 }
 
@@ -68,6 +68,6 @@ void
 		print_pad(" | ", depth);
 		ft_dprintf(2, "(ARGS)\n");
 	}
-	wordlist_print(depth + 1, node->cmd.args, node->cmd.nargs);
+	wordlist_print(depth + 1, &node->cmd.args);
 	print_redir(&node->cmd.redirs, depth + 1);
 }
