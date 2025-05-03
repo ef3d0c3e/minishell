@@ -148,8 +148,6 @@ word_copy(const t_word *in);
  */
 void
 word_print(size_t depth, const t_word *word);
-
-
 /**
  * @brief Builds a subword from another word
  *
@@ -161,7 +159,16 @@ word_print(size_t depth, const t_word *word);
  */
 t_word
 word_sub(t_word *word, const size_t range[4]);
-
+/**
+ * @brief Creates a word from a string
+ *
+ * @param str String to create word from
+ * @param flags Word flags, 0 for `FL_NONE`
+ *
+ * @returns Thecreated word containing a single @ref W_LITERAL @ref t_atom
+ */
+t_word
+word_from_string(const char *str, int flags);
 /**
  * @brief Parses word under cursor until word delimited is encountered
  *
