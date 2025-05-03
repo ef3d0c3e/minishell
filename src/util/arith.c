@@ -62,3 +62,28 @@ int
 	}
 	return (!*s);
 }
+
+int
+	atoi_range_checked(const char *s, const char *e, int *value)
+{
+	int	sign;
+
+	sign = 1;
+	if (s == e)
+		return (0);
+	if (*s == '+' && ++s)
+		sign = 1;
+	else if (*s == '-' && ++s)
+		sign = -1;
+	if (s == e)
+		return (0);
+	*value = 0;
+	while (s != e && *s >= '0' && *s <= '9')
+	{
+		if (muladd_10s_overflow(*value, sign, *s - '0'))
+			return (0);
+		*value = *value * 10 + sign * (*s - '0');
+		++s;
+	}
+	return (s == e);
+}

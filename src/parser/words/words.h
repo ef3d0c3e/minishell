@@ -165,10 +165,20 @@ word_sub(t_word *word, const size_t range[4]);
  * @param str String to create word from
  * @param flags Word flags, 0 for `FL_NONE`
  *
- * @returns Thecreated word containing a single @ref W_LITERAL @ref t_atom
+ * @returns The created word containing a single @ref W_LITERAL @ref t_atom
  */
 t_word
 word_from_string(const char *str, int flags);
+/**
+ * @brief Creates a word from an integer
+ *
+ * @param value Value to create word from
+ * @param flags Word flags, 0 for `FL_NONE`
+ *
+ * @returns The created word containing a single @ref W_LITERAL @ref t_atom
+ */
+t_word
+word_from_int(int value, int flags);
 /**
  * @brief Parses word under cursor until word delimited is encountered
  *
