@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
 #include <shell/shell.h>
 #include <stdio.h>
 
@@ -20,9 +21,9 @@ static void
 
 	if (with_cond)
 	{
+		parser_delimiter_push(parser, "then");
 		cond = parse_cmdlist(parser);
-		expect(parser, 0, "then");
-		++parser->pos;
+		expects_delimiter(parser, "then");
 	}
 	body = parse_cmdlist(parser);
 
@@ -42,12 +43,13 @@ static void
 t_ast_node
 	*parse_if(t_parser *parser)
 {
-	int			in_stmt = !parser->allow_reserved;
 	t_ast_node	*stmt;
 
 	++parser->pos;
-	parser->allow_reserved = 0;
 	stmt = make_if_node();
+	parser_delimiter_push(parser, "fi");
+	parser_delimiter_push(parser, "elif");
+	parser_delimiter_push(parser, "else");
 	if_push(parser, stmt, 1);
 	while (accept(parser, 0, "elif"))
 	{
@@ -59,8 +61,8 @@ t_ast_node
 		++parser->pos;
 		if_push(parser, stmt, 0);
 	}
-	expect(parser, 0, "fi");
-	++parser->pos;
-	parser->allow_reserved = !in_stmt;
+	parser_delimiter_pop(parser, "else");
+	parser_delimiter_pop(parser, "elif");
+	expects_delimiter(parser, "fi");
 	return (stmt);
 }

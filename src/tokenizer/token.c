@@ -12,7 +12,7 @@
 #include "tokenizer.h"
 
 void
-	token_print_debug(int fd, t_string prompt, const t_token *token)
+	token_print_debug(t_string prompt, const t_token *token)
 {
 	static const char	*names[] = {
 	[TOK_SPACE] = "SPACE",

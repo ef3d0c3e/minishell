@@ -18,7 +18,6 @@
 t_ast_node
 	*parse_compound_command(t_parser *parser)
 {
-	const int		in_stmt = parser->allow_reserved;
 	const size_t	begin = parser->pos;
 	t_ast_node		*inner;
 	t_ast_node		*node;
@@ -38,11 +37,9 @@ t_ast_node
 		++parser->pos;
 		if (parser->list.tokens[parser->pos].type == TOK_SPACE)
 			++parser->pos;
-		parser->allow_reserved = 0;
+		parser_delimiter_push(parser, "}");
 		inner = parse_cmdlist(parser);
-		parser->allow_reserved = in_stmt;
-		expect(parser, 0, "}");
-		++parser->pos;
+		expects_delimiter(parser, "}");
 		node = make_block_node(inner);
 	}
 	else if (accept(parser, 0, "if"))
@@ -54,19 +51,9 @@ t_ast_node
 	else if (accept(parser, 0, "for"))
 		return (parse_for(parser));
 	else
-	{
 		parser_error(parser, ft_strdup("Unexpected token"),
 				begin, parser->list.size);
-	}
 	return (node);
-	/* TODO:
-    if (accept("if"))      return parse_if_clause();
-    if (accept("while"))   return parse_while_clause();
-    if (accept("until"))   return parse_until_clause();
-    if (accept("for"))     return parse_for_clause();
-    if (accept("case"))    return parse_case_clause();
-    error("unexpected token in compound_command");
-	*/
 }
 
 t_ast_node
@@ -106,6 +93,8 @@ t_ast_node
 t_ast_node
 	*parse_command(t_parser *parser)
 {
+	if (accept_tok(parser, 0, TOK_SPACE))
+		++parser->pos;
 	if (parser->pos >= parser->list.size)
 	{
 		parser_error(parser, ft_strdup("Expected tokens near newline"),

@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 /** @brief Parses a list of whitespace/newline delimited words */
@@ -46,7 +48,6 @@ static void
 t_ast_node
 	*parse_for(t_parser *parser)
 {
-	int				in_stmt = !parser->allow_reserved;
 	t_ast_node		*stmt;
 	t_string_buffer	buf;
 
@@ -80,16 +81,16 @@ t_ast_node
 	stmt = make_for_node(stringbuf_cstr(&buf));
 	expect(parser, 0, "in");
 	++parser->pos;
-	parser->allow_reserved = 0;
+	parser_delimiter_push(parser, "do");
 	parse_arglist(parser, &stmt->st_for.args, &stmt->st_for.nargs);
 	if (!accept(parser, 0, ";") && !accept(parser, 0, "\n"))
 		parser_error(parser, ft_strdup("Expected separator after word list"),
 			parser->pos, parser->pos + 1);
-	expect(parser, 1, "do");
-	parser->pos += 2;
+	if (accept_tok(parser, 0, TOK_SPACE))
+		++parser->pos;
+	expects_delimiter(parser, "do");
+	parser_delimiter_push(parser, "done");
 	stmt->st_for.body = parse_cmdlist(parser);
-	parser->allow_reserved = !in_stmt;
-	expect(parser, 0, "done");
-	++parser->pos;
+	expects_delimiter(parser, "done");
 	return (stmt);
 }

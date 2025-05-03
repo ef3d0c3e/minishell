@@ -43,19 +43,49 @@ assignlist_print(size_t depth, t_word *list, size_t size);
 /* The parser                                                                 */
 /******************************************************************************/
 
+typedef struct s_delimiter_stack
+{
+	const char	**delimiters;
+	size_t		size;
+	size_t		capacity;
+}	t_delimiter_stack;
+
+/** @brief Pushes a delimiter to the parser's delimiters stack */
+void
+parser_delimiter_push(t_parser *parser, const char *delim);
+/** @brief Pops a delimiter to the parser's delimiters stack */
+int
+parser_delimiter_pop(t_parser *parser, const char *delim);
+/**
+ * @brief Checks that the current token is delimiter `delim` and that the
+ * delimiters stack's top contains the requested delimiter.
+ *
+ * @param parser The parser
+ * @param delim Delimiter to check
+ *
+ * @return 1 On success, 0 on failure. On success, ther parser's internal
+ * cursor is advanced, on failure, an error is reported.
+ */
+int
+expects_delimiter(t_parser *parser, const char *delim);
+
 /** @brief The parser */
 typedef struct s_parser
 {
+	/** @brief The input prompt */
 	t_string		input;
+	/** @brief Token list */
 	t_token_list	list;
+	/** @brief Error messages */
 	char			**errors;
+	/** @brief Number of error messages */
 	size_t			errors_size;
+	/** @brief Capacity of `errors` */
 	size_t			errors_cap;
-	
 	/** @brief Current position in the parser's input list */
 	size_t			pos;
-	/** @brief Determines if keywords have to be treated as words */
-	int				allow_reserved;
+	/** @brief Stack of delimiters tokens that must not be parsed as words */
+	t_delimiter_stack	delim_stack;
 }	t_parser;
 
 /** @brief Initializes a new parser */
@@ -242,10 +272,13 @@ accept(t_parser *parser, int offset, const char *word);
 /**
  * @brief Checks if the current token can be treated as a word
  *
+ * This function takes the current delimiters context into consideration in
+ * order to detect when a keyword can be interpreted as a regular word.
+ *
  * @param parser The parser
  * @param offset Offset from current position
  *
- * @returns 1 If the token can be treated as a plain word.
+ * @returns Non-zero if the token can be treated as a plain word.
  */
 int
 accept_word(t_parser *parser, int offset);

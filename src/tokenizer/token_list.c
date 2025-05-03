@@ -78,7 +78,7 @@ void
 	i = 0;
 	while (i < list->size)
 	{
-		token_print_debug(2, input, &list->tokens[i]);
+		token_print_debug(input, &list->tokens[i]);
 		++i;
 	}
 	ft_dprintf(2, "\n");

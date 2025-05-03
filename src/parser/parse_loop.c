@@ -9,24 +9,36 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "parser/parser.h"
 #include <shell/shell.h>
+
+static void
+	parser_syntax_error(t_parser *parser, const char *expected)
+{
+	char	*err;
+
+	if (expected)
+		ft_asprintf(&err, "Unexpected token");
+	else
+		ft_asprintf(&err, "Expected `%s` token", expected);
+	parser_error(parser, err, parser->pos, parser->pos + 1);
+}
 
 t_ast_node
 	*parse_while(t_parser *parser)
 {
-	int			in_stmt = !parser->allow_reserved;
 	t_ast_node	*cond;
 	t_ast_node	*body;
 
 	++parser->pos;
-	parser->allow_reserved = 0;
+	parser_delimiter_push(parser, "do");
 	cond = parse_cmdlist(parser);
-	expect(parser, 0, "do");
-	++parser->pos;
+	expects_delimiter(parser, "do");
+
+	parser_delimiter_push(parser, "done");
 	body = parse_cmdlist(parser);
-	expect(parser, 0, "done");
-	++parser->pos;
-	parser->allow_reserved = !in_stmt;
+	expects_delimiter(parser, "done");
 	return (make_loop_node(cond, body, 0));
 }
 

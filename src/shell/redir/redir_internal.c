@@ -55,7 +55,6 @@ static int
 	t_redirection *redir)
 {
 	char	*err;
-	int		dest;
 	int		status;
 
 	if (redir->redirectee.fd == redir->redirector.fd)
