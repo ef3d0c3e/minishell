@@ -110,56 +110,79 @@ char
 /* Brace expansion                                                            */
 /******************************************************************************/
 
-/** @brief A candidate for brace-expansion, tree-like structure */
-typedef struct s_brace_canditate
+/** @brief A candidate for brace-expansion, forest structure */
+typedef struct s_brace_group
 {
 	/** @brief Prefix for this brace group */
-	t_word						prefix;
+	t_word					prefix;
 	/** @brief All alternatives sub-group for this brace group */
-	struct s_brace_canditate	*alternatives;
+	struct s_brace_group	*alternatives;
 	/** @brief Number of alternative sub-groups */
-	size_t						nalternatives;
+	size_t					nalternatives;
 	/** @brief Next brace sub-group */
-	struct s_brace_canditate	*next;
-
-	/** @brief Position for the iteration code, initially `0` */
-	size_t						selector;
-}	t_brace_candidate;
+	struct s_brace_group	*next;
+	/** @brief Position for the iteration logic, initially `0` */
+	size_t					selector;
+}	t_brace_group;
 
 /**
- * @brief Frees a brace candidate
+ * @brief Frees a brace group
  *
- * @param cand Brace candidate to free
+ * @param group Brace group to free
  * @param root Whether this is the root node
  */
 void
-brace_candidate_free(t_brace_candidate *cand, int root);
+brace_group_free(t_brace_group *group, int root);
 /**
- * @brief Prints a brace candidate
+ * @brief Prints a brace group
  *
  * @param depth Print pad depth
- * @param cand Brace candidate to print
+ * @param group Brace group to print
  */
 void
-brace_candidate_print(size_t depth, const t_brace_candidate *cand);
-
-//int
-//candidate_parse();
-
+brace_group_print(size_t depth, const t_brace_group *group);
 /**
- * @brief Performs a single expansion of a @ref t_brace_candidate
+ * @brief Splits a word for brace parsing
  *
- * Expands the candidate once and store the resulting expansion into `out`.
- * The counter for `cand` is increased.
+ * The following input `prefix{a,b}next..` is split into the following parts:
+ *  - Prefix `prefix`: becomes a @ref t_word `(START, (delim[0], delim[1]))`
+ *  - Inner `{a,b}`: is recursively parsed to create further brace groups
+ *	`((delim[0], delim[1]), (delim[2], delim[3]))`
+ *  - Next `next`: is recursively parsed by calling this function with the next
+ * 	brace groups as delimiters `((delim[2], delim[3]), END)`.
  *
- * @param cand Candidate to expand once
- * @param out Output word
+ *  @param arg Word to perform splitting on
+ *  @param delims Delimiters parsed by @ref
  *
- * @returns 1 if further expansions can be made, 0 if no more expansions are
- * possible
+ *  @returns The parsed brace group
+ */
+t_brace_group
+brace_split(t_word *arg, const size_t delims[4]);
+/**
+ * @brief Parses brace groups like this: `[X..Y[..INCR]]`
+ *
+ * Currently, this does not handle ASCII-based ranges
+ *
+ * @param group Resulting brace group
+ * @param inner Content to parse and expand
+ *
+ * @returns 0 if no range matched, 1 if a range matched.
  */
 int
-candidate_expand(t_brace_candidate *cand, t_word *out);
+brace_parse_range(t_brace_group *group, t_word *inner);
+/**
+ * @brief Parses a brace group
+ *
+ * This function calls itself recursively in order to parse the subsequent brace
+ * group
+ *
+ * @param arg Word to parse braces in
+ * @param group Resulting brace group parsed
+ *
+ * @returns 1 on success, 0 if no valid brace groups are found in `arg`
+ */
+int
+brace_parse(t_word *arg, t_brace_group *group);
 
 /******************************************************************************/
 /* Individual expanders                                                       */

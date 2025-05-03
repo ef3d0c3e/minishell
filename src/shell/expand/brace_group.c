@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   brace_candidates.c                                 :+:      :+:    :+:   */
+/*   brace_group.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,44 +12,44 @@
 #include <shell/shell.h>
 
 void
-	brace_candidate_free(t_brace_candidate *cand, int root)
+	brace_group_free(t_brace_group *group, int root)
 {
 	size_t	i;
 
-	word_free(&cand->prefix);
+	word_free(&group->prefix);
 	i = 0;
-	while (i < cand->nalternatives)
-		brace_candidate_free(&cand->alternatives[i++], 1);
-	free(cand->alternatives);
-	if (cand->next)
-		brace_candidate_free(cand->next, 0);
+	while (i < group->nalternatives)
+		brace_group_free(&group->alternatives[i++], 1);
+	free(group->alternatives);
+	if (group->next)
+		brace_group_free(group->next, 0);
 	if (!root)
-		free(cand);
+		free(group);
 }
 
 void
-	brace_candidate_print(size_t depth, const t_brace_candidate *cand)
+	brace_group_print(size_t depth, const t_brace_group *group)
 {
 	size_t	i;
 
 	print_pad(" | ", depth);
 	ft_dprintf(2, "PREFIX ");
-	if (cand->prefix.natoms)
-		word_print(0, &cand->prefix);
+	if (group->prefix.natoms)
+		word_print(0, &group->prefix);
 	else
 		ft_dprintf(2, "\n");
 	i = 0;
-	while (i < cand->nalternatives)
+	while (i < group->nalternatives)
 	{
 		print_pad(" | ", depth);
 		ft_dprintf(2, "ALTERNATIVES %zu\n", i);
-		brace_candidate_print(depth + 1, &cand->alternatives[i]);
+		brace_group_print(depth + 1, &group->alternatives[i]);
 		++i;
 	}
-	if (cand->next)
+	if (group->next)
 	{
 		print_pad(" | ", depth);
 		ft_dprintf(2, "NEXT\n");
-		brace_candidate_print(depth + 1, cand->next);
+		brace_group_print(depth + 1, group->next);
 	}
 }

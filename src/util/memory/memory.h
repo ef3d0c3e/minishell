@@ -61,6 +61,17 @@ void
 void
 *ft_memcpy(void *dest, const void *src, size_t n);
 /**
+ * @brief Memset
+ *
+ * @param dest Destination buffer to fill
+ * @param c Byte to fill with
+ * @param n Number of time to copy byte `c` into `dest`
+ *
+ * @returns `dest`
+ */
+void
+*ft_memset(void *dest, int c, size_t n);
+/**
  * @brief Reallocates `ptr` for fit at least `new_size`
  *
  * @param ptr Buffer to reallocate
