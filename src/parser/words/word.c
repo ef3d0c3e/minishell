@@ -19,7 +19,7 @@ void
 	arg->atoms = ft_realloc(arg->atoms, sizeof(arg->atoms[0]) * arg->natoms,
 		sizeof(arg->atoms[0]) * (arg->natoms + 1));
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
-		parse_param_aton(parser, &arg->atoms[arg->natoms]);
+		parse_param_atom(parser, &arg->atoms[arg->natoms]);
 	else if (token->type == TOK_CMD_SUB)
 		arg->atoms[arg->natoms] = (t_atom){
 			.type = W_SUBEXPR,

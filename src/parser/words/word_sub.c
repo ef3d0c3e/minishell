@@ -47,7 +47,6 @@ t_word
 	t_word				new;
 	size_t				i;
 	
-	printf("range = {%zu %zu %zu %zu}\n", range[0], range[1], range[2], range[3]);
 	new.natoms = (range[2] - range[0]);
 	new.atoms = xmalloc(sizeof(struct s_atom) * new.natoms);
 	i = range[0];

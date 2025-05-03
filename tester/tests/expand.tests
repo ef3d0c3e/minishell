@@ -1,0 +1,45 @@
+// vi:syntax=c
+#include "tests.def"
+
+DO_TEST(expand,
+	// 1. Invalid or unbalanced → left unchanged
+	SHELL_TEST("echo {}",             "", "{}\n",    "", 0)
+	SHELL_TEST("echo {a,}",           "", "a\n",  "", 0)
+	SHELL_TEST("echo {,a}",           "", "a\n",  "", 0)
+	SHELL_TEST("echo {a b}",          "", "{a b}\n", "", 0)
+	SHELL_TEST("echo {a",             "", "{a\n",    "", 0)
+	SHELL_TEST("echo a}",             "", "a}\n",    "", 0)
+	SHELL_TEST("echo {a,{b,c}",       "", "{a,{b,c}\n", "", 0)
+
+	// 2. Simple numeric and alphabetic ranges
+	SHELL_TEST("echo {1..5}",         "", "1 2 3 4 5\n",    "", 0)
+	SHELL_TEST("echo {5..1}",         "", "5 4 3 2 1\n",    "", 0)
+	SHELL_TEST("echo {1..5..2}",      "", "1 3 5\n",        "", 0)
+	SHELL_TEST("echo {5..1..-2}",     "", "5 3 1\n",        "", 0)
+
+	// 3. Variable‐prefix plus brace
+	WITH_ENV(({"VAR1=V1", "VAR2=V2", NULL}),
+		SHELL_TEST("echo $VAR{1,2}",      "", "V1 V2\n", "", 0)
+	)
+	SHELL_TEST("VARa=Za VARb=Zb; echo $VAR{a,b}", "", "Za Zb\n", "", 0)
+
+	// 4. Multiple adjacent expansions (rightmost varies fastest)
+	SHELL_TEST("echo {x,y}{1,2}",     "", "x1 x2 y1 y2\n", "", 0)
+	SHELL_TEST("echo a{b,c}d{e,f}g",  "", "abdeg abdfg acdeg acdfg\n", "", 0)
+
+	// 5. Nested expansions
+	SHELL_TEST("echo {{a,b},c}",      "", "a b c\n",        "", 0)
+	SHELL_TEST("echo a{1,2{x,y}3}b",  "", "a1b a2x3b a2y3b\n", "", 0)
+
+	// 6. Brace-expansion combined with plain text
+	SHELL_TEST("echo pre{1,2}post",   "", "pre1post pre2post\n", "", 0)
+	SHELL_TEST("echo {u,{v,w}}-Z",    "", "u-Z v-Z w-Z\n",       "", 0)
+
+	// 7. Empty‐string alternatives
+	SHELL_TEST("echo a{,X}b",         "", "ab aXb\n",    "", 0)
+	SHELL_TEST("echo {,}",            "", "\n",        "", 0)
+
+	// 8. Complex nesting and ranges
+	SHELL_TEST("echo {A{1,2},B{3..4}}", "", "A1 A2 B3 B4\n", "", 0)
+	SHELL_TEST("echo {{x,y}{1..2},Z}",  "", "x1 x2 y1 y2 Z\n", "", 0)
+)
