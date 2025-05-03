@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_word
@@ -23,6 +24,25 @@ t_word
 		.flags = flags,
 		.next = NULL,
 		.text = stringbuf_from(str),
+	};
+	return (word);
+}
+
+t_word
+	word_from_int(int value, int flags)
+{
+	t_word			word;
+	t_string_buffer	buf;
+
+	stringbuf_init(&buf, 24);
+	stringbuf_itoa(&buf, value);
+	word.natoms = 1;
+	word.atoms = xmalloc(sizeof(t_atom) * word.natoms);
+	word.atoms[0] = (t_atom){
+		.type = W_LITERAL,
+		.flags = flags,
+		.next = NULL,
+		.text = buf,
 	};
 	return (word);
 }

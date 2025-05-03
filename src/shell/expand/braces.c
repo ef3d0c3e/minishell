@@ -14,6 +14,7 @@
 #include "shell/expand/expand.h"
 #include "util/util.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 static void
 	merge_prefix(t_word *result, t_word *source)
@@ -44,6 +45,81 @@ static void
 	cand->alternatives = NULL;
 	cand->nalternatives = 0;
 	merge_prefix(&cand->prefix, inner);
+}
+
+static void
+	expand_incr(t_brace_candidate *cand, int start, int end, int incr)
+{
+	int	i;
+	if (!incr)
+		incr = 1;
+	if (incr < 0)
+		incr *= -1;
+	cand->nalternatives = 0;
+	cand->alternatives = xmalloc(sizeof(t_brace_candidate)
+			* ((end - start) / incr + 1));
+	i = start;
+	while (1)
+	{
+		printf("i=%d\n", i);
+		cand->alternatives[cand->nalternatives++] = (t_brace_candidate){
+			.prefix = word_from_int(i, 0),
+			.nalternatives = 0,
+			.alternatives = NULL,
+			.next = NULL,
+			.selector = 0,
+		};
+		if (start <= end)
+		{
+			i += incr;
+			if (i > end)
+				break ;
+		}
+		else
+		{
+			i -= incr;
+			if (i < start)
+				break ;
+		}
+	}
+}
+
+/** @brief Parses brace groups like this: `[X..Y[..INCR]]` */
+static int
+	parse_incr(t_brace_candidate *cand, t_word *inner)
+{
+	t_string	s;
+	int			v[3];
+	int			incr;
+	size_t		i;
+
+	if (inner->natoms != 1)
+		return (0);
+	s = (t_string){inner->atoms[0].text.str, inner->atoms[0].text.len};
+	i = str_find(s, "..");
+	if (i == (size_t ) - 1 || !atoi_range_checked(s.str, s.str + i, &v[0]))
+		return (0);
+	s.str += i + 2;
+	s.len -= i + 2;
+	i = str_find(s, "..");
+	incr = 1;
+	if (i == (size_t ) - 1)
+	{
+		incr = 0;
+		i = s.len;
+	}
+	if (!atoi_range_checked(s.str, s.str + i, &v[1]))
+		return (0);
+	v[2] = 1;
+	if (incr)
+	{
+		s.str += i + 2;
+		s.len -= i + 2;
+		if (!atoi_range_checked(s.str, s.str + s.len, &v[2]))
+			return (0);
+	}
+	expand_incr(cand, v[0], v[1], v[2]);
+	return (1);
 }
 
 static void
@@ -80,8 +156,6 @@ static void
 	}
 	// TODO: if count == 1, do not recurse
 	printf("ncands: %zu\n", count);
-
-	//if (count == 1)
 	//{
 	//	split_inner_1(cand, inner);
 	//	return ;
@@ -191,13 +265,16 @@ static t_brace_candidate
 	cand.selector = 0;
 	inner = word_sub(arg, (const size_t[4]){delims[0], delims[1] + 1, delims[2] + 1, delims[3]});
 	count = count_groups(&inner);
+	if (parse_incr(&cand, &inner))
+		count = 0;
 	cand.prefix = word_sub(arg, (const size_t[4]){0, 0, delims[0] + 1, delims[1] + (count == 1)});
 	end = 0;
 	if (arg->atoms[arg->natoms - 1].type == W_LITERAL)
 		end = arg->atoms[arg->natoms - 1].text.len;
 	ft_dprintf(2, "inner\n");
 	word_print(1, &inner);
-	split_inner(&cand, &inner);
+	if (count)
+		split_inner(&cand, &inner);
 	cand.next = NULL;
 	if (delims[2] < arg->natoms)
 	{
