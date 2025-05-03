@@ -71,6 +71,7 @@ static int
 			if (status == -1)
 			{
 				fraglist_free(list);
+				wordlist_free(arg, len);
 				return (0);
 			}
 			++j;

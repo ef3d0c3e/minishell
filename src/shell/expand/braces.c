@@ -9,12 +9,27 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/words/words.h"
-#include "shell/expand/expand.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
+
+static void
+	merge_parameters(t_word *result, const t_atom *left)
+{
+	t_atom *const	param = &result->atoms[result->natoms - 1];
+	char			*joined;
+	size_t			len;
+
+	len = 0;
+	while (len < left->text.len && is_param_ident(left->text.str[len]))
+		++len;
+	ft_asprintf(&joined, "%s%.*s", param->param.name, (int)len, left->text.str);
+	free(param->param.name);
+	param->param.name = joined;
+	if (len >= left->text.len)
+		return ;
+	result->atoms[result->natoms] = *left;
+	result->atoms[result->natoms].text.str += len;
+	result->atoms[result->natoms++].text.len -= len;
+}
 
 static void
 	merge_prefix(t_word *result, t_word *source)
@@ -27,12 +42,17 @@ static void
 	i = 0;
 	while (i < source->natoms)
 	{
-		if (source->atoms[i].type == W_LITERAL && !source->atoms[i].text.len)
-		{
-			++i;
+		if (source->atoms[i].type == W_LITERAL && !source->atoms[i].text.len
+			&& (++i))
 			continue ;
-		}
-		result->atoms[result->natoms++] = atom_copy(&source->atoms[i++]);
+		if (result->natoms
+			&& source->atoms[i].type == W_LITERAL
+			&& !(source->atoms[i].flags & (FL_SQUOTED | FL_DQUOTED))
+			&& result->atoms[result->natoms - 1].type == W_PARAMETER
+			&& result->atoms[result->natoms - 1].param.simple_param)
+			merge_parameters(result, &source->atoms[i++]);
+		else
+			result->atoms[result->natoms++] = atom_copy(&source->atoms[i++]);
 	}
 }
 
@@ -50,18 +70,23 @@ static void
 static void
 	expand_incr(t_brace_candidate *cand, int start, int end, int incr)
 {
-	int	i;
+	int		i;
+	size_t	size;
+
 	if (!incr)
 		incr = 1;
 	if (incr < 0)
 		incr *= -1;
+	size = (end - start) / incr + 1;
+	if (end <= start)
+		size = (start - end) / incr + 1;
 	cand->nalternatives = 0;
 	cand->alternatives = xmalloc(sizeof(t_brace_candidate)
-			* ((end - start) / incr + 1));
+			* size);
 	i = start;
 	while (1)
 	{
-		printf("i=%d\n", i);
+		//printf("i=%d\n", i);
 		cand->alternatives[cand->nalternatives++] = (t_brace_candidate){
 			.prefix = word_from_int(i, 0),
 			.nalternatives = 0,
@@ -74,13 +99,11 @@ static void
 			i += incr;
 			if (i > end)
 				break ;
+			continue ;
 		}
-		else
-		{
-			i -= incr;
-			if (i < start)
-				break ;
-		}
+		i -= incr;
+		if (i < end)
+			break ;
 	}
 }
 
@@ -122,103 +145,6 @@ static int
 	return (1);
 }
 
-static void
-	split_inner(t_brace_candidate *cand, t_word *inner)
-{
-	size_t	count;
-	size_t	i;
-	size_t	j;
-	size_t	last[2];
-	int		balance;
-	t_word	arg;
-
-	count = 1;
-	i = 0;
-	balance = 0;
-	while (i < inner->natoms)
-	{
-		if ((inner->atoms[i].type != W_LITERAL
-			|| inner->atoms[i].flags & (FL_SQUOTED | FL_SQUOTED))
-			&& ++i)
-			continue ;
-		j = 0;
-		while (j < inner->atoms[i].text.len)
-		{
-			if (inner->atoms[i].text.str[j] == '{')
-				++balance;
-			if (inner->atoms[i].text.str[j] == '}')
-				--balance;
-			if (inner->atoms[i].text.str[j] == ',' && balance == 0)
-				++count;
-			++j;
-		}
-		++i;
-	}
-	// TODO: if count == 1, do not recurse
-	printf("ncands: %zu\n", count);
-	//{
-	//	split_inner_1(cand, inner);
-	//	return ;
-	//}
-	cand->alternatives = xmalloc(sizeof(t_brace_candidate) * count);
-	cand->nalternatives = 0;
-	i = 0;
-	balance = 0;
-	last[0] = 0;
-	last[1] = 0;
-	while (i < inner->natoms)
-	{
-		if ((inner->atoms[i].type != W_LITERAL
-			|| inner->atoms[i].flags & (FL_SQUOTED | FL_DQUOTED))
-			&& ++i)
-			continue ;
-		j = 0;
-		while (j < inner->atoms[i].text.len)
-		{
-			if (inner->atoms[i].text.str[j] == '{')
-				++balance;
-			if (inner->atoms[i].text.str[j] == '}')
-				--balance;
-			if (inner->atoms[i].text.str[j] == ',' && !balance)
-			{
-				arg = word_sub(inner, (const size_t[4]){last[0], last[1], i + 1, j});
-				printf("HERE: %c\n", inner->atoms[i].text.str[j]);
-				word_print(2, &arg);
-				if (!parse_candidate(&arg, &cand->alternatives[cand->nalternatives++]))
-				{
-					cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
-					cand->alternatives[cand->nalternatives - 1].nalternatives = 0;
-					cand->alternatives[cand->nalternatives - 1].selector = 0;
-					cand->alternatives[cand->nalternatives - 1].prefix = arg;
-					cand->alternatives[cand->nalternatives - 1].next = NULL;
-				}
-				else
-					word_free(&arg);
-				last[0] = i;
-				last[1] = j + 1;
-			}
-			++j;
-		}
-		++i;
-	}
-
-	size_t end = 0;
-	if (inner->atoms[inner->natoms - 1].type == W_LITERAL)
-		end = inner->atoms[inner->natoms - 1].text.len;
-	arg = word_sub(inner, (const size_t[4]){last[0], last[1], i, end});
-	word_print(2, &arg);
-	if (!parse_candidate(&arg, &cand->alternatives[cand->nalternatives++]))
-	{
-		cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
-		cand->alternatives[cand->nalternatives - 1].nalternatives = 0;
-		cand->alternatives[cand->nalternatives - 1].selector = 0;
-		cand->alternatives[cand->nalternatives - 1].prefix = arg;
-		cand->alternatives[cand->nalternatives - 1].next = NULL;
-	}
-	else
-		word_free(&arg);
-}
-
 /** @brief Counts the number of `,` separated groups */
 static size_t
 	count_groups(t_word *inner)
@@ -253,6 +179,97 @@ static size_t
 	return (count);
 }
 
+static void
+	split_inner(t_brace_candidate *cand, t_word *inner)
+{
+	size_t	count;
+	size_t	i;
+	size_t	j;
+	size_t	last[2];
+	int		balance;
+	t_word	arg;
+
+	count = count_groups(inner);
+	/*
+	i = 0;
+	balance = 0;
+	while (i < inner->natoms)
+	{
+		if ((inner->atoms[i].type != W_LITERAL
+			|| inner->atoms[i].flags & (FL_SQUOTED | FL_SQUOTED))
+			&& ++i)
+			continue ;
+		j = 0;
+		while (j < inner->atoms[i].text.len)
+		{
+			if (inner->atoms[i].text.str[j] == '{')
+				++balance;
+			if (inner->atoms[i].text.str[j] == '}')
+				--balance;
+			if (inner->atoms[i].text.str[j] == ',' && balance == 0)
+				++count;
+			++j;
+		}
+		++i;
+	}
+	*/
+	cand->alternatives = xmalloc(sizeof(t_brace_candidate) * count);
+	cand->nalternatives = 0;
+	i = 0;
+	balance = 0;
+	last[0] = 0;
+	last[1] = 0;
+	while (i < inner->natoms)
+	{
+		if ((inner->atoms[i].type != W_LITERAL
+			|| inner->atoms[i].flags & (FL_SQUOTED | FL_DQUOTED))
+			&& ++i)
+			continue ;
+		j = 0;
+		while (j < inner->atoms[i].text.len)
+		{
+			if (inner->atoms[i].text.str[j] == '{')
+				++balance;
+			if (inner->atoms[i].text.str[j] == '}')
+				--balance;
+			if (inner->atoms[i].text.str[j] == ',' && !balance)
+			{
+				arg = word_sub(inner, (const size_t[4]){last[0], last[1], i + 1, j});
+				//word_print(2, &arg);
+				if (!parse_candidate(&arg, &cand->alternatives[cand->nalternatives++]))
+				{
+					cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
+					cand->alternatives[cand->nalternatives - 1].nalternatives = 0;
+					cand->alternatives[cand->nalternatives - 1].selector = 0;
+					cand->alternatives[cand->nalternatives - 1].prefix = arg;
+					cand->alternatives[cand->nalternatives - 1].next = NULL;
+				}
+				else
+					word_free(&arg);
+				last[0] = i;
+				last[1] = j + 1;
+			}
+			++j;
+		}
+		++i;
+	}
+
+	size_t end = 0;
+	if (inner->atoms[inner->natoms - 1].type == W_LITERAL)
+		end = inner->atoms[inner->natoms - 1].text.len;
+	arg = word_sub(inner, (const size_t[4]){last[0], last[1], i, end});
+	if (!parse_candidate(&arg, &cand->alternatives[cand->nalternatives++]))
+	{
+		cand->alternatives[cand->nalternatives - 1].alternatives = NULL;
+		cand->alternatives[cand->nalternatives - 1].nalternatives = 0;
+		cand->alternatives[cand->nalternatives - 1].selector = 0;
+		cand->alternatives[cand->nalternatives - 1].prefix = arg;
+		cand->alternatives[cand->nalternatives - 1].next = NULL;
+	}
+	else
+		word_free(&arg);
+}
+
 static t_brace_candidate
 	cand_split(t_word *arg, const size_t delims[4])
 {
@@ -271,16 +288,16 @@ static t_brace_candidate
 	end = 0;
 	if (arg->atoms[arg->natoms - 1].type == W_LITERAL)
 		end = arg->atoms[arg->natoms - 1].text.len;
-	ft_dprintf(2, "inner\n");
-	word_print(1, &inner);
+	//ft_dprintf(2, "inner\n");
+	//word_print(1, &inner);
 	if (count)
 		split_inner(&cand, &inner);
 	cand.next = NULL;
 	if (delims[2] < arg->natoms)
 	{
 		suffix = word_sub(arg, (const size_t[4]){delims[2], delims[3] + (count != 1), arg->natoms, end});
-		ft_dprintf(2, "Suffix\n");
-		word_print(0, &suffix);
+		//ft_dprintf(2, "Suffix\n");
+		//word_print(0, &suffix);
 		cand.next = xmalloc(sizeof(t_brace_candidate));
 		if (!parse_candidate(&suffix, cand.next))
 		{
@@ -340,7 +357,6 @@ int
 			}
 			if (delims[0] != (size_t) - 1 && delims[2] != (size_t) - 1)
 			{
-				printf("delims = {%zu %zu %zu %zu}\n", delims[0], delims[1], delims[2], delims[3]);
 				*cand = cand_split(arg, delims);
 				return (1);
 			}
@@ -410,14 +426,14 @@ void
 	{
 		if (parse_candidate(wordlist[i], &cand))
 		{
-			brace_candidate_print(0, &cand);
+			//brace_candidate_print(0, &cand);
 			while (1)
 			{
 				result = ft_realloc(result, sizeof(t_word) * result_len,
 						sizeof(t_word) * (result_len + 1));
 				if (!candidate_expand(&cand, &result[result_len++]))
 					break ;
-				word_print(0, &result[result_len - 1]);
+				//word_print(0, &result[result_len - 1]);
 			}
 			brace_candidate_free(&cand, 1);
 		}

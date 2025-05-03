@@ -57,6 +57,8 @@ struct s_atom_param
 	size_t			offset;
 	/** @brief Length for substring */
 	size_t			length;
+	/** @brief Set to 1 if atom comes from a simple parameter token */
+	int				simple_param;
 };
 
 /** @brief A single argument item */
@@ -99,7 +101,7 @@ atom_copy(const t_atom *in);
  * @param arg Atom to parse into
  */
 void
-parse_param_aton(t_parser *parser, t_atom *arg);
+parse_param_atom(t_parser *parser, t_atom *arg);
 
 /******************************************************************************/
 /* Words                                                                      */

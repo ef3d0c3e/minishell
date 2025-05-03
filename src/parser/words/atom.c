@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 t_atom
@@ -28,7 +29,7 @@ t_atom
 }
 
 void
-	parse_param_aton(t_parser *parser, struct s_atom *arg)
+	parse_param_atom(t_parser *parser, struct s_atom *arg)
 {
 	static const char	*ops[] = {":-", "-", ":=", "=", ":?", "?", ":+", "+",
 	"##", "#", "%%", "%", ":", NULL};
@@ -43,6 +44,7 @@ void
 	arg->param.word = NULL;
 	arg->param.offset = 0;
 	arg->param.length = (size_t) - 1;
+	arg->param.simple_param = token->type == TOK_PARAM_SIMPLE;
 	name = stringbuf_cstr(&token->word);
 	if (token->type == TOK_PARAM_SIMPLE)
 	{
