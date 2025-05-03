@@ -122,14 +122,6 @@ shell_free(t_shell *shell);
 /* Temporaries handling                                                       */
 /******************************************************************************/
 
-/** @brief Holds runtime data for cleanup after the `exit` builtin */
-struct s_runtime_data
-{
-	t_shell			*shell;
-	t_redirs_stack	*r_stack;
-	char			**argv;
-};
-
 /**
  * @brief Initializes the temporaries registry
  *

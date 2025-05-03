@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.h                                             :+:      :+:    :+:   */
+/*   expand.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
-#include <parser/parser.h>
+# include <parser/parser.h>
 
 typedef struct s_shell	t_shell;
 
@@ -199,7 +199,6 @@ brace_parse(t_word *arg, t_brace_group *group);
  */
 void
 expand_braces(
-	t_shell *shell,
 	t_word **wordlist,
 	size_t *len);
 /**
