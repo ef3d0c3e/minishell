@@ -190,29 +190,6 @@ static void
 	t_word	arg;
 
 	count = count_groups(inner);
-	/*
-	i = 0;
-	balance = 0;
-	while (i < inner->natoms)
-	{
-		if ((inner->atoms[i].type != W_LITERAL
-			|| inner->atoms[i].flags & (FL_SQUOTED | FL_SQUOTED))
-			&& ++i)
-			continue ;
-		j = 0;
-		while (j < inner->atoms[i].text.len)
-		{
-			if (inner->atoms[i].text.str[j] == '{')
-				++balance;
-			if (inner->atoms[i].text.str[j] == '}')
-				--balance;
-			if (inner->atoms[i].text.str[j] == ',' && balance == 0)
-				++count;
-			++j;
-		}
-		++i;
-	}
-	*/
 	cand->alternatives = xmalloc(sizeof(t_brace_candidate) * count);
 	cand->nalternatives = 0;
 	i = 0;
