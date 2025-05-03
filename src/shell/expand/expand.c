@@ -25,9 +25,6 @@ void
 	if ((param->flags & (FL_DQUOTED | FL_SQUOTED)) == 0
 		&& expand_tilde(shell, list, param, ifs) != 0)
 		return ;
-	else if ((param->flags & (FL_DQUOTED | FL_SQUOTED)) == 0
-		&& expand_tilde(shell, list, param, ifs) != 0)
-		return ;
 	else
 	{
 		//ft_dprintf(2, "exp list fl=%d '%.*s'\n", param->flags, param->text.len, param->text.str);
