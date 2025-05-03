@@ -60,8 +60,8 @@ ITESTS := \
 	-include ./tester/tests/control.tests \
 	-include ./tester/tests/sub.tests
 tests: CFLAGS += -D_XOPEN_SOURCE=500
-tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
-tests: $(LIB_PRINTF) $(LIB_GNL) $(OBJECTS_TESTER)
+tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL) $(LIB_OPTS)
+tests: $(LIB_PRINTF) $(LIB_GNL) $(LIB_OPTS) $(OBJECTS_TESTER)
 	$(CC) $(IFLAGS) $(ITESTS) $(CFLAGS) -o $@ ./tester/tests/runner.c $(OBJECTS_TESTER) $(LFLAGS)
 
 # Libraries build
