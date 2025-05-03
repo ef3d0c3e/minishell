@@ -68,20 +68,29 @@ static t_eval_result
 static t_eval_result
 	special_continue(t_shell *shell, char **av)
 {
+	int		num;
 	char	*err;
 
+	num = 1;
 	// TODO: Loop context...
 	//if (!shell->eval_stack.size)
 	//{
 	//	ft_asprintf(&err, "'return' is only valid inside functions", av[1]);
 	//	shell_error(shell, err, SRC_LOCATION);
 	//}
-	if (av[1])
+	if (av[1] && !atoi_checked(av[1], &num))
 	{
-		ft_asprintf(&err, "continue: expected no arguments");
+		ft_asprintf(&err, "continue: numeric argument required, got: `%s` ",
+			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
+		if (av[2])
+		{
+			ft_asprintf(&err, "continue: expected one numeric argument");
+			shell_error(shell, err, SRC_LOCATION);
+		}
+		num = 1;
 	}
-	return ((t_eval_result){RES_CONTINUE, 0});
+	return ((t_eval_result){RES_CONTINUE, num});
 }
 
 static t_eval_result

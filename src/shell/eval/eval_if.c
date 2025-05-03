@@ -21,6 +21,11 @@ t_eval_result
 	while (i < cmd->st_if.nconds)
 	{
 		result = eval(shell, cmd->st_if.conds[i]);
+		if (result.type == RES_CONTINUE && result.param > 0)
+		{
+			--result.param;
+			return (result);
+		}
 		if (result.type != RES_NONE)
 			return (result);
 		if (shell->last_status)
@@ -28,7 +33,13 @@ t_eval_result
 			++i;
 			continue;
 		}
-		return (eval(shell, cmd->st_if.bodies[i]));
+		result = eval(shell, cmd->st_if.bodies[i]);
+		if (result.type == RES_CONTINUE && result.param > 0)
+		{
+			--result.param;
+			return (result);
+		}
+		return (result);
 	}
 	if (i < cmd->st_if.nbodies)
 		return (eval(shell, cmd->st_if.bodies[i]));

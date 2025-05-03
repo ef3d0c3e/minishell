@@ -30,8 +30,7 @@ static void
 		tok = &parser->list.tokens[parser->pos];
 		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
 			|| tok->type == TOK_CMD_SUB
-			|| (arg_pos != 0 && token_isword(tok->type))
-			|| accept_word(parser, 0))
+			|| token_isword(tok->type))
 		{
 			if (arg_pos >= list->size)
 				wordlist_push(parser, list);

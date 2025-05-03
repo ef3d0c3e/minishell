@@ -55,6 +55,7 @@ ITESTS := \
 	-include ./tester/tests/pipe.tests \
 	-include ./tester/tests/redir.tests \
 	-include ./tester/tests/expand.tests \
+	-include ./tester/tests/control.tests \
 	-include ./tester/tests/sub.tests
 tests: CFLAGS += -D_XOPEN_SOURCE=500
 tests: LFLAGS += $(LIB_PRINTF) $(LIB_GNL)
