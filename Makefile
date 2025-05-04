@@ -21,6 +21,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/shell/funs/*.c) \
 	$(wildcard src/shell/expand/*.c) \
 	$(wildcard src/shell/ctx/*.c) \
+	$(wildcard src/shell/regex/*.c) \
 	$(wildcard src/parser/ast/*.c) \
 	$(wildcard src/parser/redirs/*.c) \
 	$(wildcard src/parser/words/*.c) \

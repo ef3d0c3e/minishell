@@ -119,6 +119,8 @@ char
 		}
 	}
 	list = word_split(shell, &list, ifs);
+	rb_delete(&shell->temporaries, &list);
+	return (NULL);
 	argv = xmalloc(sizeof(char *) * (list.size + 1));
 	i = 0;
 	while (i < list.size)

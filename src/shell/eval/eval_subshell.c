@@ -14,6 +14,7 @@
 t_eval_result
 	eval_subshell(t_shell *shell, t_ast_node *program)
 {
+	t_eval_result	result;
 	pid_t			pid;
 	int				status;
 	t_redirs_stack	stack;
@@ -31,8 +32,10 @@ t_eval_result
 	{
 		redir_stack_init(&stack);
 		do_redir(shell, &stack, &program->sub.redirs);
-		eval(shell, program->sub.head);
+		result = eval(shell, program->sub.head);
 		undo_redir(shell, &stack);
+		if (result.type == RES_EXIT)
+			shell->last_status = result.param;
 		shell_exit(shell, shell->last_status);
 	}
 	return ((t_eval_result){RES_NONE, 0});

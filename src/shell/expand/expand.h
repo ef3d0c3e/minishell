@@ -19,7 +19,9 @@ typedef struct s_shell	t_shell;
 /** @brief A fragment */
 typedef struct s_fragment
 {
+	/** @brief String content */
 	t_string_buffer	word;
+	/** @brief Original token flags */
 	int				flags;
 	/** @brief Force this fragment to become the beginning of it's own
 	 * argument */
