@@ -27,6 +27,8 @@ t_eval_result
 	{
 		set_variable(shell, cmd->st_for.ident, ft_strdup(argv[i]), 0);
 		result = eval(shell, cmd->st_for.body);
+		if (result.type == RES_CONTINUE && result.param == 1 && ++i)
+			continue ;
 		if ((result.type == RES_BREAK && result.param >= 1)
 			|| (result.type == RES_CONTINUE && result.param >= 1)
 			|| result.type == RES_RETURN || result.type == RES_EXIT)
@@ -36,6 +38,8 @@ t_eval_result
 			if (result.type == RES_BREAK || result.type == RES_CONTINUE)
 			{
 				--result.param;
+				if (!result.param)
+					result.type = RES_NONE;
 			}
 			return (result);
 		}

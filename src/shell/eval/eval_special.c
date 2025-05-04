@@ -112,8 +112,7 @@ static t_eval_result
 		ft_asprintf(&err, "exit: expected one numeric argument");
 		shell_error(shell, err, SRC_LOCATION);
 	}
-	shell->last_status = num;
-	return ((t_eval_result){RES_EXIT, 0});
+	return ((t_eval_result){RES_EXIT, num});
 }
 
 t_eval_result

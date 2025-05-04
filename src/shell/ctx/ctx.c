@@ -104,7 +104,6 @@ int
 		ctx->program = NULL;
 		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
 	}
-	t_ast_node *program = ctx->program;
 	evaluator(ctx, cookie);
 	return (1);
 }

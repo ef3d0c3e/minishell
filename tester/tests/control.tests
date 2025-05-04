@@ -83,7 +83,14 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 			"  done\n"
 			"done",
 			"", "1a\n1b\n2a\n", "", 0)
-
+	SHELL_TEST(
+			"for i in 1 2; do\n"
+			"  for j in a b; do\n"
+			"    if [ $j == a ]; then continue 1; fi\n"
+			"    echo $i$j\n"
+			"  done\n"
+			"done",
+			"", "1b\n2b\n", "", 0)
 	SHELL_TEST(
 			"for i in 1 2; do\n"
 			"  for j in a b; do\n"
@@ -91,7 +98,25 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 			"    echo $i$j\n"
 			"  done\n"
 			"done",
-			"", "1b\n2b\n", "", 0)
+			"", "", "", 0)
+	SHELL_TEST(
+			"for i in 1 2; do\n"
+			"  for j in a b; do\n"
+			"    if [ $j == a ]; then continue 1; fi\n"
+			"    echo $j\n"
+			"  done\n"
+			"  echo $i\n"
+			"done",
+			"", "b\n1\nb\n2\n", "", 0)
+	SHELL_TEST(
+			"for i in 1 2; do\n"
+			"  for j in a b; do\n"
+			"    if [ $j == a ]; then continue 2; fi\n"
+			"    echo $j\n"
+			"  done\n"
+			"  echo $i\n"
+			"done",
+			"", "", "", 0)
 
 	// break count > depth exits all loops
 	// TODO: Fix continue/break
