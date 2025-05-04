@@ -71,11 +71,11 @@ t_fragment_list
 	}
 	free(list->fragments);
 
-	//i = 0;
-	//while (i < new.size)
-	//{
-	//	ft_dprintf(2, "frag[%zu] = `%.*s` fl=%05o fs=%d\n", i, new.fragments[i].word.len, new.fragments[i].word.str, new.fragments[i].flags, new.fragments[i].force_split);
-	//	++i;
-	//}
+	i = 0;
+	while (i < new.size)
+	{
+		ft_dprintf(2, "frag[%zu] = `%.*s` fl=%05o fs=%d\n", i, new.fragments[i].word.len, new.fragments[i].word.str, new.fragments[i].flags, new.fragments[i].force_split);
+		++i;
+	}
 	return (new);
 }
