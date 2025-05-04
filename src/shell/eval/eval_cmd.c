@@ -36,7 +36,7 @@ static t_eval_result
 		i = 0;
 		while (i < cmd->cmd.nassigns)
 		{
-			result = arg_expansion_cat(shell, &cmd->cmd.assigns[i].value);
+			result = word_expansion_cat(shell, &cmd->cmd.assigns[i].value);
 			if (result)
 				install_var(shell,
 						stringbuf_cstr(&cmd->cmd.assigns[i].variable), result);
@@ -56,7 +56,7 @@ t_eval_result
 	char	*path;
 
 	path = NULL;
-	argv = arg_expansion(shell, &program->cmd.args);
+	argv = word_expansion(shell, &program->cmd.args);
 	if (!argv)
 		return ((t_eval_result){RES_NONE, 0});
 	status = 0;

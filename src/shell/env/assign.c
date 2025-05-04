@@ -94,7 +94,7 @@ void
 	i = 0;
 	while (i < size)
 	{
-		result = arg_expansion_cat(shell, &assigns[i].value);
+		result = word_expansion_cat(shell, &assigns[i].value);
 		if (result)
 			install_var(shell, &stack->variables[stack->size],
 					stringbuf_cstr(&assigns[i].variable), result);

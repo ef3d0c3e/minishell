@@ -20,12 +20,22 @@ typedef struct s_shell	t_shell;
 /* Results for control flow                                                   */
 /******************************************************************************/
 
+/** @brief Types of results */
 enum e_result_type
 {
+	/** @brief Normal return code, continue execution */
 	RES_NONE,
+	/** @brief Returns from current function (optional exit code, defaults
+	 * to 0) */
 	RES_RETURN,
+	/** @brief Exits from current loop (if/while/until) with an optional numeric
+	 * parameter to exit nested loops (defaults to 1) */
 	RES_BREAK,
+	/** @brief Skip until next iteration of loop (if/while/until) with an 
+	 * optional numeric parameter to continue nested loops (defaults to 1) */
 	RES_CONTINUE,
+	/** @brief Exits current shell, with optional numeric argument for exit
+	 * code, defaults to 0 */
 	RES_EXIT,
 };
 
@@ -33,7 +43,7 @@ typedef struct s_eval_result
 {
 	/** @brief Result type */
 	enum e_result_type	type;
-	/** @brief Optional parameter, e.g for return, exit or break */
+	/** @brief Optional parameter, e.g for return, exit, continue or break */
 	int					param;
 }	t_eval_result;
 
@@ -41,6 +51,15 @@ typedef struct s_eval_result
 /* Evaluators                                                                 */
 /******************************************************************************/
 
+/**
+ * @brief Evaluates node `program`
+ *
+ * This function will look at the node's type to dispatch to the correct
+ * evaluator function below.
+ *
+ * @param shell The shell session
+ * @param program The ast node to evaluate
+ */
 t_eval_result
 eval(t_shell *shell, t_ast_node* program);
 /**

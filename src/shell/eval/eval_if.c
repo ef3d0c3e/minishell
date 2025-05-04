@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
+#include <stdio.h>
 
 t_eval_result
 	eval_if(t_shell *shell, t_ast_node *cmd)
@@ -21,11 +22,6 @@ t_eval_result
 	while (i < cmd->st_if.nconds)
 	{
 		result = eval(shell, cmd->st_if.conds[i]);
-		if (result.type == RES_CONTINUE && result.param > 0)
-		{
-			--result.param;
-			return (result);
-		}
 		if (result.type != RES_NONE)
 			return (result);
 		if (shell->last_status)
@@ -34,12 +30,8 @@ t_eval_result
 			continue;
 		}
 		result = eval(shell, cmd->st_if.bodies[i]);
-		if (result.type == RES_CONTINUE && result.param > 0)
-		{
-			--result.param;
+		if (result.type != RES_NONE)
 			return (result);
-		}
-		return (result);
 	}
 	if (i < cmd->st_if.nbodies)
 		return (eval(shell, cmd->st_if.bodies[i]));

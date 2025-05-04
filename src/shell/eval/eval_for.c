@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval_if.c                                          :+:      :+:    :+:   */
+/*   eval_for.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 t_eval_result
@@ -18,7 +19,7 @@ t_eval_result
 	t_eval_result	result;
 	char			**argv;
 	
-	argv = arg_expansion(shell, &cmd->st_for.args);
+	argv = word_expansion(shell, &cmd->st_for.args);
 	if (!argv)
 		return ((t_eval_result){RES_NONE, 0});
 	i = 0;
@@ -26,17 +27,16 @@ t_eval_result
 	{
 		set_variable(shell, cmd->st_for.ident, ft_strdup(argv[i]), 0);
 		result = eval(shell, cmd->st_for.body);
-		if (result.type == RES_CONTINUE && result.param > 1)
-		{
-			--result.param;
-			return (result);
-		}
-		if ((result.type == RES_BREAK && result.param > 0)
+		if ((result.type == RES_BREAK && result.param >= 1)
+			|| (result.type == RES_CONTINUE && result.param >= 1)
 			|| result.type == RES_RETURN || result.type == RES_EXIT)
 		{
-			args_free(argv);
-			if (result.type == RES_BREAK)
+			if (result.type != RES_CONTINUE)
+				args_free(argv);
+			if (result.type == RES_BREAK || result.type == RES_CONTINUE)
+			{
 				--result.param;
+			}
 			return (result);
 		}
 		++i;

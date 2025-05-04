@@ -103,6 +103,10 @@ clean:
 lclean:
 	echo "Cleaning printf..."
 	cd $(dir $(LIB_PRINTF)) && make fclean
+	echo "Cleaning gnl..."
+	cd $(dir $(LIB_GNL)) && make fclean
+	echo "Cleaning opts..."
+	cd $(dir $(LIB_OPTS)) && make fclean
 
 .PHONY: fclean
 fclean: clean

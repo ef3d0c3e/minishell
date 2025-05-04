@@ -14,8 +14,8 @@
 #include "ft_printf.h"
 #include "libopts.h"
 
-void set_color(void *data, const char **av);
-void set_style(void *data, const char **av);
+void set_color(void *data, const char **av) {};
+void set_style(void *data, const char **av) {};
 
 void
 	*init(t_app *a)

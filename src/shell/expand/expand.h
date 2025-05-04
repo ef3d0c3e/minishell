@@ -92,7 +92,7 @@ fraglist_append(t_fragment_list *list, t_string_buffer word);
  * @returns A null-terminated array of strings to be passed to `execve`
  */
 char
-**arg_expansion(t_shell *shell, t_wordlist *list);
+**word_expansion(t_shell *shell, t_wordlist *list);
 /**
  * @brief Expands a single word to a list of argument
  *
@@ -108,12 +108,12 @@ char
  * a single string separated by `ifs[0]`.
  *
  * @param shell The shell session
- * @param arg Argument to expand and concatenate
+ * @param word Word to expand and concatenate using `ifs[0]`
  *
  * @returns The resulting expansion
  */
 char
-*arg_expansion_cat(t_shell *shell, t_word *list);
+*word_expansion_cat(t_shell *shell, t_word *word);
 
 /******************************************************************************/
 /* Brace expansion                                                            */

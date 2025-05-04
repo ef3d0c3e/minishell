@@ -115,4 +115,37 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	// Using reserved words as list items
 	SHELL_TEST("for then in do else; do echo $then; done",
 			"", "do\nelse\n", "", 0)
+
+	// Continue
+	SHELL_TEST("for i in 0; do echo a; continue; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do echo a; continue 1; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do echo a; continue 2; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do echo a; continue 3; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do for j in 1; do continue 1; echo a; done; echo b; done",
+			"", "b\n", "", 0)
+	SHELL_TEST("for i in 0; do for j in 1; do continue 2; echo a; done; echo b; done",
+			"", "", "", 0)
+
+	// Break
+	SHELL_TEST("for i in 0; do echo a; break; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do echo a; break 1; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do echo a; break 2; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do echo a; break 3; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do for j in 0; do echo a; break; done; echo b; done",
+			"", "a\nb\n", "", 0)
+	SHELL_TEST("for i in 0; do for j in 0; do echo a; break 1; done; echo b; done",
+			"", "a\nb\n", "", 0)
+	SHELL_TEST("for i in 0; do for j in 0; do echo a; break 2; done; echo b; done",
+			"", "a\n", "", 0)
+	SHELL_TEST("for i in 0; do for j in 0; do echo a; break 3; done; echo b; done",
+			"", "a\n", "", 0)
+	
 ))

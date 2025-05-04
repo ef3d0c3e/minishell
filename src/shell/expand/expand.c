@@ -97,7 +97,7 @@ static void cleanup(void *ptr)
 }
 
 char
-	**arg_expansion(t_shell *shell, t_wordlist *words)
+	**word_expansion(t_shell *shell, t_wordlist *words)
 {
 	size_t			i;
 	t_fragment_list	list;
@@ -167,7 +167,7 @@ char
 }
 
 char
-	*arg_expansion_cat(t_shell *shell, struct s_word *arg)
+	*word_expansion_cat(t_shell *shell, struct s_word *arg)
 {
 	t_fragment_list	list;
 	const char		*ifs;

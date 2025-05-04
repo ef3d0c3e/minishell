@@ -28,11 +28,11 @@ static t_eval_result
 		ft_asprintf(&err, "return: numeric argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
-		if (av[2])
-		{
-			ft_asprintf(&err, "return: expected one numeric argument");
-			shell_error(shell, err, SRC_LOCATION);
-		}
+	}
+	if (av[1] && av[2])
+	{
+		ft_asprintf(&err, "return: expected one numeric argument");
+		shell_error(shell, err, SRC_LOCATION);
 	}
 	return ((t_eval_result){RES_RETURN, num});
 }
@@ -55,12 +55,12 @@ static t_eval_result
 		ft_asprintf(&err, "break: numeric argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
-		if (av[2])
-		{
-			ft_asprintf(&err, "break: expected one numeric argument");
-			shell_error(shell, err, SRC_LOCATION);
-		}
 		num = 1;
+	}
+	if (av[1] && av[2])
+	{
+		ft_asprintf(&err, "break: expected one numeric argument");
+		shell_error(shell, err, SRC_LOCATION);
 	}
 	return ((t_eval_result){RES_BREAK, num});
 }
@@ -83,12 +83,12 @@ static t_eval_result
 		ft_asprintf(&err, "continue: numeric argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
-		if (av[2])
-		{
-			ft_asprintf(&err, "continue: expected one numeric argument");
-			shell_error(shell, err, SRC_LOCATION);
-		}
 		num = 1;
+	}
+	if (av[1] && av[2])
+	{
+		ft_asprintf(&err, "continue: expected one numeric argument");
+		shell_error(shell, err, SRC_LOCATION);
 	}
 	return ((t_eval_result){RES_CONTINUE, num});
 }
@@ -105,12 +105,12 @@ static t_eval_result
 		ft_asprintf(&err, "exit: numeric argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
-		if (av[2])
-		{
-			ft_asprintf(&err, "exit: expected one numeric argument");
-			shell_error(shell, err, SRC_LOCATION);
-		}
 		num = 0;
+	}
+	if (av[1] && av[2])
+	{
+		ft_asprintf(&err, "exit: expected one numeric argument");
+		shell_error(shell, err, SRC_LOCATION);
 	}
 	shell->last_status = num;
 	return ((t_eval_result){RES_EXIT, 0});
