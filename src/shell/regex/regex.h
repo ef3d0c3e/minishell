@@ -14,6 +14,10 @@
 
 # include <parser/parser.h>
 
+/******************************************************************************/
+/* Regex parsing AST                                                          */
+/******************************************************************************/
+
 /** @brief Glob options, controlled by the `shopt` builtin and variables */
 typedef struct s_globopts
 {
@@ -44,8 +48,6 @@ enum e_match_type
 	M_ANY,
 	/* @brief '*' */
 	M_STAR,
-	/* @brief [...] */
-	M_CHARCLASS,
 	/* @brief ?(...), *(...), etc. */
 	M_EXTGLOB,
 	/* @brief ** */
@@ -57,15 +59,6 @@ enum e_match_type
 };
 
 typedef struct s_regex_ast	t_regex_ast;
-
-/** @brief Data for @ref M_CHARCLASS */
-struct s_charclass
-{
-	/** @brief 1 for negation */
-	int		neg;
-	/** @brief List of matched ascii characters */
-	char	*list;
-};
 
 /** @brief Data for @ref M_EXTGLOB */
 struct s_extglob
@@ -96,13 +89,21 @@ typedef struct s_regex_ast
 	{
 		/** @brief Data for @ref M_LITERAL */
 		char				*literal;
-		/** @brief Data for @ref M_CHARCLASS */
-		struct s_charclass	range;
 		/** @brief Data for @ref M_EXTGLOB */
 		struct s_extglob	glob;
 		/** @brief Data for @ref M_SEQ and @ref M_ALT */
 		struct s_compound	compound;
 	};
 }	t_regex_ast;
+
+void
+regex_free(t_regex_ast *node);
+t_regex_ast
+*regex_new(enum e_match_type type);
+void
+regex_print(size_t depth, const t_regex_ast *node);
+
+t_regex_ast
+*regex_parse(const t_globopts *opts, const char *pattern);
 
 #endif // REGEX_H
