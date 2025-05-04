@@ -14,6 +14,8 @@
 #include "util/util.h"
 #include <math.h>
 #include <shell/shell.h>
+#include <stddef.h>
+#include <stdio.h>
 
 /** @brief Performs expansion on literals */
 void
@@ -89,22 +91,45 @@ static int
 	return (1);
 }
 
-static void cleanup(void *ptr)
+/** @brief Converts a fragment list to a null-terminated string array */
+static char
+	**list_to_argv(t_fragment_list *list)
 {
-	t_fragment_list *const	list = ptr;
+	char 			**argv;
+	t_string_buffer	buf;
+	size_t			size;
+	size_t			i;
 
-	fraglist_free(list);
+	argv = xmalloc(sizeof(char *) * (list->size + 1));
+	size = 0;
+	i = 0;
+	stringbuf_init(&buf, 24);
+	while (i < list->size)
+	{
+		if (list->fragments[i].force_split && i)
+		{
+			argv[size++] = stringbuf_cstr(&buf);
+			stringbuf_init(&buf, 24);
+		}
+		stringbuf_append(&buf, (t_string){list->fragments[i].word.str,
+				list->fragments[i].word.len});
+		++i;
+	}
+	if (i)
+		argv[size++] = stringbuf_cstr(&buf);
+	argv[size] = NULL;
+	return (argv);
 }
 
 char
 	**word_expansion(t_shell *shell, t_wordlist *words)
 {
+	char			**argv;
 	size_t			i;
 	t_fragment_list	list;
-	char			**argv;
 	const char		*ifs;
 
-	rb_insert(&shell->temporaries, &list, (void *)cleanup);
+	rb_insert(&shell->temporaries, &list, (void *)fraglist_free);
 	i = 0;
 	ifs = get_variable_value(shell, "IFS");
 	if (!ifs || ifs[0] == 0)
@@ -120,7 +145,17 @@ char
 	}
 	list = word_split(shell, &list, ifs);
 	rb_delete(&shell->temporaries, &list);
-	return (NULL);
+	argv = list_to_argv(&list);
+	//i = 0;
+	//ft_dprintf(2, "---\n");
+	//while (argv[i])
+	//{
+	//	ft_dprintf(2, "argv[%zu] = '%s'\n", i, argv[i]);
+	//	++i;
+	//}
+	fraglist_free(&list);
+	return (argv);
+	/*
 	argv = xmalloc(sizeof(char *) * (list.size + 1));
 	i = 0;
 	while (i < list.size)
@@ -133,6 +168,7 @@ char
 	free(list.fragments);
 	rb_delete(&shell->temporaries, &list);
 	return (argv);
+	*/
 }
 
 char
@@ -143,7 +179,7 @@ char
 	char			**argv;
 	const char		*ifs;
 
-	rb_insert(&shell->temporaries, &list, (void *)cleanup);
+	rb_insert(&shell->temporaries, &list, (void *)fraglist_free);
 	ifs = get_variable_value(shell, "IFS");
 	if (!ifs || ifs[0] == 0)
 		ifs = " \t\n";
@@ -154,17 +190,9 @@ char
 		return (NULL);
 	}
 	list = word_split(shell, &list, ifs);
-	argv = xmalloc(sizeof(char *) * (list.size + 1));
-	i = 0;
-	while (i < list.size)
-	{
-		argv[i] = stringbuf_cstr(&list.fragments[i].word);
-		//ft_dprintf(2, "argv[%zu] = '%s'\n", i, argv[i]);
-		++i;
-	}
-	argv[i] = NULL;
-	free(list.fragments);
 	rb_delete(&shell->temporaries, &list);
+	argv = list_to_argv(&list);
+	fraglist_free(&list);
 	return (argv);
 }
 
@@ -177,7 +205,7 @@ char
 	size_t			i;
 	size_t			size;
 	
-	rb_insert(&shell->temporaries, &list, (void *)cleanup);
+	rb_insert(&shell->temporaries, &list, (void *)fraglist_free);
 	ifs = get_variable_value(shell, "IFS");
 	if (!ifs || ifs[0] == 0)
 		ifs = " \t\n";
