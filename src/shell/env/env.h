@@ -12,7 +12,7 @@
 #ifndef ENV_H
 # define ENV_H
 
-# include <util/util.h>
+# include <parser/parser.h>
 # include <sys/stat.h>
 
 typedef struct s_shell t_shell;
@@ -271,5 +271,15 @@ typedef int
  */
 int
 file_tree_walk(const char *path, size_t max_depth, t_ftw_fn fn, void *cookie);
+
+/** @brief Data for file tree walk */
+struct s_ftw
+{
+	size_t		max_depth;
+	char		*fullpath;
+	struct		stat sb;
+	t_ftw_fn	fn;
+	void		*cookie;
+};
 
 #endif // ENV_H

@@ -209,6 +209,17 @@ regex_error(t_reg_parser *parser, const char *msg, size_t pos);
  */
 int
 regex_error_flush(t_reg_parser *parser);
+/**
+ * @brief Checks if string `str` matches regex `reg`
+ *
+ * @param opts Matcher option
+ * @param reg Regex
+ * @param str String to check for match
+ *
+ * @returns 1 on match, 0 otherwise
+ */
+int
+regex_match(const t_globopts *opts, const t_regex *reg, const char *str);
 
 /******************************************************************************/
 /* Regex builder                                                              */

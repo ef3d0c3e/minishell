@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
+#include "shell/env/env.h"
 #include "shell/expand/expand.h"
 #include "shell/regex/regex.h"
 #include "tokenizer/tokenizer.h"
@@ -46,11 +47,11 @@ static int
 
 // TODO: Error handling for failglob
 static int
-	expand_regex(
-	t_shell *shell,
+	make_regex(
 	const t_globopts *opts,
 	t_fragment *start,
-	t_fragment *end)
+	t_fragment *end,
+	t_regex *regex)
 {
 	t_regex_builder	builder;
 	size_t			recurse;
@@ -69,9 +70,28 @@ static int
 			return (0);
 		++start;
 	}
-	recurse = regex_recurse_depth(builder.regex.expr);
-	printf("Recurse= %zu\n", recurse);
+	*regex = builder.regex;
 	return (1);
+}
+
+struct s_filename_traversal
+{
+	t_fragment_list	*list;
+	t_globopts		opts;
+	t_regex			regex;
+};
+
+static int
+	collect_files(char *path, const struct stat *sb, void *ptr)
+{
+	struct s_filename_traversal *const	tr = ptr;
+
+	if (!regex_match(&tr->opts, &tr->regex, path))
+		return (0);
+	ft_dprintf(2, "matching: `%s`\n", path);
+	fraglist_push(tr->list, stringbuf_from(path), 0);
+	tr->list->fragments[tr->list->size - 1].force_split = 1;
+	return (0);
 }
 
 static int
@@ -81,8 +101,9 @@ static int
 	t_fragment *start,
 	t_fragment *end)
 {
-	t_string_buffer	s;
-	t_globopts		opts;
+	t_string_buffer				s;
+	size_t						recurse;
+	struct s_filename_traversal	tr;
 
 	if (!needs_expansion(shell, start, end))
 	{
@@ -95,8 +116,17 @@ static int
 		fraglist_push(list, s, 0);
 		return (1);
 	}
-	opts = regex_shellopt_get(shell);
-	return (expand_regex(shell, &opts, start, end));
+	tr.opts = regex_shellopt_get(shell);
+	if (!make_regex(&tr.opts, start, end, &tr.regex))
+		return (0);
+	recurse = regex_recurse_depth(tr.regex.expr);
+	if (recurse != (size_t)-1)
+		recurse += 1;
+	tr.list = list;
+	regex_print(0, tr.regex.expr);
+	file_tree_walk(".", recurse, collect_files, &tr);
+	regex_free(tr.regex.expr);
+	return (1);
 }
 
 t_fragment_list

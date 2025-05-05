@@ -14,6 +14,8 @@
 #include "util/util.h"
 #include <dirent.h>
 #include <shell/shell.h>
+#include <stddef.h>
+#include <stdio.h>
 #include <sys/stat.h>
 
 static char
@@ -25,27 +27,25 @@ static char
 	len = ft_strlen(path);
 	while (len > 0 && path[len - 1] == '/')
 		--len;
-	ft_asprintf(&formatted, "%.*s/%s", len, path, ent->d_name);
+	if (len == 1 && path[0] == '.')
+		len = 0;
+	ft_asprintf(&formatted, "%.*s%s%s", len, path, &"/"[len == 0], ent->d_name);
 	return (formatted);
 }
 
-int
-	file_tree_walk(
-	const char *path,
-	size_t max_depth,
-	t_ftw_fn fn,
-	void *cookie)
+static int
+	file_tree_walk_impl(struct s_ftw *f, size_t depth, const char *path)
 {
 	DIR				*dir;
 	struct dirent	*ent;
-	struct stat		sb;
-	int				status;
 	char			*fullpath;
+	int				status;
+	int				fstatus;
 
-	if (!max_depth)
+	if (depth >= f->max_depth)
 		return (0);
 	dir = opendir(path);
-	status = 1;
+	status = -1;
 	while (1)
 	{
 		errno = 0;
@@ -57,21 +57,44 @@ int
 			status = 0;
 			break ;
 		}
-		if (lstat(ent->d_name, &sb) == -1)
-			break ;
+		if (!ft_strcmp(ent->d_name, "..") || !ft_strcmp(ent->d_name, "."))
+			continue ;
 		fullpath = get_path(path, ent);
-		status = fn(ent->d_name, &sb, cookie);
-		free(fullpath);
-		if (status == -1)
+		if (lstat(fullpath, &f->sb) == -1)
+		{
+			free(fullpath);
 			break ;
-		if (status != 1 && S_ISDIR(sb.st_mode))
-			if (file_tree_walk(path, max_depth - 1, fn, cookie) == 1)
-			{
-				status = 0;
-				break ;
-			}
+		}
+		fstatus = f->fn(fullpath, &f->sb, f->cookie);
+		if (fstatus == -1)
+		{
+			free(fullpath);
+			break ;
+		}
+		if (fstatus != 1 && S_ISDIR(f->sb.st_mode))
+		{
+			status = file_tree_walk_impl(f, depth + 1, fullpath);
+		}
+		free(fullpath);
 	}
 	if (dir)
 		closedir(dir);
 	return (status);
+}
+
+int
+	file_tree_walk(
+	const char *path,
+	size_t max_depth,
+	t_ftw_fn fn,
+	void *cookie)
+{
+	struct s_ftw	f;
+
+	if (!max_depth)
+		return (0);
+	f.max_depth = max_depth;
+	f.fn = fn;
+	f.cookie = cookie;
+	return (file_tree_walk_impl(&f, 0, path));
 }
