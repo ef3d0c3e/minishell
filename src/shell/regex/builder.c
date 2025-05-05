@@ -26,6 +26,7 @@ t_regex_builder
 	return (builder);
 }
 
+/** @brief Merges two @ref M_SEQ regex nodes */
 static void
 	regex_merge(t_regex_ast *seq, t_regex_ast *other)
 {
@@ -39,6 +40,8 @@ static void
 	while (i < other->compound.ngroups)
 		seq->compound.groups[seq->compound.ngroups++]
 			= other->compound.groups[i++];
+	free(other->compound.groups);
+	free(other);
 }
 
 int

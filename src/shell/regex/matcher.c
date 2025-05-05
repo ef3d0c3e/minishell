@@ -190,7 +190,6 @@ int main(int ac, char **av, const char **envp)
 		ft_printf("'%s': [%d]\n", tests[i], regex_match(&opts, &reg, tests[i]));
 		++i;
 	}
-
 	regex_free(reg.expr);
 	return (0);
 }

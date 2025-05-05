@@ -12,6 +12,40 @@
 #include <shell/shell.h>
 
 void
+	regex_shellopt_register(t_shell *shell)
+{
+	option_insert(shell, "extglob", "If set, the extended pattern matching "
+		"features are enabled", 0);
+	option_insert(shell, "glolbstar", "If set, the pattern '**' used in a"
+		" filename expansion context will match all files and zero or more"
+		" directories and subdirectories.  If the pattern is followed by a '/',"
+		" only directories and subdirectories match.", 0);
+	option_insert(shell, "dotglob", "If set, includes filenames beginning with"
+			" a '.'  in the results of filename expansion.  The filenames '.'"
+			" and '..' must always be matched explicitly, even if 'dotglob' is"
+			" set.", 0);
+	option_insert(shell, "nocaseglob", "If set, matches filenames in a"
+		" case-insensitive fashion when performing filename expansion.", 0);
+	option_insert(shell, "nullglob", "If set, allows filename patterns which "
+		"match no files to expand to a null string, rather than themselves.", 0);
+	option_insert(shell, "failglob", "If set, patterns which fail to match "
+		"filenames during filename expansion result in an expansion error.", 0);
+}
+
+t_globopts
+	regex_shellopt_get(t_shell *shell)
+{
+	return ((t_globopts){
+			.extglob = option_value(shell, "extglob"),
+			.globstar = option_value(shell, "globstar"),
+			.dotglob = option_value(shell, "dotglob"),
+			.nocaseglob = option_value(shell, "nocaseglob"),
+			.nullglob = option_value(shell, "nullglob"),
+			.failglob = option_value(shell, "failglob"),
+	});
+}
+
+void
 	regex_error(t_reg_parser *parser, const char *msg, size_t pos)
 {
 	if (parser->regex.errors_size >= parser->regex.errors_capacity)

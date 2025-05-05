@@ -306,6 +306,16 @@ struct s_option
 void
 options_init(t_shell *shell);
 /**
+ * @brief Insert option into the registry
+ *
+ * @param shell The shell session
+ * @param name The option's name
+ * @param desc The option's description
+ * @param value The option's initial value [0 or 1].
+ */
+void
+option_insert(t_shell *shell, const char *name, const char *desc, int value);
+/**
  * @brief Gets the value of an option
  *
  * This function will call to `shell_exit()` if the option doesn't exist

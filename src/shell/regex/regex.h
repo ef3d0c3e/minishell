@@ -14,6 +14,12 @@
 
 # include <parser/parser.h>
 
+typedef struct s_shell	t_shell;
+
+/******************************************************************************/
+/* Shell options for the regex                                                */
+/******************************************************************************/
+
 /** @brief Glob options, controlled by the `shopt` builtin and variables */
 typedef struct s_globopts
 {
@@ -29,13 +35,29 @@ typedef struct s_globopts
 	int		nullglob;
 	/* @brief non-matches cause error */
 	int		failglob;
-	/* @brief patterns to exclude */
-	char	**globinore;
-	size_t	globignore_len;
-	/* @brief suffixes to ignore */
-	char	**fignore;
-	size_t	finore_len;
+	// Unsupported:
+	///* @brief patterns to exclude */
+	//char	**globinore;
+	//size_t	globignore_len;
+	///* @brief suffixes to ignore */
+	//char	**fignore;
+	//size_t	finore_len;
 }	t_globopts;
+
+/**
+ * @brief Registers default shell options for pattern matching
+ *
+ * @param shell The shell session
+ */
+void
+regex_shellopt_register(t_shell *shell);
+/**
+ * @brief Gets the regex options for the shell
+ *
+ * @param shell The shell session
+ */
+t_globopts
+regex_shellopts_get(t_shell *shell);
 
 /******************************************************************************/
 /* Regex AST                                                                  */
@@ -96,12 +118,6 @@ typedef struct s_regex_ast
 	};
 }	t_regex_ast;
 
-void
-regex_free(t_regex_ast *node);
-t_regex_ast
-*regex_new(enum e_match_type type);
-void
-regex_print(size_t depth, const t_regex_ast *node);
 
 /**
  * @brief Appends to a @ref M_SEQ node
@@ -111,6 +127,31 @@ regex_print(size_t depth, const t_regex_ast *node);
  */
 void
 regex_seq_append(t_regex_ast *seq, t_regex_ast *node);
+
+/**
+ * @brief Frees a regex node
+ *
+ * @param node Regex node to free
+ */
+void
+regex_free(t_regex_ast *node);
+/**
+ * @brief Creates a new empty regex node
+ *
+ * @param type Regex node type
+ *
+ * @returns The created regex node
+ */
+t_regex_ast
+*regex_new(enum e_match_type type);
+/**
+ * @brief Prints a regex to stderr
+ *
+ * @param depth Print padding depth
+ * @param node Regex node to print
+ */
+void
+regex_print(size_t depth, const t_regex_ast *node);
 
 /******************************************************************************/
 /* Regex                                                                      */
@@ -130,8 +171,6 @@ typedef struct s_regex
 	 * When this is turned on, the matcher will recursively scan directories */
 	int					has_dotglob;
 }	t_regex;
-
-typedef struct s_reg_parser	t_reg_parser;
 
 /******************************************************************************/
 /* Regex parser                                                               */
@@ -171,8 +210,16 @@ regex_error_flush(t_reg_parser *parser);
 /* Regex builder                                                              */
 /******************************************************************************/
 
+/**
+ * @brief Builder for regex patterns
+ *
+ * The goal of the builder is to be able to concatenate multiple regexes
+ * together. For instance the following wordlist: `"foo"*'bar'` can be seen as
+ * `Literal(foo) Regex(*) Literal(bar)`
+ */
 typedef struct s_regex_builder
 {
+	/** @brief The built regex */
 	t_regex	regex;
 }	t_regex_builder;
 
