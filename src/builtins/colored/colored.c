@@ -6,16 +6,15 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/05/03 19:03:09 by thschnei         ###   ########.fr       */
+/*   Updated: 2025/05/05 10:28:33 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "colored.h"
-#include "ft_printf.h"
 #include "libopts.h"
 
-void set_color(void *data, const char **av) {};
-void set_style(void *data, const char **av) {};
+void set_color(void *data, const char **av);
+void set_style(void *data, const char **av);
 
 void
 	*init(t_app *a)
@@ -27,6 +26,7 @@ void
 		{"--bo", "Set bold", set_style, 0},
 		{"--it", "Set italic", set_style, 0},
 		{"--ul", "Set underline", set_style, 0},
+		{"--os", "Set overstrike", set_style, 0},
 	};
 	const t_behavior	flags = NO_EXIT | NO_RESERVE_HELP | GET_CALLER;
 
@@ -42,7 +42,7 @@ int
 	(void)shell;
 	app.opts = init(&app);
 	ret = _parse_args(app.opts, argc, (const char **)argv);
-	return (0);
+	return (ret);
 }
 
 const t_builtin

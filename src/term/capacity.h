@@ -1,46 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   colored.h                                          :+:      :+:    :+:   */
+/*   capacity.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thschnei <thschnei@student.42perpignan.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/01 19:52:09 by thschnei          #+#    #+#             */
-/*   Updated: 2025/05/05 11:10:51 by thschnei         ###   ########.fr       */
+/*   Created: 2025/05/05 11:10:01 by thschnei          #+#    #+#             */
+/*   Updated: 2025/05/05 11:16:15 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COLORED_H
-# define COLORED_H
-# include <shell/shell.h>
-# include <libopts.h>
+#ifndef CAPACITY_H
+#define CAPACITY_H
 
-typedef enum e_flag
+typedef struct s_termcap
 {
-	SET_BOLD,
-	SET_ITALIC,
-	SET_UNDERLINE,
-	SET_OVERSTRIKE,
-	SET_FG,
-	SET_BG,
-}	t_flag;
-
-typedef struct s_color
-{
-	int		r;
-	int		g;
-	int		b;
-	int		err;
-	char	*litteral;
-}	t_color;
-
-typedef struct s_app
-{
-	void	*opts;
-	t_flag	flags;
-	t_color	fg;
-	t_color	bg;
-	char	*out;
-}	t_app;
+	unsigned	truecolor:1;
+	unsigned	bold:1;
+	unsigned	italic:1;
+	unsigned	underline:1;
+	unsigned	overstrike:1;
+}	t_termcap;
 
 #endif
