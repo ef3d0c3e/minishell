@@ -14,10 +14,6 @@
 
 # include <parser/parser.h>
 
-/******************************************************************************/
-/* Regex parsing AST                                                          */
-/******************************************************************************/
-
 /** @brief Glob options, controlled by the `shopt` builtin and variables */
 typedef struct s_globopts
 {
@@ -40,6 +36,10 @@ typedef struct s_globopts
 	char	**fignore;
 	size_t	finore_len;
 }	t_globopts;
+
+/******************************************************************************/
+/* Regex AST                                                                  */
+/******************************************************************************/
 
 enum e_match_type
 {
@@ -103,7 +103,56 @@ t_regex_ast
 void
 regex_print(size_t depth, const t_regex_ast *node);
 
-t_regex_ast
-*regex_parse(const t_globopts *opts, const char *pattern);
+/******************************************************************************/
+/* Regex                                                                      */
+/******************************************************************************/
+
+typedef struct s_regex
+{
+	/** @brief Parsed expression */
+	t_regex_ast	*expr;
+	/** @brief Errors from the parser */
+	char				**errors;
+	/** @brief Number of errors */
+	size_t				errors_size;
+	/** @brief Errors capacity */
+	size_t				errors_capacity;
+}	t_regex;
+
+typedef struct s_reg_parser	t_reg_parser;
+
+/******************************************************************************/
+/* Regex parser                                                               */
+/******************************************************************************/
+
+typedef struct s_reg_parser
+{
+	/** @brief Pattern options */
+	const t_globopts	*opts;
+	/** @brief Input string */
+	const char			*str;
+	/** @brief Parser's position */
+	size_t				pos;
+	/** @brief Parsed regex */
+	t_regex				regex;
+}	t_reg_parser;
+
+t_regex
+regex_parse(const t_globopts *opts, const char *pattern);
+/**
+ * @brief Adds an error to the regex
+ *
+ * @param parser Regex parser
+ * @param msg Error message
+ */
+void
+regex_error(t_reg_parser *parser, const char *msg, size_t pos);
+/**
+ * @brief Writes all errors to stderr
+ *
+ * @returns 1 if no errors were written, 0 otherwise
+ */
+int
+regex_error_flush(t_reg_parser *parser);
 
 #endif // REGEX_H
