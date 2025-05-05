@@ -9,8 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/regex/regex.h"
 #include <shell/shell.h>
-
 
 static int
 	ascii_eq(const t_globopts *opts, char l, char r)
@@ -176,7 +176,11 @@ int main(int ac, char **av, const char **envp)
 		.nullglob = 1,
 		.failglob = 1,
 	};
-	t_regex reg = regex_parse(&opts, av[1]);
+	t_regex_builder builder = regex_builder_new();
+	regex_builder_literal(&opts, &builder, "f");
+	regex_builder_expr(&opts, &builder, av[1]);
+
+	t_regex reg = builder.regex;
 	regex_print(0, reg.expr);
 
 	static const char *tests[] = {"foo", ".foo", "bar", ".bar/", NULL};

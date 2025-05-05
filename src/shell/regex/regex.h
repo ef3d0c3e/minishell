@@ -103,6 +103,15 @@ t_regex_ast
 void
 regex_print(size_t depth, const t_regex_ast *node);
 
+/**
+ * @brief Appends to a @ref M_SEQ node
+ *
+ * @param seq @ref M_SEQ node
+ * @param node Node to append
+ */
+void
+regex_seq_append(t_regex_ast *seq, t_regex_ast *node);
+
 /******************************************************************************/
 /* Regex                                                                      */
 /******************************************************************************/
@@ -110,7 +119,7 @@ regex_print(size_t depth, const t_regex_ast *node);
 typedef struct s_regex
 {
 	/** @brief Parsed expression */
-	t_regex_ast	*expr;
+	t_regex_ast			*expr;
 	/** @brief Errors from the parser */
 	char				**errors;
 	/** @brief Number of errors */
@@ -157,5 +166,48 @@ regex_error(t_reg_parser *parser, const char *msg, size_t pos);
  */
 int
 regex_error_flush(t_reg_parser *parser);
+
+/******************************************************************************/
+/* Regex builder                                                              */
+/******************************************************************************/
+
+typedef struct s_regex_builder
+{
+	t_regex	regex;
+}	t_regex_builder;
+
+/**
+ * @brief Creates a new empty regex builder
+ */
+t_regex_builder
+regex_builder_new(void);
+/**
+ * @brief Adds a regex expression to the builder
+ *
+ * @param builder Regex builder
+ * @param expr Expression string to add
+ *
+ * @returns 1 on success, 0 on failure. On failure, an error message will be
+ * printed to stderr and the regex will be freed.
+ */
+int
+regex_builder_expr(
+	const t_globopts *opts,
+	t_regex_builder *builder,
+	const char *expr);
+/**
+ * @brief Adds a literal string to the builder
+ *
+ * @param builder Regex builder
+ * @param literal String to add
+ *
+ * @returns 1 on success, 0 on failure. On failure, an error message will be
+ * printed to stderr and the regex will be freed.
+ */
+int
+regex_builder_literal(
+	const t_globopts *opts,
+	t_regex_builder *builder,
+	const char *literal);
 
 #endif // REGEX_H

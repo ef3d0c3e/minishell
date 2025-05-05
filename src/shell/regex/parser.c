@@ -14,7 +14,7 @@
 static t_regex_ast
 	*regex_parse_sequence(t_reg_parser *parser, const char *until);
 
-static void
+void
 	regex_seq_append(t_regex_ast *seq, t_regex_ast *node)
 {
 	seq->compound.groups = ft_realloc(seq->compound.groups, 
@@ -120,6 +120,7 @@ t_regex
 	if (!regex_error_flush(&parser))
 	{
 		regex_free(parser.regex.expr);
+		free(parser.regex.errors);
 		parser.regex.expr = NULL;
 	}
 	return (parser.regex);
