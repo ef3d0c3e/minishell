@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   word_splitting.c                                   :+:      :+:    :+:   */
+/*   filename.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,73 +9,124 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "shell/expand/expand.h"
+#include "shell/regex/regex.h"
+#include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
-static void
-	split_force(t_fragment_list *list, const char *ifs, t_string_buffer *word, int fs)
+/** @brief Checks if a fragment range needs filename expansion by scanning for
+ * reserved words */
+static int
+	needs_expansion(
+	t_shell *shell,
+	const t_fragment *start,
+	const t_fragment *end)
 {
-	size_t					i;
-	size_t					last;
+	static const char	*alts[] = {"*", "?", NULL};
+	static const char	*glob[] = {"@", "!", "+", NULL};
+	const t_string_buffer	*word;
 
-	i = 0;
-	last = 0;
-	while (i < word->len)
+	while (start != end)
 	{
-		if (!ft_strchr(ifs, word->str[i]))
-		{
-			++i;
+		if (start->flags & (FL_SQUOTED | FL_DQUOTED) && ++start)
 			continue ;
-		}
-		fraglist_push(list, stringbuf_from_range(word->str + last,
-				word->str + i), 0);
-		list->fragments[list->size - 1].force_split = fs * (!last) + (!!last);
-		++i;
-		last = i;
+		word = &start->word;
+		if (str_find_alternatives((t_string){word->str, word->len}, alts))
+			return (1);
+		else if (option_value(shell, "extglob")
+			&& str_find_alternatives((t_string){word->str, word->len}, glob))
+			return (1);
+		++start;
 	}
-	if (last != word->len)
+	return (0);
+}
+
+// TODO: Error handling for failglob
+static int
+	expand_regex(
+	t_shell *shell,
+	const t_globopts *opts,
+	t_fragment *start,
+	t_fragment *end)
+{
+	t_regex_builder	builder;
+	size_t			recurse;
+
+	builder = regex_builder_new();
+	while (start != end)
 	{
-		fraglist_push(list, stringbuf_from_range(word->str + last,
-					word->str + word->len), 0);
-		list->fragments[list->size - 1].force_split = fs * (!last) + (!!last);
+		if (start->flags & (FL_SQUOTED | FL_DQUOTED))
+		{
+			if (!regex_builder_literal(opts, &builder,
+						stringbuf_cstr(&start->word)))
+				return (0);
+		}
+		else if (!regex_builder_expr(opts, &builder,
+					stringbuf_cstr(&start->word)))
+			return (0);
+		++start;
 	}
-	stringbuf_free(word);
+	recurse = regex_recurse_depth(builder.regex.expr);
+	printf("Recurse= %zu\n", recurse);
+	return (1);
+}
+
+static int
+	expand(
+	t_shell *shell,
+	t_fragment_list *list,
+	t_fragment *start,
+	t_fragment *end)
+{
+	t_string_buffer	s;
+	t_globopts		opts;
+
+	if (!needs_expansion(shell, start, end))
+	{
+		stringbuf_init(&s, 16);
+		while (start != end)
+		{
+			stringbuf_append(&s, (t_string){start->word.str, start->word.len});
+			++start;
+		}
+		fraglist_push(list, s, 0);
+		return (1);
+	}
+	opts = regex_shellopt_get(shell);
+	return (expand_regex(shell, &opts, start, end));
 }
 
 t_fragment_list
-	word_split(t_shell *shell, t_fragment_list *list, const char *ifs)
+	expand_filename(t_shell *shell, t_fragment_list *list)
 {
-	t_fragment_list	new;
+	t_fragment_list new;
 	size_t			i;
+	size_t			start;
 
-	//i = 0;
-	//while (i < list->size)
-	//{
-	//	ft_dprintf(2, "orig[%zu] = `%.*s` fl=%05o fs=%d\n", i, list->fragments[i].word.len, list->fragments[i].word.str, list->fragments[i].flags, list->fragments[i].force_split);
-	//	++i;
-	//}
-
-	fraglist_init(&new);
 	i = 0;
+	start = 0;
+	fraglist_init(&new);
 	while (i < list->size)
 	{
-		//ft_dprintf(2, "word[%zu] = `%.*s` %d fl=%d\n", i, list->fragments[i].word.len, list->fragments[i].word.str, list->fragments[i].force_split, list->fragments[i].flags & (FL_SQUOTED | FL_DQUOTED));
-		if ((list->fragments[i].flags & (FL_SQUOTED | FL_DQUOTED)) == 0)
-			split_force(&new, ifs, &list->fragments[i].word, list->fragments[i].force_split);
-		else
+		if (list->fragments[i].force_split)	
 		{
-			fraglist_push(&new, list->fragments[i].word,
-					list->fragments[i].flags);
-			new.fragments[new.size - 1].force_split = list->fragments[i].force_split;
+			if (start != i)
+			{
+				expand(shell, &new, &list->fragments[start], &list->fragments[i]);
+				new.fragments[new.size - 1].force_split = 1;
+				start = i;
+			}
 		}
 		++i;
 	}
-	free(list->fragments);
-
-	i = 0;
-	while (i < new.size)
+	if (start != i)
 	{
-		ft_dprintf(2, "frag[%zu] = `%.*s` fl=%05o fs=%d\n", i, new.fragments[i].word.len, new.fragments[i].word.str, new.fragments[i].flags, new.fragments[i].force_split);
-		++i;
+		expand(shell, &new, &list->fragments[start], &list->fragments[i]);
+		new.fragments[new.size - 1].force_split = 1;
 	}
+	fraglist_free(list);
 	return (new);
 }

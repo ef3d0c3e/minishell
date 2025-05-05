@@ -61,23 +61,3 @@ int
 		return (1);
 	return (0);
 }
-
-const char
-	*str_alternatives(t_string str, const char **alternatives)
-{
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	while (alternatives[i])
-	{
-		j = 0;
-		while (j < str.len && str.str[j] == alternatives[i][j]
-				&& alternatives[i][j])
-			++j;
-		if (alternatives[i][j] == 0)
-			return (alternatives[i]);
-		++i;
-	}
-	return (NULL);
-}

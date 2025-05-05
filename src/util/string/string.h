@@ -74,13 +74,29 @@ str_starts_with(t_string str, const char *token);
 /**
  * @brief Finds if `str` starts with a string in `alternatives`
  *
+ * If order to properly match, `alternatives` must contain the longest strings
+ * first.
+ *
  * @param str String to serach in
  * @param alternatives Alternatives to search for (NULL-terminated)
  *
- * @returns The member of `alternatives` equal to `str`
+ * @returns The member of `alternatives` that `str` starts with
  */
 const char
 *str_alternatives(t_string str, const char **alternatives);
+/**
+ * @brief Finds if `str` contains one of the strings in `alternatives`
+ *
+ * If order to properly match, `alternatives` must contain the longest strings
+ * first.
+ *
+ * @param str String to serach in
+ * @param alternatives Alternatives to search for (NULL-terminated)
+ *
+ * @returns The member of `alternatives` contained in `str`
+ */
+const char
+*str_find_alternatives(t_string str, const char **alternatives);
 
 /** @brief String buffer, for performing string operations */
 typedef struct s_string_buffer

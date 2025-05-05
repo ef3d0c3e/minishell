@@ -19,7 +19,7 @@ void
 {
 	option_insert(shell, "extglob", "If set, the extended pattern matching "
 		"features are enabled", 0);
-	option_insert(shell, "glolbstar", "If set, the pattern '**' used in a"
+	option_insert(shell, "globstar", "If set, the pattern '**' used in a"
 		" filename expansion context will match all files and zero or more"
 		" directories and subdirectories.  If the pattern is followed by a '/',"
 		" only directories and subdirectories match.", 0);

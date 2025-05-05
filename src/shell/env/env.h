@@ -12,8 +12,8 @@
 #ifndef ENV_H
 # define ENV_H
 
-#include "parser/parser.h"
 # include <util/util.h>
+# include <sys/stat.h>
 
 typedef struct s_shell t_shell;
 
@@ -236,5 +236,40 @@ prefix_stack_push(
 /** @brief Pops a frame in the prefix assignments stack */
 void
 prefix_stack_pop(t_shell *shell);
+
+/******************************************************************************/
+/* Utilities                                                                  */
+/******************************************************************************/
+
+/**
+ * @brief Evaluator function for @ref file_tree_walk
+ *
+ * @param path Path to the file, relative to search start
+ * @param sb Returned deta by `lstat`
+ * @param cookie Optional parameter given to @ref file_tree_walk
+ *
+ * @returns This function can return the following values:
+ *  * -1 to stop searching
+ *  * 0 to continue searching
+ *  * 1 to prevent searching recursively over this directory (only used if `sb`
+ *  refers to a directory)
+ */
+typedef int
+(*t_ftw_fn)(
+	char *path,
+	const struct stat *sb,
+	void *cookie);
+/**
+ * @brief Recursively walk a directory and it's content
+ *
+ * @param path Original path
+ * @param max_depth Maximum search depth
+ * @param fn The file tree walk callback
+ * @param cookie Optional data passed to `fn`
+ *
+ * @returns -1 on error, 0 on success
+ */
+int
+file_tree_walk(const char *path, size_t max_depth, t_ftw_fn fn, void *cookie);
 
 #endif // ENV_H

@@ -91,36 +91,6 @@ static int
 	return (1);
 }
 
-/** @brief Converts a fragment list to a null-terminated string array */
-static char
-	**list_to_argv(t_fragment_list *list)
-{
-	char 			**argv;
-	t_string_buffer	buf;
-	size_t			size;
-	size_t			i;
-
-	argv = xmalloc(sizeof(char *) * (list->size + 1));
-	size = 0;
-	i = 0;
-	stringbuf_init(&buf, 24);
-	while (i < list->size)
-	{
-		if (list->fragments[i].force_split && i)
-		{
-			argv[size++] = stringbuf_cstr(&buf);
-			stringbuf_init(&buf, 24);
-		}
-		stringbuf_append(&buf, (t_string){list->fragments[i].word.str,
-				list->fragments[i].word.len});
-		++i;
-	}
-	if (i)
-		argv[size++] = stringbuf_cstr(&buf);
-	argv[size] = NULL;
-	return (argv);
-}
-
 char
 	**word_expansion(t_shell *shell, t_wordlist *words)
 {
@@ -144,8 +114,16 @@ char
 		}
 	}
 	list = word_split(shell, &list, ifs);
+	list = expand_filename(shell, &list);
+
+	i = 0;
+	while (i < list.size)
+	{
+		ft_dprintf(2, "f[%zu] = `%.*s` fl=%05o fs=%d\n", i, list.fragments[i].word.len, list.fragments[i].word.str, list.fragments[i].flags, list.fragments[i].force_split);
+		++i;
+	}
 	rb_delete(&shell->temporaries, &list);
-	argv = list_to_argv(&list);
+	argv = fraglist_to_argv(&list);
 	//i = 0;
 	//ft_dprintf(2, "---\n");
 	//while (argv[i])
@@ -153,7 +131,6 @@ char
 	//	ft_dprintf(2, "argv[%zu] = '%s'\n", i, argv[i]);
 	//	++i;
 	//}
-	fraglist_free(&list);
 	return (argv);
 	/*
 	argv = xmalloc(sizeof(char *) * (list.size + 1));
@@ -191,8 +168,7 @@ char
 	}
 	list = word_split(shell, &list, ifs);
 	rb_delete(&shell->temporaries, &list);
-	argv = list_to_argv(&list);
-	fraglist_free(&list);
+	argv = fraglist_to_argv(&list);
 	return (argv);
 }
 

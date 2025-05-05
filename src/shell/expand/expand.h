@@ -79,6 +79,15 @@ fraglist_push(t_fragment_list *list, t_string_buffer word, int flags);
  */
 void
 fraglist_append(t_fragment_list *list, t_string_buffer word);
+/**
+ * @brief Consumes a fraglist into a list of arguments for execve
+ *
+ * @param list Fraglist to consume
+ *
+ * @returns A null-terminated array of strings
+ */
+char
+**fraglist_to_argv(t_fragment_list *list);
 
 /******************************************************************************/
 /* Word expansion                                                              */
@@ -284,9 +293,9 @@ word_split(t_shell *shell, t_fragment_list *list, const char *ifs);
  * @param shell The shell session
  * @param list The list of fragments
  *
- * @returns 1 On success, 0 on failure
+ * @returns The list of words after performing filename expansion
  */
-int
-filename_expand(t_shell *shell, t_fragment_list *list);
+t_fragment_list
+expand_filename(t_shell *shell, t_fragment_list *list);
 
 #endif // EXPAND_H

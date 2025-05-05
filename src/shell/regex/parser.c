@@ -70,7 +70,8 @@ static t_regex_ast
 		return (regex_new(M_ANY));
 	else if (parser->str[parser->pos] == '*' && ++parser->pos)
 	{
-		if (parser->str[parser->pos] == '*' && ++parser->pos)
+		if (parser->opts->globstar && parser->str[parser->pos] == '*'
+			&& ++parser->pos)
 			return (regex_new(M_GLOBSTAR));
 		return (regex_new(M_STAR));
 	}

@@ -57,7 +57,7 @@ regex_shellopt_register(t_shell *shell);
  * @param shell The shell session
  */
 t_globopts
-regex_shellopts_get(t_shell *shell);
+regex_shellopt_get(t_shell *shell);
 
 /******************************************************************************/
 /* Regex AST                                                                  */
@@ -150,6 +150,15 @@ t_regex_ast
  */
 void
 regex_print(size_t depth, const t_regex_ast *node);
+/**
+ * @brief Gets the recursion depth of a regex
+ *
+ * @param node Regex node
+ *
+ * @returns The recursion depth, -1 for unlimited
+ */
+size_t
+regex_recurse_depth(const t_regex_ast *node);
 
 /******************************************************************************/
 /* Regex                                                                      */
