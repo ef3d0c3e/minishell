@@ -9,7 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/regex/regex.h"
+#include "util/util.h"
 #include <shell/shell.h>
+#include <stddef.h>
 
 void
 	regex_shellopt_register(t_shell *shell)
@@ -71,4 +74,44 @@ int
 		ft_dprintf(2, "%s\n", parser->regex.errors[i++]);
 	parser->regex.errors_size = 0;
 	return (i == 0);
+}
+
+size_t
+	regex_recurse_depth(const t_regex_ast *node)
+{
+	size_t	total;
+	size_t	status;
+	size_t	i;
+
+	if (!node)
+		return (0);
+	total = 0;
+	i = 0;
+	if (node->type == M_LITERAL)
+	{
+		while (node->literal[i])
+			total += node->literal[i++] == '/';
+	}
+	else if (node->type == M_EXTGLOB)
+	{
+		while (i < node->glob.ngroups)
+		{
+			status = regex_recurse_depth(node->glob.groups[i++]);
+			if (status > total)
+				total = status;
+		}
+	}
+	else if (node->type == M_SEQ)
+	{
+		while (i < node->compound.ngroups)
+		{
+			status = regex_recurse_depth(node->compound.groups[i++]);
+			if (status == (size_t)-1)
+				return (-1);
+			total += status;
+		}
+	}
+	else if (node->type == M_GLOBSTAR)
+		return (-1);
+	return (total);
 }

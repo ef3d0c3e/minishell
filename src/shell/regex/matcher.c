@@ -69,15 +69,6 @@ int
 		}
 		return (1);
 	}
-	else if (node->type == M_ALT)
-	{
-		while (i < node->compound.ngroups)
-		{
-			if (match_one(opts, node->compound.groups[i], s, s_next))
-				return (1);
-			++i;
-		}
-	}
 	return (0);
 }
 
@@ -164,32 +155,4 @@ int
 	regex_match(const t_globopts *opts, const t_regex *reg, const char *str)
 {
 	return (match_seq(opts, reg->expr->compound.groups, reg->expr->compound.ngroups, str));
-}
-
-int main(int ac, char **av, const char **envp)
-{
-	t_globopts opts = {
-		.extglob = 1,
-		.globstar = 1,
-		.dotglob = 1,
-		.nocaseglob = 0,
-		.nullglob = 1,
-		.failglob = 1,
-	};
-	t_regex_builder builder = regex_builder_new();
-	regex_builder_literal(&opts, &builder, "f");
-	regex_builder_expr(&opts, &builder, av[1]);
-
-	t_regex reg = builder.regex;
-	regex_print(0, reg.expr);
-
-	static const char *tests[] = {"foo", ".foo", "bar", ".bar/", NULL};
-	size_t i = 0;
-	while (tests[i])
-	{
-		ft_printf("'%s': [%d]\n", tests[i], regex_match(&opts, &reg, tests[i]));
-		++i;
-	}
-	regex_free(reg.expr);
-	return (0);
 }

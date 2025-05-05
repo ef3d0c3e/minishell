@@ -278,4 +278,15 @@ expand_subexpr(
 t_fragment_list
 word_split(t_shell *shell, t_fragment_list *list, const char *ifs);
 
+/**
+ * @brief Performs filename expansion
+ *
+ * @param shell The shell session
+ * @param list The list of fragments
+ *
+ * @returns 1 On success, 0 on failure
+ */
+int
+filename_expand(t_shell *shell, t_fragment_list *list);
+
 #endif // EXPAND_H

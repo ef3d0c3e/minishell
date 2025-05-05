@@ -27,7 +27,7 @@ void
 			regex_free(node->glob.groups[i++]);
 		free(node->glob.groups);
 	}
-	else if (node->type == M_SEQ || node->type == M_ALT)
+	else if (node->type == M_SEQ)
 	{
 		while (i < node->compound.ngroups)
 			regex_free(node->compound.groups[i++]);
@@ -57,7 +57,6 @@ static void
 	[M_EXTGLOB] = "EXTGLOB",
 	[M_GLOBSTAR] = "GLOBSTAR",
 	[M_SEQ] = "SEQ",
-	[M_ALT] = "ALT",
 	};
 
 	ft_dprintf(2, "%s", names[node->type]);
@@ -81,7 +80,7 @@ void
 		while (i < node->glob.ngroups)
 			regex_print(depth + 1, node->glob.groups[i++]);
 	}
-	else if (node->type == M_SEQ || node->type == M_ALT)
+	else if (node->type == M_SEQ)
 	{
 		ft_dprintf(2, " [%zu]\n", node->compound.ngroups);
 		while (i < node->compound.ngroups)

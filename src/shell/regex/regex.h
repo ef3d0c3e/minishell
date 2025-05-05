@@ -76,8 +76,6 @@ enum e_match_type
 	M_GLOBSTAR,
 	/* @brief sequence of nodes */
 	M_SEQ,
-	/* @brief alternation for extglob */
-	M_ALT,
 };
 
 typedef struct s_regex_ast	t_regex_ast;
@@ -93,7 +91,7 @@ struct s_extglob
 	size_t		ngroups;
 };
 
-/** @brief Data for @ref M_SEQ and @ref M_ALT */
+/** @brief Data for @ref M_SEQ */
 struct s_compound
 {
 	/** @brief Sub group */
@@ -113,7 +111,7 @@ typedef struct s_regex_ast
 		char				*literal;
 		/** @brief Data for @ref M_EXTGLOB */
 		struct s_extglob	glob;
-		/** @brief Data for @ref M_SEQ and @ref M_ALT */
+		/** @brief Data for @ref M_SEQ */
 		struct s_compound	compound;
 	};
 }	t_regex_ast;
@@ -167,9 +165,6 @@ typedef struct s_regex
 	size_t				errors_size;
 	/** @brief Errors capacity */
 	size_t				errors_capacity;
-	/** @brief Flag to indicate that the regex has at least one `dotglob`
-	 * When this is turned on, the matcher will recursively scan directories */
-	int					has_dotglob;
 }	t_regex;
 
 /******************************************************************************/

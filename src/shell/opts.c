@@ -9,16 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/env/env.h"
-#include "shell/regex/regex.h"
 #include <shell/shell.h>
-
-/** @brief Does nothing */
-static void
-	noop(void *data)
-{
-	(void)data;
-}
 
 void
 	option_insert(t_shell *shell, const char *name, const char *desc, int value)

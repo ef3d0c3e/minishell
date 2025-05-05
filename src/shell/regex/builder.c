@@ -21,7 +21,6 @@ t_regex_builder
 		.errors_size = 0,
 		.errors_capacity = 0,
 		.expr = regex_new(M_SEQ),
-		.has_dotglob = 0,
 	};
 	return (builder);
 }
@@ -59,7 +58,6 @@ int
 		return (0);
 	}
 	regex_merge(builder->regex.expr, sub.expr);
-	builder->regex.has_dotglob |= sub.has_dotglob;
 	return (1);
 }
 
