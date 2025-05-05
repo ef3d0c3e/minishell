@@ -117,6 +117,9 @@ typedef struct s_regex
 	size_t				errors_size;
 	/** @brief Errors capacity */
 	size_t				errors_capacity;
+	/** @brief Flag to indicate that the regex has at least one `dotglob`
+	 * When this is turned on, the matcher will recursively scan directories */
+	int					has_dotglob;
 }	t_regex;
 
 typedef struct s_reg_parser	t_reg_parser;

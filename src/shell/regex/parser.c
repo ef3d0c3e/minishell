@@ -124,19 +124,3 @@ t_regex
 	}
 	return (parser.regex);
 }
-
-int main(int ac, char **av, const char **envp)
-{
-	t_globopts opts = {
-		.extglob = 1,
-		.globstar = 1,
-		.dotglob = 1,
-		.nocaseglob = 0,
-		.nullglob = 1,
-		.failglob = 1,
-	};
-	t_regex reg = regex_parse(&opts, av[1]);
-	regex_print(0, reg.expr);
-	regex_free(reg.expr);
-	return (0);
-}
