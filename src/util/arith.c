@@ -36,8 +36,8 @@ int
 
 	if (a > INT_MAX / 10 || a < INT_MIN / 10)
 		return (1);
-	if ((sb > 0 && mul10 > INT_MAX - sb) ||
-			(sb < 0 && mul10 < INT_MIN - sb))
+	if ((sb > 0 && mul10 > INT_MAX - sb)
+		|| (sb < 0 && mul10 < INT_MIN - sb))
 		return (1);
 	return (0);
 }

@@ -25,6 +25,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/parser/ast/*.c) \
 	$(wildcard src/parser/redirs/*.c) \
 	$(wildcard src/parser/words/*.c) \
+	$(wildcard src/term/*.c) \
 	$(wildcard src/parser/*.c)
 
 SOURCES_TESTER := $(filter-out %main.c,$(SOURCES))

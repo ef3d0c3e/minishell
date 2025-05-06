@@ -15,6 +15,7 @@
 # include <tokenizer/tokenizer.h>
 # include <expansion/expansion.h>
 # include <parser/parser.h>
+# include <term/geometry.h>
 # include <builtins/builtin.h>
 # include <shell/env/env.h>
 # include <shell/eval/eval.h>

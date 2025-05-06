@@ -308,6 +308,16 @@ it_substr(const t_u8_iterator *it, size_t len);
  */
 size_t
 u8_length(char c);
+/**
+ * @brief Gets the codepoint from a UTF-8 sequence
+ *
+ * @param cp UTF-8 sequence
+ *
+ * @returns The codepoint associated with `cp`, or 0xFFFD if `cp` is not a valid
+ * UTF-8 sequence.
+ */
+uint32_t
+u8_to_cp(t_string cp);
 
 /* ************************************************************************** */
 /* String utilities                                                           */
@@ -333,6 +343,16 @@ char
  */
 size_t
 ft_strlen(const char *s);
+/**
+ * @brief Strnlen function
+ *
+ * @param s String to get length of
+ * @param maxlen Maximum width to search for a `\0`
+ *
+ * @returns `min(ft_strlen(s), maxwidth)`
+ */
+size_t
+ft_strnlen(const char *s, size_t maxlen);
 /**
  * @brief Strcmp function
  *

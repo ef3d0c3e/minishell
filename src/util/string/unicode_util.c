@@ -28,3 +28,23 @@ size_t
 		return (6);
 	return (0);
 }
+
+uint32_t
+	u8_to_cp(t_string cp)
+{
+	if (cp.len == 1)
+		return (cp.str[0]);
+	else if (cp.len == 2)
+		return (((cp.str[0] & 0x1F) << 6)
+			| (cp.str[1] & 0x3F));
+	else if (cp.len == 3)
+		return (((cp.str[0] & 0x0F) << 12)
+			| ((cp.str[1] & 0x3F) << 6)
+			| (cp.str[2] & 0x3F));
+	else if (cp.len == 4)
+		return (((cp.str[0] & 0x07) << 18)
+			| ((cp.str[1] & 0x3F) << 12)
+			| ((cp.str[2] & 0x3F) << 6)
+			| (cp.str[3] & 0x3F));
+	return (0xFFFD);
+}
