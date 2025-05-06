@@ -64,5 +64,8 @@ const t_builtin
 /** @brief The `cd` builtin */
 const t_builtin
 *builtin_cd(void);
+/** @brief The `type` builtin */
+const t_builtin
+*builtin_type(void);
 
 #endif // BUILTIN_H

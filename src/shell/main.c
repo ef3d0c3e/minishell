@@ -15,7 +15,7 @@ int main(int ac, char **av, const char **envp)
 
 	shell = shell_new(envp);
 	//ctx_eval_stdout(&shell, ft_strdup(av[1]));
-	//rl_bind_key('\t', rl_complete);
+	rl_bind_key('\t', rl_complete);
 
 	//// Enable history
 	//using_history();
