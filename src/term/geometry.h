@@ -25,28 +25,19 @@ struct s_codepoint_range
 };
 
 /**
- * @brief Gets the width of a single codepoint
+ * @brief Gets the width of a single codepoint, wcwidth implementation based on
+ * this one: https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
+ *
+ * The computed width cannot be guaranteed to match the width once printed to a
+ * terminal. Terminals may handle glyphs differently (grapheme, combining
+ * chacaters, ligatures etc..).
  *
  * @param str String starting on a valid codepoint
  *
  * @returns The width of str
  */
 int
-codepoint_wcwidth(const char *str);
-/**
- * @brief wcwidth implementation, based on this one:
- * https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
- *
- * The computed width cannot be guaranteed to match the width once printed to a
- * terminal. Terminals may handle glyphs differently (grapheme, combining
- * chacaters, ligatures etc..).
- *
- * @param str String to compute width of
- *
- * @returns The width of str
- */
-size_t
-grapheme_wcwidth(const char *str);
+codepoint_width(const char *str);
 /**
  * @brief Attempts to get the grapheme width of text `str`
  *
@@ -57,10 +48,11 @@ grapheme_wcwidth(const char *str);
  * @param expensive Perform expensive test, if the shell supports it, this
  * function will measure the actual width of the text, otherwise, heuristic
  * will be used to attempt to determine the width.
+ * @param skip_ansi Attempts to skip ansi escape codes
  *
  * @returns The width of `str`
  */
 size_t
-grapheme_width(t_shell *shell, const char *str, int expensive);
+grapheme_width(t_shell *shell, const char *str, int expensive, int skip_ansi);
 
 #endif // GEOMETRY_H

@@ -42,7 +42,7 @@ static void
 static struct s_codepoint_range*
 	mk_wcwidth(void)
 {
-	static const int				*init = 0;
+	static int						init;
 	static struct s_codepoint_range	ranges[142];
 
 	if (!init)
@@ -53,7 +53,7 @@ static struct s_codepoint_range*
 		mk_wcwidth4(ranges);
 		mk_wcwidth5(ranges);
 		mk_wcwidth6(ranges);
-		init = (int *)1;
+		init = 1;
 	}
 	return (ranges);
 }
@@ -82,7 +82,7 @@ static int
 }
 
 int
-	codepoint_wcwidth(const char *str)
+	codepoint_width(const char *str)
 {
 	t_u8_iterator	it;
 	uint32_t		cp;
