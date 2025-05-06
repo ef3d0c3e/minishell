@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "shell/regex/regex.h"
 #include <shell/shell.h>
 
@@ -98,12 +99,17 @@ static int
 	}
 	else if (node->glob.op == '!')
 	{
+		int partial = 0;
 		while (i++ < node->glob.ngroups)
-			if (match_one(opts, alts[i - 1], s, &rest) == 2)
+		{
+			r =  match_seq(opts, alts[i - 1]->compound.groups,
+					alts[i - 1]->compound.ngroups, s);
+			if (r == 2)
 				return (0);
-		if (!s[0])
-			return (1);
-		return (match_seq(opts, groups + 1, ngroups - 1, s + 1));
+			else if (r == 1)
+				partial = 1;
+		}
+		return (partial + !partial * 2);
 	}
 	return (0);
 }

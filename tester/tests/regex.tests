@@ -1,0 +1,30 @@
+// vi:syntax=c
+#include "tests.def"
+
+DO_TEST(regex, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
+	SHELL_TEST("touch foo foo.c foo.h bar bar.c bar.h", "", "", "", 0);
+
+	SHELL_TEST("printf '%s\n' *.c | sort", "", "bar.c\nfoo.c\n", "", 0)
+	SHELL_TEST("printf '%s\n' *.h | sort", "", "bar.h\nfoo.h\n", "", 0)
+	SHELL_TEST("printf '%s\n' *.* | sort", "", "bar.c\nbar.h\nfoo.c\nfoo.h\n", "", 0)
+	SHELL_TEST("printf '%s\n' foo.* | sort", "", "foo.c\nfoo.h\n", "", 0)
+	SHELL_TEST("printf '%s\n' 'f'o\"o\".* | sort", "", "foo.c\nfoo.h\n", "", 0)
+
+	SHELL_TEST("mkdir -p baz/quz", "", "", "", 0);
+	SHELL_TEST("touch baz{,/quz}/foo baz/bar{.c,.h}", "", "", "", 0);
+
+	SHELL_TEST("printf '%s\n' */*.c | sort", "", "baz/bar.c\n", "", 0)
+	SHELL_TEST("printf '%s\n' */*.c | sort", "", "baz/bar.c\n", "", 0)
+
+	WITH_OPTS(({{"globstar", 1}, {NULL, 0}}),
+		SHELL_TEST("printf '%s\n' **foo | sort", "", "foo\n", "", 0)
+		SHELL_TEST("printf '%s\n' **/foo | sort", "", "baz/foo\nbaz/quz/foo\nfoo\n", "", 0)
+	)
+
+	// TODO: FIX EXTGLOB
+	WITH_OPTS(({{"extglob", 1}, {NULL, 0}}),
+		SHELL_TEST("PAT=\"!(foo)\"; printf '%s\n' $PAT | sort", "", "bar\nbar.c\nbar.h\nbaz\nfoo.c\nfoo.h\n", "", 0)
+		//SHELL_TEST("PAT=\"!(foo|*.c)\"; printf '%s\n' $PAT | sort", "", "bar\nbar.h\nbaz\nfoo.h\n", "", 0)
+	)
+	exit(1);
+))

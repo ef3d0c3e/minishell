@@ -116,12 +116,12 @@ char
 	list = word_split(shell, &list, ifs);
 	list = expand_filename(shell, &list);
 
-	i = 0;
-	while (i < list.size)
-	{
-		ft_dprintf(2, "f[%zu] = `%.*s` fl=%05o fs=%d\n", i, list.fragments[i].word.len, list.fragments[i].word.str, list.fragments[i].flags, list.fragments[i].force_split);
-		++i;
-	}
+	//i = 0;
+	//while (i < list.size)
+	//{
+	//	ft_dprintf(2, "f[%zu] = `%.*s` fl=%05o fs=%d\n", i, list.fragments[i].word.len, list.fragments[i].word.str, list.fragments[i].flags, list.fragments[i].force_split);
+	//	++i;
+	//}
 	rb_delete(&shell->temporaries, &list);
 	argv = fraglist_to_argv(&list);
 	//i = 0;

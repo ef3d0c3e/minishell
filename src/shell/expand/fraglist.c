@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 void
@@ -87,6 +88,8 @@ char
 	}
 	if (i)
 		argv[size++] = stringbuf_cstr(&buf);
+	else
+		stringbuf_free(&buf);
 	argv[size] = NULL;
 	fraglist_free(list);
 	return (argv);

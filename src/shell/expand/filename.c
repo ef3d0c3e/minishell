@@ -87,11 +87,9 @@ static int
 	struct s_filename_traversal *const	tr = ptr;
 	int									r;
 
-	ft_dprintf(2, "testing: `%s`\n", path);
 	r = regex_match(&tr->opts, &tr->regex, path);
 	if (r == 0)
 		return (1);
-	printf("Partial match\n");
 	if (r == 2)
 	{
 		fraglist_push(tr->list, stringbuf_from(path), 0);
@@ -129,7 +127,7 @@ static int
 	if (recurse != (size_t)-1)
 		recurse += 1;
 	tr.list = list;
-	regex_print(0, tr.regex.expr);
+	//regex_print(0, tr.regex.expr);
 	file_tree_walk(".", recurse, collect_files, &tr);
 	regex_free(tr.regex.expr);
 	return (1);

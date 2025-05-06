@@ -72,7 +72,11 @@ static t_regex_ast
 	{
 		if (parser->opts->globstar && parser->str[parser->pos] == '*'
 			&& ++parser->pos)
-			return (regex_new(M_GLOBSTAR));
+		{
+			if (!parser->str[parser->pos]
+				|| (parser->str[parser->pos] == '/' && ++parser->pos))
+				return (regex_new(M_GLOBSTAR));
+		}
 		return (regex_new(M_STAR));
 	}
 	else if (parser->str[parser->pos])
