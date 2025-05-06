@@ -18,12 +18,13 @@ int main(int ac, char **av, const char **envp)
 	rl_bind_key('\t', rl_complete);
 
 	//// Enable history
-	//using_history();
+	using_history();
 
 	ctx_eval_stdout(&shell, ft_strdup("source default.sh"));
 	while (1) {
 
 		prompt = ctx_eval_string(&shell, ft_strdup("prompt_left"), ft_strdup("Prompt"));
+		//prompt = stringbuf_from("> ");
 		// Display prompt and read input
 		char* input = readline(stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);

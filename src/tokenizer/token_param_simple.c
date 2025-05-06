@@ -68,7 +68,7 @@ int
 		return (0);
 	if (handle_special_param(list, it, &next))
 		return (1);
-	else if (!is_param_ident_start(next.str[1]))
+	else if (!is_param_ident(next.str[1]))
 		return (0);
 	it_advance(it, 2);
 	stringbuf_init(&buf, 64);

@@ -1,5 +1,10 @@
 #!/usr/bin/hsh
 
+colored()
+{
+	printf "\x01%s\x02" $(tput setaf $1)
+}
+
 # set -o experr
 prompt_left()
 {
@@ -7,9 +12,9 @@ prompt_left()
 	STATUS=""
 	if [ $ERR != 0 ]
 	then
-		STATUS=" $(tput setaf 1)[CODE: $ERR]$(tput setaf 7)"
+		STATUS=" $(colored 1)[CODE: $ERR]$(colored 7)"
 	fi
 
-	echo -n "$(tput setaf 3)$USER$(tput setaf 2)@$(tput setaf 12)$PWD$(tput setaf 7)$STATUS $(tput setaf 13)󰘧$(tput setaf 7) "
+	echo -n "$(colored 3)$USER$(colored 2)@$(colored 12)$PWD$(colored 7)$STATUS $(colored 13)󰘧$(colored 7) "
 	return $ERR
 }
