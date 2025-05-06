@@ -85,12 +85,17 @@ static int
 	collect_files(char *path, const struct stat *sb, void *ptr)
 {
 	struct s_filename_traversal *const	tr = ptr;
+	int									r;
 
-	if (!regex_match(&tr->opts, &tr->regex, path))
-		return (0);
+	r = regex_match(&tr->opts, &tr->regex, path);
+	if (r == 0)
+		return (1);
 	ft_dprintf(2, "matching: `%s`\n", path);
-	fraglist_push(tr->list, stringbuf_from(path), 0);
-	tr->list->fragments[tr->list->size - 1].force_split = 1;
+	if (r == 2)
+	{
+		fraglist_push(tr->list, stringbuf_from(path), 0);
+		tr->list->fragments[tr->list->size - 1].force_split = 1;
+	}
 	return (0);
 }
 

@@ -216,7 +216,8 @@ regex_error_flush(t_reg_parser *parser);
  * @param reg Regex
  * @param str String to check for match
  *
- * @returns 1 on match, 0 otherwise
+ * @returns 2 on match complete match, 1 on partial match (str not long enough)
+ * and 0 if no match was found
  */
 int
 regex_match(const t_globopts *opts, const t_regex *reg, const char *str);
