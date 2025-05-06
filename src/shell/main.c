@@ -1,31 +1,42 @@
-#include "ft_printf.h"
 #include "shell/ctx/ctx.h"
+#include "shell/eval/eval.h"
 #include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
-int
-int_cmp(const void *a, const void *b)
-{
-	return (int)((ptrdiff_t)a - (ptrdiff_t)b);
-}
-
-void
-printfn(size_t de, t_rbnode *node, void *)
-{
-	for (size_t i = 0; i < de; ++i)
-		ft_dprintf(2, " | ");
-	ft_dprintf(2, "%d(%c)\n", (int)(intptr_t)node->key, "RB"[node->color]);
-}
+#include <termios.h>
+#include <unistd.h>
 
 int main(int ac, char **av, const char **envp)
 {
-	t_shell		shell;
+	t_shell			shell;
+	t_string_buffer	prompt;
 
 	shell = shell_new(envp);
-	ctx_eval_stdout(&shell, ft_strdup(av[1]));
+	//ctx_eval_stdout(&shell, ft_strdup(av[1]));
+	//rl_bind_key('\t', rl_complete);
+
+	//// Enable history
+	//using_history();
+
+	ctx_eval_stdout(&shell, ft_strdup("source default.sh"));
+	while (1) {
+
+		prompt = ctx_eval_string(&shell, ft_strdup("prompt_left"), ft_strdup("Prompt"));
+		// Display prompt and read input
+		char* input = readline(stringbuf_cstr(&prompt));
+		stringbuf_free(&prompt);
+
+		// Check for EOF.
+		if (!input)
+			break ;
+
+		// Add input to readline history.
+		add_history(input);
+
+		ctx_eval_stdout(&shell, input);
+	}
 	shell_free(&shell);
 
 	return (shell.last_status);

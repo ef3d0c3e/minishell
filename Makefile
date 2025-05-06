@@ -2,7 +2,7 @@ NAME := minishell
 CC := clang
 CFLAGS := -Wall -Wextra -pedantic -ggdb
 IFLAGS := -I./src
-LFLAGS :=
+LFLAGS := -lreadline
 
 # :^] `.!find src -name "*.c" -exec echo "{} \\" \;`
 SOURCES := $(wildcard src/*.c) \

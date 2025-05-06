@@ -32,6 +32,7 @@ t_eval_result
 		result = eval(shell, cmd->st_if.bodies[i]);
 		if (result.type != RES_NONE)
 			return (result);
+		++i;
 	}
 	if (i < cmd->st_if.nbodies)
 		return (eval(shell, cmd->st_if.bodies[i]));
