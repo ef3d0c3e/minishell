@@ -87,10 +87,11 @@ static int
 	struct s_filename_traversal *const	tr = ptr;
 	int									r;
 
+	ft_dprintf(2, "testing: `%s`\n", path);
 	r = regex_match(&tr->opts, &tr->regex, path);
 	if (r == 0)
 		return (1);
-	ft_dprintf(2, "matching: `%s`\n", path);
+	printf("Partial match\n");
 	if (r == 2)
 	{
 		fraglist_push(tr->list, stringbuf_from(path), 0);
