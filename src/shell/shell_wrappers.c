@@ -29,6 +29,7 @@ pid_t
 	{
 		shell->is_child = 1;
 		shell->is_interactive = 0;
+		//signal_install(shell, 1);
 	}
 	return (pid);
 }

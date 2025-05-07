@@ -68,6 +68,11 @@ static int
 				rb_insert(&shell->temporaries, &expanded, (void *)wordlist_free);
 				status = expand_subexpr(shell, list, &expanded.list[i].atoms[j], ifs);
 				rb_delete(&shell->temporaries, &expanded);
+				if (!status)
+				{
+					wordlist_free(&expanded);
+					return (0);
+				}
 			}
 			else if (expanded.list[i].atoms[j].type == W_PARAMETER)
 				status = expand_param(shell, list, &expanded.list[i].atoms[j], ifs);

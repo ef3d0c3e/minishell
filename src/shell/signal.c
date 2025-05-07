@@ -30,6 +30,7 @@ static void
 		ft_dprintf(2, "^D\n");
 	else
 		ft_dprintf(2, "SIG=%d\n", signum);
+	g_signal = signum;
     rl_on_new_line();
     rl_replace_line("", 0);
     rl_redisplay();
@@ -47,7 +48,7 @@ void
 		sa.sa_handler = SIG_DFL;
 		if (sigaction(SIGINT, &sa, NULL) == -1
 			|| sigaction(SIGQUIT, &sa, NULL) == -1)
-				shell_fail(shell, "Failed to uninstall signal handlers",
+				shell_perror(shell, "Failed to uninstall signal handlers",
 						SRC_LOCATION);
 		return ;
 	}
@@ -55,5 +56,5 @@ void
 	sa.sa_sigaction = &sighandler;
 	if (sigaction(SIGINT, &sa, NULL) == -1
 		|| sigaction(SIGQUIT, &sa, NULL) == -1)
-		shell_fail(shell, "Failed to install signal handlers", SRC_LOCATION);
+		shell_perror(shell, "Failed to install signal handlers", SRC_LOCATION);
 }

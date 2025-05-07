@@ -9,9 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/eval/eval.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 t_eval_result
 	eval_list(t_shell *shell, t_ast_node *cmd)

@@ -23,7 +23,8 @@ int main(int ac, char **av, const char **envp)
 	profile_source(&shell);
 	while (1) {
 
-		prompt = ctx_eval_string(&shell, ft_strdup("prompt_left"), ft_strdup("Prompt"));
+		prompt = stringbuf_from("> ");
+		//prompt = ctx_eval_string(&shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
 		char* input = readline(stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);
 		if (!input)

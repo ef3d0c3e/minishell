@@ -9,7 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 void
 	args_free(char **cmd)
@@ -49,12 +51,13 @@ static void
 	shell_exit(shell, EXIT_FAILURE);
 }
 
-static void
+static int
 	eval_exec_parent(t_shell *shell, t_ast_node *cmd, char *path, char **argv)
 {
 	pid_t	pid;
 	int		status;
 
+	status = 0;
 	pid = shell_fork(shell, SRC_LOCATION);
 	if (pid == -1)
 		shell_perror(shell, "fork() failed", SRC_LOCATION);
@@ -72,13 +75,18 @@ static void
 	}
 	else
 		eval_exec_child(shell, cmd, path, argv);
+	return (WIFEXITED(status));
 }
 
 
 t_eval_result
 	eval_exec(t_shell *shell, t_ast_node *cmd, char *path, char **argv)
 {
-	eval_exec_parent(shell, cmd, path, argv);
+	int	status;
+
+	status = eval_exec_parent(shell, cmd, path, argv);
 	args_free(argv);
+	if (!status)
+		return ((t_eval_result){RES_STOP, 0});
 	return ((t_eval_result){RES_NONE, 0});
 }

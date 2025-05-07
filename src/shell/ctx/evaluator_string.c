@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
-#include "parser/parser.h"
 #include "shell/ctx/ctx.h"
-#include "util/util.h"
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 /** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
@@ -26,7 +25,11 @@ static void
 	{
 		sz = read(fd, buf->str + buf->len, 1024);
 		if (sz < 0)
+		{
+			if (errno == EINTR)
+				break ;
 			shell_perror(shell, "read() failed", SRC_LOCATION);
+		}
 		buf->len += sz;
 		stringbuf_reserve(buf, buf->len + 1024);
 	}
@@ -45,34 +48,37 @@ static void
 }
 
 static void
-	evaluator_parent(t_shell *shell, pid_t pid, int *fds, t_string_buffer *buf)
+	evaluator_parent(t_shell *shell, pid_t pid, int *fds, struct s_eval_string_result *result)
 {
 	int		status;
 	int		waitst;
 
-	stringbuf_init(buf, 1024);
+	stringbuf_init(&result->stdout, 1024);
 	waitst = 0;
 	while (waitst != pid)
 	{
-		read_incoming(shell, fds[0], buf);
+		read_incoming(shell, fds[0], &result->stdout);
 		waitst = waitpid(pid, &status, WNOHANG);
 		if (waitst == -1 && errno != EINTR)
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
-	read_incoming(shell, fds[0], buf);
+	read_incoming(shell, fds[0], &result->stdout);
 	if (waitst != pid && waitpid(pid, &status, 0) == -1)
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	shell->last_status = WEXITSTATUS(status);
+	ft_dprintf(2, "gsig=%d\n", g_signal);
+	if (!WIFEXITED(status))
+		result->result.type = RES_STOP;
 	close(fds[0]);
 }
 
 static void
 	evaluator(t_ctx *ctx, void *cookie)
 {
-	t_string_buffer *const	buf = cookie;
-	pid_t	pid;
-	int		fds[2];
-	char	*err;
+	struct s_eval_string_result *const	result = cookie;
+	pid_t										pid;
+	int											fds[2];
+	char										*err;
 
 	if (pipe(fds) == -1)
 	{
@@ -90,17 +96,18 @@ static void
 	if (!pid)
 		evaluator_child(ctx, fds);
 	close(fds[1]);
-	evaluator_parent(ctx->shell, pid, fds, buf);
+	evaluator_parent(ctx->shell, pid, fds, result);
 	ctx_free(ctx);
 }
 
-t_string_buffer
+struct s_eval_string_result
 	ctx_eval_string(t_shell *shell, char *prompt, char *info)
 {
-	t_string_buffer	buf;
-	t_ctx			ctx;
+	struct s_eval_string_result	result;
+	t_ctx						ctx;
 
+	result.result = (t_eval_result){RES_NONE, 0};
 	ctx = ctx_new(shell, info);
-	ctx_eval(&ctx, prompt, evaluator, &buf);
-	return (buf);
+	ctx_eval(&ctx, prompt, evaluator, &result);
+	return (result);
 }

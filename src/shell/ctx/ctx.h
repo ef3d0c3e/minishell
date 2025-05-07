@@ -13,6 +13,7 @@
 # define CTX_H
 
 #include "shell/eval/eval.h"
+#include "util/util.h"
 typedef struct s_shell	t_shell;
 
 # include <parser/parser.h>
@@ -78,8 +79,15 @@ ctx_eval(
 /** @brief Evaluates to stdout */
 t_eval_result
 ctx_eval_stdout(t_shell *shell, char *prompt);
+
+struct s_eval_string_result
+{
+	t_eval_result	result;
+	t_string_buffer	stdout;
+};
+
 /** @brief Evaluates to a string */
-t_string_buffer
+struct s_eval_string_result
 ctx_eval_string(t_shell *shell, char *prompt, char *info);
 
 #endif // CTX_H

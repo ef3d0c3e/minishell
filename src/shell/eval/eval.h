@@ -37,6 +37,9 @@ enum e_result_type
 	/** @brief Exits current shell, with optional numeric argument for exit
 	 * code, defaults to 0 */
 	RES_EXIT,
+	/** @brief Stops the current command from being evaluated, set when a signal
+	 * is caught */
+	RES_STOP,
 };
 
 typedef struct s_eval_result
