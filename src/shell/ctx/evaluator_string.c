@@ -56,7 +56,7 @@ static void
 	{
 		read_incoming(shell, fds[0], buf);
 		waitst = waitpid(pid, &status, WNOHANG);
-		if (waitst == -1)
+		if (waitst == -1 && errno != EINTR)
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
 	read_incoming(shell, fds[0], buf);

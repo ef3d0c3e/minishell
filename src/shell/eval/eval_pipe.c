@@ -21,9 +21,18 @@ static void
 
 	close(fds[0]);
 	close(fds[1]);
-	if (waitpid(pids[0], &status[0], 0) == -1
-		|| waitpid(pids[1], &status[1], 0) == -1)
+	while (waitpid(pids[0], &status[0], 0) == -1)
+	{
+		if (errno == EINTR)
+			continue;
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+	}
+	while (waitpid(pids[1], &status[1], 0) == -1)
+	{
+		if (errno == EINTR)
+			continue;
+		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+	}
 	if (!status[1] && option_value(shell, "pipefail"))
 		shell_exit(shell, WEXITSTATUS(status[0]));
 	shell_exit(shell, WEXITSTATUS(status[1]));
@@ -98,7 +107,6 @@ t_eval_result
 	eval_pipeline(t_shell *shell, t_ast_node* pipeline)
 {
 	const int		r_stderr = pipeline->logic.token.reserved_word[1] == '&';
-	t_eval_result	result;
 	int				status;
 	pid_t			pid;
 	char			*err;
@@ -117,8 +125,12 @@ t_eval_result
 		else
 			pipe_stdout(shell, pipeline);
 	}
-	if (waitpid(pid, &status, 0) == -1)
+	while (waitpid(pid, &status, 0) == -1)
+	{
+		if (errno == EINTR)
+			continue;
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+	}
 	shell->last_status = WEXITSTATUS(status);
 	return ((t_eval_result){RES_NONE, 0});
 }

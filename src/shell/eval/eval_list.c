@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "shell/eval/eval.h"
 #include <shell/shell.h>
+#include <stdio.h>
 
 t_eval_result
 	eval_list(t_shell *shell, t_ast_node *cmd)

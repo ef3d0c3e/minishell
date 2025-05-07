@@ -35,6 +35,9 @@
 # include <dirent.h>
 # include <fcntl.h>
 
+/** @brief Value of the last received signal */
+extern int				g_signal;
+
 typedef struct s_error	t_error;
 
 /** @brief Stores errors for the shell */
@@ -288,7 +291,7 @@ void
 shell_perror(t_shell *shell, const char *msg, const char *function);
 
 /******************************************************************************/
-/* Options handling for the `set` builtin                                     */
+/* Options handling for the `set` and `shopt` builtin                         */
 /******************************************************************************/
 
 /** @brief Represents a configuration option for the shell. Options can be
@@ -339,5 +342,18 @@ option_value(t_shell *shell, const char *name);
  */
 int
 option_set(t_shell *shell, const char *name, int value);
+
+/******************************************************************************/
+/* Signal handling                                                            */
+/******************************************************************************/
+
+/**
+ * @brief Install or uninstall signals handlers for the shell
+ *
+ * @param shell The shell session
+ * @param uninstall Set to 1 to uninstall the signal handlers
+ */
+void
+signal_install(t_shell *shell, int uninstall);
 
 #endif // SHELL_H

@@ -24,8 +24,12 @@ t_eval_result
 		shell_perror(shell, "fork() failed", SRC_LOCATION);
 	if (pid)
 	{
-		if (waitpid(pid, &status, 0) == -1)
+		while (waitpid(pid, &status, 0) == -1)
+		{
+			if (errno == EINTR)
+				continue;
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+		}
 		shell->last_status = WEXITSTATUS(status);
 	}
 	else
