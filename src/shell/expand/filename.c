@@ -159,7 +159,8 @@ t_fragment_list
 	if (start != i)
 	{
 		expand(shell, &new, &list->fragments[start], &list->fragments[i]);
-		new.fragments[new.size - 1].force_split = 1;
+		if (new.size)
+			new.fragments[new.size - 1].force_split = 1;
 	}
 	fraglist_free(list);
 	return (new);
