@@ -1,4 +1,5 @@
 #include "shell/ctx/ctx.h"
+#include "shell/env/env.h"
 #include "shell/eval/eval.h"
 #include "util/util.h"
 #include <shell/shell.h>
@@ -15,12 +16,13 @@ int main(int ac, char **av, const char **envp)
 
 	shell = shell_new(envp);
 	//ctx_eval_stdout(&shell, ft_strdup(av[1]));
-	rl_bind_key('\t', rl_complete);
+	//rl_bind_key('\t', rl_complete);
 
 	//// Enable history
 	using_history();
 
-	ctx_eval_stdout(&shell, ft_strdup("source default.sh"));
+	profile_source(&shell);
+	//ctx_eval_stdout(&shell, ft_strdup("source default.sh"));
 	while (1) {
 
 		prompt = ctx_eval_string(&shell, ft_strdup("prompt_left"), ft_strdup("Prompt"));

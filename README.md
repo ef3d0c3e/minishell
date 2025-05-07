@@ -6,6 +6,12 @@
 
 # Documentation
 
+## Profile
+
+The shell will attempt to source it's default profile file from `~/.hshrc`.
+If this fails, it will then attempt to search for `$XDG_CONFIG_HOME/hsh/profile.sh`.
+If a profile still couldn't be sourced, the default profile will be used.
+
 ## Regex / Pattern matching
 
 Pattern matching is partially implemented to follow bash's rules.

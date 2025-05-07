@@ -12,10 +12,60 @@
 #ifndef ENV_H
 # define ENV_H
 
+#include "util/util.h"
 # include <parser/parser.h>
 # include <sys/stat.h>
 
 typedef struct s_shell t_shell;
+
+/******************************************************************************/
+/* Path buf utility                                                           */
+/******************************************************************************/
+
+typedef struct s_pathbuf
+{
+	t_string_buffer	buf;
+}	t_pathbuf;
+
+/**
+ * @brief Initializes an empty @ref t_pathbuf with given default capacity
+ *
+ * @param buf Pathbuf to initialize
+ * @param initial_capacity Pathbuf initial capacity
+ */
+void
+pathbuf_init(t_pathbuf *buf, size_t initial_capacity);
+/**
+ * @brief Appends a component to the @ref t_pathbuf
+ *
+ * @param buf Pathbuf to append to
+ * @param component component to append (may be NULL)
+ * @param force_dir Force the componene to be treated as a directory, e.g append
+ * a `/` after the component
+ *
+ * @returns 1 on success, 0 on failure or if `component == NULL`
+ */
+int
+pathbuf_append(t_pathbuf *buf, const char *component, int force_dir);
+/**
+ * @brief Converts the @ref t_pathbuf to a NUL-terminated string
+ *
+ * @note This function does not clone the internal buffer, so you can free
+ * the returned `char *` and not have to worry about calling @ref pathbuf_free.
+ *
+ * @param buf Buffer to convert
+ *
+ * @returns A null terminated string of the buffer
+ */
+char
+*pathbuf_cstr(t_pathbuf *buf);
+/**
+ * @brief Frees a pathbuf
+ *
+ * @param buf Pathbufto free
+ */
+void
+pathbuf_free(t_pathbuf *buf);
 
 /******************************************************************************/
 /* $PATH and environment handling                                             */
@@ -281,5 +331,21 @@ struct s_ftw
 	t_ftw_fn	fn;
 	void		*cookie;
 };
+
+/******************************************************************************/
+/* Profile management                                                         */
+/******************************************************************************/
+
+/**
+ * @brief Attempts to source the default profile
+ *
+ * This function will first look in `~/.hshrc` if not found, it will look into
+ * `$XDG_CONFIG_HOME/hsh/profile.sh`. If it's still not found a default profile
+ * will be used and a message will be displayed.
+ *
+ * @param shell The shell session
+ */
+void
+profile_source(t_shell *shell);
 
 #endif // ENV_H
