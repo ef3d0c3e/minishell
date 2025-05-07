@@ -38,12 +38,16 @@ static void
 static void
 	evaluator_child(t_ctx *ctx, int *fds)
 {
+	t_eval_result	result;
+
 	close(fds[0]);
 	if (dup2(fds[1], STDOUT_FILENO) == -1)
 		shell_perror(ctx->shell, "dup2() failed", SRC_LOCATION);
 	close(fds[1]);
-	eval(ctx->shell, ctx->program);
+	result = eval(ctx->shell, ctx->program);
 	ctx_free(ctx);
+	if (result.type == RES_STOP)
+		shell_exit(ctx->shell, 130);
 	shell_exit(ctx->shell, ctx->shell->last_status);
 }
 
@@ -66,7 +70,6 @@ static void
 	if (waitst != pid && waitpid(pid, &status, 0) == -1)
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	shell->last_status = WEXITSTATUS(status);
-	ft_dprintf(2, "gsig=%d\n", g_signal);
 	if (!WIFEXITED(status))
 		result->result.type = RES_STOP;
 	close(fds[0]);

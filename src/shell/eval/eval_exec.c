@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "shell/eval/eval.h"
 #include <shell/shell.h>
 #include <stdio.h>
@@ -63,10 +64,15 @@ static int
 		shell_perror(shell, "fork() failed", SRC_LOCATION);
 	if (pid)
 	{
-		while (waitpid(pid, &status, 0) == -1)
+		while (waitpid(pid, &status, 0) != pid)
 		{
 			if (errno == EINTR)
 				continue;
+			if (errno == ECHILD)
+			{
+				status = 2;
+				break ;
+			}
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 		}
 		shell->last_status = WEXITSTATUS(status);

@@ -115,6 +115,7 @@ char
 		if (!expand_arg(shell, &list, &words->list[i++], ifs))
 		{
 			rb_delete(&shell->temporaries, &list);
+			fraglist_free(&list);
 			return (NULL);
 		}
 	}

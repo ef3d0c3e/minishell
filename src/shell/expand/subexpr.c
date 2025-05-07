@@ -9,10 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/ctx/ctx.h"
-#include "shell/eval/eval.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 int
@@ -29,9 +25,8 @@ int
 	(void)ifs;
 	ft_asprintf(&info, "$(%s)", stringbuf_cstr(&param->text));
 	result = ctx_eval_string(shell, ft_strdup(stringbuf_cstr(&param->text)), info);
-	if (result.result.type != RES_NONE)
+	if (shell->last_status || result.result.type != RES_NONE)
 	{
-		// An error happened
 		stringbuf_free(&result.stdout);
 		return (0);
 	}

@@ -23,8 +23,8 @@ int main(int ac, char **av, const char **envp)
 	profile_source(&shell);
 	while (1) {
 
-		prompt = stringbuf_from("> ");
-		//prompt = ctx_eval_string(&shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
+		//prompt = stringbuf_from("> ");
+		prompt = ctx_eval_string(&shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
 		char* input = readline(stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);
 		if (!input)
@@ -36,6 +36,7 @@ int main(int ac, char **av, const char **envp)
 			shell.last_status = result.param;
 			break ;
 		}
+		g_signal = 0;
 	}
 	signal_install(&shell, 1);
 	shell_free(&shell);
