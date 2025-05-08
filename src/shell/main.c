@@ -7,11 +7,20 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#include <signal.h>
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
 
 #include <libopts.h>
+static int my_getc(FILE *stream) {
+  char c;
+  ssize_t n = read(STDIN_FILENO, &c, 1);
+  if (n == 1)            return (unsigned char)c;
+  if (n == 0)            return EOF;
+  if (errno == EINTR)    return -1;    /* tell readline to abort */
+  return EOF;
+}
 
 static void
 	repl(t_shell *shell)
@@ -19,19 +28,26 @@ static void
 	t_string_buffer	prompt;
 	t_eval_result	result;
 
-	rl_catch_signals = 1;
-	using_history();
+	readline_setup();
 	signal_install(shell, 0);
 	profile_source(shell);
 	while (1)
 	{
+		if (g_signal == SIGINT)
+			shell->last_status = 130;
+		g_signal = 0;
 	//	prompt = stringbuf_from("> ");
 		prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
 		char* input = readline(stringbuf_cstr(&prompt));
-		//ft_dprintf(2, "HERE");
 		stringbuf_free(&prompt);
 		if (!input)
+		{
+			if (g_signal == SIGINT || g_signal == SIGQUIT)
+			{
+				continue ;
+			}
 			break ;
+		}
 		add_history(input);
 		result = ctx_eval_stdout(shell, input);
 		if (result.type == RES_EXIT)
@@ -39,7 +55,6 @@ static void
 			shell->last_status = result.param;
 			break ;
 		}
-		g_signal = 0;
 	}
 	signal_install(shell, 1);
 }

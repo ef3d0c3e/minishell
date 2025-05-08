@@ -25,6 +25,7 @@
 # include <shell/regex/regex.h>
 # include <shell/expand/expand.h>
 # include <shell/ctx/ctx.h>
+# include <shell/readline/readline.h>
 
 # include <ft_printf.h>
 # include <gnl.h>
@@ -36,9 +37,9 @@
 # include <fcntl.h>
 
 /** @brief Value of the last received signal */
-extern int				g_signal;
+extern volatile sig_atomic_t	g_signal;
 
-typedef struct s_error	t_error;
+typedef struct s_error			t_error;
 
 /** @brief Stores errors for the shell */
 struct s_error_list

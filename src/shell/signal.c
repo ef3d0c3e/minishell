@@ -9,12 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include <readline/readline.h>
 #include <shell/shell.h>
-#include <signal.h>
 
-int	g_signal;
+volatile sig_atomic_t	g_signal;
 
 static void
 	sighandler(int signum, siginfo_t *info, void *data)
@@ -30,11 +27,7 @@ static void
 	//	ft_dprintf(2, "Quitting...\n");
 	//else
 	//	ft_dprintf(2, "SIG=%d\n", signum);
-	g_signal = signum;
 	ft_dprintf(2, "\n");
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
 }
 
 void
