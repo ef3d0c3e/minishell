@@ -203,6 +203,8 @@ typedef struct s_wordlist
 	t_word	*list;
 	/** @brief Number of words */
 	size_t	size;
+	/** @brief Capacity of word list */
+	size_t	capacity;
 }	t_wordlist;
 
 /**

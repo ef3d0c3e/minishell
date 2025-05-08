@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
+#include <stdio.h>
 
 static void
 	expand_range(t_brace_group *group, int start, int end, int incr)

@@ -109,13 +109,20 @@ static int
 	t_wordlist *result)
 {
 	t_brace_group	group;
+	size_t			new_cap;
 
 	if (!brace_parse(word, &group))
 		return (0);
 	while (1)
 	{
-		result->list = ft_realloc(result->list, sizeof(t_word) * result->size,
-				sizeof(t_word) * (result->size + 1));
+		if (result->size >= result->capacity)
+		{
+			new_cap = !result->capacity + result->capacity * 2;
+			result->list = ft_realloc(result->list,
+					sizeof(t_word) * result->capacity,
+					sizeof(t_word) * new_cap);
+			result->capacity = new_cap;
+		}
 		if (!brace_expand(&group, &result->list[result->size++]))
 			break ;
 	}
@@ -128,6 +135,7 @@ void
 {
 	list->list = NULL;
 	list->size = 0;
+	list->capacity = 0;
 	if (!try_expand(word, list))
 	{
 		list->list = xmalloc(sizeof(t_word));

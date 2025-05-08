@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-static void
+static int
 	write_msg(const char *msg)
 {
 	const size_t	len = ft_strlen(msg);
@@ -20,9 +20,11 @@ static void
 	written = write(1, msg, len);
 	if (written == -1 || (size_t)written != len)
 	{
-		ft_dprintf(2, "echo: Write error");
-		exit(EXIT_FAILURE);
+		if (errno != EINTR)
+			ft_dprintf(2, "echo: Write error");
+		return (0);
 	}
+	return (1);
 }
 
 static int
@@ -44,8 +46,12 @@ static int
 	while (i < argc)
 	{
 		if (i != start)
-			write_msg(" ");
-		write_msg(argv[i]);
+		{
+			if (!write_msg(" "))
+				return (errno == EINTR);
+		}
+		if (!write_msg(argv[i]))
+			return (errno == EINTR);
 		++i;
 	}
 	if (newline)
