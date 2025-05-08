@@ -12,6 +12,8 @@
 #ifndef READLINE_H
 # define READLINE_H
 
+typedef struct s_shell	t_shell;
+
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -23,6 +25,6 @@ readline_getc(FILE *stream);
  * @brief Readline setup
  */
 void
-readline_setup(void);
+readline_setup(t_shell *shell);
 
 #endif // READLINE_H

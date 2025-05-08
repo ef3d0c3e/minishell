@@ -34,7 +34,7 @@ t_eval_result
 	[NODE_FOR] = eval_for,
 	};
 
-	if (g_signal)
+	if (g_signal == SIGINT)
 		return ((t_eval_result){RES_STOP, 0});
 	if (!program)
 		return ((t_eval_result){RES_NONE, 0});

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
+#include <stdlib.h>
 
 volatile sig_atomic_t	g_signal;
 
@@ -18,16 +19,7 @@ static void
 {
 	int	status;
 
-	if (waitpid(-1, &status, WNOHANG) == 0)
-		return ;
 	g_signal = signum;
-	//if (signum == SIGINT)
-	//	ft_dprintf(2, "Cancelling...\n");
-	//else  if (signum == SIGQUIT)
-	//	ft_dprintf(2, "Quitting...\n");
-	//else
-	//	ft_dprintf(2, "SIG=%d\n", signum);
-	ft_dprintf(2, "\n");
 }
 
 void

@@ -38,7 +38,6 @@ t_shell
 	shell.errors.errors = NULL;
 	shell.last_status = 0;
 	shell.is_child = 0;
-
 	shell.is_interactive = 1;
 	e = envp;
 	while (*e)

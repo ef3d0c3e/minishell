@@ -1,26 +1,5 @@
-#include "ft_printf.h"
-#include "shell/ctx/ctx.h"
-#include "shell/env/env.h"
-#include "shell/eval/eval.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-
-#include <signal.h>
 #include <stdio.h>
-#include <termios.h>
-#include <unistd.h>
-
-#include <libopts.h>
-static int my_getc(FILE *stream) {
-  char c;
-  ssize_t n = read(STDIN_FILENO, &c, 1);
-  if (n == 1)            return (unsigned char)c;
-  if (n == 0)            return EOF;
-  if (errno == EINTR)    return -1;    /* tell readline to abort */
-  return EOF;
-}
 
 static void
 	repl(t_shell *shell)
@@ -28,7 +7,7 @@ static void
 	t_string_buffer	prompt;
 	t_eval_result	result;
 
-	readline_setup();
+	readline_setup(shell);
 	signal_install(shell, 0);
 	profile_source(shell);
 	while (1)
@@ -36,8 +15,8 @@ static void
 		if (g_signal == SIGINT)
 			shell->last_status = 130;
 		g_signal = 0;
-	//	prompt = stringbuf_from("> ");
-		prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
+		prompt = stringbuf_from("> ");
+		//prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
 		char* input = readline(stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);
 		if (!input)

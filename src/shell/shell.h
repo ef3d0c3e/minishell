@@ -29,6 +29,7 @@
 
 # include <ft_printf.h>
 # include <gnl.h>
+# include <libopts.h>
 
 # include <sys/stat.h>
 # include <sys/wait.h>
