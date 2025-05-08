@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 static void
@@ -57,6 +58,8 @@ t_eval_result
 
 	path = NULL;
 	argv = word_expansion(shell, &program->cmd.args);
+	if (g_signal)
+		return (args_free(argv), (t_eval_result){RES_STOP, 0});
 	if (!argv)
 		return ((t_eval_result){RES_NONE, 0});
 	status = 0;

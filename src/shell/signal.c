@@ -24,16 +24,17 @@ static void
 	if (waitpid(-1, &status, WNOHANG) == 0)
 		return ;
 	g_signal = signum;
-	if (signum == SIGINT)
-		ft_dprintf(2, "^C\n");
-	else  if (signum == SIGQUIT)
-		ft_dprintf(2, "^D\n");
-	else
-		ft_dprintf(2, "SIG=%d\n", signum);
+	//if (signum == SIGINT)
+	//	ft_dprintf(2, "Cancelling...\n");
+	//else  if (signum == SIGQUIT)
+	//	ft_dprintf(2, "Quitting...\n");
+	//else
+	//	ft_dprintf(2, "SIG=%d\n", signum);
 	g_signal = signum;
-    rl_on_new_line();
-    rl_replace_line("", 0);
-    rl_redisplay();
+	ft_dprintf(2, "\n");
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 void

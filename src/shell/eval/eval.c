@@ -34,8 +34,8 @@ t_eval_result
 	[NODE_FOR] = eval_for,
 	};
 
-	//if (g_signal)
-	//	return ((t_eval_result){RES_STOP, 0});
+	if (g_signal)
+		return ((t_eval_result){RES_STOP, 0});
 	if (!program)
 		return ((t_eval_result){RES_NONE, 0});
 	return (evaluators[program->type](shell, program));

@@ -9,14 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/env/env.h"
-#include "shell/expand/expand.h"
-#include "shell/regex/regex.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 /** @brief Checks if a fragment range needs filename expansion by scanning for
  * reserved words */
@@ -108,6 +101,7 @@ static int
 	t_string_buffer				s;
 	size_t						recurse;
 	struct s_filename_traversal	tr;
+	size_t						oldsz;
 
 	if (!needs_expansion(shell, start, end))
 	{
@@ -128,8 +122,10 @@ static int
 		recurse += 1;
 	tr.list = list;
 	//regex_print(0, tr.regex.expr);
+	oldsz = list->size;
 	file_tree_walk(".", recurse, collect_files, &tr);
 	regex_free(tr.regex.expr);
+	// TODO: If no match, use globerr/globfail to determine what to do
 	return (1);
 }
 

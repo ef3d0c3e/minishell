@@ -19,15 +19,16 @@ static void
 	t_string_buffer	prompt;
 	t_eval_result	result;
 
-	rl_catch_signals = 0;
+	rl_catch_signals = 1;
 	using_history();
 	signal_install(shell, 0);
 	profile_source(shell);
 	while (1)
 	{
-		//prompt = stringbuf_from("> ");
+	//	prompt = stringbuf_from("> ");
 		prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
 		char* input = readline(stringbuf_cstr(&prompt));
+		//ft_dprintf(2, "HERE");
 		stringbuf_free(&prompt);
 		if (!input)
 			break ;
