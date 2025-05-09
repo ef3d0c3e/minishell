@@ -13,13 +13,31 @@
 # define LINEGET_H
 
 # include <util/util.h>
+# include <termios.h>
+
+typedef struct s_shell		t_shell;
+typedef struct s_lineget	t_lineget;
+
+/******************************************************************************/
+/* Key handling                                                               */
+/******************************************************************************/
+
+/** @brief Keybinding function */
+typedef void(*t_keybind_fn)(t_lineget *);
+
+void
+lineget_setup_keys(t_lineget *line);
+int
+lineget_handle_key(t_lineget *line, int c);
 
 typedef struct s_buffer_attr
 {
 	size_t	start;
 	size_t	end;
 	int		color;
-
+	int		bold:1;
+	int		italic:1;
+	int		underline:1;
 }	t_buffer_attr;
 
 typedef struct s_buffer
@@ -44,19 +62,37 @@ lineget_buffer_new(void);
 
 typedef struct s_lineget
 {
+	/** @brief Associated shell session */
+	t_shell			*shell;
 	/** @brief Input FD */
-	int			in_fd;
+	int				in_fd;
 	/** @brief Output FD */
-	int			out_fd;
+	int				out_fd;
 	/** @brief Getchar function */
-	int			(*getc)(int fd);
+	int				(*getc)(int fd);
 
-	char		*prompt;
-	t_buffer	buffer;
+	/** @brief List of key bindings */
+	t_rbtree		keybinds;
+
+	/** @brief User specified prompt */
+	char			*prompt;
+
+	/** @brief Input buffer */
+	t_buffer		buffer;
+	/** @brief Cursor's byte position in the prompt */
+	size_t			cursor_index;
+	/** @brief Window width */
+	size_t			display_width;
+	/** @brief Key sequence sliding window */
+	unsigned char	sequence[16];
+	size_t			sequence_len;
+
+	/** @brief Terminal handling */
+	struct termios	tio;
 }	t_lineget;
 
 t_lineget
-lineget_setup(void);
+lineget_setup(t_shell *shell);
 void
 lineget_cleanup(t_lineget *line);
 

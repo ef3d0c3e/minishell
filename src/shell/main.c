@@ -72,6 +72,7 @@ static void
 	return (_set_behavior(_init_opt(use, opts, *(&opts + 1) - opts, a), flags));
 }
 
+/*
 int main(int ac, const char **av, const char **envp)
 {
 	t_shell			shell;
@@ -88,4 +89,4 @@ int main(int ac, const char **av, const char **envp)
 		repl(&shell);
 	shell_free(&shell);
 	return (shell.last_status);
-}
+}*/
