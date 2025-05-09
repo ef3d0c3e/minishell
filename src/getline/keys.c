@@ -12,32 +12,32 @@
 #include <shell/shell.h>
 
 void
-	lineget_move_left(t_lineget *line)
+	getline_move_left(t_getline *line)
 {
 	ft_dprintf(2, "Move left\n");
 }
 
 void
-	lineget_move_right(t_lineget *line)
+	getline_move_right(t_getline *line)
 {
 	ft_dprintf(2, "Move right\n");
 }
 
 void
-	lineget_setup_keys(t_lineget *line)
+	getline_setup_keys(t_getline *line)
 {
 	line->sequence_len = 0;
 	line->keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			NULL, NULL);
-	rb_insert(&line->keybinds, "\x1b[C", (void *)lineget_move_right);
-	rb_insert(&line->keybinds, "\x1b[D", (void *)lineget_move_left);
-	rb_insert(&line->keybinds, "\x0d", (void *)lineget_move_right);
-	rb_insert(&line->keybinds, "\x10", (void *)lineget_move_left);
+	rb_insert(&line->keybinds, "\x1b[C", (void *)getline_move_right);
+	rb_insert(&line->keybinds, "\x1b[D", (void *)getline_move_left);
+	rb_insert(&line->keybinds, "\x0d", (void *)getline_move_right);
+	rb_insert(&line->keybinds, "\x10", (void *)getline_move_left);
 }
 
 /** @brief Gets the length of a key sequence */
 static size_t
-	key_sequence_len(t_lineget *line)
+	key_sequence_len(t_getline *line)
 {
 	size_t	i;
 
@@ -62,7 +62,7 @@ static size_t
 
 /** Returns 1 if `c` is part of a key sequence, thus not added to the line */
 int
-	lineget_handle_key(t_lineget *line, int c)
+	getline_handle_key(t_getline *line, int c)
 {
 	t_keybind_fn	bind;
 	size_t			expect;
@@ -81,7 +81,11 @@ int
 	{
 		ft_dprintf(2, "KEYSEQ:");
 		for (size_t i = 0; i < line->sequence_len; ++i)
-			ft_dprintf(2, "'%d' ", line->sequence[i]);
+		{
+			if (line->sequence[i] < 32 || line->sequence[i] == 127)
+				ft_dprintf(2, "%d ", line->sequence[i]);
+			ft_dprintf(2, "'%c' ", line->sequence[i]);
+		}
 	}
 	line->sequence_len = 0;
 	return (1);

@@ -27,7 +27,7 @@
 # include <shell/ctx/ctx.h>
 # include <shell/readline/readline.h>
 
-# include <lineget/lineget.h>
+# include <getline/getline.h>
 # include <ft_printf.h>
 # include <gnl.h>
 # include <libopts.h>
