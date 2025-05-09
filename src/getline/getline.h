@@ -27,6 +27,9 @@ int
 getline_getc(t_getline *line);
 int
 getline_read_char(t_getline *line);
+/** @brief Appends input to the input queue */
+void
+getline_add_input(t_getline *line, const char *input, size_t len);
 
 /******************************************************************************/
 /* Key handling                                                               */
@@ -138,5 +141,12 @@ getline_cleanup(t_getline *line);
 
 char
 *getline_read(t_getline *line, char *prompt);
+
+/******************************************************************************/
+/* Utilities                                                                  */
+/******************************************************************************/
+
+int
+getline_cursor_pos(t_getline *line, int *x, int *y);
 
 #endif // GETLINE_H

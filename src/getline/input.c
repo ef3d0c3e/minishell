@@ -29,6 +29,12 @@ int
 	return (EOF);
 }
 
+void
+	getline_add_input(t_getline *line, const char *input, size_t len)
+{
+	stringbuf_append(&line->input_queue, (t_string){input, len});
+}
+
 int
 	getline_read_char(t_getline *line)
 {
