@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "../util.h"
 #include <stdlib.h>
+#include <string.h>
 
 void
 	stringbuf_replace(
@@ -24,9 +25,9 @@ void
 
 	buf->capacity = len + buf->len - (end - start);
 	result = xmalloc(buf->capacity);
-	ft_memcpy(result, buf->str, start);
-	ft_memcpy(result + start, replace, len);
-	ft_memcpy(result + start + len, buf->str + end, buf->len - end);
+	memcpy(result, buf->str, start);
+	memcpy(result + start, replace, len);
+	memcpy(result + start + len, buf->str + end, buf->len - end);
 	free(buf->str);
 	buf->len = buf->capacity;
 	buf->str = result;

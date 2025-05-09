@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memcpy_unaligned.c                                 :+:      :+:    :+:   */
+/*   buffer.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,21 +9,17 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../util.h"
+#include <shell/shell.h>
 
-void
-	*ft_memcpy(void *dest, const void *src, size_t len)
+t_buffer
+	lineget_buffer_new(void)
 {
-	unsigned char		*d;
-	const unsigned char	*s = (const unsigned char *)src;
-
-	d = (unsigned char *)dest;
-	while (len > 0)
-	{
-		*d = *s;
-		++d;
-		++s;
-		--len;
-	}
-	return (dest);
+	return (t_buffer){
+		.line = NULL,
+		.capacity = 0,
+		.size = 0,
+		.s_attrs.data = NULL,
+		.s_attrs.capacity = 0,
+		.s_attrs.size = 0,
+	};
 }
