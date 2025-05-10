@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
 #include <shell/shell.h>
 
 t_getline
@@ -82,7 +83,7 @@ int
 	write(line->out_fd, "\x1b[1A\r", 5); 
 
 	// col0=1 col1=1
-	//ft_dprintf(2, "col0=%d col1=%d", col0, col1);
+	//ft_dprintf(2, "[%d %d]", col0, col1);
 	return (col1 - col0);
 }
 
@@ -148,6 +149,29 @@ void	recluster_around(t_getline *line, t_u8_iterator it)
 }
 */
 
+void recluster_around(t_getline *line, size_t k);
+static size_t
+find_cluster_index_and_offset(t_getline *line,
+                              size_t byte_pos,
+                              size_t *out_cluster_start)
+{
+    size_t pos = 0;
+    size_t i   = 0;
+    while (i < line->buffer.s_clusters.size)
+    {
+        size_t sz = line->buffer.s_clusters.data[i].size;
+        if (byte_pos < pos + sz)
+        {
+            if (out_cluster_start) *out_cluster_start = pos;
+            return i;
+        }
+        pos += sz;
+        i++;
+    }
+    if (out_cluster_start) *out_cluster_start = pos;
+    return line->buffer.s_clusters.size; // past‑end
+}
+
 void
 	getline_input_add(t_getline *line, int c)
 {
@@ -161,7 +185,13 @@ void
 	it_next(&it);
 	while (it.byte_next < line->cursor_index)
 		it_next(&it);
-	printf("at=%zu\n\r", line->cursor_index);
+	printf("at=%zu\n\r", it.byte_pos);
+
+	size_t cluster_start;
+	size_t ci = find_cluster_index_and_offset(line, it.byte_pos, &cluster_start);
+	size_t k = getline_cluster_insert(line, it.byte_pos, line->cursor_index, 1);
+	recluster_around(line, ci);
+	getline_cluster_print(line);
 }
 
 

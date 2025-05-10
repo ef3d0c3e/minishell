@@ -61,6 +61,17 @@ void
 void
 *ft_memcpy(void *dest, const void *src, size_t n);
 /**
+ * @brief Memmove function
+ *
+ * @param dest Destination buffer
+ * @param src Source buffer
+ * @param n Number of bytes to move from `dest` to `src`
+ *
+ * @returns `dest`
+ */
+void
+*ft_memmove(void *dest, const void *src, size_t n);
+/**
  * @brief Memset
  *
  * @param dest Destination buffer to fill

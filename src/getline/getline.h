@@ -36,7 +36,7 @@ getline_add_input(t_getline *line, const char *input, size_t len);
 /******************************************************************************/
 
 /** @brief Keybinding function */
-typedef void(*t_keybind_fn)(t_getline *);
+typedef void				(*t_keybind_fn)(t_getline *);
 
 void
 getline_setup_keys(t_getline *line);
@@ -74,6 +74,11 @@ typedef struct s_cluster
 	/** @brief Visual width (measured) of the cluster */
 	int		width;
 }	t_cluster;
+
+void
+getline_cluster_print(t_getline *line);
+size_t
+getline_cluster_insert(t_getline *line, size_t start, size_t end, int width);
 
 typedef struct s_buffer
 {

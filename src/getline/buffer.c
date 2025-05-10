@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
 
 t_buffer
@@ -24,6 +23,9 @@ t_buffer
 		.s_attrs.data = NULL,
 		.s_attrs.capacity = 0,
 		.s_attrs.size = 0,
+		.s_clusters.data = NULL,
+		.s_clusters.size = 0,
+		.s_clusters.capacity = 0,
 	};
 }
 
