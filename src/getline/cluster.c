@@ -153,99 +153,95 @@ getline_cluster_insert(t_getline *line,
 
 /// line->buffer.data is your UTF‑8 buffer (char*).  
 /// line->buffer.s_clusters.data is t_cluster[].
+#define M 5
 void recluster_around(t_getline *line, size_t k)
 {
-	enum { MAX_CLUSTER_LEN = 5 };
-    t_cluster *C = line->buffer.s_clusters.data;
-    size_t     N = line->buffer.s_clusters.size;
+	t_cluster *C = line->buffer.s_clusters.data;
+	size_t     N = line->buffer.s_clusters.size;
 
-    // 1) If the cluster at k has zero width, auto‑merge it into the left
-    if (C[k].width == 0 && k > 0) {
-        // absorb cluster k into k-1
-        size_t mergedSize  = C[k-1].size + C[k].size;
-        int    mergedWidth = C[k-1].width;  
-        // remove k…k+1
-        remove_cluster(line, k-1, k+1);
-        // insert merged
-        insert_cluster(line, k-1, (t_cluster){ .size = mergedSize,
-                                                .width = mergedWidth });
-        return;
-    }
+	// 1) re‑measure every singleton cluster
+	size_t pos = 0, ci = 0;
+	while (ci < N) {
+		C[ci].width = measure_terminal_width(
+				line,
+				line->buffer.buffer.str + pos,
+				C[ci].size);
+		pos += C[ci].size;
+		ci++;
+	}
 
-    // 2) Build prefix‑sum of widths
-    int *prefix = malloc((N+1)*sizeof(int));
-    prefix[0] = 0;
-    size_t pi = 0;
-    while (pi < N) {
-        prefix[pi+1] = prefix[pi] + C[pi].width;
-        pi++;
-    }
+	// 2) if the codepoint at k is zero‑width, absorb all adjacent zeroes
+	if (C[k].width == 0) {
+		// absorb left zeroes
+		size_t lo = k, hi = k+1;
+		while (lo > 0 && C[lo-1].width == 0) lo--;
+		// absorb right zeroes
+		while (hi < N && C[hi].width == 0) hi++;
+		// merge [lo..hi)
+		size_t totalBytes = 0, x = lo;
+		while (x < hi) { totalBytes += C[x].size; x++; }
+		remove_cluster(line, lo, hi);
+		insert_cluster(line, lo, (t_cluster){ .size = totalBytes, .width = 0 });
+		return;
+	}
 
-    // 3) Find best span [i..j) containing k that maximizes (sumWidth - measuredWidth)
-    size_t best_i = 0, best_j = 0;
-    int    best_diff = 0;
-    int    best_w    = 0;
+	// 3) build prefix‑sum of widths for O(1) sum queries
+	int *pref = malloc((N+1)*sizeof(int));
+	pref[0] = 0; ci = 0;
+	while (ci < N) {
+		pref[ci+1] = pref[ci] + C[ci].width;
+		ci++;
+	}
 
-    // We'll iterate i from max(0, k-(M-1)) to k
-    size_t i = (k < (MAX_CLUSTER_LEN-1) ? 0 : k - (MAX_CLUSTER_LEN-1));
-    while (i <= k) {
-        size_t j = i + 1;
-        while (j <= N && j - i <= MAX_CLUSTER_LEN) {
-            if (k < j) {
-                // sum of this span
-                int sumW = prefix[j] - prefix[i];
+	// 4) find best span [i..j) with i ≤ k < j, length ≤ M
+	size_t best_i=0, best_j=0;
+	int best_diff = 0, best_w = 0;
 
-                // byte-range for [i..j)
-                size_t byteStart = 0, idx = 0;
-                while (idx < i) {
-                    byteStart += C[idx].size;
-                    idx++;
-                }
-                size_t byteLen = 0;
-                idx = i;
-                while (idx < j) {
-                    byteLen += C[idx].size;
-                    idx++;
-                }
+	size_t i = (k < M-1 ? 0 : k-(M-1));
+	while (i <= k) {
+		size_t j = i+1;
+		while (j <= N && j-i <= M) {
+			if (k < j) {
+				int sumW = pref[j] - pref[i];
+				// skip pure zero spans (we handled those above)
+				if (sumW > 0) {
+					// measure the span
+					size_t bstart=0, t=i;
+					while (t < i) { bstart += C[t].size; t++; }
+					size_t blen=0; t = i;
+					while (t < j) { blen += C[t].size; t++; }
+					int w = measure_terminal_width(line,
+							line->buffer.buffer.str + bstart,
+							blen);
 
-                int w = measure_terminal_width(line,
-                              line->buffer.buffer.str + byteStart,
-                              byteLen);
+					int diff = sumW - w;
+					// pick largest shrink, or equal‑width long span
+					if (diff > best_diff ||
+							(diff==0 && (j-i)>1 && best_diff==0))
+					{
+						best_diff = diff;
+						best_i    = i;
+						best_j    = j;
+						best_w    = w;
+					}
+				}
+			}
+			j++;
+		}
+		i++;
+	}
+	free(pref);
 
-                // if terminal treats it as one, w < sumW or (w==sumW but span>1)
-                // we consider both cases:
-                int diff = sumW - w;
-                if (diff > best_diff || (diff == 0 && (j-i) > 1 && best_diff == 0)) {
-                    // prefer any multi‑codepoint span even if no numeric shrink
-                    best_diff = diff;
-                    best_i    = i;
-                    best_j    = j;
-                    best_w    = w;
-                }
-            }
-            j++;
-        }
-        i++;
-    }
-
-    free(prefix);
-
-    // 4) If we found a multi‑codepoint span to merge (best_j–best_i > 1)
-    if (best_j - best_i > 1) {
-        // compute total bytes
-        size_t totalB = 0, x = best_i;
-        while (x < best_j) {
-            totalB += C[x].size;
-            x++;
-        }
-        // remove old clusters
-        remove_cluster(line, best_i, best_j);
-        // insert the merged cluster
-        insert_cluster(line, best_i, (t_cluster){
-            .size  = totalB,
-            .width = best_w
-        });
-    }
+	// 5) if we found a multi‑codepoint span, merge it
+	if (best_j - best_i > 1) {
+		size_t totalB=0, x=best_i;
+		while (x < best_j) { totalB += C[x].size; x++; }
+		remove_cluster(line, best_i, best_j);
+		insert_cluster(line, best_i, (t_cluster){
+				.size  = totalB,
+				.width = best_w
+				});
+	}
 }
 
 void

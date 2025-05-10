@@ -19,7 +19,7 @@ static int
 
     if (n >= 0)
 		return (0);
-    if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+    if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR))
 		return (0);
     return (-1);
 }
@@ -48,6 +48,7 @@ static int
 		{
 			getline_add_input(line, buf, pos);
 			pos = 0;
+			buf[pos++] = '\033';
 			sep = 0;
 			continue ;
 		}

@@ -14,13 +14,13 @@
 void
 	getline_move_left(t_getline *line)
 {
-	ft_dprintf(2, "Move left\n");
+	ft_dprintf(2, "[Move left]\n\r");
 }
 
 void
 	getline_move_right(t_getline *line)
 {
-	ft_dprintf(2, "Move right\n");
+	ft_dprintf(2, "[Move right]\n\r");
 }
 
 void
@@ -79,14 +79,9 @@ int
 		bind(line);
 	else
 	{
-		ft_dprintf(2, "KEYSEQ:");
+		ft_dprintf(2, "\n\rKEYSEQ:");
 		for (size_t i = 0; i < line->sequence_len; ++i)
-		{
-			if (line->sequence[i] < 32 || line->sequence[i] >= 127)
-				ft_dprintf(2, "%x ", line->sequence[i]);
-			else
-				ft_dprintf(2, "'%c' ", (char)line->sequence[i]);
-		}
+			ft_dprintf(2, "%x ", (int)line->sequence[i]);
 	}
 	line->sequence_len = 0;
 	return (1);

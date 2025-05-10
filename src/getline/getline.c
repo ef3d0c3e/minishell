@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "getline/getline.h"
 #include <shell/shell.h>
+#include <unistd.h>
 
 t_getline
 	getline_setup(t_shell *shell)
@@ -73,14 +74,14 @@ int
 	int	col0;
 	int	col1;
 
-	write(line->out_fd, "\r\n", 2);
+	//write(line->out_fd, "\r\n", 2);
 	if (getline_cursor_pos(line, &col0, NULL) == -1)
 		return (-1);
 
-	write(line->out_fd, utf8, byte_len);
+	write(line->in_fd, utf8, byte_len);
 	if (getline_cursor_pos(line, &col1, NULL) == -1)
 		return (-1);
-	write(line->out_fd, "\x1b[1A\r", 5); 
+	//write(line->out_fd, "\x1b[1A\r", 5); 
 
 	// col0=1 col1=1
 	//ft_dprintf(2, "[%d %d]", col0, col1);
@@ -180,18 +181,18 @@ void
 	if (line->buffer.cp_len) /* Unterminated codepoint */
 		return ;
 
-	printf("Needs cluster\n\r");
+	ft_dprintf(2, "Needs cluster\n\r");
 	it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
 	it_next(&it);
 	while (it.byte_next < line->cursor_index)
 		it_next(&it);
-	printf("at=%zu\n\r", it.byte_pos);
+	ft_dprintf(2, "at=%zu\n\r", it.byte_pos);
 
-	size_t cluster_start;
-	size_t ci = find_cluster_index_and_offset(line, it.byte_pos, &cluster_start);
+	//size_t cluster_start;
+	//size_t ci = find_cluster_index_and_offset(line, it.byte_pos, &cluster_start);
 	size_t k = getline_cluster_insert(line, it.byte_pos, line->cursor_index, 1);
-	recluster_around(line, ci);
-	getline_cluster_print(line);
+	//recluster_around(line, ci);
+	//getline_cluster_print(line);
 }
 
 
@@ -208,17 +209,15 @@ char
 		if (c == -1)
 			break ;
 		if (c == '\003')
-		{
 			break ;
-		}
 		if (c == '\004')
 			break ;
 		if (getline_handle_key(line, c))
 			continue ;
 		getline_input_add(line, c);
-		//ft_dprintf(2, "Width =%d\n\r", read_cursor_column(line->in_fd));
+		int w = measure_terminal_width(line, line->buffer.buffer.str, line->buffer.buffer.len);
+		ft_dprintf(2, "Width =%d\n\r", w);
 		ft_dprintf(2, "Buffer='%.*s'\n\r", line->buffer.buffer.len, line->buffer.buffer.str);
-
 	}
 	getline_raw_mode(line, 0);
 
