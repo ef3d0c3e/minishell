@@ -44,30 +44,6 @@ int
 getline_handle_key(t_getline *line, int c);
 
 /******************************************************************************/
-/* Grapheme handling                                                          */
-/******************************************************************************/
-
-/**
- * @brief Represents a single grapheme cluster according to the terminal.
- *
- * It is impossible to perform clustering programmatically since different
- * terminals + font stack will handle unicode differently. So we nicely ask the
- * terminal about the width of our codepoint sequences and trust it.
- *
- * Hence this is called `cluster` because `grapheme` would be incorrect.
- * Even though this is what visually appears on the terminal screen.
- */
-typedef struct s_cluster
-{
-	/** @brief Index in the input line */
-	size_t	index;
-	/** @brief Size in bytes of the cluster */
-	size_t	size;
-	/** @brief Visual width (measured) of the cluster */
-	int		width;
-}	t_cluster;
-
-/******************************************************************************/
 /* Buffer management                                                          */
 /******************************************************************************/
 
@@ -81,10 +57,32 @@ typedef struct s_buffer_attr
 	int		underline:1;
 }	t_buffer_attr;
 
+/**
+ * @brief Represents a single grapheme cluster according to the terminal.
+ *
+ * It is impossible to perform clustering programmatically since different
+ * terminals + font stack will handle unicode differently. So we nicely ask the
+ * terminal about the width of our codepoint sequences and trust it.
+ *
+ * Hence this is called `cluster` because `grapheme` would be incorrect.
+ * Even though this is what visually appears on the terminal screen.
+ */
+typedef struct s_cluster
+{
+	/** @brief Size in bytes of the cluster */
+	size_t	size;
+	/** @brief Visual width (measured) of the cluster */
+	int		width;
+}	t_cluster;
+
 typedef struct s_buffer
 {
 	/** @brief The line's buffer */
 	t_string_buffer		buffer;
+	/** @brief Bytes required to terminate the current codepoint */
+	size_t				cp_len;
+	/** @brief Start byte position of the current codepoint */
+	size_t				cp_pos;
 	/** @brief Attributes buffer */
 	struct
 	{
@@ -92,6 +90,13 @@ typedef struct s_buffer
 		size_t			capacity;
 		size_t			size;
 	}	s_attrs;
+	/** @brief Clustering data */
+	struct
+	{
+		t_cluster		*data;
+		size_t			size;
+		size_t			capacity;
+	}	s_clusters;
 }	t_buffer;
 
 t_buffer

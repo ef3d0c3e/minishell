@@ -43,6 +43,38 @@ t_string
 	return (it->codepoint);
 }
 
+t_string
+	it_prev(t_u8_iterator *it)
+{
+	size_t			pos;
+	size_t			len;
+	unsigned char	c;
+
+	if (it->byte_pos == 0)
+	{
+		it->codepoint.str = NULL;
+		it->codepoint.len = 0;
+		return (it->codepoint);
+	}
+	it->byte_next = it->byte_pos;
+	pos = it->byte_pos - 1;
+	while (pos > 0 && (it->str.str[pos] & 0xC0) == 0x80)
+		pos--;
+	c = (unsigned char)it->str.str[pos];
+	len = u8_length(c);
+	if (len == 0 || pos + len != it->byte_next)
+	{
+		it->codepoint.str = NULL;
+		it->codepoint.len = 0;
+		return (it->codepoint);
+	}
+	it->byte_pos = pos;
+	it->codepoint.str = it->str.str + pos;
+	it->codepoint.len = len;
+	it->cp_pos--;
+	return (it->codepoint);
+}
+
 void
 	it_advance(t_u8_iterator *it, size_t num)
 {
@@ -52,24 +84,6 @@ void
 	cp.len = 1;
 	while (cp.len && it->byte_pos < start + num)
 		cp = it_next(it);
-}
-
-t_string
-	it_until(t_u8_iterator *it, const char *delim)
-{
-	const size_t	len = ft_strlen(delim);
-	const size_t	start = it->byte_pos;
-	t_string		current;
-
-	current = it_substr(it, len);
-	while (str_cmp(current, delim))
-	{
-		if (!it_next(it).len)
-			return ((t_string){.str = NULL, .len = 0});
-		current = it_substr(it, len);
-	}
-	return ((t_string){.str = it->str.str + start,
-		.len = it->byte_pos - start});
 }
 
 t_string

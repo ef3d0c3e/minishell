@@ -84,7 +84,8 @@ int
 		{
 			if (line->sequence[i] < 32 || line->sequence[i] == 127)
 				ft_dprintf(2, "%d ", line->sequence[i]);
-			ft_dprintf(2, "'%c' ", line->sequence[i]);
+			else
+				ft_dprintf(2, "'%c' ", (char)line->sequence[i]);
 		}
 	}
 	line->sequence_len = 0;

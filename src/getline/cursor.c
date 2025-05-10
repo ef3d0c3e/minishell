@@ -41,7 +41,7 @@ static int
 			return (-1);
 		if (buf[0] != '\033')
 		{
-			getline_add_input(line, buf + pos, 1);
+			getline_add_input(line, buf, 1);
 			continue ;
 		}
 		if (pos && buf[pos] == '\033')
@@ -71,7 +71,7 @@ int
 		*x = -1;
 	if (y)
 		*y = -1;
-	if (write(line->in_fd, "\033[6n", 4) != 4)
+	if (write(line->out_fd, "\033[6n", 4) != 4)
 		return (-1);
 	return (read_cursor_report(line, x, y));
 }

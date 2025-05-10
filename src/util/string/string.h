@@ -262,7 +262,15 @@ it_new(t_string str);
  */
 t_string
 it_next(t_u8_iterator *it);
-
+/**
+ * @brief Returns the next previous in the iterated UTF-8 string
+ *
+ * @param it Iterator over UTF-8 string
+ *
+ * @return The previous codepoint, or an empty string if the content is invalid
+ */
+t_string
+it_prev(t_u8_iterator *it);
 /**
  * @brief Advances the iterator by `num` bytes
  *
@@ -271,20 +279,6 @@ it_next(t_u8_iterator *it);
  */
 void
 it_advance(t_u8_iterator *it, size_t num);
-
-/**
- * @brief Reads until a delimiter
- *
- * @param it Iterator over UTF-8 string
- * @param delim Delimiter to stop reading at
- *
- *
- * @return The content until the delimiter (delimiter included)
- * An empty string is returned if the delimiter cannot be found
- */
-t_string
-it_until(t_u8_iterator *it, const char *delim);
-
 /**
  * @brief Gets the iterator's leftover content
  *
@@ -296,7 +290,6 @@ it_until(t_u8_iterator *it, const char *delim);
  */
 t_string
 it_substr(const t_u8_iterator *it, size_t len);
-
 /**
  * @brief Gets length of the utf-8 codepoint after this character
  *
