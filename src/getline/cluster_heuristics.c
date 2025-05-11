@@ -11,9 +11,6 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-int
-measure_terminal_width(t_getline *line, const char *utf8, size_t byte_len);
-
 /** @brief Checks if codepoint `cp` is a fuser according to UAX-29 */
 static int
 	probe_fuser(uint32_t cp)
@@ -59,7 +56,7 @@ static void
 	t_cluster	*c;
 
 	c = &line->buffer.s_clusters.data[lo.cp_pos];
-	w = measure_terminal_width(line, str + lo.byte_pos, c->size);
+	w = getline_text_width(line, str + lo.byte_pos, c->size);
 	c->width = w;
 	i[0] = lo.cp_pos + 1;
 	i[1] = lo.byte_pos + c->size;
@@ -67,13 +64,13 @@ static void
 	while (i[0] < hi.cp_pos)
 	{
 		c = &line->buffer.s_clusters.data[i[0]++];
-		if (measure_terminal_width(line, str + i[2], i[1] + c->size
+		if (getline_text_width(line, str + i[2], i[1] + c->size
 					- i[2]) == w)
 			c->width = 0;
 		else
 		{
 			i[2] = i[1];
-			w = measure_terminal_width(line, str + i[1], c->size);
+			w = getline_text_width(line, str + i[1], c->size);
 			c->width = w;
 		}
 		i[1] += c->size;
@@ -81,7 +78,7 @@ static void
 }
 
 void
-	getline_recluster(t_getline *line, t_u8_iterator it)
+	getline_recluster(t_getline *line, t_u8_iterator it, int neighbors)
 {
 	t_u8_iterator	prev;
 	t_u8_iterator	next;
@@ -102,12 +99,21 @@ void
 		i = 0;
 		while (++i < LINE_CLUSTER_MAX)
 		{
-			it_prev(&prev);
-			it_next(&next);
+			if (prev.codepoint.len && !line->buffer.s_clusters.data[prev.cp_pos].width)
+				it_prev(&prev);
+			if (next.codepoint.len && !line->buffer.s_clusters.data[next.cp_pos].width)
+				it_next(&next);
 		}
 		recluster_precise(line, prev, next);
 	}
+	else if (neighbors)
+	{
+		getline_recluster(line, prev, 0);
+		line->buffer.s_clusters.data[it.cp_pos].width
+			= getline_text_width(line, it.codepoint.str, it.codepoint.len);
+		getline_recluster(line, next, 0);
+	}
 	else
 		line->buffer.s_clusters.data[it.cp_pos].width
-			= measure_terminal_width(line, it.codepoint.str, it.codepoint.len);
+			= getline_text_width(line, it.codepoint.str, it.codepoint.len);
 }

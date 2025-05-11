@@ -95,9 +95,6 @@ remove_cluster(t_getline *line, size_t i, size_t j);
  */
 void
 getline_cluster_print(t_getline *line);
-
-size_t
-getline_cluster_insert(t_getline *line, size_t start, size_t end, int width);
 /**
  * @brief Updates the cluster data around `it`
  *
@@ -105,7 +102,7 @@ getline_cluster_insert(t_getline *line, size_t start, size_t end, int width);
  * @param it Iterator to recluster around
  */
 void
-getline_recluster(t_getline *line, t_u8_iterator it);
+getline_recluster(t_getline *line, t_u8_iterator it, int neighbors);
 
 /******************************************************************************/
 /* Buffer management                                                          */
@@ -200,5 +197,7 @@ char
 
 int
 getline_cursor_pos(t_getline *line, int *x, int *y);
+int
+getline_text_width(t_getline *line, const char *utf8, size_t byte_len);
 
 #endif // GETLINE_H

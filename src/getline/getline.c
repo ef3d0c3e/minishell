@@ -68,71 +68,20 @@ void
 	}
 }
 
-int
-	measure_terminal_width(t_getline *line, const char *utf8, size_t byte_len)
-{
-	int	col0;
-	int	col1;
-
-	write(line->out_fd, "\r\n", 2);
-	if (getline_cursor_pos(line, &col0, NULL) == -1)
-		return (-1);
-
-	write(line->out_fd, utf8, byte_len);
-	if (getline_cursor_pos(line, &col1, NULL) == -1)
-		return (-1);
-	write(line->out_fd, "\x1b[1A\r", 5); 
-
-	// col0=1 col1=1
-	//ft_dprintf(2, "[%d %d]", col0, col1);
-	return (col1 - col0);
-}
-
-static size_t
-find_cluster_index_and_offset(t_getline *line,
-                              size_t byte_pos,
-                              size_t *out_cluster_start)
-{
-    size_t pos = 0;
-    size_t i   = 0;
-    while (i < line->buffer.s_clusters.size)
-    {
-        size_t sz = line->buffer.s_clusters.data[i].size;
-        if (byte_pos < pos + sz)
-        {
-            if (out_cluster_start) *out_cluster_start = pos;
-            return i;
-        }
-        pos += sz;
-        i++;
-    }
-    if (out_cluster_start) *out_cluster_start = pos;
-    return line->buffer.s_clusters.size; // past‑end
-}
-
 void
 	getline_input_add(t_getline *line, int c)
 {
-	t_u8_iterator	lo;
-	t_u8_iterator	hi;
+	t_u8_iterator	it;
 
 	getline_buffer_insert(line, c);
-	if (line->buffer.cp_len) /* Unterminated codepoint */
+	if (line->buffer.cp_len)
 		return ;
-
 	ft_dprintf(2, "Buffer='%.*s'\n\r", line->buffer.buffer.len, line->buffer.buffer.str);
-	lo = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
-	it_next(&lo);
-	while (lo.byte_next < line->cursor_index)
-		it_next(&lo);
-
-	int w = measure_terminal_width(line, line->buffer.buffer.str, line->buffer.buffer.len);
-	//ft_dprintf(2, "Width =%d\n\r", w);
-
-	hi = lo;
-	it_next(&hi);
-	ft_dprintf(2, "lo=%zu hi==%zu\n\r", lo.cp_pos, hi.cp_pos);
-	getline_recluster(line, lo);
+	it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+	it_next(&it);
+	while (it.byte_next < line->cursor_index)
+		it_next(&it);
+	getline_recluster(line, it, 1);
 	getline_cluster_print(line);
 }
 
