@@ -67,7 +67,7 @@ int
 	t_keybind_fn	bind;
 	size_t			expect;
 
-	if ((c < 0 || (c > 31 && c != 127)) && !line->sequence_len)
+	if (c != 0x1b && !line->sequence_len)
 		return (0);
 	line->sequence[line->sequence_len++] = c;
 	line->sequence[line->sequence_len] = 0;

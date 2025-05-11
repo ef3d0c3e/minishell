@@ -44,19 +44,14 @@ int
 getline_handle_key(t_getline *line, int c);
 
 /******************************************************************************/
-/* Buffer management                                                          */
+/* Unicode grapheme handling                                                  */
 /******************************************************************************/
 
-typedef struct s_buffer_attr
+enum
 {
-	size_t	start;
-	size_t	end;
-	int		color;
-	int		bold:1;
-	int		italic:1;
-	int		underline:1;
-}	t_buffer_attr;
-
+	/** @brief Maimum number of codepoints to recluster around */
+	LINE_CLUSTER_MAX = 0,
+};
 /**
  * @brief Represents a single grapheme cluster according to the terminal.
  *
@@ -79,6 +74,28 @@ void
 getline_cluster_print(t_getline *line);
 size_t
 getline_cluster_insert(t_getline *line, size_t start, size_t end, int width);
+/**
+ * @brief Updates the cluster data around `it`
+ *
+ * @param line Getline instance
+ * @param it Iterator to recluster around
+ */
+void
+getline_recluster(t_getline *line, t_u8_iterator it);
+
+/******************************************************************************/
+/* Buffer management                                                          */
+/******************************************************************************/
+
+typedef struct s_buffer_attr
+{
+	size_t	start;
+	size_t	end;
+	int		color;
+	int		bold:1;
+	int		italic:1;
+	int		underline:1;
+}	t_buffer_attr;
 
 typedef struct s_buffer
 {
@@ -106,6 +123,7 @@ typedef struct s_buffer
 
 t_buffer
 getline_buffer_new(void);
+/** @brief Inserts byte `c` into the line buffer */
 void
 getline_buffer_insert(t_getline *line, int c);
 

@@ -74,83 +74,20 @@ int
 	int	col0;
 	int	col1;
 
-	//write(line->out_fd, "\r\n", 2);
+	write(line->out_fd, "\r\n", 2);
 	if (getline_cursor_pos(line, &col0, NULL) == -1)
 		return (-1);
 
-	write(line->in_fd, utf8, byte_len);
+	write(line->out_fd, utf8, byte_len);
 	if (getline_cursor_pos(line, &col1, NULL) == -1)
 		return (-1);
-	//write(line->out_fd, "\x1b[1A\r", 5); 
+	write(line->out_fd, "\x1b[1A\r", 5); 
 
 	// col0=1 col1=1
 	//ft_dprintf(2, "[%d %d]", col0, col1);
 	return (col1 - col0);
 }
 
-/*
-void	recluster_around(t_getline *line, t_u8_iterator it)
-{
-	t_u8_iterator	lo;
-	t_u8_iterator	hi;
-	int				base_sum;
-	int				changed;
-
-	lo = it;
-	hi = it;
-	it_next(&hi);
-	base_sum = measure_terminal_width(line, lo.str.str + lo.byte_pos,
-			hi.byte_pos - lo.byte_pos);
-
-	// Now attempt to expand outward while grouping reduces width
-	while (1)
-	{
-		if (lo.cp_pos > 0)
-		{
-			int sum = sum_width(lo-1, hi);
-			int grp = measure_width(lo-1, hi);
-			if (grp < sum)
-			{
-				lo--; base_sum = grp; changed = true;
-			}
-		}
-		// try extending right
-		if (hi.codepoint.len)
-		{
-			int sum = base_sum + sum_width(hi, hi+1);
-			int grp = measure_width(lo, hi+1);
-			if (grp < sum) {
-				hi++; base_sum = grp; changed = true;
-			}
-		}
-	}
-	do {
-		changed = 0;
-		// try extending left
-		if (lo > 0) {
-			int sum = sum_width(lo-1, hi);
-			int grp = measure_width(lo-1, hi);
-			if (grp < sum) {
-				lo--; base_sum = grp; changed = true;
-			}
-		}
-		// try extending right
-		if (hi < cp_count) {
-			int sum = base_sum + sum_width(hi, hi+1);
-			int grp = measure_width(lo, hi+1);
-			if (grp < sum) {
-				hi++; base_sum = grp; changed = true;
-			}
-		}
-	} while (changed);
-
-	// Now [lo..hi) is the maximal cluster around k
-	record_cluster(lo, hi, base_sum);
-	// Anything inside [lo..hi) will not be reclustered again.
-}
-*/
-
-void recluster_around(t_getline *line, size_t k);
 static size_t
 find_cluster_index_and_offset(t_getline *line,
                               size_t byte_pos,
@@ -176,23 +113,27 @@ find_cluster_index_and_offset(t_getline *line,
 void
 	getline_input_add(t_getline *line, int c)
 {
-	t_u8_iterator	it;
+	t_u8_iterator	lo;
+	t_u8_iterator	hi;
+
 	getline_buffer_insert(line, c);
 	if (line->buffer.cp_len) /* Unterminated codepoint */
 		return ;
 
-	ft_dprintf(2, "Needs cluster\n\r");
-	it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
-	it_next(&it);
-	while (it.byte_next < line->cursor_index)
-		it_next(&it);
-	ft_dprintf(2, "at=%zu\n\r", it.byte_pos);
+	ft_dprintf(2, "Buffer='%.*s'\n\r", line->buffer.buffer.len, line->buffer.buffer.str);
+	lo = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+	it_next(&lo);
+	while (lo.byte_next < line->cursor_index)
+		it_next(&lo);
 
-	//size_t cluster_start;
-	//size_t ci = find_cluster_index_and_offset(line, it.byte_pos, &cluster_start);
-	size_t k = getline_cluster_insert(line, it.byte_pos, line->cursor_index, 1);
-	//recluster_around(line, ci);
-	//getline_cluster_print(line);
+	int w = measure_terminal_width(line, line->buffer.buffer.str, line->buffer.buffer.len);
+	//ft_dprintf(2, "Width =%d\n\r", w);
+
+	hi = lo;
+	it_next(&hi);
+	ft_dprintf(2, "lo=%zu hi==%zu\n\r", lo.cp_pos, hi.cp_pos);
+	getline_recluster(line, lo);
+	getline_cluster_print(line);
 }
 
 
@@ -215,9 +156,6 @@ char
 		if (getline_handle_key(line, c))
 			continue ;
 		getline_input_add(line, c);
-		int w = measure_terminal_width(line, line->buffer.buffer.str, line->buffer.buffer.len);
-		ft_dprintf(2, "Width =%d\n\r", w);
-		ft_dprintf(2, "Buffer='%.*s'\n\r", line->buffer.buffer.len, line->buffer.buffer.str);
 	}
 	getline_raw_mode(line, 0);
 
