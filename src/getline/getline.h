@@ -49,8 +49,8 @@ getline_handle_key(t_getline *line, int c);
 
 enum
 {
-	/** @brief Maimum number of codepoints to recluster around */
-	LINE_CLUSTER_MAX = 0,
+	/** @brief Maximum number of codepoints to recluster around */
+	LINE_CLUSTER_MAX = 10,
 };
 /**
  * @brief Represents a single grapheme cluster according to the terminal.
@@ -70,8 +70,32 @@ typedef struct s_cluster
 	int		width;
 }	t_cluster;
 
+/**
+ * @brief Inserts cluster at guven position
+ *
+ * @param line Getline instance
+ * @param at Position to insert at
+ * @param cluster Cluster to insert
+ */
+void
+insert_cluster(t_getline *line, size_t at, t_cluster cluster);
+/**
+ * @brief Removes clusters in a range
+ *
+ * Removes clusters within [i, j-1].
+ *
+ * @param line Getline instance
+ * @param i Range start
+ * @param j Range end
+ */
+void
+remove_cluster(t_getline *line, size_t i, size_t j);
+/**
+ * @brief Prints clustering data to stderr
+ */
 void
 getline_cluster_print(t_getline *line);
+
 size_t
 getline_cluster_insert(t_getline *line, size_t start, size_t end, int width);
 /**

@@ -12,7 +12,6 @@
 #ifndef GEOMETRY_H
 # define GEOMETRY_H
 
-#include <sys/types.h>
 # include <util/util.h>
 
 typedef struct s_shell	t_shell;
@@ -32,12 +31,12 @@ struct s_codepoint_range
  * terminal. Terminals may handle glyphs differently (grapheme, combining
  * chacaters, ligatures etc..).
  *
- * @param str String starting on a valid codepoint
+ * @param cp The codepoint to get the width of
  *
- * @returns The width of str
+ * @returns The width of cp
  */
 int
-codepoint_width(const char *str);
+codepoint_width(uint32_t cp);
 /**
  * @brief Attempts to get the grapheme width of text `str`
  *

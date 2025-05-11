@@ -24,6 +24,7 @@ size_t
 	
 	total = 0;
 	if (expensive) { /* TODO */ }
+	/*
 	it = it_new((t_string){str, ft_strlen(str)});
 	it_next(&it);
 	while (it.codepoint.len)
@@ -42,5 +43,6 @@ size_t
 			total += len;
 		it_next(&it);
 	}
+	*/
 	return (total);
 }
