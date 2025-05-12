@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input.c                                            :+:      :+:    :+:   */
+/*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,43 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
 
-int
-	getline_getc(t_getline *line)
+t_render_data
+	getline_render_new(void)
 {
-	char	c;
-	ssize_t	n;
-
-	n = read(line->in_fd, &c, 1);
-	if (n == 1)
-		return ((unsigned char)c);
-	if (n == 0)
-		return (EOF);
-	if (n == 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
-		return 0;
-	if (errno == EINTR && g_signal != SIGQUIT)
-		return (-1);
-	return (EOF);
-}
-
-void
-	getline_recycle_input(t_getline *line, const char *input, size_t len)
-{
-	stringbuf_append(&line->input_queue, (t_string){input, len});
-}
-
-int
-	getline_read_char(t_getline *line)
-{
-	int	c;
-
-	if (line->input_queue.len)
-	{
-		c = line->input_queue.str[0];
-		stringbuf_replace(&line->input_queue, 0, 1, "");
-		return (c);
-	}
-	return (line->getc(line));
+	return ((t_render_data){
+		.display_width = 20, /* TODO */
+		.scrolled = 0,
+		.safe_margin = 10
+	});
 }

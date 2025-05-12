@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input.c                                            :+:      :+:    :+:   */
+/*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,43 +9,29 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
-int
-	getline_getc(t_getline *line)
-{
-	char	c;
-	ssize_t	n;
-
-	n = read(line->in_fd, &c, 1);
-	if (n == 1)
-		return ((unsigned char)c);
-	if (n == 0)
-		return (EOF);
-	if (n == 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
-		return 0;
-	if (errno == EINTR && g_signal != SIGQUIT)
-		return (-1);
-	return (EOF);
-}
-
 void
-	getline_recycle_input(t_getline *line, const char *input, size_t len)
+	getline_set_prompt(t_getline *line, const char *text)
 {
-	stringbuf_append(&line->input_queue, (t_string){input, len});
-}
+	const size_t	len = ft_strlen(text);
+	t_u8_iterator	it;
+	t_u8_iterator	it2;
 
-int
-	getline_read_char(t_getline *line)
-{
-	int	c;
-
-	if (line->input_queue.len)
+	line->prompt = getline_buffer_new();
+	// TODO: CSI Handling -> Push to attr buffer
+	stringbuf_init(&line->prompt.buffer, len);
+	it = it_new((t_string){text, len});
+	it_next(&it);
+	while (it.codepoint.len)
 	{
-		c = line->input_queue.str[0];
-		stringbuf_replace(&line->input_queue, 0, 1, "");
-		return (c);
+		stringbuf_append(&line->prompt.buffer, it.codepoint);
+		it2 = it_new((t_string){line->prompt.buffer.str,
+			line->prompt.buffer.len});
+		it_next(&it2);
+		it_advance(&it2, it.byte_pos);
+		getline_recluster(line, &line->prompt, it2);
+		it_next(&it);
 	}
-	return (line->getc(line));
 }

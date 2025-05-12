@@ -41,12 +41,12 @@ static int
 			return (-1);
 		if (buf[0] != '\033')
 		{
-			getline_add_input(line, buf, 1);
+			getline_recycle_input(line, buf, 1);
 			continue ;
 		}
 		if (pos && buf[pos] == '\033')
 		{
-			getline_add_input(line, buf, pos);
+			getline_recycle_input(line, buf, pos);
 			pos = 0;
 			buf[pos++] = '\033';
 			sep = 0;

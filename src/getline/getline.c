@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "getline/getline.h"
+#include "ft_printf.h"
 #include <shell/shell.h>
-#include <unistd.h>
+#include <termios.h>
 
 t_getline
 	getline_setup(t_shell *shell)
@@ -22,10 +23,9 @@ t_getline
 	line.in_fd = STDIN_FILENO;
 	line.out_fd = STDOUT_FILENO;
 	line.getc = getline_getc;
-	line.prompt = NULL;
 	line.buffer = getline_buffer_new();
 	line.cursor_index = 0;
-	line.display_width = 0;
+	line.render = getline_render_new();
 	stringbuf_init(&line.input_queue, 24);
 	getline_setup_keys(&line);
 	return (line);
@@ -61,8 +61,8 @@ void
     raw.c_cflag |= (CS8);
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
 	raw.c_cc[VMIN]  = 1;
-	raw.c_cc[VTIME] = 1;
-	if (tcsetattr(line->in_fd, TCSAFLUSH, &raw) == -1)
+	raw.c_cc[VTIME] = 0;
+	if (tcsetattr(line->in_fd, TCSANOW, &raw) == -1)
 	{
 		shell_perror(line->shell, "tcsetattr fail", SRC_LOCATION);
 	}
@@ -76,28 +76,27 @@ void
 	getline_buffer_insert(line, c);
 	if (line->buffer.cp_len)
 		return ;
-	ft_dprintf(2, "Buffer='%.*s'\n\r", line->buffer.buffer.len, line->buffer.buffer.str);
 	it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
 	it_next(&it);
 	while (it.byte_next < line->cursor_index)
 		it_next(&it);
-	getline_recluster(line, it, 1);
-	getline_cluster_print(line);
+	getline_recluster(line, &line->buffer, it);
+	getline_redraw(line);
 }
 
 
 char
-	*getline_read(t_getline *line, char *prompt)
+	*getline_read(t_getline *line, const char *prompt)
 {
 	int				c;
 
 	getline_raw_mode(line, 1);
-
+	getline_set_prompt(line, prompt);
 	while (1)
 	{
 		c = getline_read_char(line);
 		if (c == -1)
-			break ;
+			continue ;
 		if (c == '\003')
 			break ;
 		if (c == '\004')
@@ -106,8 +105,8 @@ char
 			continue ;
 		getline_input_add(line, c);
 	}
+	getline_buffer_free(&line->prompt);
 	getline_raw_mode(line, 0);
-
 	return (NULL);
 }
 
@@ -117,7 +116,7 @@ int main(int ac, const char **av, const char **envp)
 
 	t_getline line = getline_setup(&shell);
 
-	getline_read(&line, ft_strdup(" > "));
+	getline_read(&line, ft_strdup("[prompt]"));
 
 	shell_free(&shell);
 	return (0);

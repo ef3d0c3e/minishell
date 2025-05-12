@@ -9,18 +9,51 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "getline/getline.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 void
 	getline_move_left(t_getline *line)
 {
-	ft_dprintf(2, "[Move left]\n\r");
+	t_u8_iterator	it;
+
+	if (line->buffer.cp_len)
+		return ;
+	//if (line->cursor_index != 0)
+	{
+		it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+		it_next(&it);
+		while (it.codepoint.len && it.byte_next < line->cursor_index)
+			it_next(&it);
+		while (!line->buffer.s_clusters.data[it.cp_pos].width)
+			it_prev(&it);
+	}
+	//else if (line->render.scrolled)
+	//	--line->render.scrolled;
+	line->cursor_index = it.byte_pos;
+	line->buffer.cp_pos = SIZE_MAX;
+	getline_redraw(line);
 }
 
 void
 	getline_move_right(t_getline *line)
 {
-	ft_dprintf(2, "[Move right]\n\r");
+	t_u8_iterator	it;
+
+	if (line->buffer.cp_len)
+		return ;
+	it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+	it_next(&it);
+	while (it.codepoint.len && it.byte_pos <= line->cursor_index)
+		it_next(&it);
+	while (it.cp_pos < line->buffer.s_clusters.size
+		&& !line->buffer.s_clusters.data[it.cp_pos].width)
+		it_next(&it);
+	line->cursor_index = it.byte_pos;
+	line->buffer.cp_pos = SIZE_MAX;
+	getline_redraw(line);
 }
 
 void
@@ -67,7 +100,7 @@ int
 	t_keybind_fn	bind;
 	size_t			expect;
 
-	if ((c < 0 || (c > 32 && c != 127)) && !line->sequence_len)
+	if ((c < 0 || (c >= 32 && c != 127)) && !line->sequence_len)
 		return (0);
 	line->sequence[line->sequence_len++] = c;
 	line->sequence[line->sequence_len] = 0;

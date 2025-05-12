@@ -9,40 +9,41 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 void
-	insert_cluster(t_getline *line, size_t at, t_cluster cluster)
+	getline_insert_cluster(t_buffer *buf, size_t at, t_cluster cluster)
 {
 	size_t		new_cap;
 
-	if (line->buffer.s_clusters.size >= line->buffer.s_clusters.capacity)
+	if (buf->s_clusters.size + 1 >= buf->s_clusters.capacity)
 	{
-		new_cap = !line->buffer.s_clusters.capacity
-			+ 2 * line->buffer.s_clusters.capacity;
-		line->buffer.s_clusters.data = ft_realloc(line->buffer.s_clusters.data,
-				sizeof(t_cluster) * line->buffer.s_clusters.size,
+		new_cap = !buf->s_clusters.capacity
+			+ 2 * buf->s_clusters.capacity;
+		buf->s_clusters.data = ft_realloc(buf->s_clusters.data,
+				sizeof(t_cluster) * buf->s_clusters.size,
 				sizeof(t_cluster) * new_cap);
-		line->buffer.s_clusters.capacity = new_cap;
+		buf->s_clusters.capacity = new_cap;
 	}
-	ft_memmove(line->buffer.s_clusters.data + at + 1,
-			line->buffer.s_clusters.data + at,
-			sizeof(t_cluster) * (line->buffer.s_clusters.size - at));
-	line->buffer.s_clusters.data[at] = cluster;
-	++line->buffer.s_clusters.size;
+	ft_memmove(buf->s_clusters.data + at + 1,
+			buf->s_clusters.data + at,
+			sizeof(t_cluster) * (buf->s_clusters.size - at));
+	buf->s_clusters.data[at] = cluster;
+	++buf->s_clusters.size;
 }
 
 void
-	remove_cluster(t_getline *line, size_t i, size_t j)
+	getline_remove_cluster(t_buffer *buf, size_t i, size_t j)
 {
-	const size_t	total = line->buffer.s_clusters.size;
+	const size_t	total = buf->s_clusters.size;
 	t_cluster		*a;
 
 	if (i >= j)
 		return ;
-	a = line->buffer.s_clusters.data;
+	a = buf->s_clusters.data;
 	ft_memmove(&a[i], &a[j], sizeof(a[0]) * (total - j));
-	line->buffer.s_clusters.size = total - (j - i);
+	buf->s_clusters.size = total - (j - i);
 }
 
 void

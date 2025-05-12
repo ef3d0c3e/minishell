@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
 #include <shell/shell.h>
 
 t_buffer
@@ -27,6 +28,14 @@ t_buffer
 		.s_clusters.size = 0,
 		.s_clusters.capacity = 0,
 	};
+}
+
+void
+	getline_buffer_free(t_buffer *buf)
+{
+	stringbuf_free(&buf->buffer);
+	free(buf->s_attrs.data);
+	free(buf->s_clusters.data);
 }
 
 /** @brief Replaces invalid codepoint with 0xFFFD, this still allow unmapped

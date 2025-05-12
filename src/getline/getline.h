@@ -17,6 +17,7 @@
 
 typedef struct s_shell		t_shell;
 typedef struct s_getline	t_getline;
+typedef struct s_buffer		t_buffer;
 
 /******************************************************************************/
 /* Input handling                                                             */
@@ -29,7 +30,7 @@ int
 getline_read_char(t_getline *line);
 /** @brief Appends input to the input queue */
 void
-getline_add_input(t_getline *line, const char *input, size_t len);
+getline_recycle_input(t_getline *line, const char *input, size_t len);
 
 /******************************************************************************/
 /* Key handling                                                               */
@@ -73,23 +74,23 @@ typedef struct s_cluster
 /**
  * @brief Inserts cluster at guven position
  *
- * @param line Getline instance
+ * @param buf Buffer to insert to
  * @param at Position to insert at
  * @param cluster Cluster to insert
  */
 void
-insert_cluster(t_getline *line, size_t at, t_cluster cluster);
+getline_insert_cluster(t_buffer *buf, size_t at, t_cluster cluster);
 /**
  * @brief Removes clusters in a range
  *
  * Removes clusters within [i, j-1].
  *
- * @param line Getline instance
+ * @param buf Buffer to remove from
  * @param i Range start
  * @param j Range end
  */
 void
-remove_cluster(t_getline *line, size_t i, size_t j);
+getline_remove_cluster(t_buffer *buf, size_t i, size_t j);
 /**
  * @brief Prints clustering data to stderr
  */
@@ -99,10 +100,11 @@ getline_cluster_print(t_getline *line);
  * @brief Updates the cluster data around `it`
  *
  * @param line Getline instance
+ * @param buf Buffer to recluster
  * @param it Iterator to recluster around
  */
 void
-getline_recluster(t_getline *line, t_u8_iterator it, int neighbors);
+getline_recluster(t_getline *line, t_buffer *buf, t_u8_iterator it);
 
 /******************************************************************************/
 /* Buffer management                                                          */
@@ -142,11 +144,47 @@ typedef struct s_buffer
 	}	s_clusters;
 }	t_buffer;
 
+/**
+ * @brief Initializes a new empty buffer
+ */
 t_buffer
 getline_buffer_new(void);
+/**
+ * @brief Frees a buffer
+ *
+ * @param buf Buffer to free
+ */
+void
+getline_buffer_free(t_buffer *buf);
+
 /** @brief Inserts byte `c` into the line buffer */
 void
 getline_buffer_insert(t_getline *line, int c);
+
+/******************************************************************************/
+/* Rendering                                                                  */
+/******************************************************************************/
+
+typedef struct s_render_data
+{
+	/** @brief Width in cells of the display */
+	int		display_width;
+	/** @brief Scrolled bytes */
+	int		scrolled;
+	/** @brief Safe magin in 1/100th the width */
+	int		safe_margin;
+
+}	t_render_data;
+
+/** @brief Initializes render data */
+t_render_data
+getline_render_new(void);
+void
+getline_redraw(t_getline *line);
+
+/** @brief Sets the prompt text */
+void
+getline_set_prompt(t_getline *line, const char *text);
 
 typedef struct s_getline
 {
@@ -166,15 +204,16 @@ typedef struct s_getline
 	/** @brief List of key bindings */
 	t_rbtree		keybinds;
 
-	/** @brief User specified prompt */
-	char			*prompt;
+	/*-- Rendering --*/
+	/** @brief Line prompt */
+	t_buffer		prompt;
+	/** @brief Line render data */
+	t_render_data	render;
 
 	/** @brief Input buffer */
 	t_buffer		buffer;
 	/** @brief Cursor's byte position in the prompt */
 	size_t			cursor_index;
-	/** @brief Window width */
-	size_t			display_width;
 	/** @brief Key sequence sliding window */
 	unsigned char	sequence[16];
 	size_t			sequence_len;
@@ -189,7 +228,7 @@ void
 getline_cleanup(t_getline *line);
 
 char
-*getline_read(t_getline *line, char *prompt);
+*getline_read(t_getline *line, const char *prompt);
 
 /******************************************************************************/
 /* Utilities                                                                  */
