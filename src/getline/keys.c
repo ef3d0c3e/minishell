@@ -17,43 +17,13 @@
 void
 	getline_move_left(t_getline *line)
 {
-	t_u8_iterator	it;
-
-	if (line->buffer.cp_len)
-		return ;
-	//if (line->cursor_index != 0)
-	{
-		it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
-		it_next(&it);
-		while (it.codepoint.len && it.byte_next < line->cursor_index)
-			it_next(&it);
-		while (!line->buffer.s_clusters.data[it.cp_pos].width)
-			it_prev(&it);
-	}
-	//else if (line->render.scrolled)
-	//	--line->render.scrolled;
-	line->cursor_index = it.byte_pos;
-	line->buffer.cp_pos = SIZE_MAX;
-	getline_redraw(line);
+	getline_move(line, -1);
 }
 
 void
 	getline_move_right(t_getline *line)
 {
-	t_u8_iterator	it;
-
-	if (line->buffer.cp_len)
-		return ;
-	it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
-	it_next(&it);
-	while (it.codepoint.len && it.byte_pos <= line->cursor_index)
-		it_next(&it);
-	while (it.cp_pos < line->buffer.s_clusters.size
-		&& !line->buffer.s_clusters.data[it.cp_pos].width)
-		it_next(&it);
-	line->cursor_index = it.byte_pos;
-	line->buffer.cp_pos = SIZE_MAX;
-	getline_redraw(line);
+	getline_move(line, 2);
 }
 
 void

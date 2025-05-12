@@ -11,17 +11,6 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-typedef struct s_drawline
-{
-	int	cursor_pos;
-	int	column_pos;
-	int	input_w;
-	int	prompt_w;
-	int	left_indicator;
-	int	right_indicator;
-	int printed;
-}	t_drawline;
-
 void
 	draw_buffer(t_getline *l, t_buffer *buf, t_drawline *dr)
 {
@@ -57,77 +46,75 @@ void
 	}
 }
 
-void getline_redraw(t_getline *l)
+static void
+	init_state(t_getline *l, t_drawline *dr)
 {
-	t_drawline	dr;
-	size_t		idx;
+	size_t			idx;
+	t_u8_iterator	it;
 
-	// Clear
-	ft_dprintf(l->out_fd, "\x1b[2K\r");
-
-	// Measure widths
 	idx = 0;
-	dr.prompt_w = 0;
+	dr->prompt_w = 0;
 	while (idx++ < l->prompt.s_clusters.size)
-		dr.prompt_w += l->prompt.s_clusters.data[idx - 1].width;
+		dr->prompt_w += l->prompt.s_clusters.data[idx - 1].width;
 	idx = 0;
-	dr.input_w = 0;
+	dr->input_w = 0;
 	while (idx++ < l->buffer.s_clusters.size)
-		dr.input_w += l->buffer.s_clusters.data[idx - 1].width;
-
-	// 4) compute dr.cursor_pos in columns
-	dr.cursor_pos = dr.prompt_w;
+		dr->input_w += l->buffer.s_clusters.data[idx - 1].width;
+	dr->cursor_pos = dr->prompt_w;
+	it = it_new((t_string){l->buffer.buffer.str, l->buffer.buffer.len});
+	it_next(&it);
+	idx = 0;
+	while (idx < l->buffer.s_clusters.size && it.codepoint.len)
 	{
-		size_t byte_acc = 0, ci = 0;
-		t_u8_iterator it = it_new((t_string){l->buffer.buffer.str, l->buffer.buffer.len});
+		if (it.byte_pos < (size_t)l->cursor_index)
+			dr->cursor_pos += l->buffer.s_clusters.data[idx].width;
 		it_next(&it);
-		while (ci < l->buffer.s_clusters.size && it.codepoint.len)
-		{
-			size_t sz = it.codepoint.len;
-			int    w  = l->buffer.s_clusters.data[ci].width;
-			if (byte_acc < (size_t)l->cursor_index)
-				dr.cursor_pos += w;
-			byte_acc += sz;
-			it_next(&it);
-			ci++;
-		}
+		idx++;
 	}
-	if (dr.cursor_pos > dr.input_w + dr.prompt_w)
-		dr.cursor_pos = dr.input_w + dr.prompt_w;
+	if (dr->cursor_pos > dr->input_w + dr->prompt_w)
+		dr->cursor_pos = dr->input_w + dr->prompt_w;
+}
 
-	// compute scroll position to ensure cursor visibility, prioritizing showing more text
-	int sc = (int)l->render.scrolled;
+static void
+	update_scroll(t_getline *l, t_drawline *dr)
+{
+	int	sc;
 
-	dr.left_indicator = sc > 0;
+	sc = (int)l->render.scrolled;
+	dr->left_indicator = sc > 0;
 
-	if (dr.cursor_pos >= sc + l->render.display_width - dr.left_indicator - 1)
-		sc = dr.cursor_pos - (l->render.display_width - dr.left_indicator - 2);
-	else if (dr.cursor_pos < sc)
-		sc = dr.cursor_pos;
+	if (dr->cursor_pos >= sc + l->render.display_width - dr->left_indicator - 1)
+		sc = dr->cursor_pos - l->render.display_width + dr->left_indicator + 2;
+	else if (dr->cursor_pos < sc)
+		sc = dr->cursor_pos;
 	if (sc < 0)
 		sc = 0;
 	l->render.scrolled = sc;
-	dr.right_indicator = (dr.prompt_w + dr.input_w) > sc + (l->render.display_width - dr.left_indicator);
+	dr->right_indicator = (dr->prompt_w + dr->input_w) > sc
+		+ (l->render.display_width - dr->left_indicator);
+}
 
+void getline_redraw(t_getline *l)
+{
+	t_drawline	dr;
+	int			vis;
+
+	ft_dprintf(l->out_fd, "\x1b[2K\r");
+	init_state(l, &dr);
+	update_scroll(l, &dr);
 	dr.printed = 0;
 	dr.column_pos = 0;
 	if (dr.left_indicator && ++dr.printed)
 		write(l->out_fd, ">", 1);
-
 	draw_buffer(l, &l->prompt, &dr);
 	draw_buffer(l, &l->buffer, &dr);
-
 	if (dr.right_indicator && dr.printed < l->render.display_width)
 	{
-		while (dr.printed < l->render.display_width - 1)
-		{
+		while (dr.printed < l->render.display_width - 1 && ++dr.printed)
 			write(l->out_fd, " ",1);
-			dr.printed++;
-		}
 		write(l->out_fd, "<",1);
 	}
-
-	int vis = dr.cursor_pos - sc + dr.left_indicator;
+	vis = dr.cursor_pos - l->render.scrolled + dr.left_indicator;
 	if (vis < 0)
 		vis = 0;
 	if (vis >= l->render.display_width)

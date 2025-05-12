@@ -165,6 +165,18 @@ getline_buffer_insert(t_getline *line, int c);
 /* Rendering                                                                  */
 /******************************************************************************/
 
+/** @brief Render state for the line */
+typedef struct s_drawline
+{
+	int	cursor_pos;
+	int	column_pos;
+	int	input_w;
+	int	prompt_w;
+	int	left_indicator;
+	int	right_indicator;
+	int	printed;
+}	t_drawline;
+
 typedef struct s_render_data
 {
 	/** @brief Width in cells of the display */
@@ -229,6 +241,12 @@ getline_cleanup(t_getline *line);
 
 char
 *getline_read(t_getline *line, const char *prompt);
+
+/******************************************************************************/
+/* Actions                                                                    */
+/******************************************************************************/
+void
+getline_move(t_getline *line, int offset);
 
 /******************************************************************************/
 /* Utilities                                                                  */
