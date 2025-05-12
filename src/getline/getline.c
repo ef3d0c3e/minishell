@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 #include "getline/getline.h"
 #include "ft_printf.h"
+#include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <shell/shell.h>
 #include <termios.h>
 
@@ -23,6 +25,7 @@ t_getline
 	line.in_fd = STDIN_FILENO;
 	line.out_fd = STDOUT_FILENO;
 	line.getc = getline_getc;
+	line.highlighter_fn = NULL;
 	line.buffer = getline_buffer_new();
 	line.cursor_index = 0;
 	line.render = getline_render_new();
@@ -81,14 +84,16 @@ void
 	while (it.byte_next < line->cursor_index)
 		it_next(&it);
 	getline_recluster(line, &line->buffer, it);
-	getline_redraw(line);
+	getline_redraw(line, 1);
+	//getline_cluster_print(line);
 }
 
 
 char
 	*getline_read(t_getline *line, const char *prompt)
 {
-	int				c;
+	int		c;
+	char	*ret;
 
 	getline_raw_mode(line, 1);
 	getline_set_prompt(line, prompt);
@@ -107,7 +112,29 @@ char
 	}
 	getline_buffer_free(&line->prompt);
 	getline_raw_mode(line, 0);
-	return (NULL);
+	ret = stringbuf_cstr(&line->buffer.buffer);
+	line->buffer.buffer.str = NULL;
+	getline_buffer_free(&line->buffer);
+	return (ret);
+}
+
+static void highlighter(t_getline *line)
+{
+	t_token_list	list;
+
+	list = tokenizer_tokenize((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+	for (size_t i = 0; i < list.size; ++i)
+	{
+		if (list.tokens[i].type == TOK_KEYWORD)
+		{
+			getline_highlight_add(&line->buffer, (t_buffer_attr){
+				list.tokens[i].start, list.tokens[i].end,
+				0xFF0000, 0, 0, 0,
+			});
+		}
+	}
+
+
 }
 
 int main(int ac, const char **av, const char **envp)
@@ -115,6 +142,7 @@ int main(int ac, const char **av, const char **envp)
 	t_shell shell = shell_new(envp);
 
 	t_getline line = getline_setup(&shell);
+	line.highlighter_fn = highlighter;
 
 	getline_read(&line, ft_strdup("[prompt]"));
 

@@ -70,5 +70,5 @@ void
 		move_right(line, offset);
 	else if (line->render.scrolled)
 		--line->render.scrolled;
-	getline_redraw(line);
+	getline_redraw(line, 0);
 }

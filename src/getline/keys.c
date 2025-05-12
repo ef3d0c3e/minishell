@@ -23,7 +23,7 @@ void
 void
 	getline_move_right(t_getline *line)
 {
-	getline_move(line, 2);
+	getline_move(line, 1);
 }
 
 void

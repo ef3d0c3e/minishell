@@ -14,17 +14,21 @@
 void
 	draw_buffer(t_getline *l, t_buffer *buf, t_drawline *dr)
 {
-	size_t			i = 0;
+	size_t			i;
 	t_u8_iterator	it;
+	int				start;
+	int				end;
+	t_buffer_attr	*hi[2];
 
+	hi[0] = NULL;
 	it = it_new((t_string){buf->buffer.str, buf->buffer.len});
 	it_next(&it);
+	i = 0;
 	while (i++ < buf->s_clusters.size && it.codepoint.len
 			&& dr->printed < l->render.display_width - dr->right_indicator)
 	{
-		t_cluster *c = &buf->s_clusters.data[i - 1];
-		int start = dr->column_pos;
-		int	end = start + c->width;
+		start = dr->column_pos;
+		end = start + buf->s_clusters.data[i - 1].width;
 		if (end <= l->render.scrolled)
 		{
 			dr->column_pos = end;
@@ -39,11 +43,24 @@ void
 			write(l->out_fd, " ", 1);
 			dr->printed++;
 		}
+		hi[1] = getline_highlight_get(buf, it.byte_pos);
+		if (hi[1] && hi[1] != hi[0])
+		{
+			getline_highlight_display(l, hi[1]);
+			hi[0] = hi[1];
+		}
 		write(l->out_fd, it.codepoint.str, it.codepoint.len);
-		dr->printed += c->width;
+		if (!hi[1] && hi[0])
+		{
+			getline_highlight_display(l, hi[1]);
+			hi[0] = NULL;
+		}
+		dr->printed += buf->s_clusters.data[i - 1].width;
 		dr->column_pos = end;
 		it_next(&it);
 	}
+	if (hi[0])
+		getline_highlight_display(l, NULL);
 }
 
 static void
@@ -94,11 +111,20 @@ static void
 		+ (l->render.display_width - dr->left_indicator);
 }
 
-void getline_redraw(t_getline *l)
+void getline_redraw(t_getline *l, int update)
 {
 	t_drawline	dr;
 	int			vis;
 
+	if (update)
+	{
+		free(l->buffer.s_attrs.data);
+		l->buffer.s_attrs.data = NULL;
+		l->buffer.s_attrs.size = 0;
+		l->buffer.s_attrs.capacity = 0;
+		if (l->highlighter_fn)
+			l->highlighter_fn(l);
+	}
 	ft_dprintf(l->out_fd, "\x1b[2K\r");
 	init_state(l, &dr);
 	update_scroll(l, &dr);

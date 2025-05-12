@@ -120,6 +120,16 @@ typedef struct s_buffer_attr
 	int		underline:1;
 }	t_buffer_attr;
 
+/** @brief Adds highlighting to the buffer */
+void
+getline_highlight_add(t_buffer *buf, t_buffer_attr attr);
+/** @brief Gets highlight at byte position */
+t_buffer_attr
+*getline_highlight_get(t_buffer *buf, size_t pos);
+/** @brief Displays the given highlights, resets if `attr == NULL` */
+void
+getline_highlight_display(t_getline *line, const t_buffer_attr *attr);
+
 typedef struct s_buffer
 {
 	/** @brief The line's buffer */
@@ -192,7 +202,7 @@ typedef struct s_render_data
 t_render_data
 getline_render_new(void);
 void
-getline_redraw(t_getline *line);
+getline_redraw(t_getline *line, int update);
 
 /** @brief Sets the prompt text */
 void
@@ -216,7 +226,9 @@ typedef struct s_getline
 	/** @brief List of key bindings */
 	t_rbtree		keybinds;
 
-	/*-- Rendering --*/
+	/** @brief Highlighter function */
+	void			(*highlighter_fn)(t_getline *line);
+
 	/** @brief Line prompt */
 	t_buffer		prompt;
 	/** @brief Line render data */
