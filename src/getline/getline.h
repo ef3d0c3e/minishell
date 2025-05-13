@@ -239,17 +239,18 @@ typedef struct s_complete_item
 	char	*desc;
 }	t_complete_item;
 
-/** @brief Function returning the next completion item */
-typedef const t_complete_item*(*t_comp_fn)(t_getline *l, size_t i);
-
 typedef struct s_complete_state
 {
 	/** @brief Whether the completion menu is active */
 	int		shown;
 	/** @brief Selected completion item */
 	size_t	sel;
-	/** @brief Draws a single completion item */
-	void	(*comp_draw_item_fn)(t_getline *, const t_complete_item *item);
+	/** @brief Number of scrolled rows */
+	int		scrolled;
+	/** @brief Saved cursor's x coordinate */
+	int		cur_x;
+	/** @brief Saved cursor's y coordinate */
+	int		cur_y;
 
 	/*-- Draw state --*/
 	/** @brief Menu start row */
@@ -265,8 +266,12 @@ typedef struct s_complete_state
 
 }	t_complete_state;
 
+/** @brief Displays the completion menu */
 void
 getline_complete_menu(t_getline *line);
+/** @brief Hides the completion menu */
+void
+getline_complete_menu_hide(t_getline *line);
 
 /** @brief Moves in the completion menu by columns */
 void
@@ -274,6 +279,9 @@ getline_complete_move(t_getline *l, int offset);
 /** @brief Moves in the completion menu by rows */
 void
 getline_complete_move_row(t_getline *l, int offset);
+/** @brief Redraws the completion menu */
+void
+getline_complete_redraw(t_getline *line, int update);
 
 /******************************************************************************/
 /* Rendering                                                                  */
@@ -356,6 +364,11 @@ typedef struct s_getline
 	t_complete_state	comp_state;
 	/** @brief Key binds for completion mode */
 	t_rbtree			comp_keybinds;
+	/** @brief Draws a single completion item */
+	void	(*comp_draw_item_fn)(t_getline *, size_t,
+			const t_complete_item *item);
+	/** @brief Gets a completion item by id */
+	const t_complete_item	*(*comp_get_item_fn)(t_getline *, size_t);
 
 	/** @brief Terminal handling */
 	struct termios		tio;
@@ -384,8 +397,9 @@ t_u8_iterator
 getline_handler_word_boundaries(t_getline *line, t_u8_iterator it, int direction);
 /** @brief Default completion item draw function */
 void
-getline_handler_draw_comp_item(
+getline_handler_comp_draw_item(
 	t_getline *line,
+	size_t i,
 	const t_complete_item *item);
 
 /******************************************************************************/

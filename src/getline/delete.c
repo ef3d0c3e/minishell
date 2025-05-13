@@ -91,7 +91,7 @@ void
 	else
 	{
 		getline_remove_cluster(&line->input, hi.cp_pos, lo.cp_pos);
-		stringbuf_replace(&line->input.buffer, hi.byte_pos, lo.byte_next, "");
+		stringbuf_replace(&line->input.buffer, hi.byte_pos, lo.byte_pos, "");
 		line->cursor_index = hi.byte_pos;
 	}
 	line->input.cp_pos = SIZE_MAX;

@@ -111,7 +111,7 @@ char
 			break ;
 		if (getline_handle_key(line, c))
 			continue ;
-		line->comp_state.shown = 0;
+		getline_complete_menu_hide(line);
 		getline_input_add(line, c);
 	}
 	getline_buffer_free(&line->prompt);

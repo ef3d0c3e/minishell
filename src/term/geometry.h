@@ -38,20 +38,24 @@ struct s_codepoint_range
 int
 codepoint_width(uint32_t cp);
 /**
- * @brief Attempts to get the grapheme width of text `str`
+ * @brief Repeatedly apply `codepoint_width` over string `str`
  *
- * This function is to be given a string before being displayed in order to
- * get the width of the text once displayed.
+ * @param str String to measure the width of
  *
- * @param str Text to compute width of
- * @param expensive Perform expensive test, if the shell supports it, this
- * function will measure the actual width of the text, otherwise, heuristic
- * will be used to attempt to determine the width.
- * @param skip_ansi Attempts to skip ansi escape codes
+ * @returns The width of str
+ */
+int
+string_width(const char *str);
+/**
+ * @brief Gets byte position in `str` after which the width of `str` is larger
+ * than `max`
  *
- * @returns The width of `str`
+ * @param str String to truncate
+ * @param max Maximum width to display
+ *
+ * @returns Byte position in str to truncate, or SIZE_MAX
  */
 size_t
-grapheme_width(t_shell *shell, const char *str, int expensive, int skip_ansi);
+string_width_truncate(const char *str, int max);
 
 #endif // GEOMETRY_H

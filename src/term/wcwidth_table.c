@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 void	mk_wcwidth1(struct s_codepoint_range *r);
@@ -103,33 +104,3 @@ int
 				|| (cp >= 0x20000 && cp <= 0x2fffd)
 				|| (cp >= 0x30000 && cp <= 0x3fffd))));
 }
-
-/*
-int
-	codepoint_width(const char *str)
-{
-	t_u8_iterator	it;
-	uint32_t		cp;
-
-	it = it_new((t_string){str, ft_strnlen(str, 5)});
-	it_next(&it);
-	cp = u8_to_cp(it.codepoint);
-	if (cp == 0)
-		return (0);
-	else if (cp < 32 || (cp >= 0x7f && cp < 0xa0))
-		return (-1);
-	if (bfind(cp, mk_wcwidth(), 142))
-		return (0);
-	return (1 + (cp >= 0x1100
-			&& (cp <= 0x115f || cp == 0x2329 || cp == 0x232a
-				|| (cp >= 0x2e80 && cp <= 0xa4cf && cp != 0x303f)
-				|| (cp >= 0xac00 && cp <= 0xd7a3)
-				|| (cp >= 0xf900 && cp <= 0xfaff)
-				|| (cp >= 0xfe10 && cp <= 0xfe19)
-				|| (cp >= 0xfe30 && cp <= 0xfe6f)
-				|| (cp >= 0xff00 && cp <= 0xff60)
-				|| (cp >= 0xffe0 && cp <= 0xffe6)
-				|| (cp >= 0x20000 && cp <= 0x2fffd)
-				|| (cp >= 0x30000 && cp <= 0x3fffd))));
-}
-*/
