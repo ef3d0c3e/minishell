@@ -26,6 +26,8 @@ typedef struct s_buffer		t_buffer;
 /** @brief The default `getc` function */
 int
 getline_getc(t_getline *line);
+/** @brief Reads a single char, using either `getc` or by recycling from the
+ * queue */
 int
 getline_read_char(t_getline *line);
 /** @brief Appends input to the input queue */
@@ -43,6 +45,16 @@ void
 getline_setup_keys(t_getline *line);
 int
 getline_handle_key(t_getline *line, int c);
+
+/** @brief Moves in input buffer by `offset` */
+void
+getline_move(t_getline *line, int offset);
+/** @brief Moves at absolute byte position */
+void
+getline_move_at(t_getline *line, size_t pos);
+/** @brief Deletes characters before or after cursor */
+void
+getline_delete(t_getline *line, int offset);
 
 /******************************************************************************/
 /* Unicode grapheme handling                                                  */
@@ -110,13 +122,20 @@ getline_recluster(t_getline *line, t_buffer *buf, t_u8_iterator it);
 /* Buffer management                                                          */
 /******************************************************************************/
 
+/** @brief Style attributes */
 typedef struct s_buffer_attr
 {
+	/* @brief Style start range */
 	size_t	start;
+	/* @brief Style end range */
 	size_t	end;
+	/** @brief Color, set to -1 for none */
 	int		color;
+	/** @brief Bold text */
 	int		bold:1;
+	/** @brief Italic text */
 	int		italic:1;
+	/** @brief Underline text */
 	int		underline:1;
 }	t_buffer_attr;
 
@@ -253,12 +272,6 @@ getline_cleanup(t_getline *line);
 
 char
 *getline_read(t_getline *line, const char *prompt);
-
-/******************************************************************************/
-/* Actions                                                                    */
-/******************************************************************************/
-void
-getline_move(t_getline *line, int offset);
 
 /******************************************************************************/
 /* Utilities                                                                  */

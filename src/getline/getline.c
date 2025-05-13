@@ -126,15 +126,19 @@ static void highlighter(t_getline *line)
 	for (size_t i = 0; i < list.size; ++i)
 	{
 		if (list.tokens[i].type == TOK_KEYWORD)
-		{
 			getline_highlight_add(&line->buffer, (t_buffer_attr){
 				list.tokens[i].start, list.tokens[i].end,
 				0xFF0000, 0, 0, 0,
 			});
-		}
+		else if (token_isword(list.tokens[i].type))
+			getline_highlight_add(&line->buffer, (t_buffer_attr){
+				list.tokens[i].start, list.tokens[i].end,
+				0x00FF00, 0, 0, 0,
+			});
 	}
-
-
+	for (size_t i = 0; i < line->buffer.s_attrs.size; ++i)
+		ft_dprintf(2, "{%zu..%zu} ", line->buffer.s_attrs.data[i].start, line->buffer.s_attrs.data[i].end);
+	ft_dprintf(2, "\n\r");
 }
 
 int main(int ac, const char **av, const char **envp)

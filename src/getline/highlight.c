@@ -19,19 +19,42 @@ static size_t
 	size_t									mid;
 
 	lo = 0;
-	hi = buf->s_attrs.size;
-	while (lo < hi)
+	if (!buf->s_attrs.size)
+		return (SIZE_MAX);
+	hi = buf->s_attrs.size - 1;
+	while (hi >= lo)
 	{
 		mid = (lo + hi) / 2;
-		if (start < buf->s_attrs.data[mid].start)
-			hi = mid;
-		else if (start >= buf->s_attrs.data[mid].end)
+		if (start >= buf->s_attrs.data[mid].end)
 			lo = mid + 1;
+		else if (start < buf->s_attrs.data[mid].start)
+		{
+			if (!mid)
+				return (SIZE_MAX);
+			hi = mid - 1;
+		}
 		else
-			return (lo);
+			return (mid);
 	}
 	return (SIZE_MAX);
 }
+
+static size_t
+	bfind_insert(t_buffer *buf, size_t start)
+{
+	size_t lo = 0;
+	size_t hi = buf->s_attrs.size;
+
+	while (lo < hi) {
+		size_t mid = lo + (hi - lo) / 2;
+		if (buf->s_attrs.data[mid].start < start)
+			lo = mid + 1;
+		else
+			hi = mid;
+	}
+	return (lo);
+}
+
 
 void
 	getline_highlight_add(t_buffer *buf, t_buffer_attr attr)
@@ -47,9 +70,9 @@ void
 				sizeof(t_buffer_attr) * new_cap);
 		buf->s_attrs.capacity = new_cap;
 	}
-	pos = bfind(buf, attr.start);
-	if (pos == SIZE_MAX)
-		pos = buf->s_attrs.size;
+	pos = bfind_insert(buf, attr.start);
+	//if (pos == SIZE_MAX)
+	//	pos = buf->s_attrs.size;
 	ft_memmove(buf->s_attrs.data + pos + 1, buf->s_attrs.data + pos,
 			buf->s_attrs.size - pos);
 	buf->s_attrs.data[pos] = attr;
@@ -74,6 +97,7 @@ void
 		ft_dprintf(line->out_fd, "\033[m");
 		return ;
 	}
+	// TODO Proper formatting
 	if (attr->color != -1)
 		ft_dprintf(line->out_fd, "\033[38;2;%d;%d;%dm",
 				((attr->color >> 16) & 0xFF),

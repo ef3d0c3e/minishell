@@ -27,6 +27,30 @@ void
 }
 
 void
+	getline_move_start(t_getline *line)
+{
+	getline_move_at(line, 0);
+}
+
+void
+	getline_move_end(t_getline *line)
+{
+	getline_move_at(line, line->buffer.buffer.len);
+}
+
+void
+	getline_del(t_getline *line)
+{
+	getline_delete(line, 1);
+}
+
+void
+	getline_backspace(t_getline *line)
+{
+	getline_delete(line, -1);
+}
+
+void
 	getline_setup_keys(t_getline *line)
 {
 	line->sequence_len = 0;
@@ -36,6 +60,10 @@ void
 	rb_insert(&line->keybinds, "\x1b[D", (void *)getline_move_left);
 	rb_insert(&line->keybinds, "\x0d", (void *)getline_move_right);
 	rb_insert(&line->keybinds, "\x10", (void *)getline_move_left);
+	rb_insert(&line->keybinds, "\x7f", (void *)getline_backspace);
+	rb_insert(&line->keybinds, "\x1b[3~", (void *)getline_del);
+	rb_insert(&line->keybinds, "\x01", (void *)getline_move_start);
+	rb_insert(&line->keybinds, "\x05", (void *)getline_move_end);
 }
 
 /** @brief Gets the length of a key sequence */

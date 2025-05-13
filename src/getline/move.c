@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static void
@@ -70,5 +68,19 @@ void
 		move_right(line, offset);
 	else if (line->render.scrolled)
 		--line->render.scrolled;
+	getline_redraw(line, 0);
+}
+
+void
+	getline_move_at(t_getline *line, size_t pos)
+{
+	t_u8_iterator	it;
+
+	it = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+	it_next(&it);
+	while (it.codepoint.len && it.byte_pos < pos)
+		it_next(&it);
+	line->cursor_index = it.byte_pos;
+	line->buffer.cp_pos = SIZE_MAX;
 	getline_redraw(line, 0);
 }
