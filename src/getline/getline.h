@@ -14,6 +14,7 @@
 
 # include <util/util.h>
 # include <termios.h>
+# include <sys/ioctl.h>
 
 typedef struct s_shell		t_shell;
 typedef struct s_getline	t_getline;
@@ -220,6 +221,61 @@ void
 getline_buffer_insert(t_getline *line, int c);
 
 /******************************************************************************/
+/* Completion                                                                 */
+/******************************************************************************/
+
+/** @brief Default completion item kinds */
+enum e_complete_item_kind
+{
+	COMPLETE_WORD,
+	COMPLETE_OPTION,
+	COMPLETE_FILE,
+};
+
+typedef struct s_complete_item
+{
+	int		kind;
+	char	*name;
+	char	*desc;
+}	t_complete_item;
+
+/** @brief Function returning the next completion item */
+typedef const t_complete_item*(*t_comp_fn)(t_getline *l, size_t i);
+
+typedef struct s_complete_state
+{
+	/** @brief Whether the completion menu is active */
+	int		shown;
+	/** @brief Selected completion item */
+	size_t	sel;
+	/** @brief Draws a single completion item */
+	void	(*comp_draw_item_fn)(t_getline *, const t_complete_item *item);
+
+	/*-- Draw state --*/
+	/** @brief Menu start row */
+	int start_row;
+	/** @brief Menu end row */
+	int end_row;
+	/** @brief Menu column width */
+	int col_width;
+	/** @brief Window width */
+	int width;
+	/** @brief Window height */
+	int height;
+
+}	t_complete_state;
+
+void
+getline_complete_menu(t_getline *line);
+
+/** @brief Moves in the completion menu by columns */
+void
+getline_complete_move(t_getline *l, int offset);
+/** @brief Moves in the completion menu by rows */
+void
+getline_complete_move_row(t_getline *l, int offset);
+
+/******************************************************************************/
 /* Rendering                                                                  */
 /******************************************************************************/
 
@@ -259,43 +315,50 @@ getline_set_prompt(t_getline *line, const char *text);
 typedef struct s_getline
 {
 	/** @brief Associated shell session */
-	t_shell			*shell;
+	t_shell				*shell;
 
 	/*-- Input/Output stack --*/
 	/** @brief Input FD */
-	int				in_fd;
+	int					in_fd;
 	/** @brief Output FD */
-	int				out_fd;
+	int					out_fd;
 	/** @brief Getchar function */
-	int				(*getc_fn)(t_getline *);
+	int					(*getc_fn)(t_getline *);
 	/** @brief Queed input */
-	t_string_buffer	input_queue;
+	t_string_buffer		input_queue;
 
 	/*-- Rendering --*/
 	/** @brief Highlighter function */
-	void			(*highlighter_fn)(t_getline *);
+	void				(*highlighter_fn)(t_getline *);
 	/** @brief Overflow indicator function */
-	void			(*overflow_fn)(t_getline *, int);
+	void				(*overflow_fn)(t_getline *, int);
 	/** @brief Line prompt */
-	t_buffer		prompt;
+	t_buffer			prompt;
 	/** @brief Input buffer */
-	t_buffer		input;
+	t_buffer			input;
 	/** @brief Line render data */
-	t_render_data	render;
+	t_render_data		render;
 
 	/*-- Cursor & Input handling --*/
 	/** @brief Cursor's byte position in the prompt */
-	size_t			cursor_index;
+	size_t				cursor_index;
 	/** @brief Key sequence sliding window */
-	unsigned char	sequence[16];
+	unsigned char		sequence[16];
 	/** @brief Length of `sequence` */
-	size_t			sequence_len;
+	size_t				sequence_len;
 	/** @brief List of key bindings */
-	t_rbtree		keybinds;
-	t_u8_iterator	(*boundaries_fn)(t_getline *line, t_u8_iterator, int);
+	t_rbtree			keybinds;
+	/** @brief Word boundaries function */
+	t_u8_iterator		(*boundaries_fn)(t_getline *line, t_u8_iterator, int);
+
+	/*-- Completion --*/
+	/** @brief State of the completion menu */
+	t_complete_state	comp_state;
+	/** @brief Key binds for completion mode */
+	t_rbtree			comp_keybinds;
 
 	/** @brief Terminal handling */
-	struct termios	tio;
+	struct termios		tio;
 }	t_getline;
 
 t_getline
@@ -318,7 +381,12 @@ void
 getline_handler_overflow(t_getline *line, int right);
 /** @brief Finds word boundaries */
 t_u8_iterator
-getline_word_boundaries(t_getline *line, t_u8_iterator it, int direction);
+getline_handler_word_boundaries(t_getline *line, t_u8_iterator it, int direction);
+/** @brief Default completion item draw function */
+void
+getline_handler_draw_comp_item(
+	t_getline *line,
+	const t_complete_item *item);
 
 /******************************************************************************/
 /* Utilities                                                                  */

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   words.c                                            :+:      :+:    :+:   */
+/*   complete_move.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,27 +11,14 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-t_u8_iterator
-	getline_handler_word_boundaries(t_getline *line, t_u8_iterator it, int direction)
+void
+	getline_complete_move(t_getline *l, int offset)
 {
-	static const char	*delims[] = {" ", "\t", "\n", NULL};
 
-	if (direction < 0)
-	{
-		it_prev(&it);
-		while (it.codepoint.len && str_alternatives(it.codepoint, delims))
-			it_prev(&it);
-		while (it.codepoint.len && !str_alternatives(it.codepoint, delims))
-			it_prev(&it);
-		if (it.codepoint.len)
-		it_next(&it);
-	}
-	else
-	{
-		while (it.codepoint.len && str_alternatives(it.codepoint, delims))
-			it_next(&it);
-		while (it.codepoint.len && !str_alternatives(it.codepoint, delims))
-			it_next(&it);
-	}
-	return (it);
+}
+
+void
+	getline_complete_move_row(t_getline *l, int offset)
+{
+
 }

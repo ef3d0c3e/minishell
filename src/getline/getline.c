@@ -30,6 +30,8 @@ t_getline
 	line.sequence_len = 0;
 	line.keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			NULL, NULL);
+	line.comp_keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
+			NULL, NULL);
 	stringbuf_init(&line.input_queue, 24);
 	getline_setup_handlers(&line);
 	return (line);
@@ -109,6 +111,7 @@ char
 			break ;
 		if (getline_handle_key(line, c))
 			continue ;
+		line->comp_state.shown = 0;
 		getline_input_add(line, c);
 	}
 	getline_buffer_free(&line->prompt);
@@ -137,9 +140,9 @@ static void highlighter(t_getline *line)
 				0x00FF00, 0, 0, 0,
 			});
 	}
-	for (size_t i = 0; i < line->input.s_attrs.size; ++i)
-		ft_dprintf(2, "{%zu..%zu} ", line->input.s_attrs.data[i].start, line->input.s_attrs.data[i].end);
-	ft_dprintf(2, "\n\r");
+	//for (size_t i = 0; i < line->input.s_attrs.size; ++i)
+	//	ft_dprintf(2, "{%zu..%zu} ", line->input.s_attrs.data[i].start, line->input.s_attrs.data[i].end);
+	//ft_dprintf(2, "\n\r");
 }
 
 int main(int ac, const char **av, const char **envp)

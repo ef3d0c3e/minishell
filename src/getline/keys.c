@@ -9,18 +9,28 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Calls key handler function */
-static void
-	exec_bind(t_getline *line, const t_key_handler *bind)
-{
+static int
+	exec_bind(t_getline *line)
+{	
+	const t_key_handler *bind;
+
+	if (line->comp_state.shown)
+		bind = rb_find(&line->comp_keybinds, line->sequence);
+	else
+		bind = rb_find(&line->keybinds, line->sequence);
+	if (!bind)
+		return (0);
 	if (bind->sig == SIG_NONE)
 		((void(*)(t_getline *))bind->function)(line);
 	else if (bind->sig == SIG_I)
 		((void(*)(t_getline *, int))bind->function)(line, bind->i0);
 	else if (bind->sig == SIG_Z)
 		((void(*)(t_getline *, int))bind->function)(line, bind->z0);
+	return (1);
 }
 
 /** @brief Gets the length of a key sequence */
@@ -62,10 +72,7 @@ int
 	expect = key_sequence_len(line);
 	if (expect == SIZE_MAX)
 		return (1);
-	bind = rb_find(&line->keybinds, line->sequence);
-	if (bind)
-		exec_bind(line, bind);
-	else
+	if (!exec_bind(line))
 	{
 		ft_dprintf(2, "\n\rKEYSEQ:");
 		for (size_t i = 0; i < line->sequence_len; ++i)
