@@ -41,20 +41,49 @@ getline_recycle_input(t_getline *line, const char *input, size_t len);
 /** @brief Keybinding function */
 typedef void				(*t_keybind_fn)(t_getline *);
 
-void
-getline_setup_keys(t_getline *line);
+/** @brief Signature for the key handler function */
+enum e_keyhandler_sig
+{
+	SIG_NONE = 0,	
+	SIGMASK_P0 = 0x3,
+
+	SIG_I = 0x1,	
+	SIG_Z = 0x2,	
+};
+
+typedef struct s_key_handler
+{
+	/** @brief Key sequence for this handler */
+	const char				*keyseq;
+	/** @brief Function pointer */
+	void					*function;
+	/** @brief Function signature */
+	enum e_keyhandler_sig	sig;
+	/* @brief First parameter */
+	union
+	{
+		int					i0;
+		size_t				z0;
+	};
+}	t_key_handler;
+
 int
 getline_handle_key(t_getline *line, int c);
-
 /** @brief Moves in input buffer by `offset` */
 void
 getline_move(t_getline *line, int offset);
 /** @brief Moves at absolute byte position */
 void
 getline_move_at(t_getline *line, size_t pos);
+/** @brief Moves in input buffer to the next/prvious word */
+void
+getline_move_word(t_getline *line, int direction);
 /** @brief Deletes characters before or after cursor */
 void
 getline_delete(t_getline *line, int offset);
+/** @brief Deletes next/previous word */
+void
+getline_delete_word(t_getline *line, int direction);
 
 /******************************************************************************/
 /* Unicode grapheme handling                                                  */
@@ -238,28 +267,32 @@ typedef struct s_getline
 	/** @brief Output FD */
 	int				out_fd;
 	/** @brief Getchar function */
-	int				(*getc)(t_getline *line);
+	int				(*getc_fn)(t_getline *);
 	/** @brief Queed input */
 	t_string_buffer	input_queue;
 
-	/** @brief List of key bindings */
-	t_rbtree		keybinds;
-
+	/*-- Rendering --*/
 	/** @brief Highlighter function */
-	void			(*highlighter_fn)(t_getline *line);
-
+	void			(*highlighter_fn)(t_getline *);
+	/** @brief Overflow indicator function */
+	void			(*overflow_fn)(t_getline *, int);
 	/** @brief Line prompt */
 	t_buffer		prompt;
+	/** @brief Input buffer */
+	t_buffer		input;
 	/** @brief Line render data */
 	t_render_data	render;
 
-	/** @brief Input buffer */
-	t_buffer		buffer;
+	/*-- Cursor & Input handling --*/
 	/** @brief Cursor's byte position in the prompt */
 	size_t			cursor_index;
 	/** @brief Key sequence sliding window */
 	unsigned char	sequence[16];
+	/** @brief Length of `sequence` */
 	size_t			sequence_len;
+	/** @brief List of key bindings */
+	t_rbtree		keybinds;
+	t_u8_iterator	(*boundaries_fn)(t_getline *line, t_u8_iterator, int);
 
 	/** @brief Terminal handling */
 	struct termios	tio;
@@ -269,16 +302,32 @@ t_getline
 getline_setup(t_shell *shell);
 void
 getline_cleanup(t_getline *line);
-
+/** @brief Entry point function */
 char
 *getline_read(t_getline *line, const char *prompt);
+
+/******************************************************************************/
+/* Default handlers                                                           */
+/******************************************************************************/
+
+/** @brief Registers default handlers */
+void
+getline_setup_handlers(t_getline *line);
+/** @brief `overflow_fn`, draws overflow indicators */
+void
+getline_handler_overflow(t_getline *line, int right);
+/** @brief Finds word boundaries */
+t_u8_iterator
+getline_word_boundaries(t_getline *line, t_u8_iterator it, int direction);
 
 /******************************************************************************/
 /* Utilities                                                                  */
 /******************************************************************************/
 
+/** @brief Gets the cursor position */
 int
 getline_cursor_pos(t_getline *line, int *x, int *y);
+/** @brief Asks the terminal to measure the width of text */
 int
 getline_text_width(t_getline *line, const char *utf8, size_t byte_len);
 

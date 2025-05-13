@@ -56,10 +56,10 @@ void
 
 	pos = 0;
 	i = 0;
-	while (i < line->buffer.s_clusters.size)
+	while (i < line->input.s_clusters.size)
 	{
-		cl = &line->buffer.s_clusters.data[i];
-		cp.str = line->buffer.buffer.str + pos;
+		cl = &line->input.s_clusters.data[i];
+		cp.str = line->input.buffer.str + pos;
 		cp.len = cl->size;
 		if (codepoint_width(u8_to_cp(cp)))
 			ft_dprintf(2, "'%.*s'(%zu/%d) ", (int)cp.len, cp.str, cl->size,

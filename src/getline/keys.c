@@ -9,61 +9,18 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "getline/getline.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
-void
-	getline_move_left(t_getline *line)
+/** @brief Calls key handler function */
+static void
+	exec_bind(t_getline *line, const t_key_handler *bind)
 {
-	getline_move(line, -1);
-}
-
-void
-	getline_move_right(t_getline *line)
-{
-	getline_move(line, 1);
-}
-
-void
-	getline_move_start(t_getline *line)
-{
-	getline_move_at(line, 0);
-}
-
-void
-	getline_move_end(t_getline *line)
-{
-	getline_move_at(line, line->buffer.buffer.len);
-}
-
-void
-	getline_del(t_getline *line)
-{
-	getline_delete(line, 1);
-}
-
-void
-	getline_backspace(t_getline *line)
-{
-	getline_delete(line, -1);
-}
-
-void
-	getline_setup_keys(t_getline *line)
-{
-	line->sequence_len = 0;
-	line->keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
-			NULL, NULL);
-	rb_insert(&line->keybinds, "\x1b[C", (void *)getline_move_right);
-	rb_insert(&line->keybinds, "\x1b[D", (void *)getline_move_left);
-	rb_insert(&line->keybinds, "\x0d", (void *)getline_move_right);
-	rb_insert(&line->keybinds, "\x10", (void *)getline_move_left);
-	rb_insert(&line->keybinds, "\x7f", (void *)getline_backspace);
-	rb_insert(&line->keybinds, "\x1b[3~", (void *)getline_del);
-	rb_insert(&line->keybinds, "\x01", (void *)getline_move_start);
-	rb_insert(&line->keybinds, "\x05", (void *)getline_move_end);
+	if (bind->sig == SIG_NONE)
+		((void(*)(t_getline *))bind->function)(line);
+	else if (bind->sig == SIG_I)
+		((void(*)(t_getline *, int))bind->function)(line, bind->i0);
+	else if (bind->sig == SIG_Z)
+		((void(*)(t_getline *, int))bind->function)(line, bind->z0);
 }
 
 /** @brief Gets the length of a key sequence */
@@ -95,8 +52,8 @@ static size_t
 int
 	getline_handle_key(t_getline *line, int c)
 {
-	t_keybind_fn	bind;
-	size_t			expect;
+	const void	*bind;
+	size_t		expect;
 
 	if ((c < 0 || (c >= 32 && c != 127)) && !line->sequence_len)
 		return (0);
@@ -105,14 +62,19 @@ int
 	expect = key_sequence_len(line);
 	if (expect == SIZE_MAX)
 		return (1);
-	bind = (t_keybind_fn)rb_find(&line->keybinds, line->sequence);
+	bind = rb_find(&line->keybinds, line->sequence);
 	if (bind)
-		bind(line);
+		exec_bind(line, bind);
 	else
 	{
 		ft_dprintf(2, "\n\rKEYSEQ:");
 		for (size_t i = 0; i < line->sequence_len; ++i)
+		{
+			if (line->sequence[i] >= 32 && line->sequence[i] <= 126)
+			ft_dprintf(2, "'%c' ", (int)line->sequence[i]);
+			else
 			ft_dprintf(2, "%x ", (int)line->sequence[i]);
+		}
 	}
 	line->sequence_len = 0;
 	return (1);

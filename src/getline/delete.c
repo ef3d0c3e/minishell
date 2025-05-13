@@ -21,7 +21,7 @@ static void
 
 	if (!line->cursor_index)
 		return ;
-	hi = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+	hi = it_new((t_string){line->input.buffer.str, line->input.buffer.len});
 	it_next(&hi);
 	while (hi.codepoint.len && hi.byte_next < line->cursor_index)
 		it_next(&hi);
@@ -29,8 +29,8 @@ static void
 	i = 1;
 	while (i++ != offset)
 		it_prev(&lo);
-	getline_remove_cluster(&line->buffer, lo.cp_pos, hi.cp_pos + 1);
-	stringbuf_replace(&line->buffer.buffer, lo.byte_pos, hi.byte_next, "");
+	getline_remove_cluster(&line->input, lo.cp_pos, hi.cp_pos + 1);
+	stringbuf_replace(&line->input.buffer, lo.byte_pos, hi.byte_next, "");
 	line->cursor_index = hi.byte_pos;
 }
 
@@ -41,9 +41,9 @@ static void
 	t_u8_iterator	hi;
 	int				i;
 
-	if (line->cursor_index >= line->buffer.buffer.len)
+	if (line->cursor_index >= line->input.buffer.len)
 		return ;
-	lo = it_new((t_string){line->buffer.buffer.str, line->buffer.buffer.len});
+	lo = it_new((t_string){line->input.buffer.str, line->input.buffer.len});
 	it_next(&lo);
 	while (lo.codepoint.len && lo.byte_pos < line->cursor_index)
 		it_next(&lo);
@@ -51,10 +51,10 @@ static void
 	i = 1;
 	while (i++ != offset)
 		it_next(&hi);
-	getline_remove_cluster(&line->buffer, lo.cp_pos, hi.cp_pos + 1);
-	stringbuf_replace(&line->buffer.buffer, lo.byte_pos, hi.byte_next, "");
+	getline_remove_cluster(&line->input, lo.cp_pos, hi.cp_pos + 1);
+	stringbuf_replace(&line->input.buffer, lo.byte_pos, hi.byte_next, "");
 	line->cursor_index = lo.byte_pos;
-	line->buffer.cp_pos = SIZE_MAX;
+	line->input.cp_pos = SIZE_MAX;
 	getline_redraw(line, 1);
 }
 
@@ -65,6 +65,35 @@ void
 		getline_delete_left(line, -offset);
 	else if (offset > 0)
 		getline_delete_right(line, offset);
-	line->buffer.cp_pos = SIZE_MAX;
+	line->input.cp_pos = SIZE_MAX;
+	getline_redraw(line, 1);
+}
+
+void
+	getline_delete_word(t_getline *line, int direction)
+{
+	t_u8_iterator	lo;
+	t_u8_iterator	hi;
+
+	lo = it_new((t_string){line->input.buffer.str, line->input.buffer.len});
+	it_next(&lo);
+	while (lo.codepoint.len && lo.byte_pos < line->cursor_index)
+		it_next(&lo);
+	hi = line->boundaries_fn(line, lo, direction);
+	if (lo.cp_pos == hi.cp_pos)
+		return ;
+	if (direction > 0)
+	{
+		getline_remove_cluster(&line->input, lo.cp_pos, hi.cp_pos);
+		stringbuf_replace(&line->input.buffer, lo.byte_pos, hi.byte_next, "");
+		line->cursor_index = lo.byte_pos;
+	}
+	else
+	{
+		getline_remove_cluster(&line->input, hi.cp_pos, lo.cp_pos);
+		stringbuf_replace(&line->input.buffer, hi.byte_pos, lo.byte_next, "");
+		line->cursor_index = hi.byte_pos;
+	}
+	line->input.cp_pos = SIZE_MAX;
 	getline_redraw(line, 1);
 }

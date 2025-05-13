@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
 #include <shell/shell.h>
 
 t_buffer
@@ -43,11 +42,11 @@ void
 static void
 	check_utf8(t_getline *line, size_t start, size_t end)
 {
-	const size_t	len = u8_length(line->buffer.buffer.str[start]);
+	const size_t	len = u8_length(line->input.buffer.str[start]);
 
 	if (end - start == len)
 		return ;
-	stringbuf_replace(&line->buffer.buffer, start, end, "\uFFFD");
+	stringbuf_replace(&line->input.buffer, start, end, "\uFFFD");
 }
 
 void
@@ -58,15 +57,15 @@ void
 	buf[0] = c;
 	buf[1] = 0;
 
-	if (!line->buffer.cp_len)
+	if (!line->input.cp_len)
 	{
-		if (line->buffer.cp_pos != SIZE_MAX)
-			check_utf8(line, line->buffer.cp_pos, line->cursor_index);
-		line->buffer.cp_pos = line->cursor_index;
-		line->buffer.cp_len = u8_length(c);
+		if (line->input.cp_pos != SIZE_MAX)
+			check_utf8(line, line->input.cp_pos, line->cursor_index);
+		line->input.cp_pos = line->cursor_index;
+		line->input.cp_len = u8_length(c);
 	}
-	stringbuf_replace(&line->buffer.buffer, line->cursor_index,
+	stringbuf_replace(&line->input.buffer, line->cursor_index,
 			line->cursor_index, buf);
 	line->cursor_index += 1;
-	--line->buffer.cp_len;
+	--line->input.cp_len;
 }

@@ -75,16 +75,16 @@ static void
 		dr->prompt_w += l->prompt.s_clusters.data[idx - 1].width;
 	idx = 0;
 	dr->input_w = 0;
-	while (idx++ < l->buffer.s_clusters.size)
-		dr->input_w += l->buffer.s_clusters.data[idx - 1].width;
+	while (idx++ < l->input.s_clusters.size)
+		dr->input_w += l->input.s_clusters.data[idx - 1].width;
 	dr->cursor_pos = dr->prompt_w;
-	it = it_new((t_string){l->buffer.buffer.str, l->buffer.buffer.len});
+	it = it_new((t_string){l->input.buffer.str, l->input.buffer.len});
 	it_next(&it);
 	idx = 0;
-	while (idx < l->buffer.s_clusters.size && it.codepoint.len)
+	while (idx < l->input.s_clusters.size && it.codepoint.len)
 	{
 		if (it.byte_pos < (size_t)l->cursor_index)
-			dr->cursor_pos += l->buffer.s_clusters.data[idx].width;
+			dr->cursor_pos += l->input.s_clusters.data[idx].width;
 		it_next(&it);
 		idx++;
 	}
@@ -118,10 +118,10 @@ void getline_redraw(t_getline *l, int update)
 
 	if (update)
 	{
-		free(l->buffer.s_attrs.data);
-		l->buffer.s_attrs.data = NULL;
-		l->buffer.s_attrs.size = 0;
-		l->buffer.s_attrs.capacity = 0;
+		free(l->input.s_attrs.data);
+		l->input.s_attrs.data = NULL;
+		l->input.s_attrs.size = 0;
+		l->input.s_attrs.capacity = 0;
 		if (l->highlighter_fn)
 			l->highlighter_fn(l);
 	}
@@ -131,14 +131,14 @@ void getline_redraw(t_getline *l, int update)
 	dr.printed = 0;
 	dr.column_pos = 0;
 	if (dr.left_indicator && ++dr.printed)
-		write(l->out_fd, ">", 1);
+		l->overflow_fn(l, 0);
 	draw_buffer(l, &l->prompt, &dr);
-	draw_buffer(l, &l->buffer, &dr);
+	draw_buffer(l, &l->input, &dr);
 	if (dr.right_indicator && dr.printed < l->render.display_width)
 	{
 		while (dr.printed < l->render.display_width - 1 && ++dr.printed)
 			write(l->out_fd, " ",1);
-		write(l->out_fd, "<",1);
+		l->overflow_fn(l, 1);
 	}
 	vis = dr.cursor_pos - l->render.scrolled + dr.left_indicator;
 	if (vis < 0)

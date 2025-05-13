@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input.c                                            :+:      :+:    :+:   */
+/*   words.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,43 +9,29 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
 
-int
-	getline_getc(t_getline *line)
+t_u8_iterator
+	getline_word_boundaries(t_getline *line, t_u8_iterator it, int direction)
 {
-	char	c;
-	ssize_t	n;
+	static const char	*delims[] = {" ", "\t", "\n", NULL};
 
-	n = read(line->in_fd, &c, 1);
-	if (n == 1)
-		return ((unsigned char)c);
-	if (n == 0)
-		return (EOF);
-	if (n == 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
-		return 0;
-	if (errno == EINTR && g_signal != SIGQUIT)
-		return (-1);
-	return (EOF);
-}
-
-void
-	getline_recycle_input(t_getline *line, const char *input, size_t len)
-{
-	stringbuf_append(&line->input_queue, (t_string){input, len});
-}
-
-int
-	getline_read_char(t_getline *line)
-{
-	int	c;
-
-	if (line->input_queue.len)
+	if (direction < 0)
 	{
-		c = line->input_queue.str[0];
-		stringbuf_replace(&line->input_queue, 0, 1, "");
-		return (c);
+		it_prev(&it);
+		while (it.codepoint.len && str_alternatives(it.codepoint, delims))
+			it_prev(&it);
+		while (it.codepoint.len && !str_alternatives(it.codepoint, delims))
+			it_prev(&it);
+		if (it.codepoint.len)
+		it_next(&it);
 	}
-	return (line->getc_fn(line));
+	else
+	{
+		while (it.codepoint.len && str_alternatives(it.codepoint, delims))
+			it_next(&it);
+		while (it.codepoint.len && !str_alternatives(it.codepoint, delims))
+			it_next(&it);
+	}
+	return (it);
 }

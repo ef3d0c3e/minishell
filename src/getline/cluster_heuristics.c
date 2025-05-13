@@ -101,9 +101,9 @@ void
 		i = 0;
 		while (++i < LINE_CLUSTER_MAX)
 		{
-			if (prev.codepoint.len && !line->buffer.s_clusters.data[prev.cp_pos].width)
+			if (prev.codepoint.len && !line->input.s_clusters.data[prev.cp_pos].width)
 				it_prev(&prev);
-			if (next.codepoint.len && !line->buffer.s_clusters.data[next.cp_pos].width)
+			if (next.codepoint.len && !line->input.s_clusters.data[next.cp_pos].width)
 				it_next(&next);
 		}
 		recluster_precise(line, buf, prev, next);

@@ -71,8 +71,6 @@ void
 		buf->s_attrs.capacity = new_cap;
 	}
 	pos = bfind_insert(buf, attr.start);
-	//if (pos == SIZE_MAX)
-	//	pos = buf->s_attrs.size;
 	ft_memmove(buf->s_attrs.data + pos + 1, buf->s_attrs.data + pos,
 			buf->s_attrs.size - pos);
 	buf->s_attrs.data[pos] = attr;
