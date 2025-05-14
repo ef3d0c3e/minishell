@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   complete_actions.c                                 :+:      :+:    :+:   */
+/*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,33 +9,40 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
 #include <shell/shell.h>
 
-void
-	getline_complete_move(t_getline *l, int offset)
+static void
+	path_traversal(size_t depth, t_rbnode *node, void *cookie)
 {
-	l->comp_state.sel -= offset;
-	l->comp_state.sel %= l->comp_state.nitems;
-	if (l->comp_state.sel < 0)
-		l->comp_state.sel += l->comp_state.nitems;
-	getline_redraw(l, 0);
+	t_path_tr *const	tr = cookie;
+	
+	tr->items[tr->index++] = (t_complete_item){
+		.kind = COMPLETE_WORD,
+		.name = ft_strdup(node->key),
+		.desc = ft_strdup("Executable"),
+	};
 }
 
-void
-	getline_complete_move_row(t_getline *l, int offset)
+t_complete_item
+	*repl_completer(t_getline *line)
 {
-	const int	ncols = l->comp_state.width / l->comp_state.col_width;
+	t_path_tr	tr;
 
-	if (ncols)
-		getline_complete_move(l, -ncols * offset);
-	else
-		getline_complete_move(l, -offset);
+	tr.index = 0;
+	tr.items = xmalloc(sizeof(t_complete_item)
+			* (line->shell->path_cache.size + 1));
+	rb_apply(&line->shell->path_cache, path_traversal, &tr);
+	tr.items[tr.index].name = NULL;
+	return (tr.items);
 }
 
-void
-	getline_complete_select(t_getline *line)
+t_getline
+	repl_setup(t_shell *shell)
 {
-	// TODO
-	getline_complete_menu_hide(line);
+	t_getline	line;
+
+	line = getline_setup(shell);
+	line.highlighter_fn = repl_highlighter;
+	line.comp_provider_fn = repl_completer;
+	return (line);
 }

@@ -9,7 +9,11 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "getline/getline.h"
+#include "util/util.h"
 #include <shell/shell.h>
+#include <stdlib.h>
 
 static int
 	draw_bounded(t_getline *line, const char *str, int maxwidth, const char *tr)
@@ -58,6 +62,27 @@ void
 	ft_dprintf(line->out_fd, ")\x1b[m");
 }
 
+static size_t
+	update_scroll(t_getline *line)
+{
+	int		rows;
+	int		ncols;
+	int		y;
+
+	rows = (line->comp_state.end_row - line->comp_state.start_row);
+	if (rows < 0)
+		rows *= -1;
+	ncols = line->display_width / line->comp_state.col_width;
+	if (!ncols)
+		ncols = 1;
+	y = line->comp_state.sel / ncols;
+	if (y - line->comp_state.scrolled < 0)
+		line->comp_state.scrolled = y;
+	else if (y - line->comp_state.scrolled >= rows)
+		line->comp_state.scrolled = y - rows + 1;
+	return (line->comp_state.scrolled * (ncols));
+}
+
 void
 	getline_complete_redraw(t_getline *line)
 {
@@ -75,25 +100,28 @@ void
 	}
 	else if ((size_t)line->comp_state.sel > line->comp_state.nitems)
 		line->comp_state.sel %= line->comp_state.nitems;
-
-	i = 0;
+	i = update_scroll(line);
 	x = 1;
 	y = 0;
+	getline_cursor_set(line, 1, line->comp_state.start_row);
 	while (i < line->comp_state.nitems)
 	{
 		item = &line->comp_state.items[i];
-		if (line->comp_state.start_row >= line->comp_state.cur_y)
-			getline_cursor_set(line, x, line->comp_state.start_row + y);
-		else
-			getline_cursor_set(line, x, line->comp_state.end_row - y);
 		line->comp_draw_item_fn(line, i, item);
 		if (x + line->comp_state.col_width >= line->comp_state.width)
 		{
 			x = 1;
 			++y;
+			ft_dprintf(line->out_fd, "\n\r")	;
+			if (y + line->comp_state.start_row + 1 > line->comp_state.end_row)
+				break ;
 		}
 		else
+		{
 			x += line->comp_state.col_width;
+			ft_dprintf(line->out_fd, " ");
+		}
 		++i;
 	}
+	getline_cursor_set(line, line->comp_state.cur_x, line->comp_state.cur_y);
 }

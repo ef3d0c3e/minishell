@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   complete_actions.c                                 :+:      :+:    :+:   */
+/*   repl.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,33 +9,34 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
-#include <shell/shell.h>
+#ifndef REPL_H
+# define REPL_H
 
-void
-	getline_complete_move(t_getline *l, int offset)
+#include <getline/getline.h>
+
+/******************************************************************************/
+/* Completion                                                                 */
+/******************************************************************************/
+
+typedef struct s_path_tr
 {
-	l->comp_state.sel -= offset;
-	l->comp_state.sel %= l->comp_state.nitems;
-	if (l->comp_state.sel < 0)
-		l->comp_state.sel += l->comp_state.nitems;
-	getline_redraw(l, 0);
-}
+	size_t			index;
+	t_complete_item	*items;
+}	t_path_tr;
 
+/**
+ * @brief Highlighter for the getline prompt
+ */
+t_complete_item
+*repl_completer(t_getline *line);
+
+/**
+ * @brief Highlighter for the getline prompt
+ */
 void
-	getline_complete_move_row(t_getline *l, int offset)
-{
-	const int	ncols = l->comp_state.width / l->comp_state.col_width;
+repl_highlighter(t_getline *line);
 
-	if (ncols)
-		getline_complete_move(l, -ncols * offset);
-	else
-		getline_complete_move(l, -offset);
-}
+t_getline
+repl_setup(t_shell *shell);
 
-void
-	getline_complete_select(t_getline *line)
-{
-	// TODO
-	getline_complete_menu_hide(line);
-}
+#endif // REPL_H

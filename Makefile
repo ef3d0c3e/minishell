@@ -20,6 +20,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/shell/fds/*.c) \
 	$(wildcard src/shell/funs/*.c) \
 	$(wildcard src/shell/expand/*.c) \
+	$(wildcard src/shell/repl/*.c) \
 	$(wildcard src/shell/ctx/*.c) \
 	$(wildcard src/shell/regex/*.c) \
 	$(wildcard src/getline/*.c) \
