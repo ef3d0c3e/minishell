@@ -245,27 +245,24 @@ typedef struct s_complete_item
 typedef struct s_complete_state
 {
 	/** @brief Whether the completion menu is active */
-	int		shown;
+	int				shown;
 	/** @brief Selected completion item */
-	int		sel;
+	int				sel;
 	/** @brief Number of scrolled rows */
-	int		scrolled;
+	int				scrolled;
 	/** @brief Saved cursor's x coordinate */
-	int		cur_x;
+	int				cur_x;
 	/** @brief Saved cursor's y coordinate */
-	int		cur_y;
+	int				cur_y;
 
 	/*-- Draw state --*/
 	/** @brief Menu start row */
-	int		start_row;
+	int				start_row;
 	/** @brief Menu end row */
-	int		end_row;
+	int				end_row;
 	/** @brief Menu column width */
-	int		col_width;
-	/** @brief Window width */
-	int		width;
-	/** @brief Window height */
-	int		height;
+	int				col_width;
+	char			*saved_lines;
 
 	/*-- Complete state --*/
 	/** @brief Completion items available */

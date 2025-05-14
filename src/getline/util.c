@@ -25,7 +25,7 @@ size_t
 	i = 2;
 	while (i < len)
 	{
-		if ((unsigned char)s[i] >= '@')
+		if ((unsigned char)s[i] >= '@' && (unsigned char)s[i] <= '~')
 			return (i + 1);
 		++i;
 	}

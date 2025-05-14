@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
 #include "util/util.h"
 #include <shell/shell.h>
 
@@ -19,7 +20,14 @@ static int
 	const t_key_handler *bind;
 
 	if (line->comp_state.shown)
+	{
 		bind = rb_find(&line->comp_keybinds, line->sequence);
+		if (!bind)
+		{
+			getline_complete_menu_hide(line);
+			bind = rb_find(&line->keybinds, line->sequence);
+		}
+	}
 	else
 		bind = rb_find(&line->keybinds, line->sequence);
 	if (!bind)

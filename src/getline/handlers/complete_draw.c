@@ -9,11 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "getline/getline.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdlib.h>
 
 static int
 	draw_bounded(t_getline *line, const char *str, int maxwidth, const char *tr)
@@ -112,12 +108,12 @@ void
 	{
 		item = &line->comp_state.items[i];
 		line->comp_draw_item_fn(line, i, item);
-		if (x + line->comp_state.col_width >= line->comp_state.width)
+		if (x + line->comp_state.col_width >= line->display_width)
 		{
 			x = 1;
 			++y;
 			ft_dprintf(line->out_fd, "\n\r")	;
-			if (y + line->comp_state.start_row + 1 > line->comp_state.end_row)
+			if (y + line->comp_state.start_row > line->comp_state.end_row)
 				break ;
 		}
 		else

@@ -26,11 +26,10 @@ typedef struct s_path_tr
 }	t_path_tr;
 
 /**
- * @brief Highlighter for the getline prompt
+ * @brief Completion provider for the getline prompt
  */
 t_complete_item
 *repl_completer(t_getline *line);
-
 /**
  * @brief Highlighter for the getline prompt
  */

@@ -29,7 +29,7 @@ void
 void
 	getline_complete_move_row(t_getline *l, int offset)
 {
-	const int	ncols = l->comp_state.width / l->comp_state.col_width;
+	const int	ncols = l->display_width / l->comp_state.col_width;
 
 	if (ncols)
 		getline_complete_move(l, -ncols * offset);
@@ -40,7 +40,7 @@ void
 void
 	getline_complete_move_page(t_getline *l, int offset)
 {
-	const int	ncols = l->comp_state.width / l->comp_state.col_width;
+	const int	ncols = l->display_width / l->comp_state.col_width;
 	int			nrows;
 
 	nrows = l->comp_state.end_row - l->comp_state.start_row;
