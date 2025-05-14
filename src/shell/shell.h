@@ -25,7 +25,6 @@
 # include <shell/regex/regex.h>
 # include <shell/expand/expand.h>
 # include <shell/ctx/ctx.h>
-# include <shell/readline/readline.h>
 
 # include <getline/getline.h>
 # include <ft_printf.h>

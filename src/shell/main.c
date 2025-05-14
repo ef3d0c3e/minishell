@@ -1,13 +1,39 @@
 #include <shell/shell.h>
 #include <stdio.h>
 
+static void highlighter(t_getline *line)
+{
+	t_token_list	list;
+
+	list = tokenizer_tokenize((t_string){line->input.buffer.str, line->input.buffer.len});
+	for (size_t i = 0; i < list.size; ++i)
+	{
+		if (list.tokens[i].type == TOK_KEYWORD)
+			getline_highlight_add(&line->input, (t_buffer_attr){
+				list.tokens[i].start, list.tokens[i].end,
+				0xFF0000, 0, 0, 0,
+			});
+		else if (token_isword(list.tokens[i].type))
+			getline_highlight_add(&line->input, (t_buffer_attr){
+				list.tokens[i].start, list.tokens[i].end,
+				0x00FF00, 0, 0, 0,
+			});
+	}
+	//for (size_t i = 0; i < line->input.s_attrs.size; ++i)
+	//	ft_dprintf(2, "{%zu..%zu} ", line->input.s_attrs.data[i].start, line->input.s_attrs.data[i].end);
+	//ft_dprintf(2, "\n\r");
+	token_list_free(&list);
+}
+
 static void
 	repl(t_shell *shell)
 {
 	t_string_buffer	prompt;
 	t_eval_result	result;
+	t_getline		line;
 
-	readline_setup(shell);
+	line = getline_setup(shell);
+	line.highlighter_fn = highlighter;
 	signal_install(shell, 0);
 	profile_source(shell);
 	while (1)
@@ -17,7 +43,7 @@ static void
 		g_signal = 0;
 		prompt = stringbuf_from("> ");
 		//prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
-		char* input = readline(stringbuf_cstr(&prompt));
+		char *input = getline_read(&line, stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);
 		if (!input)
 		{
@@ -27,7 +53,6 @@ static void
 			}
 			break ;
 		}
-		add_history(input);
 		result = ctx_eval_stdout(shell, input);
 		if (result.type == RES_EXIT)
 		{
@@ -35,6 +60,7 @@ static void
 			break ;
 		}
 	}
+	getline_cleanup(&line);
 	signal_install(shell, 1);
 }
 
@@ -72,7 +98,6 @@ static void
 	return (_set_behavior(_init_opt(use, opts, *(&opts + 1) - opts, a), flags));
 }
 
-/*
 int main(int ac, const char **av, const char **envp)
 {
 	t_shell			shell;
@@ -89,4 +114,4 @@ int main(int ac, const char **av, const char **envp)
 		repl(&shell);
 	shell_free(&shell);
 	return (shell.last_status);
-}*/
+}

@@ -9,23 +9,34 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
 #include <shell/shell.h>
 
-/** @brief Populates the list of completion items */
+/** @brief Frees completion items */
 static void
-	populate_items(t_getline *line)
+	free_items(t_getline *line)
 {
 	size_t	i;
 
-	if (!line->comp_provider_fn)
-		return ;
 	i = 0;
 	while (line->comp_state.items && line->comp_state.items[i].name)
 	{
 		free(line->comp_state.items[i].name);
 		free(line->comp_state.items[i].desc);
+		++i;
 	}
 	free(line->comp_state.items);
+	line->comp_state.items = NULL;
+	line->comp_state.nitems = 0;
+}
+
+/** @brief Populates the list of completion items */
+static void
+	populate_items(t_getline *line)
+{
+	if (!line->comp_provider_fn)
+		return ;
+	free_items(line);
 	line->comp_state.items = line->comp_provider_fn(line);
 	line->comp_state.nitems = 0;
 	while (line->comp_state.items[line->comp_state.nitems].name)
@@ -71,5 +82,6 @@ void
 		return ;
 	ft_dprintf(line->out_fd, "\x1b[%d;%dH", line->comp_state.cur_y,
 			line->comp_state.cur_x);
+	free_items(line);
 	line->comp_state.shown = 0;
 }

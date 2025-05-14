@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_getline
@@ -23,6 +25,7 @@ t_getline
 	line.cursor_index = 0;
 	line.scrolled = 0;
 	line.display_width = 0;
+	line.display_height = 0;
 	line.sequence_len = 0;
 	line.keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			NULL, NULL);
@@ -55,9 +58,25 @@ void
 		it_next(&it);
 	getline_recluster(line, &line->input, it);
 	getline_redraw(line, 1);
-	//getline_cluster_print(line);
 }
 
+static char
+	*get_input(t_getline *line)
+{
+	char *const	input = stringbuf_cstr(&line->input.buffer);
+
+	line->input.buffer.str = NULL;
+	getline_buffer_free(&line->input);
+	getline_buffer_free(&line->prompt);
+	stringbuf_free(&line->input_queue);
+	stringbuf_init(&line->input_queue, 24);
+	line->cursor_index = 0;
+	line->scrolled = 0;
+	line->display_width = 0;
+	line->display_height = 0;
+	line->sequence_len = 0;
+	return (input);
+}
 
 char
 	*getline_read(t_getline *line, const char *prompt)
@@ -83,14 +102,11 @@ char
 		getline_input_add(line, c);
 	}
 	ft_dprintf(line->out_fd, "\x1b[2K\r");
-	getline_buffer_free(&line->prompt);
 	getline_raw_mode(line, 0);
-	ret = stringbuf_cstr(&line->input.buffer);
-	line->input.buffer.str = NULL;
-	getline_buffer_free(&line->input);
-	return (ret);
+	return (get_input(line));
 }
 
+/*
 static void highlighter(t_getline *line)
 {
 	t_token_list	list;
@@ -131,3 +147,4 @@ int main(int ac, const char **av, const char **envp)
 	shell_free(&shell);
 	return (0);
 }
+*/

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   complete_move.c                                    :+:      :+:    :+:   */
+/*   complete_actions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -31,4 +31,10 @@ void
 		getline_complete_move(l, ncols * offset);
 	else
 		getline_complete_move(l, offset);
+}
+
+void
+	getline_complete_select(t_getline *line)
+{
+	getline_complete_menu_hide(line);
 }

@@ -35,6 +35,7 @@ void
 	stringbuf_free(&buf->buffer);
 	free(buf->s_attrs.data);
 	free(buf->s_clusters.data);
+	*buf = getline_buffer_new();
 }
 
 /** @brief Replaces invalid codepoint with 0xFFFD, this still allow unmapped

@@ -272,6 +272,10 @@ typedef struct s_complete_state
 	t_complete_item	*items;
 	/** @brief Number of completion items */
 	size_t			nitems;
+	/** @brief Start position of the word to replace upon completion */
+	size_t			word_start;
+	/** @brief End position of the word to replace upon completion */
+	size_t			word_end;
 }	t_complete_state;
 
 /** @brief Displays the completion menu */
@@ -287,6 +291,9 @@ getline_complete_move(t_getline *l, int offset);
 /** @brief Moves in the completion menu by rows */
 void
 getline_complete_move_row(t_getline *l, int offset);
+/** @brief Selects the current completion item */
+void
+getline_complete_select(t_getline *l);
 /** @brief Redraws the completion menu */
 void
 getline_complete_redraw(t_getline *line);
@@ -326,7 +333,7 @@ typedef struct s_getline
 	int					out_fd;
 	/** @brief Getchar function */
 	int					(*getc_fn)(t_getline *);
-	/** @brief Queed input */
+	/** @brief Queed inputs */
 	t_string_buffer		input_queue;
 
 	/*-- Rendering --*/
@@ -363,10 +370,10 @@ typedef struct s_getline
 	/** @brief Key binds for completion mode */
 	t_rbtree			comp_keybinds;
 	/** @brief Draws a single completion item */
-	void	(*comp_draw_item_fn)(t_getline *, size_t,
+	void				(*comp_draw_item_fn)(t_getline *, size_t,
 			const t_complete_item *item);
 	/** @brief Returns a list of completion items */
-	t_complete_item	*(*comp_provider_fn)(t_getline *line);
+	t_complete_item		*(*comp_provider_fn)(t_getline *line);
 
 	/** @brief Terminal handling */
 	struct termios		tio;
