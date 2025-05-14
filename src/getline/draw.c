@@ -125,10 +125,7 @@ void getline_redraw(t_getline *l, int update)
 		l->display_height = ws.ws_row;
 	}
 	if (l->comp_state.shown)
-	{
 		getline_complete_redraw(l);
-		return ;
-	}
 	if (update)
 	{
 		free(l->input.s_attrs.data);

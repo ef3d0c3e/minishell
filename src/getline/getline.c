@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 t_getline
@@ -101,7 +99,7 @@ char
 		getline_complete_menu_hide(line);
 		getline_input_add(line, c);
 	}
-	ft_dprintf(line->out_fd, "\x1b[2K\r");
+	ft_dprintf(line->out_fd, "\n\r");
 	getline_raw_mode(line, 0);
 	return (get_input(line));
 }

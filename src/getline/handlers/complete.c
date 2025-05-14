@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "getline/getline.h"
 #include <shell/shell.h>
 
@@ -48,18 +49,15 @@ void
 {
 	struct winsize	ws;
 
-	populate_items(line);
-	if (!line->comp_state.nitems)
-	{
-		free_items(line);
-		return ;
-	}
 	ioctl(line->out_fd, TIOCGWINSZ, &ws);
 	line->display_width = ws.ws_col;
 	line->display_height = ws.ws_row;
 	getline_cursor_pos(line, &line->comp_state.cur_x, &line->comp_state.cur_y);
-	ft_dprintf(line->out_fd, "\x1b[?1049h");
-	line->comp_state.start_row = 1;
+	ft_dprintf(line->out_fd, "\x1b[%dS", line->comp_state.cur_y - 10);
+	ft_dprintf(line->out_fd, "\x1b[2K");
+	line->comp_state.cur_y = 1;
+	line->comp_state.start_row = line->comp_state.cur_y + 1;
+	line->comp_state.end_row = ws.ws_row;
 	line->comp_state.end_row = ws.ws_row - 1;
 	line->comp_state.col_width = line->display_width / 60;
 	if (!line->comp_state.col_width)
@@ -70,6 +68,7 @@ void
 	line->comp_state.shown = 1;
 	line->comp_state.sel = 0;
 	line->comp_state.scrolled = 0;
+	populate_items(line);
 	getline_redraw(line, 1);
 }
 
@@ -79,8 +78,8 @@ void
 	if (!line->comp_state.shown)
 		return ;
 	free_items(line);
-	ft_dprintf(line->out_fd, "\x1b[?1049l");
 	ft_dprintf(line->out_fd, "\x1b[%d;%dH", line->comp_state.cur_y,
 			line->comp_state.cur_x);
+	ft_dprintf(line->out_fd, "\x1b[0J");
 	line->comp_state.shown = 0;
 }

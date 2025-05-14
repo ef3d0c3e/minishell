@@ -17,12 +17,11 @@ void
 	l->comp_state.sel += offset;
 	if (l->comp_state.nitems)
 	{
-		l->comp_state.sel %= l->comp_state.nitems;
 		if (l->comp_state.sel < 0)
 			l->comp_state.sel = l->comp_state.nitems - 1;
+		else if ((size_t)l->comp_state.sel >= l->comp_state.nitems)
+			l->comp_state.sel = 0;
 	}
-	else
-		l->comp_state.sel = 0;
 	getline_redraw(l, 0);
 }
 
