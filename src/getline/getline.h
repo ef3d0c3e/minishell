@@ -426,5 +426,8 @@ getline_text_width(t_getline *line, const char *utf8, size_t byte_len);
 /** @brief Enables or disable raw mode */
 void
 getline_raw_mode(t_getline *line, int set);
+/** @brief Gets the length of an escape sequence */
+size_t
+getline_escape_len(const char *s, size_t len);
 
 #endif // GETLINE_H

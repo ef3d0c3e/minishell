@@ -1,4 +1,7 @@
+#include "ft_printf.h"
+#include "getline/getline.h"
 #include "shell/repl/repl.h"
+#include "util/util.h"
 #include <shell/shell.h>
 #include <stdio.h>
 
@@ -12,6 +15,7 @@ static void
 	line = repl_setup(shell);
 	signal_install(shell, 0);
 	profile_source(shell);
+	rb_insert(&shell->temporaries, &line, (void *)getline_cleanup);
 	while (1)
 	{
 		if (g_signal == SIGINT)
@@ -36,6 +40,7 @@ static void
 			break ;
 		}
 	}
+	rb_delete(&shell->temporaries, &line);
 	getline_cleanup(&line);
 	signal_install(shell, 1);
 }
