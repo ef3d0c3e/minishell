@@ -47,9 +47,11 @@ static t_key_handler
 		{"\x02", (void *)getline_complete_move, SIG_I, { .i0 = -1 }},
 		{"\x1b[Z", (void *)getline_complete_move, SIG_I, { .i0 = -1 }},
 		{"\x1b[A", (void *)getline_complete_move_row, SIG_I, { .i0 = +1 }},
+		{"\x1b[5~", (void *)getline_complete_move_page, SIG_I, { .i0 = +1 }},
 		{"\x0e", (void *)getline_complete_move_row, SIG_I, { .i0 = +1 }},
 		{"\x1b[B", (void *)getline_complete_move_row, SIG_I, { .i0 = -1 }},
 		{"\x10", (void *)getline_complete_move_row, SIG_I, { .i0 = -1 }},
+		{"\x1b[6~", (void *)getline_complete_move_page, SIG_I, { .i0 = -1 }},
 		{"\xd", (void *)getline_complete_select, SIG_NONE, { 0 }},
 		{NULL, NULL, 0, {0}}
 	};

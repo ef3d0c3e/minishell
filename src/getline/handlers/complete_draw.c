@@ -55,11 +55,15 @@ void
 	w = draw_bounded(line, item->name, line->comp_state.col_width - 4, "…");
 	while (desc_len + w++ < line->comp_state.col_width - 4)
 		ft_dprintf(line->out_fd, " ");
-	ft_dprintf(line->out_fd, "\x1b[33m");
-	ft_dprintf(line->out_fd, "(");
-	w += 3;
-	draw_bounded(line, item->desc, line->comp_state.col_width - w, "…");
-	ft_dprintf(line->out_fd, ")\x1b[m");
+	if (item->desc)
+	{
+		ft_dprintf(line->out_fd, "\x1b[33m");
+		ft_dprintf(line->out_fd, "(");
+		w += 3;
+		draw_bounded(line, item->desc, line->comp_state.col_width - w, "…");
+		ft_dprintf(line->out_fd, ")");
+	}
+	ft_dprintf(line->out_fd, "\x1b[m");
 }
 
 static size_t

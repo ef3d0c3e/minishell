@@ -17,6 +17,8 @@ int
 	t_u8_iterator	it;
 	int				width;
 
+	if (!str)
+		return (0);
 	it = it_new((t_string){str, ft_strlen(str)});
 	it_next(&it);
 	width = 0;

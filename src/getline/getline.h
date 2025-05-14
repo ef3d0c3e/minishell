@@ -291,6 +291,9 @@ getline_complete_move(t_getline *l, int offset);
 /** @brief Moves in the completion menu by rows */
 void
 getline_complete_move_row(t_getline *l, int offset);
+/** @brief Moves in the completion menu by pages */
+void
+getline_complete_move_page(t_getline *l, int offset);
 /** @brief Selects the current completion item */
 void
 getline_complete_select(t_getline *l);

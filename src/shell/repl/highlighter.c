@@ -46,7 +46,8 @@ void
 	t_token_list	list;
 	t_buffer_attr	hi;
 
-	list = tokenizer_tokenize((t_string){line->input.buffer.str, line->input.buffer.len});
+	list = tokenizer_tokenize((t_string){line->input.buffer.str,
+			line->input.buffer.len});
 	for (size_t i = 0; i < list.size; ++i)
 	{
 		hi = get_highlight(list.tokens[i].type);

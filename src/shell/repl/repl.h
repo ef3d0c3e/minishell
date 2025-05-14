@@ -22,6 +22,7 @@ typedef struct s_path_tr
 {
 	size_t			index;
 	t_complete_item	*items;
+	const char		*filter;
 }	t_path_tr;
 
 /**
