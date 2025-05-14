@@ -307,23 +307,9 @@ typedef struct s_drawline
 	int	printed;
 }	t_drawline;
 
-typedef struct s_render_data
-{
-	/** @brief Width in cells of the display */
-	int		display_width;
-	/** @brief Scrolled bytes */
-	int		scrolled;
-	/** @brief Safe magin in 1/100th the width */
-	int		safe_margin;
-
-}	t_render_data;
-
-/** @brief Initializes render data */
-t_render_data
-getline_render_new(void);
+/** @brief Redraws ui */
 void
 getline_redraw(t_getline *line, int update);
-
 /** @brief Sets the prompt text */
 void
 getline_set_prompt(t_getline *line, const char *text);
@@ -352,8 +338,12 @@ typedef struct s_getline
 	t_buffer			prompt;
 	/** @brief Input buffer */
 	t_buffer			input;
-	/** @brief Line render data */
-	t_render_data		render;
+	/** @brief Line scrolled amount */
+	int					scrolled;
+	/** @brief Display width in cells */
+	int					display_width;
+	/** @brief Display height in cells */
+	int					display_height;
 
 	/*-- Cursor & Input handling --*/
 	/** @brief Cursor's byte position in the prompt */
@@ -423,5 +413,8 @@ getline_cursor_set(t_getline *line, int col, int row);
 /** @brief Asks the terminal to measure the width of text */
 int
 getline_text_width(t_getline *line, const char *utf8, size_t byte_len);
+/** @brief Enables or disable raw mode */
+void
+getline_raw_mode(t_getline *line, int set);
 
 #endif // GETLINE_H

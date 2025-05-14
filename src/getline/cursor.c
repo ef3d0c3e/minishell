@@ -84,23 +84,3 @@ void
 {
 	ft_dprintf(line->out_fd, "\x1b[%d;%dH", row, col);
 }
-
-int
-	getline_text_width(t_getline *line, const char *utf8, size_t byte_len)
-{
-	int	col0;
-	int	col1;
-
-	write(line->out_fd, "\r\n", 2);
-	if (getline_cursor_pos(line, &col0, NULL) == -1)
-		return (-1);
-
-	write(line->out_fd, utf8, byte_len);
-	if (getline_cursor_pos(line, &col1, NULL) == -1)
-		return (-1);
-	write(line->out_fd, "\x1b[1A\r", 5); 
-
-	// col0=1 col1=1
-	//ft_dprintf(2, "[%d %d]", col0, col1);
-	return (col1 - col0);
-}

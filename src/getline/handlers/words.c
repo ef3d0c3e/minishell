@@ -12,7 +12,10 @@
 #include <shell/shell.h>
 
 t_u8_iterator
-	getline_handler_word_boundaries(t_getline *line, t_u8_iterator it, int direction)
+	getline_handler_word_boundaries(
+	t_getline *line,
+	t_u8_iterator it,
+	int direction)
 {
 	static const char	*delims[] = {" ", "\t", "\n", NULL};
 

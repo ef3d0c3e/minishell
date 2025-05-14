@@ -9,12 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
-#include "ft_printf.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <termios.h>
 
 t_getline
 	getline_setup(t_shell *shell)
@@ -26,7 +21,8 @@ t_getline
 	line.out_fd = STDOUT_FILENO;
 	line.input = getline_buffer_new();
 	line.cursor_index = 0;
-	line.render = getline_render_new();
+	line.scrolled = 0;
+	line.display_width = 0;
 	line.sequence_len = 0;
 	line.keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			NULL, NULL);
@@ -40,38 +36,9 @@ t_getline
 void
 	getline_cleanup(t_getline *line)
 {
-
-}
-
-void
-	getline_raw_mode(t_getline *line, int set)
-{
-	struct termios	raw;
-
-	if (!set)
-	{
-		tcsetattr(line->in_fd, TCSAFLUSH, &line->tio);
-		return ;
-	}
-	if (!isatty(line->in_fd))
-		return ;
-	if (tcgetattr(line->in_fd, &line->tio) == -1)
-	{
-		shell_perror(line->shell, "tcgetattr fail", SRC_LOCATION);
-		return ;
-	}
-
-	raw = line->tio;
-    raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-    raw.c_oflag &= ~(OPOST);
-    raw.c_cflag |= (CS8);
-    raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-	raw.c_cc[VMIN]  = 1;
-	raw.c_cc[VTIME] = 0;
-	if (tcsetattr(line->in_fd, TCSANOW, &raw) == -1)
-	{
-		shell_perror(line->shell, "tcsetattr fail", SRC_LOCATION);
-	}
+	stringbuf_free(&line->input_queue);
+	rb_free(&line->keybinds);
+	rb_free(&line->comp_keybinds);
 }
 
 void
@@ -106,15 +73,16 @@ char
 		c = getline_read_char(line);
 		if (c == -1)
 			continue ;
-		if (c == '\003')
+		if (c == '\003' || c == '\004')
 			break ;
-		if (c == '\004')
+		if (c == '\x0d' && !line->comp_state.shown)
 			break ;
 		if (getline_handle_key(line, c))
 			continue ;
 		getline_complete_menu_hide(line);
 		getline_input_add(line, c);
 	}
+	ft_dprintf(line->out_fd, "\x1b[2K\r");
 	getline_buffer_free(&line->prompt);
 	getline_raw_mode(line, 0);
 	ret = stringbuf_cstr(&line->input.buffer);
@@ -144,6 +112,7 @@ static void highlighter(t_getline *line)
 	//for (size_t i = 0; i < line->input.s_attrs.size; ++i)
 	//	ft_dprintf(2, "{%zu..%zu} ", line->input.s_attrs.data[i].start, line->input.s_attrs.data[i].end);
 	//ft_dprintf(2, "\n\r");
+	token_list_free(&list);
 }
 
 int main(int ac, const char **av, const char **envp)
@@ -153,8 +122,12 @@ int main(int ac, const char **av, const char **envp)
 	t_getline line = getline_setup(&shell);
 	line.highlighter_fn = highlighter;
 
-	getline_read(&line, ft_strdup("[prompt]"));
+	char *in = getline_read(&line, "[prompt]");
+	ft_dprintf(2, "input=%s\n", in);
+	free(in);
 
+
+	getline_cleanup(&line);
 	shell_free(&shell);
 	return (0);
 }

@@ -68,8 +68,8 @@ void
 		move_left(line, -offset);
 	else if (offset > 0)
 		move_right(line, offset);
-	else if (line->render.scrolled)
-		--line->render.scrolled;
+	else if (line->scrolled)
+		--line->scrolled;
 	getline_redraw(line, 0);
 }
 
