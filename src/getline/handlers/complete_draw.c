@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "term/geometry.h"
 #include <shell/shell.h>
 
 static int
@@ -47,7 +45,7 @@ void
 	const int		desc_len = string_width(item->desc);
 	int				w;
 
-	if (line->comp_state.sel == i)
+	if ((size_t)line->comp_state.sel == i)
 		ft_dprintf(line->out_fd, "\x1b[7m");
 	ft_dprintf(line->out_fd, "\x1b[37m");
 	w = draw_bounded(line, item->name, line->comp_state.col_width - 4, "…");
@@ -61,7 +59,7 @@ void
 }
 
 void
-	getline_complete_redraw(t_getline *line, int update)
+	getline_complete_redraw(t_getline *line)
 {
 	size_t					i;
 	int						x;
@@ -70,17 +68,24 @@ void
 
 	if (line->comp_state.col_width < 5)
 		return ;
-	if (!line->comp_get_item_fn(line, line->comp_state.sel))
-		line->comp_state.sel = 0;
+	if (line->comp_state.sel < 0)
+	{
+		line->comp_state.sel %= line->comp_state.nitems;
+		line->comp_state.sel *= -1;
+	}
+	else if ((size_t)line->comp_state.sel > line->comp_state.nitems)
+		line->comp_state.sel %= line->comp_state.nitems;
+
 	i = 0;
 	x = 1;
 	y = 0;
-	while (line->comp_get_item_fn)
+	while (i < line->comp_state.nitems)
 	{
-		item = line->comp_get_item_fn(line, i);
-		if (!item)
-			break ;
-		ft_dprintf(line->out_fd, "\x1b[%d;%dH", line->comp_state.start_row + y, x);
+		item = &line->comp_state.items[i];
+		if (line->comp_state.start_row >= line->comp_state.cur_y)
+			getline_cursor_set(line, x, line->comp_state.start_row + y);
+		else
+			getline_cursor_set(line, x, line->comp_state.end_row - y);
 		line->comp_draw_item_fn(line, i, item);
 		if (x + line->comp_state.col_width >= line->comp_state.width)
 		{

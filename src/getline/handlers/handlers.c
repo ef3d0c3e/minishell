@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
 #include <shell/shell.h>
 
 /** @brief Keybinds */
@@ -58,20 +57,31 @@ static t_key_handler
 }
 
 // TODO
-static const t_complete_item
-	*get_item(t_getline *line, size_t i)
+static t_complete_item
+	*get_item(t_getline *line)
 {
 	static const t_complete_item items[] = {
 		{COMPLETE_WORD, "test123", "this is a test"},
 		{COMPLETE_FILE, "a.out", "file"},
 		{COMPLETE_FILE, "b.out", "1"},
-		{COMPLETE_FILE, "c.out", "2"},
+		{COMPLETE_FILE, "c.out", "2 lorem ipsum dolor sit amet very long description abcdefghij"},
 		{COMPLETE_OPTION, "--help", "help page"},
+		{0, NULL, NULL},
 	};
+	t_complete_item	*ret = xmalloc(sizeof(items));
+	for (size_t i = 0; i < sizeof(items) / sizeof(items[0]); ++i)
+	{
+		ret[i].kind = items[i].kind;
+		ret[i].name = NULL;
+		ret[i].desc = NULL;
+		if (items[i].name)
+		{
+			ret[i].name = ft_strdup(items[i].name);
+			ret[i].desc = ft_strdup(items[i].desc);
+		}
+	}
 
-	if (i >= sizeof(items) / sizeof(items[0]))
-		return (NULL);
-	return (&items[i]);
+	return (ret);
 }
 
 void
@@ -85,8 +95,9 @@ void
 	line->boundaries_fn = getline_handler_word_boundaries;
 	line->comp_state.shown = 0;
 	line->comp_state.sel = 0;
+	line->comp_state.items = NULL;
 	line->comp_draw_item_fn = getline_handler_comp_draw_item;
-	line->comp_get_item_fn = get_item;
+	line->comp_provider_fn = get_item;
 	i = 0;
 	while (handlers_keys()[i].keyseq)
 	{

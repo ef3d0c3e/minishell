@@ -9,8 +9,28 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
+
+/** @brief Populates the list of completion items */
+static void
+	populate_items(t_getline *line)
+{
+	size_t	i;
+
+	if (!line->comp_provider_fn)
+		return ;
+	i = 0;
+	while (line->comp_state.items && line->comp_state.items[i].name)
+	{
+		free(line->comp_state.items[i].name);
+		free(line->comp_state.items[i].desc);
+	}
+	free(line->comp_state.items);
+	line->comp_state.items = line->comp_provider_fn(line);
+	line->comp_state.nitems = 0;
+	while (line->comp_state.items[line->comp_state.nitems].name)
+		++line->comp_state.nitems;
+}
 
 void
 	getline_complete_menu(t_getline *line)
@@ -40,6 +60,7 @@ void
 	line->comp_state.shown = 1;
 	line->comp_state.sel = 0;
 	line->comp_state.scrolled = 0;
+	populate_items(line);
 	getline_redraw(line, 1);
 }
 

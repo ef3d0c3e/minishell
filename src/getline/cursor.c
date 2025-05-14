@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "getline/getline.h"
 #include <shell/shell.h>
 
 /** @brief Reads exactly one byte on `fd` */
@@ -75,6 +77,12 @@ int
 	if (write(line->out_fd, "\033[6n", 4) != 4)
 		return (-1);
 	return (read_cursor_report(line, x, y));
+}
+
+void
+	getline_cursor_set(t_getline *line, int col, int row)
+{
+	ft_dprintf(line->out_fd, "\x1b[%d;%dH", row, col);
 }
 
 int

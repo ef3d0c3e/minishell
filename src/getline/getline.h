@@ -234,8 +234,11 @@ enum e_complete_item_kind
 
 typedef struct s_complete_item
 {
+	/** @brief Item kind */
 	int		kind;
+	/** @brief Item name */
 	char	*name;
+	/** @brief Item description */
 	char	*desc;
 }	t_complete_item;
 
@@ -244,7 +247,7 @@ typedef struct s_complete_state
 	/** @brief Whether the completion menu is active */
 	int		shown;
 	/** @brief Selected completion item */
-	size_t	sel;
+	int		sel;
 	/** @brief Number of scrolled rows */
 	int		scrolled;
 	/** @brief Saved cursor's x coordinate */
@@ -254,16 +257,21 @@ typedef struct s_complete_state
 
 	/*-- Draw state --*/
 	/** @brief Menu start row */
-	int start_row;
+	int		start_row;
 	/** @brief Menu end row */
-	int end_row;
+	int		end_row;
 	/** @brief Menu column width */
-	int col_width;
+	int		col_width;
 	/** @brief Window width */
-	int width;
+	int		width;
 	/** @brief Window height */
-	int height;
+	int		height;
 
+	/*-- Complete state --*/
+	/** @brief Completion items available */
+	t_complete_item	*items;
+	/** @brief Number of completion items */
+	size_t			nitems;
 }	t_complete_state;
 
 /** @brief Displays the completion menu */
@@ -281,7 +289,7 @@ void
 getline_complete_move_row(t_getline *l, int offset);
 /** @brief Redraws the completion menu */
 void
-getline_complete_redraw(t_getline *line, int update);
+getline_complete_redraw(t_getline *line);
 
 /******************************************************************************/
 /* Rendering                                                                  */
@@ -367,8 +375,8 @@ typedef struct s_getline
 	/** @brief Draws a single completion item */
 	void	(*comp_draw_item_fn)(t_getline *, size_t,
 			const t_complete_item *item);
-	/** @brief Gets a completion item by id */
-	const t_complete_item	*(*comp_get_item_fn)(t_getline *, size_t);
+	/** @brief Returns a list of completion items */
+	t_complete_item	*(*comp_provider_fn)(t_getline *line);
 
 	/** @brief Terminal handling */
 	struct termios		tio;
@@ -409,6 +417,9 @@ getline_handler_comp_draw_item(
 /** @brief Gets the cursor position */
 int
 getline_cursor_pos(t_getline *line, int *x, int *y);
+/** @brief Sets the cursor position */
+void
+getline_cursor_set(t_getline *line, int col, int row);
 /** @brief Asks the terminal to measure the width of text */
 int
 getline_text_width(t_getline *line, const char *utf8, size_t byte_len);

@@ -100,6 +100,7 @@ char
 
 	getline_raw_mode(line, 1);
 	getline_set_prompt(line, prompt);
+	getline_redraw(line, 1);
 	while (1)
 	{
 		c = getline_read_char(line);

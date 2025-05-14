@@ -118,7 +118,7 @@ void getline_redraw(t_getline *l, int update)
 
 	if (l->comp_state.shown)
 	{
-		getline_complete_redraw(l, update);
+		getline_complete_redraw(l);
 		return ;
 	}
 	if (update)
