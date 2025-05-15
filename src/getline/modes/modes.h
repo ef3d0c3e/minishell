@@ -21,10 +21,25 @@ typedef struct s_getline	t_getline;
 /* Input                                                                      */
 /******************************************************************************/
 
+enum e_input_action
+{
+	/** @brief No action */
+	ACT_NONE,
+	/** @brief Action triggered by `Enter` */
+	ACT_ENTER,
+	/** @brief Action triggered by `^C` */
+	ACT_CANCEL,
+	/** @brief Action triggered by `^D` (only if line is empty) */
+	ACT_QUIT,
+};
+
 /** @brief Draws the input mode */
 void
 getline_input_draw(t_getline *l, int update);
 /*-- Input actions --*/
+/** @brief Perform action */
+void
+getline_input_action(t_getline *line, int action);
 /** @brief Moves in input buffer by `offset` */
 void
 getline_input_move(t_getline *line, int offset);
@@ -142,6 +157,8 @@ typedef struct s_history_state
 	size_t			saved_pos;
 	/** @brief Saved line scroll */
 	int				saved_scroll;
+	/** @brief Accept current selection */
+	int				accept;
 }	t_history_state;
 
 /** @brief Enables history mode */
@@ -157,6 +174,9 @@ getline_history_draw(t_getline *line, int update);
 /** @brief Moves in the history scroll menu by `offset` */
 void
 getline_history_move(t_getline *line, int offset);
+/** @brief Cancels current history selection */
+void
+getline_history_cancel(t_getline *line);
 
 /******************************************************************************/
 /* Modes                                                                      */
@@ -192,6 +212,8 @@ typedef struct s_line_mode
 /** @brief State for modes */
 typedef union s_line_mode_state
 {
+	/** @brief Action for input mode */
+	enum e_input_action	action;
 	/** @brief Tab-complete mode state */
 	t_complete_state	comp;
 	/** @brief History scroll mode state */
@@ -214,7 +236,7 @@ getline_setup_modes(t_getline *line);
 void
 getline_change_mode(t_getline *line, int mode);
 
-/*-- Modes setups */
+/*-- Modes setups --*/
 void
 getline_setup_input_mode(t_line_mode *mode);
 void

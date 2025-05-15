@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input_actions.c                                    :+:      :+:    :+:   */
+/*   action.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,8 +11,13 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
-	getline_input_action(t_getline *line, int action)
+int
+	getline_process_action(t_getline *line)
 {
-	line->state.action = action;
+	if (line->state.action == ACT_QUIT)
+	{
+		line->state.action = ACT_NONE;
+		return (line->input.buffer.len == 0);
+	}
+	return (line->state.action != ACT_NONE);
 }

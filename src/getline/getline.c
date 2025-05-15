@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 t_getline
@@ -42,7 +43,7 @@ void
 
 	stringbuf_free(&line->input_queue);
 	i = 0;
-	while (i < 2/*LINE_MODE_SIZE*/)
+	while (i < 3/*LINE_MODE_SIZE*/)
 		rb_free(&line->modes[i++].keybinds);
 	getline_history_free(line);
 }
@@ -63,7 +64,7 @@ void
 }
 
 static char
-	*get_input(t_getline *line, int c)
+	*get_input(t_getline *line)
 {
 	char *const	input = stringbuf_cstr(&line->input.buffer);
 
@@ -77,7 +78,7 @@ static char
 	line->display_width = 0;
 	line->display_height = 0;
 	line->sequence_len = 0;
-	if (c == '\x04' || c == '\x03')
+	if (line->state.action != ACT_ENTER)
 	{
 		free(input);
 		return (NULL);
@@ -89,20 +90,21 @@ char
 	*getline_read(t_getline *line, const char *prompt)
 {
 	int		c;
-	char	*ret;
 
 	getline_raw_mode(line, 1);
+	line->mode = LINE_INPUT;
+	if (line->modes[line->mode].enable_mode_fn)
+		line->modes[line->mode].enable_mode_fn(line);
 	getline_set_prompt(line, prompt);
 	getline_redraw(line, 1);
 	while (1)
 	{
+		if (line->mode == LINE_INPUT && line->state.action != ACT_NONE
+			&& getline_process_action(line))
+			break ;
 		c = getline_read_char(line);
 		if (c == -1)
 			continue ;
-		if (c == '\003' || (c == '\004' && !line->input.buffer.len))
-			break ;
-		if (c == '\x0d' && line->mode == LINE_INPUT)
-			break ;
 		if (getline_handle_key(line, c))
 			continue ;
 		getline_input_add(line, c);
@@ -110,5 +112,5 @@ char
 	}
 	ft_dprintf(line->out_fd, "\n\r");
 	getline_raw_mode(line, 0);
-	return (get_input(line, c));
+	return (get_input(line));
 }

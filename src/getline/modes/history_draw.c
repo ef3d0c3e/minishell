@@ -9,10 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
 #include <shell/shell.h>
 
 void getline_history_draw(t_getline *line, int update)
 {
-	line->modes[LINE_INPUT].draw_mode_fn(line, update);
+	line->modes[LINE_INPUT].draw_mode_fn(line, 1);
 }

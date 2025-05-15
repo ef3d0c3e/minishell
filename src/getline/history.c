@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 /** @brief Saves the history */
@@ -20,7 +21,7 @@ static void
 
 	fd = -1;
 	if (line->history.histfile)
-		fd = open(line->history.histfile, O_APPEND);
+		fd = open(line->history.histfile, O_APPEND | O_WRONLY);
 	i = 0;
 	while (i++ < num)
 	{
@@ -51,6 +52,7 @@ void
 {
 	save_history(line, line->history.num_entries);
 	free(line->history.entries);
+	free(line->history.histfile);
 }
 
 void
@@ -60,7 +62,7 @@ void
 	char	*old;
 
 	free(line->history.histfile);
-	//line->history.histfile = histfile;
+	line->history.histfile = histfile;
 	if (!source)
 		return ;
 	fd = open(histfile, O_RDONLY);
@@ -79,6 +81,7 @@ void
 	getline_history_add(t_getline *line, char *entry, int saved)
 {
 	size_t	i;
+
 	if (line->history.num_entries == line->history.max_entries)
 		save_history(line, line->history.num_entries / 2);
 	i = 0;

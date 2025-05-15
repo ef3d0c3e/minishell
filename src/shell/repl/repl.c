@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
 #include <shell/shell.h>
 
 t_getline
@@ -20,6 +19,6 @@ t_getline
 	line = getline_setup(shell);
 	line.highlighter_fn = repl_highlighter;
 	line.comp_provider_fn = repl_completer;
-	getline_history_set_file(&line, "/home/user/.bash_history", 1);
+	getline_history_set_file(&line, ft_strdup("/home/user/.bash_history"), 1);
 	return (line);
 }

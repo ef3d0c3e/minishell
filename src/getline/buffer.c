@@ -9,10 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/buffer.h"
-#include "getline/getline.h"
-#include "term/geometry.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 t_buffer

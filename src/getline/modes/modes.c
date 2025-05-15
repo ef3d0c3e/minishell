@@ -29,5 +29,5 @@ void
 	line->mode = mode;
 	if (line->modes[line->mode].enable_mode_fn)
 		line->modes[line->mode].enable_mode_fn(line);
-	getline_redraw(line, 0);
+	getline_redraw(line, 1);
 }

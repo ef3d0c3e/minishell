@@ -231,6 +231,9 @@ getline_cleanup(t_getline *line);
 /** @brief Entry point function */
 char
 *getline_read(t_getline *line, const char *prompt);
+/** @brief Process special key actions */
+int
+getline_process_action(t_getline *line);
 
 /******************************************************************************/
 /* Utilities                                                                  */

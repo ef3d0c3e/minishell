@@ -11,10 +11,20 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+static void
+	getline_input_enable(t_getline *line)
+{
+	line->state.action = ACT_NONE;
+}
+
 static t_key_handler
 	*keybinds(void)
 {
 	static t_key_handler	keys[] = {
+		{"\x0d", (void *)getline_input_action, SIG_I, { .i0 = ACT_ENTER }},
+		{"\x03", (void *)getline_input_action, SIG_I, { .i0 = ACT_CANCEL }},
+		{"\x04", (void *)getline_input_action, SIG_I, { .i0 = ACT_QUIT }},
+
 		{"\x1b[C", (void *)getline_input_move, SIG_I, { .i0 = +1 }},
 		{"\x06", (void *)getline_input_move, SIG_I, { .i0 = +1 }},
 		{"\x1b[D", (void *)getline_input_move, SIG_I, { .i0 = -1 }},
@@ -48,7 +58,7 @@ void
 
 	mode->keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			NULL, NULL);
-	mode->enable_mode_fn = NULL;
+	mode->enable_mode_fn = getline_input_enable;
 	mode->disable_mode_fn = NULL;
 	mode->draw_mode_fn = getline_input_draw;
 	i = 0;

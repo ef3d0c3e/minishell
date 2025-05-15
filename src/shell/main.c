@@ -33,6 +33,7 @@ static void
 			}
 			break ;
 		}
+		getline_history_add(&line, ft_strdup(input), 0);
 		result = ctx_eval_stdout(shell, input);
 		if (result.type == RES_EXIT)
 		{

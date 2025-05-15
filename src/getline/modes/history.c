@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 void
@@ -21,6 +20,7 @@ void
 	line->state.hist.saved_pos = line->cursor_index;
 	line->state.hist.saved_scroll = line->scrolled;
 	line->input = getline_buffer_new();
+	line->state.hist.accept = 1;
 	getline_history_move(line, 0);
 }
 
@@ -28,10 +28,17 @@ void
 	getline_history_disable(t_getline *line)
 {
 	free(line->state.hist.filter);
+	if (!line->state.hist.accept)
+	{
+		getline_buffer_free(&line->input);
+		line->input = line->state.hist.saved_input;
+		line->cursor_index = line->state.hist.saved_pos;
+		line->scrolled = line->state.hist.saved_scroll;
+		return ;
+	}
 	getline_buffer_free(&line->state.hist.saved_input);
-	//line->input = line->state.hist.saved_input;
-	//line->cursor_index = line->state.hist.saved_pos;
-	//line->scrolled = line->state.hist.saved_scroll;
+	line->cursor_index = line->input.buffer.len;
+	line->scrolled = 0;
 }
 
 static t_key_handler
@@ -42,7 +49,7 @@ static t_key_handler
 		{"\x1b[A", (void *)getline_history_move, SIG_I, { .i0 = +1 }},
 		{"\xe", (void *)getline_history_move, SIG_I, { .i0 = -1 }},
 		{"\x1b[B", (void *)getline_history_move, SIG_I, { .i0 = -1 }},
-		{"\x1b\x1b", (void *)getline_history_move, SIG_I, { .i0 = -1 }},
+		{"\x1b\x1b", (void *)getline_history_cancel, SIG_NONE, { 0 }},
 		{NULL, NULL, 0, {0}}
 	};
 
