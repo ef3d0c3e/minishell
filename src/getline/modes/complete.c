@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
-#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 void
@@ -28,7 +26,6 @@ void
 	}
 	//ft_dprintf(line->out_fd, "\x1b[2S", line->state.comp.cur_y - 1);
 	//ft_dprintf(line->out_fd, "\x1b[2J");
-	line->state.comp.shown = 0;
 	line->state.comp.sel = 0;
 	line->state.comp.cur_y = 1;
 	line->state.comp.start_row = line->state.comp.cur_y + 1;
@@ -39,7 +36,6 @@ void
 	else
 		line->state.comp.col_width = line->display_width
 			/ line->state.comp.col_width;
-	line->state.comp.shown = 1;
 	line->state.comp.sel = 0;
 	line->state.comp.scrolled = 0;
 	getline_redraw(line, 1);
@@ -48,15 +44,12 @@ void
 void
 	getline_complete_disable(t_getline *line)
 {
-	if (!line->state.comp.shown)
-		return ;
 	getline_complete_free_items(line);
 	getline_cursor_set(line, 1,
 			line->state.comp.cur_x);
 	//ft_dprintf(line->out_fd, "\x1b[%d;%dH", line->state.comp.cur_y,
 			//line->state.comp.cur_x);
 	ft_dprintf(line->out_fd, "\x1b[0J");
-	line->state.comp.shown = 0;
 }
 
 static t_key_handler

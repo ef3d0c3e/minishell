@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Saves the history */
@@ -93,6 +94,12 @@ void
 			break ;
 		}
 		++i;
+	}
+	if (line->history.num_entries && !ft_strcmp(entry,
+				line->history.entries[line->history.num_entries - 1].input))
+	{
+		free(entry);
+		return ;
 	}
 	line->history.entries[line->history.num_entries++] = (t_history_ent){
 		.input = entry,

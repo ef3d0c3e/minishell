@@ -80,8 +80,6 @@ typedef struct s_complete_item
 
 typedef struct s_complete_state
 {
-	/** @brief Whether the completion menu is active */
-	int				shown;
 	/** @brief Selected completion item */
 	int				sel;
 	/** @brief Number of scrolled rows */

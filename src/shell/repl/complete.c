@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 static int
@@ -68,6 +69,7 @@ static char
 		return (NULL);
 	stringbuf_init(&buf, 24);
 	token_wordcontent(&buf, &list.tokens[i]);
+	token_list_free(&list);
 	if (!buf.len)
 	{
 		stringbuf_free(&buf);
@@ -87,6 +89,7 @@ t_complete_item
 			* (line->shell->path_cache.size + 2));
 	rb_apply(&line->shell->path_cache, path_traversal, &tr);
 	tr.items[tr.index].name = NULL;
+	free(tr.filter);
 	return (tr.items);
 }
 
