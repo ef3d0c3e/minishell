@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   modes.c                                            :+:      :+:    :+:   */
+/*   complete_actions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,25 +9,24 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/buffer.h"
 #include <shell/shell.h>
 
 void
-	getline_setup_modes(t_getline *line)
+	getline_history_move(t_getline *line, int offset)
 {
-	getline_setup_input_mode(&line->modes[LINE_INPUT]);
-	getline_setup_complete_mode(&line->modes[LINE_TAB]);
-	getline_setup_history_mode(&line->modes[LINE_HISTSCROLL]);
-}
+	int	sc;
 
-void
-	getline_change_mode(t_getline *line, int mode)
-{
-	if ((int)line->mode == mode)
+	sc = line->state.hist.scroll_index + offset;
+	if (line->history.num_entries - sc < 0)
+		sc = 0;
+	else if (sc < 0)
+	{
+		getline_change_mode(line, LINE_INPUT);
 		return ;
-	if (line->modes[line->mode].disable_mode_fn)
-		line->modes[line->mode].disable_mode_fn(line);
-	line->mode = mode;
-	if (line->modes[line->mode].enable_mode_fn)
-		line->modes[line->mode].enable_mode_fn(line);
-	getline_redraw(line, 0);
+	}
+	line->state.hist.scroll_index = sc;
+	getline_buffer_set_content(&line->input,
+		line->history.entries[line->history.num_entries
+		- line->state.hist.scroll_index - 1].input);
 }

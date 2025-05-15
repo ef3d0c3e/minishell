@@ -12,6 +12,7 @@
 #ifndef MODES_H
 # define MODES_H
 
+# include <getline/buffer.h>
 # include <util/util.h>
 
 typedef struct s_getline	t_getline;
@@ -114,16 +115,48 @@ getline_complete_draw(t_getline *line, int update);
 /*-- Tab-complete actions --*/
 /** @brief Moves in the completion menu by columns */
 void
-getline_complete_move(t_getline *l, int offset);
+getline_complete_move(t_getline *line, int offset);
 /** @brief Moves in the completion menu by rows */
 void
-getline_complete_move_row(t_getline *l, int offset);
+getline_complete_move_row(t_getline *line, int offset);
 /** @brief Moves in the completion menu by pages */
 void
-getline_complete_move_page(t_getline *l, int offset);
+getline_complete_move_page(t_getline *line, int offset);
 /** @brief Selects the current completion item */
 void
-getline_complete_select(t_getline *l);
+getline_complete_select(t_getline *line);
+
+/******************************************************************************/
+/* History                                                                    */
+/******************************************************************************/
+
+typedef struct s_history_state
+{
+	/** @brief Scroll index */
+	int				scroll_index;
+	/** @brief Pseudo reverse-i-search filter */
+	char			*filter;
+	/** @brief Saved input buffer */
+	t_buffer		saved_input;
+	/** @brief Saved cursor pos */
+	size_t			saved_pos;
+	/** @brief Saved line scroll */
+	int				saved_scroll;
+}	t_history_state;
+
+/** @brief Enables history mode */
+void
+getline_history_enable(t_getline *line);
+/** @brief Disables history mode */
+void
+getline_history_disable(t_getline *line);
+/** @brief Draws the history menu */
+void
+getline_history_draw(t_getline *line, int update);
+/*-- History actions --*/
+/** @brief Moves in the history scroll menu by `offset` */
+void
+getline_history_move(t_getline *line, int offset);
 
 /******************************************************************************/
 /* Modes                                                                      */
@@ -162,13 +195,7 @@ typedef union s_line_mode_state
 	/** @brief Tab-complete mode state */
 	t_complete_state	comp;
 	/** @brief History scroll mode state */
-	struct
-	{
-		/** @brief Scroll index */
-		int				scroll_index;
-		/** @brief Pseudo reverse-i-search filter */
-		char			*filter;
-	}					history;
+	t_history_state		hist;
 }	t_linemode_state;
 
 /**
@@ -192,5 +219,7 @@ void
 getline_setup_input_mode(t_line_mode *mode);
 void
 getline_setup_complete_mode(t_line_mode *mode);
+void
+getline_setup_history_mode(t_line_mode *mode);
 
 #endif // MODES_H

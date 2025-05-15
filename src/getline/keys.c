@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
-#include "getline/modes/modes.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Calls key handler function */
@@ -34,6 +31,7 @@ static int
 		((void(*)(t_getline *, int))bind->function)(line, bind->i0);
 	else if (bind->sig == SIG_Z)
 		((void(*)(t_getline *, int))bind->function)(line, bind->z0);
+	getline_redraw(line, 0);
 	return (1);
 }
 

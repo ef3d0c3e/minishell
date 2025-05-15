@@ -9,6 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/buffer.h"
+#include "getline/getline.h"
+#include "term/geometry.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_buffer
@@ -48,6 +52,25 @@ static void
 	if (end - start == len)
 		return ;
 	stringbuf_replace(&line->input.buffer, start, end, "\uFFFD");
+}
+
+void
+	getline_buffer_set_content(t_buffer *buf, const char *str)
+{
+	t_u8_iterator	it;
+
+	getline_buffer_free(buf);
+	it = it_new((t_string){str, ft_strlen(str)});
+	it_next(&it);
+	while (it.codepoint.len)
+	{
+		getline_insert_cluster(buf, it.cp_pos, (t_cluster){
+			.size = it.codepoint.len,
+			.width = codepoint_width(u8_to_cp(it.codepoint))
+		});
+		it_next(&it);
+	}
+	buf->buffer = stringbuf_from(str);
 }
 
 void

@@ -22,7 +22,6 @@ void
 		else if ((size_t)l->state.comp.sel >= l->state.comp.nitems)
 			l->state.comp.sel = 0;
 	}
-	getline_redraw(l, 0);
 }
 
 void

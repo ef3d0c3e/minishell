@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
+#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 void
@@ -16,11 +18,18 @@ void
 {
 	getline_cursor_pos(line, &line->state.comp.cur_x,
 			&line->state.comp.cur_y);
-	ft_dprintf(line->out_fd, "\x1b[%dS", line->state.comp.cur_y - 10);
-	ft_dprintf(line->out_fd, "\x1b[2K");
+	line->state.comp.items = NULL;
+	line->state.comp.nitems = 0;
+	getline_complete_populate_items(line);
+	if (!line->state.comp.nitems)
+	{
+		getline_change_mode(line, LINE_INPUT);
+		return ;
+	}
+	//ft_dprintf(line->out_fd, "\x1b[2S", line->state.comp.cur_y - 1);
+	//ft_dprintf(line->out_fd, "\x1b[2J");
 	line->state.comp.shown = 0;
 	line->state.comp.sel = 0;
-	line->state.comp.items = NULL;
 	line->state.comp.cur_y = 1;
 	line->state.comp.start_row = line->state.comp.cur_y + 1;
 	line->state.comp.end_row = line->display_height - 1;
@@ -33,7 +42,6 @@ void
 	line->state.comp.shown = 1;
 	line->state.comp.sel = 0;
 	line->state.comp.scrolled = 0;
-	getline_complete_populate_items(line);
 	getline_redraw(line, 1);
 }
 
@@ -43,8 +51,10 @@ void
 	if (!line->state.comp.shown)
 		return ;
 	getline_complete_free_items(line);
-	ft_dprintf(line->out_fd, "\x1b[%d;%dH", line->state.comp.cur_y,
+	getline_cursor_set(line, 1,
 			line->state.comp.cur_x);
+	//ft_dprintf(line->out_fd, "\x1b[%d;%dH", line->state.comp.cur_y,
+			//line->state.comp.cur_x);
 	ft_dprintf(line->out_fd, "\x1b[0J");
 	line->state.comp.shown = 0;
 }
@@ -79,8 +89,8 @@ void
 
 	mode->keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			NULL, NULL);
-	mode->enable_mode_fn = NULL;
-	mode->disable_mode_fn = NULL;
+	mode->enable_mode_fn = getline_complete_enable;
+	mode->disable_mode_fn = getline_complete_disable;
 	mode->draw_mode_fn = getline_complete_draw;
 	i = 0;
 	while (keybinds()[i].keyseq)

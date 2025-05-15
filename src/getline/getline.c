@@ -63,7 +63,7 @@ void
 }
 
 static char
-	*get_input(t_getline *line)
+	*get_input(t_getline *line, int c)
 {
 	char *const	input = stringbuf_cstr(&line->input.buffer);
 
@@ -77,6 +77,11 @@ static char
 	line->display_width = 0;
 	line->display_height = 0;
 	line->sequence_len = 0;
+	if (c == '\x04' || c == '\x03')
+	{
+		free(input);
+		return (NULL);
+	}
 	return (input);
 }
 
@@ -94,7 +99,7 @@ char
 		c = getline_read_char(line);
 		if (c == -1)
 			continue ;
-		if (c == '\003' || c == '\004')
+		if (c == '\003' || (c == '\004' && !line->input.buffer.len))
 			break ;
 		if (c == '\x0d' && line->mode == LINE_INPUT)
 			break ;
@@ -105,48 +110,5 @@ char
 	}
 	ft_dprintf(line->out_fd, "\n\r");
 	getline_raw_mode(line, 0);
-	return (get_input(line));
+	return (get_input(line, c));
 }
-
-/*
-static void highlighter(t_getline *line)
-{
-	t_token_list	list;
-
-	list = tokenizer_tokenize((t_string){line->input.buffer.str, line->input.buffer.len});
-	for (size_t i = 0; i < list.size; ++i)
-	{
-		if (list.tokens[i].type == TOK_KEYWORD)
-			getline_highlight_add(&line->input, (t_buffer_attr){
-				list.tokens[i].start, list.tokens[i].end,
-				0xFF0000, 0, 0, 0,
-			});
-		else if (token_isword(list.tokens[i].type))
-			getline_highlight_add(&line->input, (t_buffer_attr){
-				list.tokens[i].start, list.tokens[i].end,
-				0x00FF00, 0, 0, 0,
-			});
-	}
-	//for (size_t i = 0; i < line->input.s_attrs.size; ++i)
-	//	ft_dprintf(2, "{%zu..%zu} ", line->input.s_attrs.data[i].start, line->input.s_attrs.data[i].end);
-	//ft_dprintf(2, "\n\r");
-	token_list_free(&list);
-}
-
-int main(int ac, const char **av, const char **envp)
-{
-	t_shell shell = shell_new(envp);
-
-	t_getline line = getline_setup(&shell);
-	line.highlighter_fn = highlighter;
-
-	char *in = getline_read(&line, "[prompt]");
-	ft_dprintf(2, "input=%s\n", in);
-	free(in);
-
-
-	getline_cleanup(&line);
-	shell_free(&shell);
-	return (0);
-}
-*/

@@ -60,7 +60,7 @@ void
 	char	*old;
 
 	free(line->history.histfile);
-	line->history.histfile = histfile;
+	//line->history.histfile = histfile;
 	if (!source)
 		return ;
 	fd = open(histfile, O_RDONLY);
@@ -78,8 +78,19 @@ void
 void
 	getline_history_add(t_getline *line, char *entry, int saved)
 {
+	size_t	i;
 	if (line->history.num_entries == line->history.max_entries)
 		save_history(line, line->history.num_entries / 2);
+	i = 0;
+	while (entry[i])
+	{
+		if (entry[i] == '\n')
+		{
+			entry[i] = 0;
+			break ;
+		}
+		++i;
+	}
 	line->history.entries[line->history.num_entries++] = (t_history_ent){
 		.input = entry,
 		.saved = saved,

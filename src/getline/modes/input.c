@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 static t_key_handler
@@ -33,6 +32,9 @@ static t_key_handler
 		//{"\x1b[B", (void *)getline_history_scroll, SIG_I, { .i0 = -1 }},
 
 		{"\x09", (void *)getline_change_mode, SIG_I, { LINE_TAB }},
+
+		{"\x10", (void *)getline_change_mode, SIG_I, { LINE_HISTSCROLL }},
+		{"\x1b[A", (void *)getline_change_mode, SIG_I, { LINE_HISTSCROLL }},
 		{NULL, NULL, 0, {0}}
 	};
 

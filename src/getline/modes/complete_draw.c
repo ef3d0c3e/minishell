@@ -124,4 +124,5 @@ void
 		++i;
 	}
 	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
+	getline_input_draw(line, 0);
 }
