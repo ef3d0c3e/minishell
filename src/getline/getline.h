@@ -17,6 +17,7 @@
 # include <termios.h>
 # include <sys/ioctl.h>
 # include <getline/modes/modes.h>
+# include <getline/handlers/handlers.h>
 
 typedef struct s_shell		t_shell;
 typedef struct s_getline	t_getline;
@@ -28,7 +29,7 @@ typedef struct s_buffer		t_buffer;
 
 /** @brief The default `getc` function */
 int
-getline_getc(t_getline *line);
+getline_handlers_getc(t_getline *line);
 /** @brief Reads a single char, using either `getc` or by recycling from the
  * queue */
 int
@@ -326,15 +327,15 @@ typedef struct s_getline
 	/** @brief Output FD */
 	int					out_fd;
 	/** @brief Getchar function */
-	int					(*getc_fn)(t_getline *);
+	t_getc_fn			getc_fn;
 	/** @brief Queed inputs */
 	t_string_buffer		input_queue;
 
 	/*-- Rendering --*/
 	/** @brief Highlighter function */
-	void				(*highlighter_fn)(t_getline *);
+	t_highlighter_fn	highlighter_fn;
 	/** @brief Overflow indicator function */
-	void				(*overflow_fn)(t_getline *, int);
+	t_overflow_fn		overflow_fn;
 	/** @brief Line prompt */
 	t_buffer			prompt;
 	/** @brief Input buffer */
@@ -354,15 +355,13 @@ typedef struct s_getline
 	/** @brief Length of `sequence` */
 	size_t				sequence_len;
 	/** @brief Word boundaries function */
-	t_u8_iterator		(*boundaries_fn)(t_getline *line, t_u8_iterator, int);
+	t_boundaries_fn		boundaries_fn;
 
 	/*-- Completion --*/
 	/** @brief Draws a single completion item */
-	void				(*comp_draw_item_fn)(t_getline *, size_t,
-			const t_complete_item *item);
+	t_comp_draw_item_fn	comp_draw_item_fn;
 	/** @brief Returns a list of completion items */
-	t_complete_item		*(*comp_provider_fn)(t_getline *line);
-
+	t_comp_provider_fn	comp_provider_fn;
 }	t_getline;
 
 t_getline
@@ -372,26 +371,6 @@ getline_cleanup(t_getline *line);
 /** @brief Entry point function */
 char
 *getline_read(t_getline *line, const char *prompt);
-
-/******************************************************************************/
-/* Default handlers                                                           */
-/******************************************************************************/
-
-/** @brief Registers default handlers */
-void
-getline_setup_handlers(t_getline *line);
-/** @brief `overflow_fn`, draws overflow indicators */
-void
-getline_handler_overflow(t_getline *line, int right);
-/** @brief Finds word boundaries */
-t_u8_iterator
-getline_handler_word_boundaries(t_getline *line, t_u8_iterator it, int direction);
-/** @brief Default completion item draw function */
-void
-getline_handler_comp_draw_item(
-	t_getline *line,
-	size_t i,
-	const t_complete_item *item);
 
 /******************************************************************************/
 /* Utilities                                                                  */

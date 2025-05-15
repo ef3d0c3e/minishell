@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handlers.c                                         :+:      :+:    :+:   */
+/*   getc.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,13 +11,20 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
-	getline_setup_handlers(t_getline *line)
+int
+	getline_handlers_getc(t_getline *line)
 {
-	line->getc_fn = getline_handlers_getc;
-	line->overflow_fn = getline_handler_overflow;
-	line->highlighter_fn = NULL;
-	line->comp_provider_fn = NULL;
-	line->boundaries_fn = getline_handler_word_boundaries;
-	line->comp_draw_item_fn = getline_handler_comp_draw_item;
+	char	c;
+	ssize_t	n;
+
+	n = read(line->in_fd, &c, 1);
+	if (n == 1)
+		return ((unsigned char)c);
+	if (n == 0)
+		return (EOF);
+	if (n == 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+		return 0;
+	if (errno == EINTR && g_signal != SIGQUIT)
+		return (-1);
+	return (EOF);
 }

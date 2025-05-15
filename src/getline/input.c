@@ -12,24 +12,6 @@
 #include "ft_printf.h"
 #include <shell/shell.h>
 
-int
-	getline_getc(t_getline *line)
-{
-	char	c;
-	ssize_t	n;
-
-	n = read(line->in_fd, &c, 1);
-	if (n == 1)
-		return ((unsigned char)c);
-	if (n == 0)
-		return (EOF);
-	if (n == 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
-		return 0;
-	if (errno == EINTR && g_signal != SIGQUIT)
-		return (-1);
-	return (EOF);
-}
-
 void
 	getline_recycle_input(t_getline *line, const char *input, size_t len)
 {

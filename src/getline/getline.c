@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 t_getline
