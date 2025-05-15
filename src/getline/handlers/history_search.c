@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handlers.c                                         :+:      :+:    :+:   */
+/*   history_search.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,12 +12,7 @@
 #include <shell/shell.h>
 
 void
-	getline_setup_handlers(t_getline *line)
+	getline_history_scroll(t_getline *line, int offset)
 {
-	line->getc_fn = getline_getc;
-	line->overflow_fn = getline_handler_overflow;
-	line->highlighter_fn = NULL;
-	line->comp_provider_fn = NULL;
-	line->boundaries_fn = getline_handler_word_boundaries;
-	line->comp_draw_item_fn = getline_handler_comp_draw_item;
+	
 }

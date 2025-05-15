@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 t_getline
@@ -25,21 +26,26 @@ t_getline
 	line.display_width = 0;
 	line.display_height = 0;
 	line.sequence_len = 0;
-	line.keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
-			NULL, NULL);
-	line.comp_keybinds = rb_new((int (*)(const void *, const void *))ft_strcmp,
-			NULL, NULL);
+	line.history = getline_history_init(8192);
 	stringbuf_init(&line.input_queue, 24);
 	getline_setup_handlers(&line);
+	line.mode = LINE_INPUT;
+	getline_setup_modes(&line);
+	if (line.modes[line.mode].enable_mode_fn)
+		line.modes[line.mode].enable_mode_fn(&line);
 	return (line);
 }
 
 void
 	getline_cleanup(t_getline *line)
 {
+	size_t	i;
+
 	stringbuf_free(&line->input_queue);
-	rb_free(&line->keybinds);
-	rb_free(&line->comp_keybinds);
+	i = 0;
+	while (i < 2/*LINE_MODE_SIZE*/)
+		rb_free(&line->modes[i++].keybinds);
+	getline_history_free(line);
 }
 
 void
@@ -55,7 +61,6 @@ void
 	while (it.byte_next < line->cursor_index)
 		it_next(&it);
 	getline_recluster(line, &line->input, it);
-	getline_redraw(line, 1);
 }
 
 static char
@@ -92,12 +97,12 @@ char
 			continue ;
 		if (c == '\003' || c == '\004')
 			break ;
-		if (c == '\x0d' && !line->comp_state.shown)
+		if (c == '\x0d' && line->mode == LINE_INPUT)
 			break ;
 		if (getline_handle_key(line, c))
 			continue ;
-		getline_complete_menu_hide(line);
 		getline_input_add(line, c);
+		getline_redraw(line, 1);
 	}
 	ft_dprintf(line->out_fd, "\n\r");
 	getline_raw_mode(line, 0);

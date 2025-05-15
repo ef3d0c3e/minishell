@@ -12,9 +12,11 @@
 #ifndef GETLINE_H
 # define GETLINE_H
 
+#include <sys/types.h>
 # include <util/util.h>
 # include <termios.h>
 # include <sys/ioctl.h>
+# include <getline/modes/modes.h>
 
 typedef struct s_shell		t_shell;
 typedef struct s_getline	t_getline;
@@ -70,21 +72,6 @@ typedef struct s_key_handler
 
 int
 getline_handle_key(t_getline *line, int c);
-/** @brief Moves in input buffer by `offset` */
-void
-getline_move(t_getline *line, int offset);
-/** @brief Moves at absolute byte position */
-void
-getline_move_at(t_getline *line, size_t pos);
-/** @brief Moves in input buffer to the next/prvious word */
-void
-getline_move_word(t_getline *line, int direction);
-/** @brief Deletes characters before or after cursor */
-void
-getline_delete(t_getline *line, int offset);
-/** @brief Deletes next/previous word */
-void
-getline_delete_word(t_getline *line, int direction);
 
 /******************************************************************************/
 /* Unicode grapheme handling                                                  */
@@ -220,83 +207,69 @@ getline_buffer_free(t_buffer *buf);
 void
 getline_buffer_insert(t_getline *line, int c);
 
+/** @brief Scrolls the history */
+void
+getline_history_scroll(t_getline *line, int offset);
+
 /******************************************************************************/
-/* Completion                                                                 */
+/* History                                                                    */
 /******************************************************************************/
 
-/** @brief Default completion item kinds */
-enum e_complete_item_kind
+typedef struct s_history_ent
 {
-	COMPLETE_WORD,
-	COMPLETE_OPTION,
-	COMPLETE_FILE,
-};
+	/** @brief Input */
+	char	*input;
+	/** @brief Set to 1 if this history line has been saved */
+	int		saved;
+}	t_history_ent;
 
-typedef struct s_complete_item
+/** @brief A structure to store command history */
+typedef struct s_history
 {
-	/** @brief Item kind */
-	int		kind;
-	/** @brief Item name */
-	char	*name;
-	/** @brief Item description */
-	char	*desc;
-}	t_complete_item;
+	/** @brief History entries */
+	t_history_ent	*entries;
+	/** @brief Number of history entries, when full, half the entries get
+	 * written */
+	size_t			num_entries;
+	/** @brief Maximum history entries */
+	size_t			max_entries;
+	/** @brief File to store history at, will discord if not possible */
+	char			*histfile;
+}	t_history;
 
-typedef struct s_complete_state
-{
-	/** @brief Whether the completion menu is active */
-	int				shown;
-	/** @brief Selected completion item */
-	int				sel;
-	/** @brief Number of scrolled rows */
-	int				scrolled;
-	/** @brief Saved cursor's x coordinate */
-	int				cur_x;
-	/** @brief Saved cursor's y coordinate */
-	int				cur_y;
-
-	/*-- Draw state --*/
-	/** @brief Menu start row */
-	int				start_row;
-	/** @brief Menu end row */
-	int				end_row;
-	/** @brief Menu column width */
-	int				col_width;
-	char			*saved_lines;
-
-	/*-- Complete state --*/
-	/** @brief Completion items available */
-	t_complete_item	*items;
-	/** @brief Number of completion items */
-	size_t			nitems;
-	/** @brief Start position of the word to replace upon completion */
-	size_t			word_start;
-	/** @brief End position of the word to replace upon completion */
-	size_t			word_end;
-}	t_complete_state;
-
-/** @brief Displays the completion menu */
+/**
+ * @brief Initializes an empty history
+ *
+ * @param max_entries Maximum number of entries the history can hold
+ *
+ * @returns The newly created history
+ */
+t_history
+getline_history_init(size_t max_entries);
+/**
+ * @brief Frees and synchronize the history
+ *
+ * @param line Getline instance
+ */
 void
-getline_complete_menu(t_getline *line);
-/** @brief Hides the completion menu */
+getline_history_free(t_getline *line);
+/**
+ * @brief Sets the history save file for the history structure
+ *
+ * @param line Getline instance
+ * @param histfile History file path
+ * @param source Source lines from history if required
+ */
 void
-getline_complete_menu_hide(t_getline *line);
-
-/** @brief Moves in the completion menu by columns */
+getline_history_set_file(t_getline *line, char *histfile, int source);
+/**
+ * @brief Adds entry to the history
+ *
+ * @param line Getline instance
+ * @param entry Entry to add
+ */
 void
-getline_complete_move(t_getline *l, int offset);
-/** @brief Moves in the completion menu by rows */
-void
-getline_complete_move_row(t_getline *l, int offset);
-/** @brief Moves in the completion menu by pages */
-void
-getline_complete_move_page(t_getline *l, int offset);
-/** @brief Selects the current completion item */
-void
-getline_complete_select(t_getline *l);
-/** @brief Redraws the completion menu */
-void
-getline_complete_redraw(t_getline *line);
+getline_history_add(t_getline *line, char *entry, int saved);
 
 /******************************************************************************/
 /* Rendering                                                                  */
@@ -317,6 +290,11 @@ typedef struct s_drawline
 /** @brief Redraws ui */
 void
 getline_redraw(t_getline *line, int update);
+
+/******************************************************************************/
+/* Line state                                                                 */
+/******************************************************************************/
+
 /** @brief Sets the prompt text */
 void
 getline_set_prompt(t_getline *line, const char *text);
@@ -325,6 +303,22 @@ typedef struct s_getline
 {
 	/** @brief Associated shell session */
 	t_shell				*shell;
+	/** @brief Terminal handling */
+	struct termios		tio;
+
+	/*-- Line mode state handling --*/
+	/** @brief Available line modes */
+	t_line_mode			modes[LINE_MODE_SIZE];
+	/** @brief Current line mode */
+	enum e_line_mode	mode;
+	/** @brief Line mode state */
+	t_linemode_state	state;
+
+	/*-- History --*/
+	/** @brief The line's history */
+	t_history			history;
+	/** @brief Item scroll in the history */
+	int					history_scrolled;
 
 	/*-- Input/Output stack --*/
 	/** @brief Input FD */
@@ -359,24 +353,16 @@ typedef struct s_getline
 	unsigned char		sequence[16];
 	/** @brief Length of `sequence` */
 	size_t				sequence_len;
-	/** @brief List of key bindings */
-	t_rbtree			keybinds;
 	/** @brief Word boundaries function */
 	t_u8_iterator		(*boundaries_fn)(t_getline *line, t_u8_iterator, int);
 
 	/*-- Completion --*/
-	/** @brief State of the completion menu */
-	t_complete_state	comp_state;
-	/** @brief Key binds for completion mode */
-	t_rbtree			comp_keybinds;
 	/** @brief Draws a single completion item */
 	void				(*comp_draw_item_fn)(t_getline *, size_t,
 			const t_complete_item *item);
 	/** @brief Returns a list of completion items */
 	t_complete_item		*(*comp_provider_fn)(t_getline *line);
 
-	/** @brief Terminal handling */
-	struct termios		tio;
 }	t_getline;
 
 t_getline

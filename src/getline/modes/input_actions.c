@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   move.c                                             :+:      :+:    :+:   */
+/*   input_actions.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static void
@@ -60,7 +58,7 @@ static void
 }
 
 void
-	getline_move(t_getline *line, int offset)
+	getline_input_move(t_getline *line, int offset)
 {
 	if (line->input.cp_len)
 		return ;
@@ -74,7 +72,7 @@ void
 }
 
 void
-	getline_move_word(t_getline *line, int direction)
+	getline_input_move_word(t_getline *line, int direction)
 {
 	t_u8_iterator	it;
 	t_u8_iterator	end;
@@ -90,7 +88,7 @@ void
 }
 
 void
-	getline_move_at(t_getline *line, size_t pos)
+	getline_input_move_at(t_getline *line, size_t pos)
 {
 	t_u8_iterator	it;
 

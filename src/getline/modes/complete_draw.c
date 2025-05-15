@@ -45,18 +45,18 @@ void
 	const int		desc_len = string_width(item->desc);
 	int				w;
 
-	if ((size_t)line->comp_state.sel == i)
+	if ((size_t)line->state.comp.sel == i)
 		ft_dprintf(line->out_fd, "\x1b[7m");
 	ft_dprintf(line->out_fd, "\x1b[37m");
-	w = draw_bounded(line, item->name, line->comp_state.col_width - 4, "…");
-	while (desc_len + w++ < line->comp_state.col_width - 4)
+	w = draw_bounded(line, item->name, line->state.comp.col_width - 4, "…");
+	while (desc_len + w++ < line->state.comp.col_width - 4)
 		ft_dprintf(line->out_fd, " ");
 	if (item->desc)
 	{
 		ft_dprintf(line->out_fd, "\x1b[33m");
 		ft_dprintf(line->out_fd, "(");
 		w += 3;
-		draw_bounded(line, item->desc, line->comp_state.col_width - w, "…");
+		draw_bounded(line, item->desc, line->state.comp.col_width - w, "…");
 		ft_dprintf(line->out_fd, ")");
 	}
 	ft_dprintf(line->out_fd, "\x1b[m");
@@ -69,59 +69,59 @@ static size_t
 	int		ncols;
 	int		y;
 
-	rows = (line->comp_state.end_row - line->comp_state.start_row);
+	rows = (line->state.comp.end_row - line->state.comp.start_row);
 	if (rows < 0)
 		rows *= -1;
-	ncols = line->display_width / line->comp_state.col_width;
+	ncols = line->display_width / line->state.comp.col_width;
 	if (!ncols)
 		ncols = 1;
-	y = line->comp_state.sel / ncols;
-	if (y - line->comp_state.scrolled < 0)
-		line->comp_state.scrolled = y;
-	else if (y - line->comp_state.scrolled >= rows)
-		line->comp_state.scrolled = y - rows + 1;
-	return (line->comp_state.scrolled * (ncols));
+	y = line->state.comp.sel / ncols;
+	if (y - line->state.comp.scrolled < 0)
+		line->state.comp.scrolled = y;
+	else if (y - line->state.comp.scrolled >= rows)
+		line->state.comp.scrolled = y - rows + 1;
+	return (line->state.comp.scrolled * (ncols));
 }
 
 void
-	getline_complete_redraw(t_getline *line)
+	getline_complete_draw(t_getline *line, int update)
 {
 	size_t					i;
 	int						x;
 	int						y;
 	const t_complete_item	*item;
 
-	if (line->comp_state.col_width < 5)
+	if (line->state.comp.col_width < 5 || !line->state.comp.nitems)
 		return ;
-	if (line->comp_state.sel < 0)
+	if (line->state.comp.sel < 0)
 	{
-		line->comp_state.sel %= line->comp_state.nitems;
-		line->comp_state.sel *= -1;
+		line->state.comp.sel %= line->state.comp.nitems;
+		line->state.comp.sel *= -1;
 	}
-	else if ((size_t)line->comp_state.sel > line->comp_state.nitems)
-		line->comp_state.sel %= line->comp_state.nitems;
+	else if ((size_t)line->state.comp.sel > line->state.comp.nitems)
+		line->state.comp.sel %= line->state.comp.nitems;
 	i = update_scroll(line);
 	x = 1;
 	y = 0;
-	getline_cursor_set(line, 1, line->comp_state.start_row);
-	while (i < line->comp_state.nitems)
+	getline_cursor_set(line, 1, line->state.comp.start_row);
+	while (i < line->state.comp.nitems)
 	{
-		item = &line->comp_state.items[i];
+		item = &line->state.comp.items[i];
 		line->comp_draw_item_fn(line, i, item);
-		if (x + line->comp_state.col_width >= line->display_width)
+		if (x + line->state.comp.col_width >= line->display_width)
 		{
 			x = 1;
 			++y;
 			ft_dprintf(line->out_fd, "\n\r")	;
-			if (y + line->comp_state.start_row > line->comp_state.end_row)
+			if (y + line->state.comp.start_row > line->state.comp.end_row)
 				break ;
 		}
 		else
 		{
-			x += line->comp_state.col_width;
+			x += line->state.comp.col_width;
 			ft_dprintf(line->out_fd, " ");
 		}
 		++i;
 	}
-	getline_cursor_set(line, line->comp_state.cur_x, line->comp_state.cur_y);
+	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
 }

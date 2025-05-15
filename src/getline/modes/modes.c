@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handlers.c                                         :+:      :+:    :+:   */
+/*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,12 +12,20 @@
 #include <shell/shell.h>
 
 void
-	getline_setup_handlers(t_getline *line)
+	getline_setup_modes(t_getline *line)
 {
-	line->getc_fn = getline_getc;
-	line->overflow_fn = getline_handler_overflow;
-	line->highlighter_fn = NULL;
-	line->comp_provider_fn = NULL;
-	line->boundaries_fn = getline_handler_word_boundaries;
-	line->comp_draw_item_fn = getline_handler_comp_draw_item;
+	getline_setup_input_mode(&line->modes[LINE_INPUT]);
+	getline_setup_complete_mode(&line->modes[LINE_TAB]);
+}
+
+void
+	getline_change_mode(t_getline *line, int mode)
+{
+	if ((int)line->mode == mode)
+		return ;
+	if (line->modes[line->mode].disable_mode_fn)
+		line->modes[line->mode].disable_mode_fn(line);
+	line->mode = mode;
+	if (line->modes[line->mode].enable_mode_fn)
+		line->modes[line->mode].enable_mode_fn(line);
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handlers.c                                         :+:      :+:    :+:   */
+/*   complete_items.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,12 +12,30 @@
 #include <shell/shell.h>
 
 void
-	getline_setup_handlers(t_getline *line)
+	getline_complete_free_items(t_getline *line)
 {
-	line->getc_fn = getline_getc;
-	line->overflow_fn = getline_handler_overflow;
-	line->highlighter_fn = NULL;
-	line->comp_provider_fn = NULL;
-	line->boundaries_fn = getline_handler_word_boundaries;
-	line->comp_draw_item_fn = getline_handler_comp_draw_item;
+	size_t	i;
+
+	i = 0;
+	while (line->state.comp.items && line->state.comp.items[i].name)
+	{
+		free(line->state.comp.items[i].name);
+		free(line->state.comp.items[i].desc);
+		++i;
+	}
+	free(line->state.comp.items);
+	line->state.comp.items = NULL;
+	line->state.comp.nitems = 0;
+}
+
+void
+	getline_complete_populate_items(t_getline *line)
+{
+	if (!line->comp_provider_fn)
+		return ;
+	getline_complete_free_items(line);
+	line->state.comp.items = line->comp_provider_fn(line);
+	line->state.comp.nitems = 0;
+	while (line->state.comp.items[line->state.comp.nitems].name)
+		++line->state.comp.nitems;
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   delete.c                                           :+:      :+:    :+:   */
+/*   input_delete.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 static void
@@ -59,7 +58,7 @@ static void
 }
 
 void
-	getline_delete(t_getline *line, int offset)
+	getline_input_delete(t_getline *line, int offset)
 {
 	if (offset < 0)
 		getline_delete_left(line, -offset);
@@ -70,7 +69,7 @@ void
 }
 
 void
-	getline_delete_word(t_getline *line, int direction)
+	getline_input_delete_word(t_getline *line, int direction)
 {
 	t_u8_iterator	lo;
 	t_u8_iterator	hi;

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "getline/getline.h"
+#include "getline/modes/modes.h"
 #include "util/util.h"
 #include <shell/shell.h>
 
@@ -19,17 +20,12 @@ static int
 {	
 	const t_key_handler *bind;
 
-	if (line->comp_state.shown)
+	bind = rb_find(&line->modes[line->mode].keybinds, line->sequence);
+	if (!bind && line->mode != LINE_INPUT)
 	{
-		bind = rb_find(&line->comp_keybinds, line->sequence);
-		if (!bind)
-		{
-			getline_complete_menu_hide(line);
-			bind = rb_find(&line->keybinds, line->sequence);
-		}
+		getline_change_mode(line, LINE_INPUT);
+		return exec_bind(line);
 	}
-	else
-		bind = rb_find(&line->keybinds, line->sequence);
 	if (!bind)
 		return (0);
 	if (bind->sig == SIG_NONE)
