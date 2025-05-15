@@ -39,6 +39,7 @@ void
 	getline_buffer_free(&line->state.hist.saved_input);
 	line->cursor_index = line->input.buffer.len;
 	line->scrolled = 0;
+	getline_buffer_recluster(line, &line->input);
 }
 
 static t_key_handler

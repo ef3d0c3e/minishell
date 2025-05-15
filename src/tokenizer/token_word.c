@@ -9,14 +9,12 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include "util/util.h"
+#include <tokenizer/tokenizer.h>
 
 int
 	token_word(t_token_list *list, t_u8_iterator *it)
 {
 	t_string_buffer	buf;
-	int				escaped;
 
 	while (it->codepoint.len == 1 && it->codepoint.str[0] == '\\')
 	{
@@ -33,7 +31,7 @@ int
 	if ((!list->size || list->tokens[list->size - 1].type != TOK_WORD)
 		&& it->codepoint.len)
 	{
-		stringbuf_init(&buf, 8);
+		stringbuf_init(&buf, 24);
 		stringbuf_append(&buf, it->codepoint);
 		token_list_push(list, TOK_WORD,
 			it->byte_pos, it->byte_pos + it->codepoint.len)->word = buf;

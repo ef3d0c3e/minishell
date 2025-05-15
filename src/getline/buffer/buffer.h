@@ -150,6 +150,9 @@ getline_buffer_free(t_buffer *buf);
  * (meant for preview) */
 void
 getline_buffer_set_content(t_buffer *buf, const char *str);
+/** @brief Reclusters the entire buffer (expensive) */
+void
+getline_buffer_recluster(t_getline *line, t_buffer *buf);
 /** @brief Inserts byte `c` into the line buffer */
 void
 getline_buffer_insert(t_getline *line, int c);

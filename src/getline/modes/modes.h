@@ -12,8 +12,8 @@
 #ifndef MODES_H
 # define MODES_H
 
-# include <getline/buffer.h>
 # include <util/util.h>
+# include <getline/buffer/buffer.h>
 
 typedef struct s_getline	t_getline;
 

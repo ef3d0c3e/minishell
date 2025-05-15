@@ -12,12 +12,13 @@
 #ifndef GETLINE_H
 # define GETLINE_H
 
-#include <sys/types.h>
+# include <getline/modes/modes.h>
+# include <getline/handlers/handlers.h>
+
+# include <sys/types.h>
 # include <util/util.h>
 # include <termios.h>
 # include <sys/ioctl.h>
-# include <getline/modes/modes.h>
-# include <getline/handlers/handlers.h>
 
 typedef struct s_shell		t_shell;
 typedef struct s_getline	t_getline;

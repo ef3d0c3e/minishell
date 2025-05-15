@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 /** @brief Calls key handler function */
@@ -67,7 +68,8 @@ int
 	const void	*bind;
 	size_t		expect;
 
-	if ((c < 0 || (c >= 32 && c != 127)) && !line->sequence_len)
+	if ((c < 0 || (c >= 32 && c != 127)) && !line->sequence_len 
+		&& line->mode == LINE_INPUT)
 		return (0);
 	line->sequence[line->sequence_len++] = c;
 	line->sequence[line->sequence_len] = 0;
@@ -84,6 +86,8 @@ int
 			else
 			ft_dprintf(2, "%x ", (int)line->sequence[i]);
 		}
+		line->sequence_len = 0;
+		return (0);
 	}
 	line->sequence_len = 0;
 	return (1);
