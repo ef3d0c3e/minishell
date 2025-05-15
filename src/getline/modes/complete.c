@@ -31,16 +31,15 @@ void
 		ft_dprintf(line->out_fd, "\x1b[%dS", 10);
 	}
 	line->state.comp.mini_mode = 1;
-	line->state.comp.sel = 0;
+	line->state.comp.sel = -1;
 	line->state.comp.start_row = line->state.comp.cur_y + 1;
-	line->state.comp.end_row = line->display_height - 2;
+	line->state.comp.end_row = line->display_height - 1;
 	line->state.comp.col_width = line->display_width / 60;
 	if (!line->state.comp.col_width)
 		line->state.comp.col_width = line->display_width;
 	else
 		line->state.comp.col_width = line->display_width
 			/ line->state.comp.col_width;
-	line->state.comp.sel = 0;
 	line->state.comp.scrolled = 0;
 	getline_redraw(line, 1);
 }

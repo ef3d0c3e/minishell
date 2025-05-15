@@ -31,6 +31,8 @@ enum e_input_action
 	ACT_CANCEL,
 	/** @brief Action triggered by `^D` (only if line is empty) */
 	ACT_QUIT,
+	/** @brief Action to clear the screen, triggered by `^L` */
+	ACT_CLEAR_SCREEN,
 };
 
 /** @brief Draws the input mode */

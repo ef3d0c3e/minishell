@@ -24,6 +24,7 @@ static t_key_handler
 		{"\x0d", (void *)getline_input_action, SIG_I, { .i0 = ACT_ENTER }},
 		{"\x03", (void *)getline_input_action, SIG_I, { .i0 = ACT_CANCEL }},
 		{"\x04", (void *)getline_input_action, SIG_I, { .i0 = ACT_QUIT }},
+		{"\x0c", (void *)getline_input_action, SIG_I, { .i0 = ACT_CLEAR_SCREEN }},
 
 		{"\x1b[C", (void *)getline_input_move, SIG_I, { .i0 = +1 }},
 		{"\x06", (void *)getline_input_move, SIG_I, { .i0 = +1 }},

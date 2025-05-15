@@ -70,10 +70,7 @@ static size_t
 	int		y;
 
 	if (line->state.comp.sel < 0)
-	{
-		line->state.comp.sel %= line->state.comp.nitems;
-		line->state.comp.sel *= -1;
-	}
+		return (0);
 	else if ((size_t)line->state.comp.sel > line->state.comp.nitems)
 		line->state.comp.sel %= line->state.comp.nitems;
 	rows = (line->state.comp.end_row - line->state.comp.start_row);
@@ -102,7 +99,16 @@ static void
 	nrows = line->state.comp.nitems / ncols;
 	if (line->state.comp.nitems % ncols)
 		++nrows;
-	ft_dprintf(line->out_fd, "\n\r\033[46m%d/%d (rows %d to %d of %d)\x1b[m",
+	if (line->state.comp.sel == -1)
+	{
+		ft_dprintf(line->out_fd, "\n\r\x1b[46mrows %d to %d of %d\x1b[m",
+			line->state.comp.scrolled + 1,
+			line->state.comp.scrolled + (line->state.comp.end_row
+			- line->state.comp.start_row) + 1,
+			nrows);
+		return ;
+	}
+	ft_dprintf(line->out_fd, "\n\r\x1b[46m%d/%d (rows %d to %d of %d)\x1b[m",
 			line->state.comp.sel + 1,
 			line->state.comp.nitems,
 			line->state.comp.scrolled + 1,

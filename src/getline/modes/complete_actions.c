@@ -20,9 +20,7 @@ void
 		line->state.comp.mini_mode = 0;
 		line->state.comp.cur_y = 1;
 		line->state.comp.start_row = 2;
-		++line->state.comp.end_row;
 		ft_dprintf(line->out_fd, "\x1b[2J");
-		return ;
 	}
 	line->state.comp.sel += offset;
 	if (line->state.comp.nitems)
