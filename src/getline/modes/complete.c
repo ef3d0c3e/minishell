@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 void
@@ -24,12 +25,15 @@ void
 		getline_change_mode(line, LINE_INPUT);
 		return ;
 	}
-	//ft_dprintf(line->out_fd, "\x1b[2S", line->state.comp.cur_y - 1);
-	//ft_dprintf(line->out_fd, "\x1b[2J");
+	if (line->display_height - line->state.comp.cur_y < 10)
+	{
+		line->state.comp.cur_y -= 10;
+		ft_dprintf(line->out_fd, "\x1b[%dS", 10);
+	}
+	line->state.comp.mini_mode = 1;
 	line->state.comp.sel = 0;
-	line->state.comp.cur_y = 1;
 	line->state.comp.start_row = line->state.comp.cur_y + 1;
-	line->state.comp.end_row = line->display_height - 1;
+	line->state.comp.end_row = line->display_height - 2;
 	line->state.comp.col_width = line->display_width / 60;
 	if (!line->state.comp.col_width)
 		line->state.comp.col_width = line->display_width;
@@ -45,10 +49,7 @@ void
 	getline_complete_disable(t_getline *line)
 {
 	getline_complete_free_items(line);
-	getline_cursor_set(line, 1,
-			line->state.comp.cur_x);
-	//ft_dprintf(line->out_fd, "\x1b[%d;%dH", line->state.comp.cur_y,
-			//line->state.comp.cur_x);
+	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
 	ft_dprintf(line->out_fd, "\x1b[0J");
 }
 

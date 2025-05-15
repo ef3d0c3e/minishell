@@ -88,6 +88,9 @@ typedef struct s_complete_state
 	int				cur_x;
 	/** @brief Saved cursor's y coordinate */
 	int				cur_y;
+	/** @brief Mini completion window, press tab another time to pass to full
+	 * completion */
+	int				mini_mode;
 
 	/*-- Draw state --*/
 	/** @brief Menu start row */

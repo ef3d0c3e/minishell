@@ -99,14 +99,18 @@ char
 	getline_redraw(line, 1);
 	while (1)
 	{
-		if (line->mode == LINE_INPUT && line->state.action != ACT_NONE
-			&& getline_process_action(line))
+		if (line->mode == LINE_INPUT && getline_process_action(line))
 			break ;
 		c = getline_read_char(line);
 		if (c == -1)
 			continue ;
 		if (getline_handle_key(line, c))
 			continue ;
+		if (line->mode != LINE_INPUT)
+		{
+			getline_change_mode(line, LINE_INPUT);
+			continue ;
+		}
 		getline_input_add(line, c);
 		getline_redraw(line, 1);
 	}

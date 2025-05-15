@@ -63,12 +63,19 @@ void
 }
 
 static size_t
-	update_scroll(t_getline *line)
+	update_scroll_sel(t_getline *line)
 {
 	int		rows;
 	int		ncols;
 	int		y;
 
+	if (line->state.comp.sel < 0)
+	{
+		line->state.comp.sel %= line->state.comp.nitems;
+		line->state.comp.sel *= -1;
+	}
+	else if ((size_t)line->state.comp.sel > line->state.comp.nitems)
+		line->state.comp.sel %= line->state.comp.nitems;
 	rows = (line->state.comp.end_row - line->state.comp.start_row);
 	if (rows < 0)
 		rows *= -1;
@@ -78,9 +85,30 @@ static size_t
 	y = line->state.comp.sel / ncols;
 	if (y - line->state.comp.scrolled < 0)
 		line->state.comp.scrolled = y;
-	else if (y - line->state.comp.scrolled >= rows)
-		line->state.comp.scrolled = y - rows + 1;
+	else if (y - line->state.comp.scrolled > rows)
+		line->state.comp.scrolled = y - rows;
 	return (line->state.comp.scrolled * (ncols));
+}
+
+static void
+	getline_complete_row_indicator(t_getline *line)
+{
+	int	ncols;
+	int	nrows;
+	
+	ncols = line->display_width / line->state.comp.col_width;
+	if (!ncols)
+		ncols = 0;
+	nrows = line->state.comp.nitems / ncols;
+	if (line->state.comp.nitems % ncols)
+		++nrows;
+	ft_dprintf(line->out_fd, "\n\r\033[46m%d/%d (rows %d to %d of %d)\x1b[m",
+			line->state.comp.sel + 1,
+			line->state.comp.nitems,
+			line->state.comp.scrolled + 1,
+			line->state.comp.scrolled + (line->state.comp.end_row
+			- line->state.comp.start_row) + 1,
+			nrows);
 }
 
 void
@@ -91,16 +119,9 @@ void
 	int						y;
 	const t_complete_item	*item;
 
-	if (line->state.comp.col_width < 5 || !line->state.comp.nitems)
+	if (line->state.comp.col_width < 5)
 		return ;
-	if (line->state.comp.sel < 0)
-	{
-		line->state.comp.sel %= line->state.comp.nitems;
-		line->state.comp.sel *= -1;
-	}
-	else if ((size_t)line->state.comp.sel > line->state.comp.nitems)
-		line->state.comp.sel %= line->state.comp.nitems;
-	i = update_scroll(line);
+	i = update_scroll_sel(line);
 	x = 1;
 	y = 0;
 	getline_cursor_set(line, 1, line->state.comp.start_row);
@@ -111,10 +132,9 @@ void
 		if (x + line->state.comp.col_width >= line->display_width)
 		{
 			x = 1;
-			++y;
-			ft_dprintf(line->out_fd, "\n\r")	;
-			if (y + line->state.comp.start_row > line->state.comp.end_row)
+			if (++y + line->state.comp.start_row > line->state.comp.end_row)
 				break ;
+			ft_dprintf(line->out_fd, "\n\r");
 		}
 		else
 		{
@@ -123,6 +143,8 @@ void
 		}
 		++i;
 	}
+	ft_dprintf(line->out_fd, "\x1b[0J");
+	getline_complete_row_indicator(line);
 	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
 	getline_input_draw(line, 0);
 }

@@ -9,45 +9,55 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
 #include <shell/shell.h>
 
 void
-	getline_complete_move(t_getline *l, int offset)
+	getline_complete_move(t_getline *line, int offset)
 {
-	l->state.comp.sel += offset;
-	if (l->state.comp.nitems)
+	if (line->state.comp.mini_mode)
 	{
-		if (l->state.comp.sel < 0)
-			l->state.comp.sel = l->state.comp.nitems - 1;
-		else if ((size_t)l->state.comp.sel >= l->state.comp.nitems)
-			l->state.comp.sel = 0;
+		line->state.comp.mini_mode = 0;
+		line->state.comp.cur_y = 1;
+		line->state.comp.start_row = 2;
+		++line->state.comp.end_row;
+		ft_dprintf(line->out_fd, "\x1b[2J");
+		return ;
+	}
+	line->state.comp.sel += offset;
+	if (line->state.comp.nitems)
+	{
+		if (line->state.comp.sel < 0)
+			line->state.comp.sel = line->state.comp.nitems - 1;
+		else if ((size_t)line->state.comp.sel >= line->state.comp.nitems)
+			line->state.comp.sel = 0;
 	}
 }
 
 void
-	getline_complete_move_row(t_getline *l, int offset)
+	getline_complete_move_row(t_getline *line, int offset)
 {
-	const int	ncols = l->display_width / l->state.comp.col_width;
+	const int	ncols = line->display_width / line->state.comp.col_width;
 
 	if (ncols)
-		getline_complete_move(l, -ncols * offset);
+		getline_complete_move(line, -ncols * offset);
 	else
-		getline_complete_move(l, -offset);
+		getline_complete_move(line, -offset);
 }
 
 void
-	getline_complete_move_page(t_getline *l, int offset)
+	getline_complete_move_page(t_getline *line, int offset)
 {
-	const int	ncols = l->display_width / l->state.comp.col_width;
+	const int	ncols = line->display_width / line->state.comp.col_width;
 	int			nrows;
 
-	nrows = l->state.comp.end_row - l->state.comp.start_row;
+	nrows = line->state.comp.end_row - line->state.comp.start_row;
 	if (nrows < 0)
 		nrows *= -1;
 	if (ncols)
-		getline_complete_move(l, -nrows * ncols * offset);
+		getline_complete_move(line, -nrows * ncols * offset);
 	else
-		getline_complete_move(l, -nrows * offset);
+		getline_complete_move(line, -nrows * offset);
 }
 
 void

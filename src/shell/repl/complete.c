@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 static int
@@ -66,7 +65,10 @@ static char
 		++i;
 	}
 	if (i >= list.size || !token_isword(list.tokens[i].type))
+	{
+		token_list_free(&list);
 		return (NULL);
+	}
 	stringbuf_init(&buf, 24);
 	token_wordcontent(&buf, &list.tokens[i]);
 	token_list_free(&list);
