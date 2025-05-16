@@ -26,8 +26,8 @@ t_u8_iterator
 t_string
 	it_next(t_u8_iterator *it)
 {
-		if (it->codepoint.len)
-			++it->cp_pos;
+	if (it->codepoint.len)
+		++it->cp_pos;
 	if (it->byte_next >= it->str.len)
 	{
 		it->byte_pos = it->byte_next;
@@ -37,10 +37,17 @@ t_string
 	}
 	it->byte_pos = it->byte_next;
 	it->codepoint.str = it->str.str + it->byte_pos;
-	it->codepoint.len = u8_length(it->codepoint.str[0]);
+	it->codepoint.len = min_sz(u8_length(it->codepoint.str[0]),
+			it->str.len - it->byte_pos);
 	if (it->codepoint.len == 0)
 		return ((t_string){.str = NULL, .len = 0});
 	it->byte_next += it->codepoint.len;
+	if (u8_to_cp(it->codepoint) == 0xFFFD)
+	{
+		it->byte_pos = it->byte_next;
+		it->codepoint.str = NULL;
+		it->codepoint.len = 0;
+	}
 	return (it->codepoint);
 }
 
@@ -73,6 +80,12 @@ t_string
 	it->codepoint.str = it->str.str + pos;
 	it->codepoint.len = len;
 	it->cp_pos--;
+	if (u8_to_cp(it->codepoint) == 0xFFFD)
+	{
+		it->byte_pos = it->byte_next;
+		it->codepoint.str = NULL;
+		it->codepoint.len = 0;
+	}
 	return (it->codepoint);
 }
 

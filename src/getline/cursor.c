@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "getline/getline.h"
 #include <shell/shell.h>
 
 /** @brief Reads exactly one byte on `fd` */
