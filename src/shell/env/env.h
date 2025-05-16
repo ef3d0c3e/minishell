@@ -239,6 +239,18 @@ get_variable(t_shell *shell, const char *name, t_shell_var *var);
  */
 int
 unset_variable(t_shell *shell, const char *name);
+/**
+ * @brief Sets the value of an environment variable
+ *
+ * If the variable did not exist prior to this function, then it will be set
+ * to no export by default
+ *
+ * @param shell The shell session
+ * @param name The variable's name
+ * @param value The variable's value
+ */
+void
+set_env_variable(t_shell *shell, const char *name, char *value);
 
 /******************************************************************************/
 /* Prefix assignment handling                                                 */
