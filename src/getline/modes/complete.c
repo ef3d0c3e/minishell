@@ -41,6 +41,10 @@ void
 		line->state.comp.col_width = line->display_width
 			/ line->state.comp.col_width;
 	line->state.comp.scrolled = 0;
+	line->state.comp.saved_input = line->input;
+	line->state.comp.saved_pos = line->cursor_index;
+	line->state.comp.saved_scroll = line->scrolled;
+	line->input = getline_buffer_new();
 	getline_redraw(line, 1);
 }
 
@@ -50,6 +54,8 @@ void
 	getline_complete_free_items(line);
 	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
 	ft_dprintf(line->out_fd, "\x1b[0J");
+	line->cursor_index = line->state.comp.word_end;
+	line->scrolled = 0;
 }
 
 static t_key_handler
@@ -68,6 +74,7 @@ static t_key_handler
 		{"\x1b[B", (void *)getline_complete_move_row, SIG_I, { .i0 = -1 }},
 		{"\x10", (void *)getline_complete_move_row, SIG_I, { .i0 = -1 }},
 		{"\x1b[6~", (void *)getline_complete_move_page, SIG_I, { .i0 = -1 }},
+
 		{"\xd", (void *)getline_complete_select, SIG_NONE, { 0 }},
 		{NULL, NULL, 0, {0}}
 	};

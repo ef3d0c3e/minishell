@@ -29,7 +29,7 @@ typedef struct s_path_tr
  * @brief Completion provider for the getline prompt
  */
 t_complete_item
-*repl_completer(t_getline *line);
+*repl_completer(t_getline *line, size_t *word_start, size_t *word_end);
 /**
  * @brief Highlighter for the getline prompt
  */

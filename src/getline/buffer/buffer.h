@@ -140,6 +140,11 @@ typedef struct s_buffer
 t_buffer
 getline_buffer_new(void);
 /**
+ * @brief Creates a buffer from another buffer
+ */
+t_buffer
+getline_buffer_clone(const t_buffer *orig);
+/**
  * @brief Frees a buffer
  *
  * @param buf Buffer to free
@@ -156,5 +161,23 @@ getline_buffer_recluster(t_getline *line, t_buffer *buf);
 /** @brief Inserts byte `c` into the line buffer */
 void
 getline_buffer_insert(t_getline *line, int c);
+/**
+ * @brief Replaces byte range in buffer with content
+ *
+ * This function will dellete highlight and clustering data for the buffer.
+ * Clustering data will be repopulated using `wcwidth`, so it will require
+ * further reclustering before editing the buffer.
+ *
+ * @param buf Buffer to replace into
+ * @param start Start byte pos
+ * @param end End byte pos
+ * @param content Content to replace [start..end) with
+ */
+void
+getline_buffer_replace(
+	t_buffer *buf,
+	size_t start,
+	size_t end,
+	const char *content);
 
 #endif // BUFFER_H

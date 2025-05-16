@@ -112,6 +112,16 @@ typedef struct s_complete_state
 	size_t			word_start;
 	/** @brief End position of the word to replace upon completion */
 	size_t			word_end;
+	
+	/** @brief Buffer where completion will happen */
+	t_buffer		complete_buffer;
+
+	/** @brief Saved input buffer */
+	t_buffer		saved_input;
+	/** @brief Saved cursor pos */
+	size_t			saved_pos;
+	/** @brief Saved line scroll */
+	int				saved_scroll;
 }	t_complete_state;
 
 /** @brief Populates the list of completion items */

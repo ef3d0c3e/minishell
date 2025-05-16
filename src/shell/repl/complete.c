@@ -49,7 +49,7 @@ static void
 }
 
 static char
-	*get_filter(t_getline *line)
+	*get_filter(t_getline *line, size_t *word_start, size_t *word_end)
 {
 	t_token_list	list;
 	size_t			i;
@@ -71,6 +71,9 @@ static char
 	}
 	stringbuf_init(&buf, 24);
 	token_wordcontent(&buf, &list.tokens[i]);
+	// TODO: Group tokens together...
+	*word_start = list.tokens[i].start;
+	*word_end = list.tokens[i].end;
 	token_list_free(&list);
 	if (!buf.len)
 	{
@@ -81,11 +84,13 @@ static char
 }
 
 t_complete_item
-	*repl_completer(t_getline *line)
+	*repl_completer(t_getline *line, size_t *word_start, size_t *word_end)
 {
 	t_path_tr	tr;
 
-	tr.filter = get_filter(line);
+	*word_start = 0;
+	*word_end = line->cursor_index;
+	tr.filter = get_filter(line, word_start, word_end);
 	tr.index = 0;
 	tr.items = xmalloc(sizeof(t_complete_item)
 			* (line->shell->path_cache.size + 2));

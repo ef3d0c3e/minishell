@@ -29,6 +29,23 @@ t_buffer
 	};
 }
 
+t_buffer
+	getline_buffer_clone(const t_buffer *orig)
+{
+	t_buffer	buf;
+
+	buf = *orig;
+	buf.buffer = stringbuf_from_range(orig->buffer.str,
+		orig->buffer.str + orig->buffer.len);
+	buf.s_attrs.data = xmalloc(sizeof(t_buffer_attr) * buf.s_attrs.capacity);
+	ft_memcpy(buf.s_attrs.data, orig->s_attrs.data,
+			sizeof(t_buffer_attr) * buf.s_attrs.size);
+	buf.s_clusters.data = xmalloc(sizeof(t_cluster) * buf.s_clusters.capacity);
+	ft_memcpy(buf.s_clusters.data, orig->s_clusters.data,
+			sizeof(t_cluster) * buf.s_clusters.size);
+	return (buf);
+}
+
 void
 	getline_buffer_free(t_buffer *buf)
 {
@@ -36,56 +53,4 @@ void
 	free(buf->s_attrs.data);
 	free(buf->s_clusters.data);
 	*buf = getline_buffer_new();
-}
-
-/** @brief Replaces invalid codepoint with 0xFFFD, this still allow unmapped
- * codepoints, but prevents unicode of malformed length */
-static void
-	check_utf8(t_getline *line, size_t start, size_t end)
-{
-	const size_t	len = u8_length(line->input.buffer.str[start]);
-
-	if (end - start == len)
-		return ;
-	stringbuf_replace(&line->input.buffer, start, end, "\uFFFD");
-}
-
-void
-	getline_buffer_set_content(t_buffer *buf, const char *str)
-{
-	t_u8_iterator	it;
-
-	getline_buffer_free(buf);
-	it = it_new((t_string){str, ft_strlen(str)});
-	it_next(&it);
-	while (it.codepoint.len)
-	{
-		getline_insert_cluster(buf, it.cp_pos, (t_cluster){
-			.size = it.codepoint.len,
-			.width = codepoint_width(u8_to_cp(it.codepoint))
-		});
-		it_next(&it);
-	}
-	buf->buffer = stringbuf_from(str);
-}
-
-void
-	getline_buffer_insert(t_getline *line, int c)
-{
-	char	buf[2];
-
-	buf[0] = c;
-	buf[1] = 0;
-
-	if (!line->input.cp_len)
-	{
-		if (line->input.cp_pos != SIZE_MAX)
-			check_utf8(line, line->input.cp_pos, line->cursor_index);
-		line->input.cp_pos = line->cursor_index;
-		line->input.cp_len = u8_length(c);
-	}
-	stringbuf_replace(&line->input.buffer, line->cursor_index,
-			line->cursor_index, buf);
-	line->cursor_index += 1;
-	--line->input.cp_len;
 }

@@ -34,7 +34,9 @@ void
 	if (!line->comp_provider_fn)
 		return ;
 	getline_complete_free_items(line);
-	line->state.comp.items = line->comp_provider_fn(line);
+	line->state.comp.items = line->comp_provider_fn(line,
+			&line->state.comp.word_start,
+			&line->state.comp.word_end);
 	line->state.comp.nitems = 0;
 	while (line->state.comp.items[line->state.comp.nitems].name)
 		++line->state.comp.nitems;

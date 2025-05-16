@@ -40,7 +40,9 @@ typedef void					(*t_comp_draw_item_fn)(
 	const t_complete_item *item);
 /** @brief Function to provide completion items */
 typedef t_complete_item			*(*t_comp_provider_fn)(
-	t_getline *line);
+	t_getline *line,
+	size_t *word_start,
+	size_t *word_end);
 
 /******************************************************************************/
 /* Default handlers                                                           */
