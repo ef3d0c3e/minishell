@@ -101,7 +101,6 @@ typedef struct s_complete_state
 	int				end_row;
 	/** @brief Menu column width */
 	int				col_width;
-	char			*saved_lines;
 
 	/*-- Complete state --*/
 	/** @brief Completion items available */
@@ -112,6 +111,8 @@ typedef struct s_complete_state
 	size_t			word_start;
 	/** @brief End position of the word to replace upon completion */
 	size_t			word_end;
+	/** @brief Whether to accept completion or restore saved input */
+	int				accept;
 	
 	/** @brief Buffer where completion will happen */
 	t_buffer		complete_buffer;

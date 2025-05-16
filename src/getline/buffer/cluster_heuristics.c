@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "ft_printf.h"
 #include "getline/getline.h"
+#include "term/geometry.h"
 #include <shell/shell.h>
 
 /** @brief Checks if codepoint `cp` is a fuser according to UAX-29 */
@@ -110,5 +111,5 @@ void
 	}
 	else
 		buf->s_clusters.data[it.cp_pos].width
-			= getline_text_width(line, it.codepoint.str, it.codepoint.len);
+			= codepoint_width(u8_to_cp(it.codepoint));
 }

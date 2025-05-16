@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "getline/buffer/buffer.h"
-#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 static void
@@ -19,8 +16,8 @@ static void
 {
 	const t_complete_item	*item = &line->state.comp.items
 		[line->state.comp.sel];
-	//ft_dprintf(2, "start=%zu, end=%zu\n\r", line->state.comp.word_start, line->state.comp.word_end);
-	getline_buffer_replace(&line->input, line->state.comp.word_start, line->state.comp.word_end, item->name);
+	getline_buffer_replace(&line->input, line->state.comp.word_start,
+			line->state.comp.word_end, item->name);
 	line->state.comp.word_end = line->state.comp.word_start + ft_strlen(item->name);
 }
 
@@ -74,7 +71,7 @@ void
 void
 	getline_complete_select(t_getline *line)
 {
-	// TODO
+	line->state.comp.accept = 1;
 	getline_buffer_recluster(line, &line->input);
 	getline_change_mode(line, LINE_INPUT);
 }

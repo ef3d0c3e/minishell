@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
 
 void
@@ -19,6 +18,7 @@ void
 			&line->state.comp.cur_y);
 	line->state.comp.items = NULL;
 	line->state.comp.nitems = 0;
+	line->state.comp.accept = -1;
 	getline_complete_populate_items(line);
 	if (!line->state.comp.nitems)
 	{
@@ -44,7 +44,8 @@ void
 	line->state.comp.saved_input = line->input;
 	line->state.comp.saved_pos = line->cursor_index;
 	line->state.comp.saved_scroll = line->scrolled;
-	line->input = getline_buffer_new();
+	line->input = getline_buffer_clone(&line->state.comp.saved_input);
+	line->state.comp.accept = 0;
 	getline_redraw(line, 1);
 }
 
@@ -52,10 +53,21 @@ void
 	getline_complete_disable(t_getline *line)
 {
 	getline_complete_free_items(line);
+	if (line->state.comp.accept == 0)
+	{
+		getline_buffer_free(&line->input);
+		line->input = line->state.comp.saved_input;
+		line->cursor_index = line->state.comp.saved_pos;
+		line->scrolled = line->state.comp.saved_scroll;
+	}
+	else if (line->state.comp.accept == 1)
+	{
+		getline_buffer_free(&line->state.comp.saved_input);
+		line->cursor_index = line->state.comp.word_end;
+		line->scrolled = 0;
+	}
 	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
 	ft_dprintf(line->out_fd, "\x1b[0J");
-	line->cursor_index = line->state.comp.word_end;
-	line->scrolled = 0;
 }
 
 static t_key_handler
