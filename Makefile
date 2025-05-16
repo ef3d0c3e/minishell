@@ -25,6 +25,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/shell/regex/*.c) \
 	$(wildcard src/getline/*.c) \
 	$(wildcard src/getline/handlers/*.c) \
+	$(wildcard src/getline/buffer/*.c) \
 	$(wildcard src/getline/modes/*.c) \
 	$(wildcard src/parser/ast/*.c) \
 	$(wildcard src/parser/redirs/*.c) \
