@@ -16,12 +16,13 @@
  * @file Words definitions
  *
  * `cmd arg1$par1 $(subexp)`
- *  |   |   |     ` Subexpr atom ── Word 3 ┐
- *  |   |   ` Parameter atom  ───┐         ├ Word list
- *  |   ` Literal atom  ─────────┴─ Word 2 │
- *  ` Literal atom ──────────────── Word 1 ┘
+ *  │   │   │     └─ Subexpr atom ── Word 3 ┐
+ *  │   │   └─ Parameter atom  ───┐         ├─ Word list
+ *  │   └─ Literal atom  ─────────┴─ Word 2 ┤
+ *  └─ Literal atom ──────────────── Word 1 ┘
  */
 
+#include "util/util.h"
 # include <tokenizer/tokenizer.h>
 
 typedef struct s_ast_node	t_ast_node;
@@ -102,6 +103,15 @@ atom_copy(const t_atom *in);
  */
 void
 parse_param_atom(t_parser *parser, t_atom *arg);
+
+/**
+ * @brief Writes the content of an atom to a string
+ *
+ * @param buf Buffer to write to
+ * @param atom Atom to get the content of
+ */
+void
+atom_wordcontent(t_string_buffer *buf, const t_atom *atom);
 
 /******************************************************************************/
 /* Words                                                                      */

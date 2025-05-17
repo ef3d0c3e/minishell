@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/redirs/redir_parser.h"
+#include "shell/env/env.h"
 #include "shell/expand/expand.h"
 #include <shell/shell.h>
 #include <stdio.h>
@@ -103,6 +105,16 @@ static int
 	return (0);
 }
 
+static int
+	redir_internal_heredoc(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir)
+{
+	write(redir->redirectee.fd, redir->heredoc.str, redir->heredoc.len);
+	return (1);
+}
+
 // TODO: Add a way to keep track of opened fd, because we can't use `fcntl(F_GETFD)`
 // Probably inside an rb tree
 int
@@ -118,6 +130,9 @@ int
 		return (redir_internal_dup_move(shell, stack, redir));
 	else if (redir->type == R_CLOSE_THIS)
 		return (redir_internal_close(shell, stack, redir));
+	else if (redir->type == R_DEBLANK_READING_UNTIL
+		|| redir->type == R_READING_UNTIL)
+		return (redir_internal_heredoc(shell, stack, redir));
 	else
 		shell_fail(shell, "Unhandled redirection type", SRC_LOCATION);
 	return (0);

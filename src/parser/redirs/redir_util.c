@@ -37,7 +37,8 @@ int
 {
 	if (redir->type == R_CLOSE_THIS || redir->type == R_DUPLICATING_INPUT
 		|| redir->type == R_DUPLICATING_OUTPUT || redir->type == R_MOVE_INPUT
-		|| redir->type == R_MOVE_OUTPUT)
+		|| redir->type == R_DEBLANK_READING_UNTIL
+		|| redir->type == R_READING_UNTIL || redir->type == R_MOVE_OUTPUT)
 		return (0);
 	return (1);
 }
@@ -94,22 +95,9 @@ void
 			ft_dprintf(2, "%s fl=%05o %d:", redir_name(redir->type), redir->flags, redir->redirector.fd);
 			word_print(0, &redir->redirectee.filename);
 		}
-		else
-		{
+		else if (redir->type != R_READING_UNTIL
+			&& redir->type != R_DEBLANK_READING_UNTIL)
 			ft_dprintf(2, "%s fl=%05o %d:%d\n", redir_name(redir->type), redir->flags, redir->redirector.fd, redir->redirectee.fd);
-		}
 		++i;
 	}
-}
-
-void
-	push_heredoc(t_parser *parser, t_redirection *redir)
-{
-	if (parser->heredoc_count == HEREDOC_MAX)
-	{
-		parser_error(parser, ft_strdup("Too many heredocs"), 0,
-			parser->list.tokens[parser->list.size - 1].end);
-		return ;
-	}
-	parser->heredocs[parser->heredoc_count++] = redir;
 }

@@ -17,6 +17,9 @@ static void
 {
 	if (redir_dest_word(redir))
 		word_free(&redir->redirectee.filename);
+	else if (redir->type == R_DEBLANK_READING_UNTIL
+		|| redir->type == R_READING_UNTIL)
+		word_free(&redir->redirector.filename);
 	stringbuf_free(&redir->heredoc);
 }
 

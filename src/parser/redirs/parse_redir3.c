@@ -110,8 +110,8 @@ static int
 	if (!found)
 		return (0);
 	parser->pos += 2;
-	make_redirection(redirs, source,
-			(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
+	make_redirection(redirs, (t_redirectee){.filename = parse_word(parser, 0)},
+			source, found->type);
 	push_heredoc(parser, &redirs->redirs[redirs->redirs_size - 1]);
 	return (1);
 }
@@ -137,6 +137,6 @@ int
 			.redirectee.filename.natoms != 0);
 	if (status == 0 && parse_redir_heredoc(parser, redirs, source))
 		return (redirs->redirs[redirs->redirs_size - 1]
-			.redirectee.filename.natoms != 0);
+			.redirector.filename.natoms != 0);
 	return (status);
 }

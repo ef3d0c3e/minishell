@@ -9,7 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/ast/ast.h"
+#include "parser/words/words.h"
 #include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_atom
@@ -81,4 +84,20 @@ void
 		parser_error(parser, err, parser->pos, parser->pos + 1);
 	}
 	// TODO: Call parser recursively on content & set context for errors
+}
+
+void
+	atom_wordcontent(t_string_buffer *buf, const t_atom* atom)
+{
+	if (atom->type == W_LITERAL || atom->type == W_SUBEXPR)
+	{
+		stringbuf_append(buf, (t_string){atom->text.str, atom->text.len});
+		return ;
+	}
+	if (atom->param.simple_param)
+	{
+		stringbuf_append(buf, (t_string){atom->param.name,
+				ft_strlen(atom->param.name)});
+		return ;
+	}
 }

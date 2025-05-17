@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "ft_printf.h"
 #include "parser/parser.h"
+#include "parser/redirs/redir_parser.h"
 #include "util/util.h"
 #include <shell/shell.h>
 
@@ -98,7 +99,7 @@ int
 		ft_dprintf(2, " -- Parsing --\n");
 		ast_print(0, ctx->program);
 	}
-	if (!parser_error_flush(&parser))
+	if (!parser_error_flush(&parser) || !read_heredocs(shell, ctx->parser))
 	{
 		ast_free(ctx->program, 1);
 		ctx->program = NULL;
