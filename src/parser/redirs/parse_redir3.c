@@ -80,18 +80,39 @@ static int
 	static const t_redir_tok_type	tokens[] = {
 	{">", R_OUTPUT_DIRECTION}, {">>", R_APPENDING_TO}, {">|", R_OUTPUT_FORCE},
 	{">&", R_DUPLICATING_OUTPUT_WORD}, {"<", R_INPUT_DIRECTION},
-	{"<>", R_INPUT_OUTPUT}, {"<<", R_READING_UNTIL},
-	{"<<-", R_DEBLANK_READING_UNTIL}, {"<<<", R_READING_STRING},
+	{"<>", R_INPUT_OUTPUT}, {"<<<", R_READING_STRING},
 	{"<&", R_DUPLICATING_INPUT_WORD}};
 	const t_redir_tok_type			*found;
 
-	found = redir_alternatives(tokens, 10,
+	found = redir_alternatives(tokens, 8,
 			parser->list.tokens[parser->pos + 1].reserved_word);
 	if (!found)
 		return (0);
 	parser->pos += 2;
 	make_redirection(redirs, source,
 			(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
+	return (1);
+}
+
+/** @brief Parses a HEREDOC redirection */
+static int
+	parse_redir_heredoc(
+	t_parser *parser,
+	t_redirections *redirs,
+	t_redirectee source)
+{
+	static const t_redir_tok_type	ins[] = {
+	{"<<-", R_DEBLANK_READING_UNTIL}, {"<<", R_READING_UNTIL}};
+	const t_redir_tok_type			*found;
+
+	found = redir_alternatives(ins, 2,
+			parser->list.tokens[parser->pos].reserved_word);
+	if (!found)
+		return (0);
+	parser->pos += 2;
+	make_redirection(redirs, source,
+			(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
+	push_heredoc(parser, &redirs->redirs[redirs->redirs_size - 1]);
 	return (1);
 }
 
@@ -112,9 +133,10 @@ int
 	else if (right->type == TOK_MINUS)
 		status = parse_redir_minus(parser, redirs, source);
 	if (status == 0 && parse_redir_word(parser, redirs, source))
-	{
 		return (redirs->redirs[redirs->redirs_size - 1]
 			.redirectee.filename.natoms != 0);
-	}
+	if (status == 0 && parse_redir_heredoc(parser, redirs, source))
+		return (redirs->redirs[redirs->redirs_size - 1]
+			.redirectee.filename.natoms != 0);
 	return (status);
 }

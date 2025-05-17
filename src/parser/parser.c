@@ -9,12 +9,16 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/redirs/redir_parser.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_parser
 	parser_init(t_string input, t_token_list list)
 {
-	return ((t_parser){
+	t_parser	parser;
+
+	parser = ((t_parser){
 		.input = input,
 		.list = list,
 		.errors = xmalloc(sizeof(t_string_buffer) * 16),
@@ -24,7 +28,10 @@ t_parser
 		.delim_stack.delimiters = NULL,
 		.delim_stack.size = 0,
 		.delim_stack.capacity = 0,
+		.heredoc_count = 0,
 	});
+	ft_memset(parser.heredocs, 0, sizeof(t_redirection *) * HEREDOC_MAX);
+	return (parser);
 }
 
 void

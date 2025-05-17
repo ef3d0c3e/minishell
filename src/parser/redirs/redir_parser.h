@@ -12,10 +12,14 @@
 #ifndef REDIR_PARSER_H
 # define REDIR_PARSER_H
 
+#include "util/util.h"
 # include <tokenizer/tokenizer.h>
 # include <parser/words/words.h>
 
 typedef struct s_parser	t_parser;
+
+/** @brief Maximum number of heredocuments to parse */
+#define HEREDOC_MAX 16
 
 /******************************************************************************/
 /* Redirection definitions and utilities                                      */
@@ -65,8 +69,8 @@ typedef struct s_redirection
 	enum e_redir_type	type;
 	/** @brief Redirect to */
 	t_redirectee		redirectee;
-	/** @brief Delimiter word for heredoc */
-	char				*here_doc_eof;
+	/** @brief Heredoc content */
+	t_string_buffer		heredoc;
 }	t_redirection;
 
 /**
@@ -118,6 +122,14 @@ void
 print_redir(
 	const t_redirections *redirs,
 	size_t depth);
+/**
+ * @brief Pushes a here document to the HEREDOC stack
+ *
+ * @param parser Parser to push to
+ * @param redir Redirection to push
+ */
+void
+push_heredoc(t_parser *parser, t_redirection *redir);
 /**
  * @brief Adds a redirection to `redirs`
  *

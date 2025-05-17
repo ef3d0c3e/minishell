@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/redirs/redir_parser.h"
 #include <shell/shell.h>
 
 static void
@@ -16,6 +17,7 @@ static void
 {
 	if (redir_dest_word(redir))
 		word_free(&redir->redirectee.filename);
+	stringbuf_free(&redir->heredoc);
 }
 
 void
@@ -57,7 +59,9 @@ void
 	redir.redirectee = dest;
 	redir.type = type;
 	redir.flags = 0;
-	redir.here_doc_eof = NULL;
+	redir.heredoc.str = NULL;
+	redir.heredoc.len = 0;
+	redir.heredoc.capacity = 0;
 	if (type == R_ERR_AND_OUT || type == R_OUTPUT_FORCE
 		|| type == R_OUTPUT_DIRECTION)
 		redir.flags = O_TRUNC | O_WRONLY | O_CREAT;

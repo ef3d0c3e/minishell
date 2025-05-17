@@ -73,19 +73,23 @@ expects_delimiter(t_parser *parser, const char *delim);
 typedef struct s_parser
 {
 	/** @brief The input prompt */
-	t_string		input;
+	t_string			input;
 	/** @brief Token list */
-	t_token_list	list;
+	t_token_list		list;
 	/** @brief Error messages */
-	char			**errors;
+	char				**errors;
 	/** @brief Number of error messages */
-	size_t			errors_size;
+	size_t				errors_size;
 	/** @brief Capacity of `errors` */
-	size_t			errors_cap;
+	size_t				errors_cap;
 	/** @brief Current position in the parser's input list */
-	size_t			pos;
+	size_t				pos;
 	/** @brief Stack of delimiters tokens that must not be parsed as words */
 	t_delimiter_stack	delim_stack;
+	/** @brief Stack for heredocs */
+	t_redirection		*heredocs[HEREDOC_MAX];
+	/** @brief Number of heredoc to read */
+	size_t				heredoc_count;
 }	t_parser;
 
 /** @brief Initializes a new parser */

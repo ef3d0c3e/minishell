@@ -9,6 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "parser/parser.h"
+#include "parser/redirs/redir_parser.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 const t_redir_tok_type
@@ -97,4 +100,16 @@ void
 		}
 		++i;
 	}
+}
+
+void
+	push_heredoc(t_parser *parser, t_redirection *redir)
+{
+	if (parser->heredoc_count == HEREDOC_MAX)
+	{
+		parser_error(parser, ft_strdup("Too many heredocs"), 0,
+			parser->list.tokens[parser->list.size - 1].end);
+		return ;
+	}
+	parser->heredocs[parser->heredoc_count++] = redir;
 }
