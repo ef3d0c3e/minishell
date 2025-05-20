@@ -21,8 +21,8 @@ static void
 		if (g_signal == SIGINT)
 			shell->last_status = 130;
 		g_signal = 0;
-		//prompt = stringbuf_from("> ");
-		prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
+		prompt = stringbuf_from("> ");
+		//prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
 		char *input = getline_read(&line, stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);
 		if (!input)

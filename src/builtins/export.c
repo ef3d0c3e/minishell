@@ -30,7 +30,8 @@ static int
 	export(t_shell *shell, int argc, char **argv)
 {
 	char				*sep;
-	t_shell_var			var;
+	t_shell_var			*var;
+	char				*name;
 
 	if (argc == 1)
 		return (rb_apply(&shell->reg_env, print_env, NULL), 0);
@@ -45,8 +46,12 @@ static int
 		ft_dprintf(2, "export: `%s` not a legal identifier\n", argv[1]);
 		return (1);
 	}
-	get_variable(shell, argv[1], &var);
-	set_variable(shell, argv[1], ft_strdup(sep + 1), var.exported);
+	var = xmalloc(sizeof(t_shell_var));
+	var->exported = 1;
+	name = ft_strdup(argv[1]);
+	var->name = name;
+	var->value = ft_strdup(sep + 1);
+	rb_insert(&shell->reg_env, name, var);
 	return (0);
 }
 
