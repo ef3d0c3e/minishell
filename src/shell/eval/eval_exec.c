@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "ft_printf.h"
 #include "shell/eval/eval.h"
+#include "util/util.h"
 #include <shell/shell.h>
 #include <stdio.h>
 
@@ -39,6 +40,7 @@ static void
 	
 	if (argv[0] && !path)
 		shell_exit(shell, 127);
+	eval_install_var(shell, cmd);
 	shellp = environ_to_envp(shell);
 	redir_stack_init(&stack);
 	if (do_redir(shell, &stack, &cmd->cmd.redirs))

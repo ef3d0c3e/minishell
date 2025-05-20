@@ -28,7 +28,6 @@ void
 	}
 	key = stringbuf_from_range(s, sep);
 	value = stringbuf_from(sep + 1);
-
 	var = xmalloc(sizeof(t_shell_var));
 	var->value = stringbuf_cstr(&value);
 	var->name = stringbuf_cstr(&key);

@@ -9,18 +9,32 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/eval/eval.h"
+#include "shell/env/env.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
-static void
-	install_var(t_shell *shell, const char *name, char *value)
+void
+	eval_install_var(t_shell *shell, t_ast_node *cmd)
 {
-	t_shell_var	var;
+	t_shell_var	*var;
+	size_t		i;
+	char		*value;
+	char		*name;
 
-	if (get_variable(shell, name, &var))
-		set_variable(shell, name, value, var.exported);
-	else
-		set_variable(shell, name, value, 0);
+	i = 0;
+	while (i < cmd->cmd.nassigns)
+	{
+		value = word_expansion_cat(shell, &cmd->cmd.assigns[i].value);
+		if (!value && ++i)
+			continue ;
+		var = xmalloc(sizeof(t_shell_var));
+		name = stringbuf_cstr(&cmd->cmd.assigns[i].variable);
+		var->name = name;
+		var->value = value;
+		var->exported = 1;
+		rb_insert(&shell->reg_env, name, var);
+		++i;
+	}
 }
 
 /** @brief Evaluates command with no arguments */
@@ -33,17 +47,7 @@ static t_eval_result
 
 	redir_stack_init(&stack);
 	if (do_redir(shell, &stack, &cmd->cmd.redirs))
-	{
-		i = 0;
-		while (i < cmd->cmd.nassigns)
-		{
-			result = word_expansion_cat(shell, &cmd->cmd.assigns[i].value);
-			if (result)
-				install_var(shell,
-						stringbuf_cstr(&cmd->cmd.assigns[i].variable), result);
-			++i;
-		}
-	}
+		eval_install_var(shell, cmd);
 	undo_redir(shell, &stack);
 	return ((t_eval_result){RES_NONE, 0});
 }

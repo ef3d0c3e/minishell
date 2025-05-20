@@ -168,11 +168,14 @@ t_eval_result
 eval_exec(t_shell *shell, t_ast_node *cmd, char *path, char **argv);
 
 /******************************************************************************/
-/* Arguments handling                                                         */
+/* Utilities handling                                                         */
 /******************************************************************************/
 
 /** @brief Frees a NULL-terminated array of strings */
 void
 args_free(char **cmd);
+/** @brief Installs variables from the command's prefix assisgnments */
+void
+eval_install_var(t_shell *shell, t_ast_node *cmd);
 
 #endif // EVAL_H

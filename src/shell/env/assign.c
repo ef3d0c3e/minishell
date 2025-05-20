@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/env/env.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 void
 	prefix_stack_init(t_shell *shell)
