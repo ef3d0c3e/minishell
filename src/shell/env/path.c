@@ -31,7 +31,7 @@ static void
 		free(fullpath);
 		return ;
 	}
-	if (S_ISREG(sb.st_mode))
+	if (S_ISREG(sb.st_mode) || S_ISLNK(sb.st_mode))
 		rb_insert(&shell->path_cache, ft_strdup(ent->d_name), fullpath);
 	else
 		free(fullpath);

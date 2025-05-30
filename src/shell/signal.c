@@ -10,15 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
-#include <stdlib.h>
 
 volatile sig_atomic_t	g_signal;
 
 static void
 	sighandler(int signum, siginfo_t *info, void *data)
 {
-	int	status;
-
 	g_signal = signum;
 }
 

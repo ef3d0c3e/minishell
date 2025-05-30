@@ -36,7 +36,7 @@ int
 		token_list_push(list, TOK_WORD,
 			it->byte_pos, it->byte_pos + it->codepoint.len)->word = buf;
 	}
-	else
+	else if (it->codepoint.len)
 	{
 		stringbuf_append(&list->tokens[list->size - 1].word, it->codepoint);
 		list->tokens[list->size - 1].end += it->codepoint.len;
