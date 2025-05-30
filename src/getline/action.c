@@ -22,14 +22,13 @@ int
 	}
 	if (line->state.action == ACT_CANCEL)
 	{
-		ft_dprintf(line->out_fd, "(C-c)\n\r");
+		ft_dprintf(line->out_fd, "(C-c)");
 		getline_buffer_free(&line->input);
 		line->scrolled = 0;
 		line->cursor_index = 0;
-		getline_redraw(line, 1);
-		line->shell->last_status = 130;
 		line->state.action = ACT_NONE;
-		return (0);
+		g_signal = SIGINT;
+		return (1);
 	}
 	return (line->state.action != ACT_NONE);
 }

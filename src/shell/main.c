@@ -11,6 +11,7 @@ static void
 	t_string_buffer	prompt;
 	t_eval_result	result;
 	t_getline		line;
+	char			*input;
 
 	line = repl_setup(shell);
 	signal_install(shell, 0);
@@ -23,16 +24,12 @@ static void
 		g_signal = 0;
 		prompt = stringbuf_from("> ");
 		//prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).stdout;
-		char *input = getline_read(&line, stringbuf_cstr(&prompt));
+		input = getline_read(&line, stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);
-		if (!input)
-		{
-			if (g_signal == SIGINT || g_signal == SIGQUIT)
-			{
-				continue ;
-			}
+		if (!input && g_signal != SIGINT)
 			break ;
-		}
+		if (!input)
+			continue ;
 		getline_history_add(&line, ft_strdup(input), 0);
 		result = ctx_eval_stdout(shell, input);
 		if (result.type == RES_EXIT)
