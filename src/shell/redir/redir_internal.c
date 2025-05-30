@@ -111,7 +111,11 @@ static int
 	t_redirs_stack *stack,
 	t_redirection *redir)
 {
-	write(redir->redirectee.fd, redir->heredoc.str, redir->heredoc.len);
+	const int	dup = shell_dup(shell, redir->redirectee.fd);
+
+	write(dup, redir->heredoc.str, redir->heredoc.len);
+	close(dup);
+	//shell_close(shell, dup);
 	return (1);
 }
 
