@@ -82,12 +82,12 @@ int
 		for (size_t i = 0; i < line->sequence_len; ++i)
 		{
 			if (line->sequence[i] >= 32 && line->sequence[i] <= 126)
-			ft_dprintf(2, "'%c' ", (int)line->sequence[i]);
+				ft_dprintf(2, "'%c' ", (int)line->sequence[i]);
 			else
-			ft_dprintf(2, "%x ", (int)line->sequence[i]);
+				ft_dprintf(2, "%x ", (int)line->sequence[i]);
 		}
 		line->sequence_len = 0;
-		return (0);
+		return (1);
 	}
 	line->sequence_len = 0;
 	return (1);
