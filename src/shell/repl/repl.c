@@ -14,11 +14,17 @@
 t_getline
 	repl_setup(t_shell *shell)
 {
+	const char	*home = get_variable_value(shell, "HOME");
+	char		*histfile;
 	t_getline	line;
 
 	line = getline_setup(shell);
 	line.highlighter_fn = repl_highlighter;
 	line.comp_provider_fn = repl_completer;
-	getline_history_set_file(&line, ft_strdup("/home/user/.bash_history"), 1);
+	if (home)
+	{
+		ft_asprintf(&histfile, "%s/.bash_history", home);
+		getline_history_set_file(&line, histfile, 1);
+	}
 	return (line);
 }

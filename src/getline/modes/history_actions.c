@@ -16,6 +16,8 @@ void
 {
 	int	sc;
 
+	if (!line->history.num_entries)
+		return ;
 	sc = line->state.hist.scroll_index + offset;
 	if (line->history.num_entries - sc < 0)
 		sc = 0;
