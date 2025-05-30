@@ -26,5 +26,4 @@ DO_TEST(regex, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 		SHELL_TEST("PAT=\"!(foo)\"; printf '%s\n' $PAT | sort", "", "bar\nbar.c\nbar.h\nbaz\nfoo.c\nfoo.h\n", "", 0)
 		//SHELL_TEST("PAT=\"!(foo|*.c)\"; printf '%s\n' $PAT | sort", "", "bar\nbar.h\nbaz\nfoo.h\n", "", 0)
 	)
-	exit(1);
 ))
