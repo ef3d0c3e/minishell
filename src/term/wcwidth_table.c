@@ -9,56 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "util/util.h"
 #include <shell/shell.h>
-
-void	mk_wcwidth1(struct s_codepoint_range *r);
-void	mk_wcwidth2(struct s_codepoint_range *r);
-void	mk_wcwidth3(struct s_codepoint_range *r);
-void	mk_wcwidth4(struct s_codepoint_range *r);
-void	mk_wcwidth5(struct s_codepoint_range *r);
-
-static void
-	mk_wcwidth6(struct s_codepoint_range *r)
-{
-	r[125] = (struct s_codepoint_range){0xFE00, 0xFE0F};
-	r[126] = (struct s_codepoint_range){0xFE20, 0xFE23};
-	r[127] = (struct s_codepoint_range){0xFEFF, 0xFEFF};
-	r[128] = (struct s_codepoint_range){0xFFF9, 0xFFFB};
-	r[129] = (struct s_codepoint_range){0x10A01, 0x10A03};
-	r[130] = (struct s_codepoint_range){0x10A05, 0x10A06};
-	r[131] = (struct s_codepoint_range){0x10A0C, 0x10A0F};
-	r[132] = (struct s_codepoint_range){0x10A38, 0x10A3A};
-	r[133] = (struct s_codepoint_range){0x10A3F, 0x10A3F};
-	r[134] = (struct s_codepoint_range){0x1D167, 0x1D169};
-	r[135] = (struct s_codepoint_range){0x1D173, 0x1D182};
-	r[136] = (struct s_codepoint_range){0x1D185, 0x1D18B};
-	r[137] = (struct s_codepoint_range){0x1D1AA, 0x1D1AD};
-	r[138] = (struct s_codepoint_range){0x1D242, 0x1D244};
-	r[139] = (struct s_codepoint_range){0xE0001, 0xE0001};
-	r[140] = (struct s_codepoint_range){0xE0020, 0xE007F};
-	r[141] = (struct s_codepoint_range){0xE0100, 0xE01EF};
-}
-
-static struct s_codepoint_range*
-	mk_wcwidth(void)
-{
-	static int						init;
-	static struct s_codepoint_range	ranges[142];
-
-	if (!init)
-	{
-		mk_wcwidth1(ranges);
-		mk_wcwidth2(ranges);
-		mk_wcwidth3(ranges);
-		mk_wcwidth4(ranges);
-		mk_wcwidth5(ranges);
-		mk_wcwidth6(ranges);
-		init = 1;
-	}
-	return (ranges);
-}
 
 /** @brief Utility function to perform binary search on the codepoint table */
 static int
@@ -83,6 +34,76 @@ static int
 	return (0);
 }
 
+void	wcwidth_table_wide1(struct s_codepoint_range *r);
+void	wcwidth_table_wide2(struct s_codepoint_range *r);
+void	wcwidth_table_wide3(struct s_codepoint_range *r);
+void	wcwidth_table_wide4(struct s_codepoint_range *r);
+void	wcwidth_table_wide5(struct s_codepoint_range *r);
+
+int
+	wcwidth_is_wide(uint32_t cp)
+{
+	static int						init;
+	static struct s_codepoint_range	ranges[122];
+
+	if (!init)
+	{
+		wcwidth_table_wide1(ranges);
+		wcwidth_table_wide2(ranges);
+		wcwidth_table_wide3(ranges);
+		wcwidth_table_wide4(ranges);
+		wcwidth_table_wide5(ranges);
+		init = 1;
+	}
+
+	return (bfind(cp, ranges, 121));
+}
+
+void	wcwidth_table_fusers1(struct s_codepoint_range *r);
+void	wcwidth_table_fusers2(struct s_codepoint_range *r);
+void	wcwidth_table_fusers3(struct s_codepoint_range *r);
+void	wcwidth_table_fusers4(struct s_codepoint_range *r);
+void	wcwidth_table_fusers5(struct s_codepoint_range *r);
+void	wcwidth_table_fusers6(struct s_codepoint_range *r);
+void	wcwidth_table_fusers7(struct s_codepoint_range *r);
+void	wcwidth_table_fusers8(struct s_codepoint_range *r);
+void	wcwidth_table_fusers9(struct s_codepoint_range *r);
+void	wcwidth_table_fusers10(struct s_codepoint_range *r);
+void	wcwidth_table_fusers11(struct s_codepoint_range *r);
+void	wcwidth_table_fusers12(struct s_codepoint_range *r);
+void	wcwidth_table_fusers13(struct s_codepoint_range *r);
+void	wcwidth_table_fusers14(struct s_codepoint_range *r);
+void	wcwidth_table_fusers15(struct s_codepoint_range *r);
+
+int
+	wcwidth_is_fuser(uint32_t cp)
+{
+	static int						init;
+	static struct s_codepoint_range	ranges[368];
+
+	if (!init)
+	{
+		wcwidth_table_fusers1(ranges);
+		wcwidth_table_fusers2(ranges);
+		wcwidth_table_fusers3(ranges);
+		wcwidth_table_fusers4(ranges);
+		wcwidth_table_fusers5(ranges);
+		wcwidth_table_fusers6(ranges);
+		wcwidth_table_fusers7(ranges);
+		wcwidth_table_fusers8(ranges);
+		wcwidth_table_fusers9(ranges);
+		wcwidth_table_fusers10(ranges);
+		wcwidth_table_fusers11(ranges);
+		wcwidth_table_fusers12(ranges);
+		wcwidth_table_fusers13(ranges);
+		wcwidth_table_fusers14(ranges);
+		wcwidth_table_fusers15(ranges);
+		init = 1;
+	}
+
+	return (bfind(cp, ranges, 367));
+}
+
 int
 	codepoint_width(uint32_t cp)
 {
@@ -90,17 +111,25 @@ int
 		return (0);
 	else if (cp < 32 || (cp >= 0x7f && cp < 0xa0))
 		return (-1);
-	if (bfind(cp, mk_wcwidth(), 141))
+	if (wcwidth_is_wide(cp))
+		return (2);
+	if (wcwidth_is_fuser(cp))
 		return (0);
-	return (1 + (cp >= 0x1100
-			&& (cp <= 0x115f || cp == 0x2329 || cp == 0x232a
-				|| (cp >= 0x2e80 && cp <= 0xa4cf && cp != 0x303f)
-				|| (cp >= 0xac00 && cp <= 0xd7a3)
-				|| (cp >= 0xf900 && cp <= 0xfaff)
-				|| (cp >= 0xfe10 && cp <= 0xfe19)
-				|| (cp >= 0xfe30 && cp <= 0xfe6f)
-				|| (cp >= 0xff00 && cp <= 0xff60)
-				|| (cp >= 0xffe0 && cp <= 0xffe6)
-				|| (cp >= 0x20000 && cp <= 0x2fffd)
-				|| (cp >= 0x30000 && cp <= 0x3fffd))));
+	return (1);
+	/*
+	if (bfind(cp, wcwidth_table_wide(), 121))
+		return (2);
+	return (1);
+	//return (1 + (cp >= 0x1100
+	//		&& (cp <= 0x115f || cp == 0x2329 || cp == 0x232a
+	//			|| (cp >= 0x2e80 && cp <= 0xa4cf && cp != 0x303f)
+	//			|| (cp >= 0xac00 && cp <= 0xd7a3)
+	//			|| (cp >= 0xf900 && cp <= 0xfaff)
+	//			|| (cp >= 0xfe10 && cp <= 0xfe19)
+	//			|| (cp >= 0xfe30 && cp <= 0xfe6f)
+	//			|| (cp >= 0xff00 && cp <= 0xff60)
+	//			|| (cp >= 0xffe0 && cp <= 0xffe6)
+	//			|| (cp >= 0x20000 && cp <= 0x2fffd)
+	//			|| (cp >= 0x30000 && cp <= 0x3fffd))));
+	*/
 }

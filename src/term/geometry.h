@@ -23,6 +23,11 @@ struct s_codepoint_range
 	uint32_t	end;
 };
 
+int
+codepoint_is_wide(uint32_t cp);
+int
+codepoint_is_fuser(uint32_t cp);
+
 /**
  * @brief Gets the width of a single codepoint, wcwidth implementation based on
  * this one: https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
