@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   geometry.h                                         :+:      :+:    :+:   */
+/*   wcwidth.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,8 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef GEOMETRY_H
-# define GEOMETRY_H
+#ifndef WCWIDTH_H
+# define WCWIDTH_H
 
 # include <util/util.h>
 
@@ -23,14 +23,27 @@ struct s_codepoint_range
 	uint32_t	end;
 };
 
+/**
+ * @brief Checks if given codepoint is wide
+ *
+ * @param cp The codepoint
+ *
+ * @returns 1 if `cp` is wide.
+ */
 int
 codepoint_is_wide(uint32_t cp);
+/**
+ * @brief Checks if given codepoint is a fuser
+ *
+ * @param cp The codepoint
+ *
+ * @returns 1 if `cp` is a fuser.
+ */
 int
 codepoint_is_fuser(uint32_t cp);
-
 /**
- * @brief Gets the width of a single codepoint, wcwidth implementation based on
- * this one: https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
+ * @brief Gets the width of a single codepoint. This function is not equivalent
+ * to wcwidth. It returns 0 for 0-width codepoints
  *
  * The computed width cannot be guaranteed to match the width once printed to a
  * terminal. Terminals may handle glyphs differently (grapheme, combining
@@ -63,4 +76,4 @@ string_width(const char *str);
 size_t
 string_width_truncate(const char *str, int max);
 
-#endif // GEOMETRY_H
+#endif // WCWIDTH_H

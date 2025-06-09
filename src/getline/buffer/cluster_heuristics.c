@@ -9,45 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "getline/getline.h"
-#include "term/geometry.h"
 #include <shell/shell.h>
-
-/** @brief Checks if codepoint `cp` is a fuser according to UAX-29 */
-static int
-	probe_fuser(uint32_t cp)
-{
-	static const struct s_codepoint_range	fuse_ranges[] = {
-	{0x0300, 0x036F},
-	{0x0600, 0x0605},
-	{0x0903, 0x0903},
-	{0x093E, 0x0940},
-	{0x0949, 0x094C},
-	{0x1AB0, 0x1AFF},
-	{0x1DC0, 0x1DFF},
-	{0x200D, 0x200D},
-	{0x1F1E6, 0x1F1FF},
-	{0x1F3FB, 0x1F3FF},
-	};
-	size_t									lo;
-	size_t									hi;
-	size_t									mid;
-
-	lo = 0;
-	hi = sizeof(fuse_ranges) / sizeof(fuse_ranges[0]);
-	while (lo < hi)
-	{
-		mid = (lo + hi) / 2;
-		if (cp < fuse_ranges[mid].start)
-			hi = mid;
-		else if (cp > fuse_ranges[mid].end)
-			lo = mid + 1;
-		else
-			return (1);
-	}
-	return (0);
-}
 
 /** @brief Performs expensive reclustering of all codepoints in [lo, hi-1] */
 static void
@@ -97,7 +59,7 @@ void
 	if (codepoint_width(u8_to_cp(prev.codepoint)) != 1
 		|| codepoint_width(u8_to_cp(next.codepoint)) != 1
 		|| codepoint_width(u8_to_cp(it.codepoint)) != 1
-		|| probe_fuser(u8_to_cp(it.codepoint)))
+		|| codepoint_is_fuser(u8_to_cp(it.codepoint)))
 	{
 		i = 0;
 		while (++i < LINE_CLUSTER_MAX)

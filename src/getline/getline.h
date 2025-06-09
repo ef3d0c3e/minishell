@@ -13,6 +13,7 @@
 # define GETLINE_H
 
 # include <getline/modes/modes.h>
+# include <getline/wcwidth/wcwidth.h>
 # include <getline/handlers/handlers.h>
 
 # include <sys/types.h>

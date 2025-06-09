@@ -25,12 +25,12 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/shell/regex/*.c) \
 	$(wildcard src/getline/*.c) \
 	$(wildcard src/getline/handlers/*.c) \
+	$(wildcard src/getline/wcwidth/*.c) \
 	$(wildcard src/getline/buffer/*.c) \
 	$(wildcard src/getline/modes/*.c) \
 	$(wildcard src/parser/ast/*.c) \
 	$(wildcard src/parser/redirs/*.c) \
 	$(wildcard src/parser/words/*.c) \
-	$(wildcard src/term/*.c) \
 	$(wildcard src/parser/*.c)
 
 SOURCES_TESTER := $(filter-out %main.c,$(SOURCES))

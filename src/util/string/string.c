@@ -57,7 +57,7 @@ int
 	i = 0;
 	while (i < str.len && token[i] && str.str[i] == token[i])
 		++i;
-	if (i == str.len || !token[i])
+	if (!token[i])
 		return (1);
 	return (0);
 }

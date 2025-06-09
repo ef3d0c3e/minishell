@@ -41,7 +41,7 @@ void	wcwidth_table_wide4(struct s_codepoint_range *r);
 void	wcwidth_table_wide5(struct s_codepoint_range *r);
 
 int
-	wcwidth_is_wide(uint32_t cp)
+	codepoint_is_wide(uint32_t cp)
 {
 	static int						init;
 	static struct s_codepoint_range	ranges[122];
@@ -76,7 +76,7 @@ void	wcwidth_table_fusers14(struct s_codepoint_range *r);
 void	wcwidth_table_fusers15(struct s_codepoint_range *r);
 
 int
-	wcwidth_is_fuser(uint32_t cp)
+	codepoint_is_fuser(uint32_t cp)
 {
 	static int						init;
 	static struct s_codepoint_range	ranges[368];
@@ -111,25 +111,9 @@ int
 		return (0);
 	else if (cp < 32 || (cp >= 0x7f && cp < 0xa0))
 		return (-1);
-	if (wcwidth_is_wide(cp))
+	if (codepoint_is_wide(cp))
 		return (2);
-	if (wcwidth_is_fuser(cp))
+	if (codepoint_is_fuser(cp))
 		return (0);
 	return (1);
-	/*
-	if (bfind(cp, wcwidth_table_wide(), 121))
-		return (2);
-	return (1);
-	//return (1 + (cp >= 0x1100
-	//		&& (cp <= 0x115f || cp == 0x2329 || cp == 0x232a
-	//			|| (cp >= 0x2e80 && cp <= 0xa4cf && cp != 0x303f)
-	//			|| (cp >= 0xac00 && cp <= 0xd7a3)
-	//			|| (cp >= 0xf900 && cp <= 0xfaff)
-	//			|| (cp >= 0xfe10 && cp <= 0xfe19)
-	//			|| (cp >= 0xfe30 && cp <= 0xfe6f)
-	//			|| (cp >= 0xff00 && cp <= 0xff60)
-	//			|| (cp >= 0xffe0 && cp <= 0xffe6)
-	//			|| (cp >= 0x20000 && cp <= 0x2fffd)
-	//			|| (cp >= 0x30000 && cp <= 0x3fffd))));
-	*/
 }

@@ -15,19 +15,20 @@ void
 	getline_history_enable(t_getline *line)
 {
 	line->state.hist.filter = NULL;
-	line->state.hist.scroll_index = 0;
+	if (line->input.buffer.len)
+		line->state.hist.filter = stringbuf_cstr(&line->input.buffer);
+	line->state.hist.scroll_index = -1;
 	line->state.hist.saved_input = line->input;
 	line->state.hist.saved_pos = line->cursor_index;
 	line->state.hist.saved_scroll = line->scrolled;
 	line->input = getline_buffer_new();
 	line->state.hist.accept = 1;
-	getline_history_move(line, 0);
+	getline_history_move(line, 1);
 }
 
 void
 	getline_history_disable(t_getline *line)
 {
-	free(line->state.hist.filter);
 	if (!line->state.hist.accept)
 	{
 		getline_buffer_free(&line->input);

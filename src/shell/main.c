@@ -30,7 +30,8 @@ static void
 			break ;
 		if (!input)
 			continue ;
-		getline_history_add(&line, ft_strdup(input), 0);
+		if (*input != '\n')
+			getline_history_add(&line, ft_strdup(input), 0);
 		result = ctx_eval_stdout(shell, input);
 		if (result.type == RES_EXIT)
 		{
