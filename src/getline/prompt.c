@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 static size_t
@@ -16,7 +17,10 @@ static size_t
 {
 	const t_string	left = it_substr(it, SIZE_MAX);
 	const size_t	len = getline_escape_len(left.str, left.len);
-	// TOOD: Parse escape sequence...
+	if (len > 1 && it->str.str[it->byte_pos + 1] == '[')
+	{
+		
+	}
 	it_advance(it, len);
 	return (len);
 }

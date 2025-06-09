@@ -9,14 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/redirs/redir_parser.h"
-#include "shell/env/env.h"
-#include "shell/expand/expand.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 /** @brief Handles redirections to files */
 static int

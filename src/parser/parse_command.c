@@ -69,8 +69,7 @@ t_ast_node
 	list = make_list_node();
 	if (cmd)
 		list_node_push(list, cmd, '\0');
-	while (accept(parser, 0, ";") || accept(parser, 0, "\n")
-		|| accept(parser, 0, "&"))
+	while (accept(parser, 0, ";") || accept(parser, 0, "\n"))
 	{
 		sep = &parser->list.tokens[parser->pos];
 		++parser->pos;

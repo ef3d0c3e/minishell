@@ -9,21 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/parser.h"
 #include <shell/shell.h>
-
-static void
-	parser_syntax_error(t_parser *parser, const char *expected)
-{
-	char	*err;
-
-	if (expected)
-		ft_asprintf(&err, "Unexpected token");
-	else
-		ft_asprintf(&err, "Expected `%s` token", expected);
-	parser_error(parser, err, parser->pos, parser->pos + 1);
-}
 
 t_ast_node
 	*parse_while(t_parser *parser)
