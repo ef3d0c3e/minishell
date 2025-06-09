@@ -5,6 +5,18 @@
 #include <shell/shell.h>
 #include <stdio.h>
 
+static int
+	should_add_to_history(const char *input)
+{
+	while (*input)
+	{
+		if (*input != ' ' && *input != '\t' && *input != '\n')
+			return (1);
+		++input;
+	}
+	return (0);
+}
+
 static void
 	repl(t_shell *shell)
 {
@@ -30,7 +42,7 @@ static void
 			break ;
 		if (!input)
 			continue ;
-		if (*input != '\n')
+		if (should_add_to_history(input))
 			getline_history_add(&line, ft_strdup(input), 0);
 		result = ctx_eval_stdout(shell, input);
 		if (result.type == RES_EXIT)

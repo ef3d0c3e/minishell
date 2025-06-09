@@ -49,12 +49,12 @@ static void
 			getline_highlight_display(l, hi[1]);
 			hi[0] = hi[1];
 		}
-		write(l->out_fd, it.codepoint.str, it.codepoint.len);
 		if (!hi[1] && hi[0])
 		{
 			getline_highlight_display(l, hi[1]);
 			hi[0] = NULL;
 		}
+		write(l->out_fd, it.codepoint.str, it.codepoint.len);
 		dr->printed += buf->s_clusters.data[i - 1].width;
 		dr->column_pos = end;
 		it_next(&it);

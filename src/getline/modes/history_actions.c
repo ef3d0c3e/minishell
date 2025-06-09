@@ -14,6 +14,7 @@
 static int
 	hist_filter_next(t_getline *line, int sc, int direction)
 {
+	const int			saved = sc;
 	const t_history_ent	*ent;
 
 	if (sc == -2)
@@ -32,6 +33,8 @@ static int
 				line->state.hist.filter))
 			break ;
 	}
+	if (sc == (int)line->history.num_entries && saved == -1)
+		return (-1);
 	if (sc == (int)line->history.num_entries)
 		return (-2);
 	return (sc);
@@ -59,16 +62,30 @@ static int
 }
 
 static void
-	hist_highlight(t_getline *line)
+	hist_highlight(t_getline *l)
 {
 	t_buffer_attr	attrs;
+	const size_t	len = ft_strnlen(l->state.hist.filter,
+			!!l->state.hist.filter * SIZE_MAX);
 
+	free(l->input.s_attrs.data);
+	l->input.s_attrs.data = NULL;
+	l->input.s_attrs.size = 0;
+	l->input.s_attrs.capacity = 0;
 	ft_memset(&attrs, 0, sizeof(t_buffer_attr));
-	attrs.underline = -1;
-	attrs.color = 0xFF0000;
-	attrs.start = 0;
-	attrs.end = ft_strlen(line->state.hist.filter);
-	getline_highlight_add(&line->input, attrs);
+	if (len)
+	{
+		attrs.underline = -1;
+		attrs.color = 0xff7f10;
+		attrs.start = 0;
+		attrs.end = len;
+		getline_highlight_add(&l->input, attrs);
+	}
+	attrs.underline = 0;
+	attrs.color = 0x7f7f7f;
+	attrs.start = len;
+	attrs.end = l->input.buffer.len;
+	getline_highlight_add(&l->input, attrs);
 }
 
 void
@@ -91,7 +108,7 @@ void
 	getline_buffer_set_content(&line->input,
 		line->history.entries[line->history.num_entries
 		- line->state.hist.scroll_index - 1].input);
-	//hist_highlight(line);
+	hist_highlight(line);
 	line->scrolled = 0;
 	line->cursor_index = line->input.buffer.len;
 }

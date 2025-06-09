@@ -13,5 +13,5 @@
 
 void getline_history_draw(t_getline *line, int update)
 {
-	line->modes[LINE_INPUT].draw_mode_fn(line, 1);
+	line->modes[LINE_INPUT].draw_mode_fn(line, 0);
 }
