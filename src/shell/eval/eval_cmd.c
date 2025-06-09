@@ -28,7 +28,7 @@ void
 		if (!value && ++i)
 			continue ;
 		var = xmalloc(sizeof(t_shell_var));
-		name = stringbuf_cstr(&cmd->cmd.assigns[i].variable);
+		name = ft_strdup(stringbuf_cstr(&cmd->cmd.assigns[i].variable));
 		var->name = name;
 		var->value = value;
 		var->exported = 1;

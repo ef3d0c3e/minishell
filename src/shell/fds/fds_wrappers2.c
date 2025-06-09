@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir.c                                            :+:      :+:    :+:   */
+/*   fds_wrappers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,33 +12,22 @@
 #include <shell/shell.h>
 
 int
-	do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs)
+	shell_pipe(t_shell *shell, int fds[2])
 {
-	size_t	i;
+	t_fd_data	*read;
+	t_fd_data	*write;
+	char		*err;
 
-	i = 0;
-	while (i < redirs->redirs_size)
-	{
-		if (!redir_internal(shell, stack, &redirs->redirs[i]))
-			return (0);
-		++i;
-	}
-	return (1);
+	if (pipe(fds) == -1)
+		return (-1);
+	read = xmalloc(sizeof(t_fd_data));
+	*read = fd_data_from(FDT_PIPE_R, NULL, 0, 0);
+	write = xmalloc(sizeof(t_fd_data));
+	*write = fd_data_from(FDT_PIPE_W, NULL, 0, 0);
+	fd_unique(shell, fds[0], read, SRC_LOCATION);
+	fd_unique(shell, fds[1], write, SRC_LOCATION);
+	rb_insert(&shell->reg_fds, (void *)(ptrdiff_t)fds[0], read);
+	rb_insert(&shell->reg_fds, (void *)(ptrdiff_t)fds[1], write);
+	return (0);
 }
 
-void
-	undo_redir(t_shell *shell, t_redirs_stack *stack)
-{
-	t_redir_fd	*saved;
-	size_t		i;
-
-	i = 0;
-	while (i++ < stack->size)
-	{
-		saved = &stack->fds[stack->size - i];
-		if (saved->fd != saved->original_fd)
-			shell_dup2(shell, saved->fd, saved->original_fd);
-		shell_close(shell, saved->fd);
-	}
-	free(stack->fds);
-}

@@ -41,7 +41,7 @@ t_fd_data
 		.mode = mode,
 		.pipe = -1,
 		.duped_from = -1,
-		.duped_to = -1,
+		.duped_to = NULL,
 	});
 }
 

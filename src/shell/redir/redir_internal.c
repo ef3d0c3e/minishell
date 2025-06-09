@@ -12,8 +12,11 @@
 #include "parser/redirs/redir_parser.h"
 #include "shell/env/env.h"
 #include "shell/expand/expand.h"
+#include "util/util.h"
 #include <shell/shell.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /** @brief Handles redirections to files */
 static int
@@ -105,22 +108,45 @@ static int
 	return (0);
 }
 
+static ssize_t
+	write_all(int fd, const void *buf, size_t len)
+{
+	ssize_t r;
+
+	r = 0;
+	while (len)
+	{
+		r = write(fd, ((const unsigned char *)buf) + r, len);
+		if (r < 0)
+			return (r);
+		len -= r;
+	}
+	return (r);
+}
+
 static int
 	redir_internal_heredoc(
 	t_shell *shell,
 	t_redirs_stack *stack,
 	t_redirection *redir)
 {
-	const int	dup = shell_dup(shell, redir->redirectee.fd);
+	int			fds[2];
 
-	write(dup, redir->heredoc.str, redir->heredoc.len);
-	close(dup);
-	//shell_close(shell, dup);
+	if (shell_pipe(shell, fds) == -1)
+		shell_perror(shell, "pipe() failed", SRC_LOCATION);
+	if (write_all(fds[1], redir->heredoc.str, redir->heredoc.len) < 0)
+	{
+		shell_close(shell, fds[0]);
+		shell_close(shell, fds[1]);
+		shell_perror(shell, "write() failed", SRC_LOCATION);
+	}
+	shell_close(shell, fds[1]);
+	if (redir_dup2(shell, stack, fds[0], STDIN_FILENO) == -1)
+		shell_perror(shell, "dup2() failed", SRC_LOCATION);
+	shell_close(shell, fds[0]);
 	return (1);
 }
 
-// TODO: Add a way to keep track of opened fd, because we can't use `fcntl(F_GETFD)`
-// Probably inside an rb tree
 int
 	redir_internal(t_shell *shell, t_redirs_stack *stack, t_redirection *redir)
 {
@@ -140,5 +166,4 @@ int
 	else
 		shell_fail(shell, "Unhandled redirection type", SRC_LOCATION);
 	return (0);
-	// TODO: HERESTRING/DOC
 }

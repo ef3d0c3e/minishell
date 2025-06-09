@@ -14,18 +14,13 @@
 static void
 	print_fn(size_t depth, t_rbnode *node, void *cookie)
 {
-	const t_fd_data	*data;
+	char			*msg;
+
 	(void)depth;
 	(void)cookie;
-
-	data = node->data;
-	ft_printf("%d: %s fl=%04o m=%04o",
-		(int)(ptrdiff_t)node->key, data->filename, data->flags, data->mode);
-	if (data->type == FDT_DUP)
-		ft_printf(" duped_from=%d", data->duped_from);
-	if (data->duped_to != -1)
-		ft_printf(" duped_to=%d", data->duped_to);
-	ft_printf("\n");
+	msg = fd_print(node->data);
+	ft_printf("%s\n", msg);
+	free(msg);
 }
 
 static int

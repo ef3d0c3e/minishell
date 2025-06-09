@@ -103,17 +103,3 @@ int
 
 	return (bfind(cp, ranges, 367));
 }
-
-int
-	codepoint_width(uint32_t cp)
-{
-	if (cp == 0)
-		return (0);
-	else if (cp < 32 || (cp >= 0x7f && cp < 0xa0))
-		return (-1);
-	if (codepoint_is_wide(cp))
-		return (2);
-	if (codepoint_is_fuser(cp))
-		return (0);
-	return (1);
-}

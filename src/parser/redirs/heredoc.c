@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 
@@ -56,9 +57,8 @@ static int
 			return (free(delim), getline_cleanup(&line), 0);
 		if (!ft_strcmp(res, delim))
 			break ;
-		if (heredoc->heredoc.len)
-			stringbuf_append(&heredoc->heredoc, (t_string){"\n", 1});
 		stringbuf_append(&heredoc->heredoc, (t_string){res, ft_strlen(res)});
+		stringbuf_append(&heredoc->heredoc, (t_string){"\n", 1});
 		free(res);
 	}
 	free(res);

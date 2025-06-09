@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/fds/fds.h"
 #include "util/util.h"
 #include <shell/shell.h>
 
@@ -90,6 +91,20 @@ int
 	return (newfd);
 }
 
+static void
+	duped_to_push(t_fd_data *fd, int new)
+{
+	size_t	len;
+
+	len = 0;
+	while (fd->duped_to && fd->duped_to[len] != -1)
+		++len;
+	fd->duped_to = ft_realloc(fd->duped_to, sizeof(int) * len,
+			sizeof(int) * (len + 2));
+	fd->duped_to[len] = new;
+	fd->duped_to[len + 1] = -1;
+}
+
 int
 	shell_dup2(t_shell *shell, int oldfd, int newfd)
 {
@@ -112,6 +127,6 @@ int
 	}
 	status = dup2(oldfd, newfd);
 	if (status != -1)
-		olddata->duped_to = newfd;
+		duped_to_push(olddata, newfd);
 	return (status);
 }
