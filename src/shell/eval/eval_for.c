@@ -30,7 +30,8 @@ t_eval_result
 			continue ;
 		if ((result.type == RES_BREAK && result.param >= 1)
 			|| (result.type == RES_CONTINUE && result.param >= 1)
-			|| result.type == RES_RETURN || result.type == RES_EXIT)
+			|| result.type == RES_RETURN || result.type == RES_EXIT
+			|| result.type == RES_STOP)
 		{
 			if (result.type != RES_CONTINUE)
 				args_free(argv);

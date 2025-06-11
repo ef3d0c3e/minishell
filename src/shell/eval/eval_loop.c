@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 t_eval_result
@@ -20,7 +21,7 @@ t_eval_result
 	{
 		result = eval(shell, cmd->st_loop.cond);
 		if ((result.type == RES_BREAK && result.param > 0)
-			|| result.type == RES_RETURN)
+			|| result.type == RES_RETURN || result.type == RES_STOP)
 		{
 			if (result.type == RES_BREAK)
 				--result.type;
@@ -31,7 +32,7 @@ t_eval_result
 			break;
 		result = eval(shell, cmd->st_loop.body);
 		if ((result.type == RES_BREAK && result.param > 0)
-			|| result.type == RES_RETURN)
+			|| result.type == RES_RETURN || result.type == RES_STOP)
 		{
 			if (result.type == RES_BREAK)
 				--result.type;
