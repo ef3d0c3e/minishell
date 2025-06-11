@@ -17,7 +17,7 @@ int
 	static const char	*operators[] = {"||", "&&", NULL};
 	const char			*operator;
 
-	operator = str_alternatives(it_substr(it, 2), operators);
+	operator = str_alternatives(it_substr(it, 2), operators, 0);
 	if (!operator)
 		return (0);
 	token_list_push(list, TOK_OPERATOR, it->byte_pos,

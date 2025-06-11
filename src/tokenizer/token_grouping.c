@@ -19,7 +19,7 @@ int
 	static const char	*groupings[] = {"(", ")", NULL};
 	const char			*grouping;
 
-	grouping = str_alternatives(it_substr(it, 1), groupings);
+	grouping = str_alternatives(it_substr(it, 1), groupings, 0);
 	if (!grouping)
 		return (0);
 	token_list_push(list, TOK_GROUPING, it->byte_pos,

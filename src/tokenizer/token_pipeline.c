@@ -19,7 +19,7 @@ int
 
 	if (it->codepoint.str[0] != '|')
 		return (0);
-	pipeline = str_alternatives(it_substr(it, 2), pipelines);
+	pipeline = str_alternatives(it_substr(it, 2), pipelines, 0);
 	token_list_push(list, TOK_PIPELINE, it->byte_pos,
 		it->byte_pos + ft_strlen(pipeline))->reserved_word = pipeline;
 	it_advance(it, ft_strlen(pipeline));

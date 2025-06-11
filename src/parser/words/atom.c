@@ -77,7 +77,7 @@ void
 	ft_dprintf(2, "TODO(%s)\n\n ", SRC_LOCATION);
 	exit(1);
 	arg->param.op = str_alternatives((t_string){name + sep,
-		ft_strlen(name + sep)}, ops);
+		ft_strlen(name + sep)}, ops, 0);
 	if (!arg->param.op)
 	{
 		ft_asprintf(&err, "Invalid parameter expansion: `%s`", name);

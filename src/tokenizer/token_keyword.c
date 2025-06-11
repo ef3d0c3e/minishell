@@ -22,7 +22,8 @@ int
 	"for", "in", "until", "while", "do",
 	"case", "esac", "coproc", "select", "function",
 	NULL};
-	const char			*keyword = str_alternatives(it_substr(it, 8), keywords);
+	const char			*keyword = str_alternatives(it_substr(it, 8), keywords,
+		0);
 
 	if (list->size
 			&& list->tokens[list->size - 1].type != TOK_SPACE

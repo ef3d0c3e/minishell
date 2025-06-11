@@ -19,7 +19,7 @@ int
 		">&", "&>", "<>", ">|", "|&", ">>", "<<", "<", ">", NULL};
 	const char				*redir;
 
-	redir = str_alternatives(it_substr(it, 3), redirs);
+	redir = str_alternatives(it_substr(it, 3), redirs, 0);
 	if (!redir)
 		return (0);
 	token_list_push(list, TOK_REDIR, it->byte_pos,

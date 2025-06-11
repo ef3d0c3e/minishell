@@ -19,7 +19,7 @@ static int
 	static const char	*special[] = {
 		"?", NULL
 	};
-	const char			*kind = str_alternatives(it_substr(it, 1), special);
+	const char			*kind = str_alternatives(it_substr(it, 1), special, 0);
 
 	if (kind && ft_strlen(kind) == end)
 	{

@@ -37,7 +37,7 @@ dquote_backslash(t_u8_iterator *it)
 
 	if (it->codepoint.str[0] != '\\')
 		return ;
-	if (str_alternatives(it_substr(it, 2), escaped))
+	if (str_alternatives(it_substr(it, 2), escaped, 0))
 		it_advance(it, 1);
 }
 

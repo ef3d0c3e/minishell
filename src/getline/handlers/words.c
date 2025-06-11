@@ -22,18 +22,18 @@ t_u8_iterator
 	if (direction < 0)
 	{
 		it_prev(&it);
-		while (it.codepoint.len && str_alternatives(it.codepoint, delims))
+		while (it.codepoint.len && str_alternatives(it.codepoint, delims, 0))
 			it_prev(&it);
-		while (it.codepoint.len && !str_alternatives(it.codepoint, delims))
+		while (it.codepoint.len && !str_alternatives(it.codepoint, delims, 0))
 			it_prev(&it);
 		if (it.codepoint.len)
 		it_next(&it);
 	}
 	else
 	{
-		while (it.codepoint.len && str_alternatives(it.codepoint, delims))
+		while (it.codepoint.len && str_alternatives(it.codepoint, delims, 0))
 			it_next(&it);
-		while (it.codepoint.len && !str_alternatives(it.codepoint, delims))
+		while (it.codepoint.len && !str_alternatives(it.codepoint, delims, 0))
 			it_next(&it);
 	}
 	return (it);

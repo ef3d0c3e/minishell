@@ -79,11 +79,13 @@ str_starts_with(t_string str, const char *token);
  *
  * @param str String to serach in
  * @param alternatives Alternatives to search for (NULL-terminated)
+ * @param complete If set to 1, str length must be that of the matching
+ * alternative
  *
  * @returns The member of `alternatives` that `str` starts with
  */
 const char
-*str_alternatives(t_string str, const char **alternatives);
+*str_alternatives(t_string str, const char **alternatives, int complete);
 /**
  * @brief Finds if `str` contains one of the strings in `alternatives`
  *

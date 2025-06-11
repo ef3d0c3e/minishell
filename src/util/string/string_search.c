@@ -12,7 +12,7 @@
 #include "../util.h"
 
 const char
-	*str_alternatives(t_string str, const char **alternatives)
+	*str_alternatives(t_string str, const char **alternatives, int complete)
 {
 	size_t	i;
 	size_t	j;
@@ -24,7 +24,7 @@ const char
 		while (j < str.len && str.str[j] == alternatives[i][j]
 				&& alternatives[i][j])
 			++j;
-		if (alternatives[i][j] == 0)
+		if (alternatives[i][j] == 0 && (!complete || j == str.len))
 			return (alternatives[i]);
 		++i;
 	}
@@ -42,7 +42,7 @@ const char
 	while (i < str.len)
 	{
 		sub = (t_string){str.str + i, str.len - i};
-		alt = str_alternatives(sub, alternatives);
+		alt = str_alternatives(sub, alternatives, 0);
 		if (alt)
 			return (alt);
 		++i;

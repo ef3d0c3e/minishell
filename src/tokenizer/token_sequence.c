@@ -16,7 +16,8 @@ int
 {
 	const size_t		start = it->byte_pos;
 	static const char	*separators[] = {"\n", "&", ";", NULL};
-	const char			*sep = str_alternatives(it_substr(it, 1), separators);
+	const char			*sep = str_alternatives(it_substr(it, 1), separators,
+			0);
 
 	if (!sep)
 		return (0);

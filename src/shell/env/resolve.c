@@ -71,7 +71,7 @@ int
 
 	if (!ft_strchr(name, '/'))
 	{
-		if (str_alternatives((t_string){name, ft_strlen(name)}, specials))
+		if (str_alternatives((t_string){name, ft_strlen(name)}, specials, 1))
 			return (1);
 		else if (rb_find(&shell->reg_fns, name))
 			return (2);
