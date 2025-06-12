@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.c                                        :+:      :+:    :+:   */
+/*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 /** @brief Removes spaces before and after operators */
@@ -120,15 +119,6 @@ t_token_list
 	{
 		if (remove_space(&list, &i) || remove_comment(&list, &i))
 			continue ;
-		//if (expand_tilde(shell, &list.tokens[i], &new))
-		//	;
-		//else if (expand_param(shell, &list.tokens[i], &new))
-		//	;
-		//else if (expand_cmdsub(shell, &list.tokens[i], &new))
-		//	;
-		//else if (expand_filename(shell, &list.tokens[i], &new))
-		//	;
-		//else
 		token_list_push_token(&new, list.tokens[i]);
 		++i;
 	}

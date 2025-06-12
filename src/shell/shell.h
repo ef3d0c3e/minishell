@@ -13,7 +13,6 @@
 # define SHELL_H
 
 # include <tokenizer/tokenizer.h>
-# include <expansion/expansion.h>
 # include <parser/parser.h>
 # include <builtins/builtin.h>
 # include <shell/env/env.h>

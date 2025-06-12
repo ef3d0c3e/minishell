@@ -14,14 +14,12 @@
 
 # include <util/util.h>
 
-// TEMP
-#include <stdio.h>
-
 /* ************************************************************************** */
 /* Token list                                                                 */
 /* ************************************************************************** */
 
 typedef struct s_token	t_token;
+typedef struct s_shell	t_shell;
 
 typedef struct s_token_list
 {
@@ -398,5 +396,18 @@ int	token_param(t_token_list *list, t_u8_iterator *it);
  */
 int
 report_tokens(t_string input, const t_token_list *list);
+
+/**
+ * @brief Cleans up token after tokenization
+ *
+ * This function will remove unneded spaces and merge similar tokens resulting
+ * from tokenization.
+ *
+ * @param shell The shell session
+ * @param list Token list to expand
+ * @return The expanded token list
+ */
+t_token_list
+token_expand(t_shell *shell, t_token_list list);
 
 #endif // TOKENIZER_H
