@@ -62,7 +62,7 @@ void
 	size_t	pos;
 	size_t	new_cap;
 
-	if (buf->s_attrs.size <= buf->s_attrs.capacity)
+	if (buf->s_attrs.size >= buf->s_attrs.capacity)
 	{
 		new_cap = buf->s_attrs.capacity * 2 + !buf->s_attrs.capacity * 4;
 		buf->s_attrs.data = ft_realloc(buf->s_attrs.data,
