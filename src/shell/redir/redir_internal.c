@@ -97,7 +97,7 @@ static int
 {
 	(void)stack;
 	(void)redir;
-	shell_fail(shell, "Unhandled redirection type", SRC_LOCATION);
+	shell_error(shell, ft_strdup("Unhandled redirection type"), SRC_LOCATION);
 	return (0);
 }
 
@@ -157,6 +157,7 @@ int
 		|| redir->type == R_READING_UNTIL)
 		return (redir_internal_heredoc(shell, stack, redir));
 	else
-		shell_fail(shell, "Unhandled redirection type", SRC_LOCATION);
+		shell_error(shell, ft_strdup("Unhandled redirection type"),
+				SRC_LOCATION);
 	return (0);
 }

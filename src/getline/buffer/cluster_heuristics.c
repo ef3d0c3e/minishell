@@ -56,22 +56,6 @@ void
 	it_prev(&prev);
 	next = it;
 	it_next(&next);
-	if (codepoint_width(u8_to_cp(prev.codepoint)) != 1
-		|| codepoint_width(u8_to_cp(next.codepoint)) != 1
-		|| codepoint_width(u8_to_cp(it.codepoint)) != 1
-		|| codepoint_is_fuser(u8_to_cp(it.codepoint)))
-	{
-		i = 0;
-		while (++i < LINE_CLUSTER_MAX)
-		{
-			if (prev.codepoint.len && !buf->s_clusters.data[prev.cp_pos].width)
-				it_prev(&prev);
-			if (next.codepoint.len && !buf->s_clusters.data[next.cp_pos].width)
-				it_next(&next);
-		}
-		recluster_precise(line, buf, prev, next);
-	}
-	else
 		buf->s_clusters.data[it.cp_pos].width
 			= codepoint_width(u8_to_cp(it.codepoint));
 }
