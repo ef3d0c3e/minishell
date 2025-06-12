@@ -19,6 +19,7 @@ void
 {
 	t_shell	shell;
 	size_t	i;
+	char 	*input;
 
 	close(fds[1]);
 	close(fds[2]);
@@ -36,8 +37,9 @@ void
 		option_set(&shell, test->opts[i].name, test->opts[i].value);
 		++i;
 	}
-	ctx_eval_stdout(&shell, ft_strdup(stringbuf_cstr(&test->expr)));
+	input = ft_strdup(stringbuf_cstr(&test->expr));
 	test_free(test);
+	ctx_eval_stdout(&shell, input);
 	shell_exit(&shell, shell.last_status);
 }
 

@@ -5,6 +5,35 @@
 # include <time.h>
 # include "../tester.h"
 
+typedef struct s_allocated
+{
+	void	**bufs;
+	size_t	size;
+}	t_allocated;
+
+static	t_allocated	__test_allocated_data;
+static	int	__test_cleanup_reg;
+
+static void
+__test_allocated_push(void *buf)
+{
+	__test_allocated_data.bufs = ft_realloc(__test_allocated_data.bufs,
+		sizeof(void *) * __test_allocated_data.size,
+		sizeof(void *) * (__test_allocated_data.size + 1));
+	__test_allocated_data.bufs[__test_allocated_data.size++] = buf;
+}
+
+static void
+__test_allocated_clean()
+{
+	size_t	i;
+
+	i = 0;
+	while (i < __test_allocated_data.size)
+		free(__test_allocated_data.bufs[i++]);
+	free(__test_allocated_data.bufs);
+}
+
 typedef struct s_runner_data
 {
 	uint32_t	random_state;
@@ -34,6 +63,8 @@ typedef struct s_evaluator_data
 }	t_evaluator_data;
 
 #define EXPAND(...) __VA_ARGS__
+
+#define CLEAN_BUFFER(buf) __test_allocated_push(buf)
 
 #define WITH_ENV(__envp, ...) \
 { \
@@ -81,16 +112,16 @@ typedef struct s_evaluator_data
 { \
 	char	*__name; \
 	__name = random_ascii(__set, __length, &__random_state); \
+	__test_allocated_push(__name); \
 	{ __VA_ARGS__ } \
-	free(__name); \
 }
 
 #define WITH_RANDOM_BYTES(__length, __name, ...) \
 { \
 	char	*__name; \
 	__name = random_bytes(__length, &__random_state); \
-	__VA_ARGS__ \
-	free(__name); \
+	__test_allocated_push(__name); \
+	{ __VA_ARGS__ } \
 }
 
 #define RANDOM_VALUE(__min, __max) \
@@ -163,6 +194,11 @@ static void __test_##__label##_eval(t_runner_data *__runner_data, uint32_t seed)
 	int							total; \
 	int							passed; \
 	uint32_t					__random_state; \
+	if (!__test_cleanup_reg) \
+	{ \
+		atexit(__test_allocated_clean); \
+		__test_cleanup_reg = 1; \
+	} \
 	__random_state = seed; \
 	if (!__runner_data->id_filter) \
 		ft_dprintf(2, "> Running \033[0;34m%s\033[0;0m tests...\n", #__label); \

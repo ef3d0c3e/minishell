@@ -17,14 +17,14 @@ DO_TEST(pipe, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 		char	*cmd;
 		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 60), ran, " \t\n\r\f\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
 			ft_asprintf(&cmd, "echo -n '%s' | cat -", ran);
+			CLEAN_BUFFER(cmd);
 			SHELL_TEST(cmd, "", ran, "", 0)
-			free(cmd);
 			ft_asprintf(&cmd, "echo -n '%s' | cat - | cat", ran);
+			CLEAN_BUFFER(cmd);
 			SHELL_TEST(cmd, "", ran, "", 0)
-			free(cmd);
 			ft_asprintf(&cmd, "echo -n '%s' | cat - | cat | cat ", ran);
+			CLEAN_BUFFER(cmd);
 			SHELL_TEST(cmd, "", ran, "", 0)
-			free(cmd);
 		)
 	)
 
@@ -33,9 +33,9 @@ DO_TEST(pipe, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 			size_t	idx = RANDOM_VALUE(1, 30);
 			char	*cmd;
 			ft_asprintf(&cmd, "cat - | head -c %zu | tail -c 1", idx);
+			CLEAN_BUFFER(cmd);
 			char str[2] = {ran[idx - 1], 0};
 			SHELL_TEST(cmd, ran, str, "", 0);
-			free(cmd);
 		)
 	)
 

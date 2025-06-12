@@ -53,6 +53,7 @@ DO_TEST(redir, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 		WITH_RANDOM_BYTES(32, ran2,
 			char *cat;
 			ft_asprintf(&cat, "%s%s", ran1, ran2);
+			CLEAN_BUFFER(cat);
 			TEST_FILES(({"r_appening_to1", cat}),
 				SHELL_TEST("cat - >>r_appening_to1", ran1, "", "", 0);
 				SHELL_TEST("cat - >>r_appening_to1", ran2, "", "", 0);
@@ -65,7 +66,6 @@ DO_TEST(redir, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 				SHELL_TEST("cat - >r_appening_to3", ran1, "", "", 0);
 				SHELL_TEST("cat - >r_appening_to3", ran2, "", "", 0);
 			)
-			free(cat);
 		)
 	)
 
@@ -110,6 +110,7 @@ DO_TEST(redir, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 		WITH_RANDOM_BYTES(32, ran2,
 			char *cat;
 			ft_asprintf(&cat, "%s%s", ran1, ran2);
+			CLEAN_BUFFER(cat);
 			TEST_FILES(({"r_append_err_and_out1", ran1}),
 				SHELL_TEST("cat - &>>r_append_err_and_out1", ran1, "", "", 0);
 			)
@@ -128,7 +129,6 @@ DO_TEST(redir, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 			TEST_FILES(({"r_append_err_and_out5", "AB\n"}),
 				SHELL_TEST("(echo AB >/dev/stderr) &>>r_append_err_and_out5", "", "", "", 0);
 			)
-			free(cat);
 		)
 	)
 

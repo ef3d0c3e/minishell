@@ -13,18 +13,18 @@ DO_TEST(echo,
 		char	*cmd;
 		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 32), ran, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
 			ft_asprintf(&cmd, "echo -n %s", ran);
+			CLEAN_BUFFER(cmd);
 			SHELL_TEST(cmd, "", ran, "", 0)
-			free(cmd);
 		)
 		WITH_RANDOM_TEXT(RANDOM_VALUE(10, 32), ran, "\t\n\r\f\v\a\b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
 			ft_asprintf(&cmd, "echo -n \"%s\"", ran);
+			CLEAN_BUFFER(cmd);
 			SHELL_TEST(cmd, "", ran, "", 0)
-			free(cmd);
 		)
 		WITH_RANDOM_TEXT(RANDOM_VALUE(100, 300), ran, " \t\n\r\f\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
 			ft_asprintf(&cmd, "echo -n '%s'", ran);
+			CLEAN_BUFFER(cmd);
 			SHELL_TEST(cmd, "", ran, "", 0)
-			free(cmd);
 		)
 	)
 )

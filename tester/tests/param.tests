@@ -45,13 +45,13 @@ DO_TEST(param,
 	WITH_RANDOM_TEXT(RANDOM_VALUE(10, 60), ran, "\v\a\b\"(){}[]*+,-./!#$%&~<>=?",
 		char *var;
 		ft_asprintf(&var, "VAR=%s", ran);
+		CLEAN_BUFFER(var);
 		WITH_ENV(({var, NULL}),
 			SHELL_TEST("echo -n $VAR", "", ran, "",  0)
 			SHELL_TEST("echo -n ${VAR}", "", ran, "",  0)
 			SHELL_TEST("echo -n \"$VAR\"", "", ran, "",  0)
 			SHELL_TEST("echo -n \"${VAR}\"", "", ran, "",  0)
 		)
-		free(var);
 	)
 
 	WITH_OPTS(({{"experr", 1}, {NULL, 0}}),
