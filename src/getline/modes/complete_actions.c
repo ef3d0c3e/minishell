@@ -75,7 +75,6 @@ void
 	getline_complete_select(t_getline *line)
 {
 	line->state.comp.accept = 1;
-	line->cursor_index = 0;
 	getline_buffer_recluster(line, &line->input);
 	getline_change_mode(line, LINE_INPUT);
 }

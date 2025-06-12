@@ -2,7 +2,7 @@
 
 colored()
 {
-	printf "\x01%s\x02" $(tput setaf $1)
+	printf "%s" $(tput setaf $1)
 }
 
 # set -o experr
