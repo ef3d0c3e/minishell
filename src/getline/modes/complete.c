@@ -13,17 +13,6 @@
 #include "getline/modes/modes.h"
 #include <shell/shell.h>
 
-static void
-	update_line(t_getline *line)
-{
-	const t_complete_item	*item = &line->state.comp.items
-		[line->state.comp.sel];
-
-	getline_buffer_replace(&line->input, line->state.comp.word_start,
-			line->state.comp.word_end, item->name);
-	line->state.comp.word_end = line->state.comp.word_start + ft_strlen(item->name);
-}
-
 void
 	getline_complete_enable(t_getline *line)
 {
@@ -62,7 +51,7 @@ void
 	if (line->state.comp.nitems == 1)
 	{
 		line->state.comp.sel = 0;
-		update_line(line);
+		getline_complete_update(line);
 		getline_complete_select(line);
 		getline_input_move(line, 1);
 		return ;

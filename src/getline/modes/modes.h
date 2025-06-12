@@ -154,6 +154,9 @@ getline_complete_move_page(t_getline *line, int offset);
 /** @brief Selects the current completion item */
 void
 getline_complete_select(t_getline *line);
+/** @brief Updates the line from the selected completion item */
+void
+getline_complete_update(t_getline *line);
 
 /******************************************************************************/
 /* History                                                                    */

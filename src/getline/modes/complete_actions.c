@@ -9,11 +9,10 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
 
-static void
-	update_line(t_getline *line)
+void
+	getline_complete_update(t_getline *line)
 {
 	const t_complete_item	*item = &line->state.comp.items
 		[line->state.comp.sel];
@@ -42,7 +41,7 @@ void
 		else if ((size_t)line->state.comp.sel >= line->state.comp.nitems)
 			line->state.comp.sel = 0;
 	}
-	update_line(line);
+	getline_complete_update(line);
 }
 
 void
