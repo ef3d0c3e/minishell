@@ -9,13 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
 
 void
 	fd_data_free(t_fd_data *data)
 {
 	free(data->filename);
+	free(data->duped_to);
 	free(data);
 }
 
@@ -50,13 +51,19 @@ t_fd_data
 {
 	char	*filename;
 	size_t	len;
+	size_t	to_len;
+	int		*duped_to;
 
 	filename = NULL;
 	if (data->filename)
-	{
-		len = ft_strlen(data->filename);
-		filename = ft_memcpy(xmalloc(len + 1), data->filename, len + 1);
-	}
+		filename = ft_strdup(data->filename);
+	to_len = !!data->duped_to;
+	while (data->duped_to && data->duped_to[to_len - 1] != -1)
+		++to_len;
+	duped_to = NULL;
+	if (data->duped_to)
+		duped_to = ft_memcpy(xmalloc(sizeof(int) * to_len), data->duped_to,
+			sizeof(int) * to_len);
 	return ((t_fd_data){
 		.type = data->type,
 		.filename = filename,
@@ -64,6 +71,6 @@ t_fd_data
 		.mode = data->mode,
 		.pipe = data->pipe,
 		.duped_from = data->duped_from,
-		.duped_to = data->duped_to,
+		.duped_to = duped_to,
 	});
 }

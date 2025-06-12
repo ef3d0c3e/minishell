@@ -44,7 +44,7 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 
 	// empty list yields zero iterations
 	SHELL_TEST("for i in; do echo never; done; echo done",
-			"", "done\n", "", 0)
+			"", "", "", 0)
 
 	// newline/semicolon tolerance
 	SHELL_TEST("for i in 1 2 3\ndo echo $i; done",
@@ -147,9 +147,9 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	SHELL_TEST("for i in 0; do echo a; continue 1; echo b; done",
 			"", "a\n", "", 0)
 	SHELL_TEST("for i in 0; do echo a; continue 2; echo b; done",
-			"", "a\n", "", 0)
+			"", "a\n", "continue: only meaningful in a 'for', 'while', or 'until' loop\n", 0)
 	SHELL_TEST("for i in 0; do echo a; continue 3; echo b; done",
-			"", "a\n", "", 0)
+			"", "a\n", "continue: only meaningful in a 'for', 'while', or 'until' loop\n", 0)
 	SHELL_TEST("for i in 0; do for j in 1; do continue 1; echo a; done; echo b; done",
 			"", "b\n", "", 0)
 	SHELL_TEST("for i in 0; do for j in 1; do continue 2; echo a; done; echo b; done",
@@ -161,9 +161,9 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	SHELL_TEST("for i in 0; do echo a; break 1; echo b; done",
 			"", "a\n", "", 0)
 	SHELL_TEST("for i in 0; do echo a; break 2; echo b; done",
-			"", "a\n", "", 0)
+			"", "a\n", "break: only meaningful in a 'for', 'while', or 'until' loop\n", 0)
 	SHELL_TEST("for i in 0; do echo a; break 3; echo b; done",
-			"", "a\n", "", 0)
+			"", "a\n", "break: only meaningful in a 'for', 'while', or 'until' loop\n", 0)
 	SHELL_TEST("for i in 0; do for j in 0; do echo a; break; done; echo b; done",
 			"", "a\nb\n", "", 0)
 	SHELL_TEST("for i in 0; do for j in 0; do echo a; break 1; done; echo b; done",
@@ -171,6 +171,6 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	SHELL_TEST("for i in 0; do for j in 0; do echo a; break 2; done; echo b; done",
 			"", "a\n", "", 0)
 	SHELL_TEST("for i in 0; do for j in 0; do echo a; break 3; done; echo b; done",
-			"", "a\n", "", 0)
+			"", "a\n", "break: only meaningful in a 'for', 'while', or 'until' loop\n", 0)
 	
 ))

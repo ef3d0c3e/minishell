@@ -32,14 +32,31 @@ t_atom
 	return (out);
 }
 
-void
+static size_t
+	param_sep(const char *name)
+{
+	size_t	sep;
+
+	sep = 0;
+	if (name[0] == '?' || name[0] == '#' || name[0] == '$' || name[0] == '@'
+			|| name[0] == '#')
+		sep = 1;
+	else
+	{
+		while ((name[sep] >= '0' && name[sep] <= '9')
+			|| (name[sep] >= 'a' && name[sep] <= 'z')
+			|| (name[sep] >= 'A' && name[sep] <= 'Z')
+			|| (name[sep] == '_'))
+			++sep;
+	}
+	return (sep);
+}
+
+int
 	parse_param_atom(t_parser *parser, struct s_atom *arg)
 {
-	static const char	*ops[] = {":-", "-", ":=", "=", ":?", "?", ":+", "+",
-	"##", "#", "%%", "%", ":", NULL};
 	t_token *const		token = &parser->list.tokens[parser->pos];
 	char				*name;
-	char				*err;
 	size_t				sep;
 
 	arg->type = W_PARAMETER;
@@ -51,33 +68,21 @@ void
 	arg->param.simple_param = token->type == TOK_PARAM_SIMPLE;
 	name = stringbuf_cstr(&token->word);
 	if (token->type == TOK_PARAM_SIMPLE)
+		return (arg->param.name = ft_strdup(name), 1);
+	sep = param_sep(name);
+	if (sep != token->word.len)
 	{
-		arg->param.name = ft_strdup(name);
-		return ;
+		parser_error(parser, ft_strdup("Param substitution is not implemented"),
+				parser->pos, parser->pos);
+		return (0);
 	}
-	parser_error(parser, ft_strdup("Param sub is unimplemented"), parser->pos,
-			parser->pos);
+	arg->param.name = ft_strdup(name);
+	return (1);
 }
-	/*
-	sep = 0;
-	if (name[0] == '?' || name[0] == '#' || name[0] == '$' || name[0] == '@'
-		|| name[0] == '#')
-	{
-		sep = 1;
-	}
-	else
-	{
-		while ((name[sep] >= '0' && name[sep] <= '9')
-			|| (name[sep] >= 'a' && name[sep] <= 'z')
-			|| (name[sep] >= 'A' && name[sep] <= 'Z')
-			|| (name[sep] == '_'))
-			++sep;
-	}
-	if (sep == token->word.len)
-	{
-		arg->param.name = ft_strdup(name);
-		return ;
-	}
+/* TODO:
+	static const char	*ops[] = {":-", "-", ":=", "=", ":?", "?", ":+", "+",
+	"##", "#", "%%", "%", ":", NULL};
+	char				*err;
 	arg->param.op = str_alternatives((t_string){name + sep,
 		ft_strlen(name + sep)}, ops, 0);
 	if (!arg->param.op)
@@ -86,7 +91,6 @@ void
 		parser_error(parser, err, parser->pos, parser->pos + 1);
 	}
 	// TODO: Call parser recursively on content & set context for errors
-}
 */
 
 void

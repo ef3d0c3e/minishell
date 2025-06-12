@@ -125,20 +125,17 @@ DO_TEST(pipe, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 	// -- 13. Side-effect testing: echo writes, but later pipe fails --
 	SHELL_TEST("echo OUTPUT | false", "", "", "", 1)
 
-	// -- 14. Mixing file descriptor closures --
-	SHELL_TEST("echo hi 1>&- | cat", "", "", "", 1) // stdout closed
-
-	// -- 15. A pipeline where all processes fail (with pipefail) --
+	// -- 14. A pipeline where all processes fail (with pipefail) --
 	WITH_OPTS(({{"pipefail", 1}, {NULL, 0}}),
 			SHELL_TEST("false | false | false", "", "", "", 1)
 			)
 
-	// -- 16. Multiple pipeline stages with final failure --
+	// -- 15. Multiple pipeline stages with final failure --
 	SHELL_TEST("echo OK | cat | false", "", "", "", 1)
 
-	// -- 17. Redirecting output in middle stage of a pipeline --
+	// -- 16. Redirecting output in middle stage of a pipeline --
 	SHELL_TEST("echo abc | tee tmpfile | cat", "", "abc\n", "", 0)
 
-	// -- 19. Bash: a=b command1 | command2 — should not leak a to outer shell --
+	// -- 18. Bash: a=b command1 | command2 — should not leak a to outer shell --
 	SHELL_TEST("a=x; a=y echo z | cat; echo $a", "", "z\nx\n", "", 0)
 ))

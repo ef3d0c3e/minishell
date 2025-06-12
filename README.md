@@ -31,20 +31,37 @@ Notable exceptions include the following:
  - Changing rule `globskipdots` is not possible, but it is enabled by default.
 
 The following option (available via the `shopt` builtin) are implemented:
- - `extglob`: Allows extended patterns, defaults: `0`
+ - `extglob`: Allow extended patterns, defaults: `0`
     - `?(PATTERN-LIST)`
-        matches zero or one occurrence of the given patterns.
+        match zero or one occurrence of the given patterns.
     - `*(PATTERN-LIST)`
-        matches zero or more occurrences of the given patterns.
+        match zero or more occurrences of the given patterns.
     - `+(PATTERN-LIST)`
-        matches one or more occurrences of the given patterns.
+        match one or more occurrences of the given patterns.
     - `@(PATTERN-LIST)`
-        matches one of the given patterns.
+        match one of the given patterns.
     - `!(PATTERN-LIST)`
-        matches anything except one of the given patterns.
- - `globstar`: Allows the `**` pattern which will match subdirectory when followed by a `/`, defaults: `0`
- - `dotglob`: Allows files starting with `.` to match when using `*` or `**`, defaults: `0`
+        match anything except one of the given patterns.
+ - `globstar`: Allow the `**` pattern which will match subdirectory when followed by a `/`, defaults: `0`
+ - `dotglob`: Allow files starting with `.` to match when using `*` or `**`, defaults: `0`
  - `nocaseglob`: **ASCII** characters comparison is done in a case-insensitive manner, defaults: `0`
+
+## Loop constructs
+
+The shell supports the following loop constructs:
+ - `while CMD; do CMD-LIST; done`
+ Run `CMD-LIST` while `CMD` is **true** (returns 0)
+ - `until CMD; do CMD-LIST; done`
+ Run `CMD-LIST` while `CMD` is **false** (returns non-zero)
+ - `for IDENT in LIST; do CMD-LIST; done`
+ Run `CMD-LIST` for each element in `LIST`, mapping each value in `LIST` to `IDENT`.
+
+The following special builtins for manipulating control flow are implemented:
+ - `break [N]` (`N` defaults to 1)
+ - `continue [N]` (`N` defaults to 1)
+
+*NOTE: In cases where `N` is greater than the number of loops, an error is displayed,
+unlike bash which displays an error only if there are 0 active loops*
 
 
 # License

@@ -100,8 +100,10 @@ atom_copy(const t_atom *in);
  *
  * @param parser The parser
  * @param arg Atom to parse into
+ *
+ * @returns 1 on success, 0 on failure
  */
-void
+int
 parse_param_atom(t_parser *parser, t_atom *arg);
 
 /**

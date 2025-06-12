@@ -15,11 +15,13 @@ void
 	word_push(t_parser *parser, t_word *arg)
 {
 	const t_token	*token = &parser->list.tokens[parser->pos];
+	int				status;
 
+	status = 1;
 	arg->atoms = ft_realloc(arg->atoms, sizeof(arg->atoms[0]) * arg->natoms,
 		sizeof(arg->atoms[0]) * (arg->natoms + 1));
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
-		parse_param_atom(parser, &arg->atoms[arg->natoms]);
+		status = parse_param_atom(parser, &arg->atoms[arg->natoms]);
 	else if (token->type == TOK_CMD_SUB)
 		arg->atoms[arg->natoms] = (t_atom){
 			.type = W_SUBEXPR,
@@ -38,7 +40,7 @@ void
 	}
 	if (arg->natoms)
 		arg->atoms[arg->natoms - 1].next = &arg->atoms[arg->natoms];
-	++arg->natoms;
+	arg->natoms += status;
 }
 
 void
