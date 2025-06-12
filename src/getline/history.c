@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include <fcntl.h>
 #include <shell/shell.h>
 
 /** @brief Saves the history */
@@ -39,10 +40,10 @@ t_history
 	getline_history_init(size_t max_entries)
 {
 	return ((t_history){
-			.entries = xmalloc(max_entries * sizeof(t_history_ent *)),
-			.num_entries = 0,
-			.max_entries = max_entries,
-			.histfile = NULL,
+		.entries = xmalloc(max_entries * sizeof(t_history_ent)),
+		.num_entries = 0,
+		.max_entries = max_entries,
+		.histfile = NULL,
 	});
 }
 
@@ -81,7 +82,7 @@ void
 {
 	size_t	i;
 
-	if (line->history.num_entries == line->history.max_entries)
+	if (line->history.num_entries >= line->history.max_entries)
 		save_history(line, line->history.num_entries / 2);
 	i = 0;
 	while (entry[i])
@@ -94,7 +95,7 @@ void
 		++i;
 	}
 	if (line->history.num_entries && !ft_strcmp(entry,
-				line->history.entries[line->history.num_entries - 1].input))
+		line->history.entries[line->history.num_entries - 1].input))
 	{
 		free(entry);
 		return ;
