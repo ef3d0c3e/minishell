@@ -77,7 +77,7 @@ typedef struct s_shell	t_shell;
  *  4. Command substitution `$(cmd)` -> replace by it's `stdout`
  *  5. Arithmetic expansion
  *  6. Process substitution
- *  7. Word splitting (TODO: rules)
+ *  7. Word splitting
  *  8. Filename expansion
  * Additionaly, word joining and space removing is performed.
  *

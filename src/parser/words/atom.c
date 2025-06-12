@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser/ast/ast.h"
+#include "parser/parser.h"
 #include "parser/words/words.h"
 #include "tokenizer/tokenizer.h"
 #include "util/util.h"
@@ -54,7 +55,10 @@ void
 		arg->param.name = ft_strdup(name);
 		return ;
 	}
-	
+	parser_error(parser, ft_strdup("Param sub is unimplemented"), parser->pos,
+			parser->pos);
+}
+	/*
 	sep = 0;
 	if (name[0] == '?' || name[0] == '#' || name[0] == '$' || name[0] == '@'
 		|| name[0] == '#')
@@ -74,8 +78,6 @@ void
 		arg->param.name = ft_strdup(name);
 		return ;
 	}
-	ft_dprintf(2, "TODO(%s)\n\n ", SRC_LOCATION);
-	exit(1);
 	arg->param.op = str_alternatives((t_string){name + sep,
 		ft_strlen(name + sep)}, ops, 0);
 	if (!arg->param.op)
@@ -85,6 +87,7 @@ void
 	}
 	// TODO: Call parser recursively on content & set context for errors
 }
+*/
 
 void
 	atom_wordcontent(t_string_buffer *buf, const t_atom* atom)

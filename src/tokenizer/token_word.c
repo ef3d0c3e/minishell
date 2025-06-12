@@ -19,7 +19,7 @@ int
 	while (it->codepoint.len == 1 && it->codepoint.str[0] == '\\')
 	{
 		it_next(it);
-		if (it->codepoint.len) // TODO: else read from stdin
+		if (it->codepoint.len)
 		{
 			stringbuf_init(&buf, 8);
 			stringbuf_append(&buf, it->codepoint);

@@ -16,6 +16,8 @@ static void
 {
 	t_shell *const			shell = ctx->shell;
 	t_eval_result *const	result = cookie;
+	static const char		*fmt = "%s: only meaningful in a 'for', 'while', "
+		"or 'until' loop\n";
 
 	(void)cookie;
 	*result = (t_eval_result){RES_NONE, 0};
@@ -25,6 +27,10 @@ static void
 		shell->last_status = 1;
 	else if (result->type == RES_EXIT)
 		shell->last_status = result->param;
+	else if (result->type == RES_CONTINUE)
+		ft_dprintf(2, fmt, "continue");
+	else if (result->type == RES_BREAK)
+		ft_dprintf(2, fmt, "break");
 }
 
 t_eval_result

@@ -60,7 +60,6 @@ void
 				sizeof(char *) * parser->regex.errors_capacity);
 	}
 	(void)pos;
-	// TODO Format using `pos`
 	parser->regex.errors[parser->regex.errors_size++] = ft_strdup(msg);
 }
 

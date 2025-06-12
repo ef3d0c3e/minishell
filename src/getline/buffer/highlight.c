@@ -95,7 +95,6 @@ void
 		ft_dprintf(line->out_fd, "\033[m");
 		return ;
 	}
-	// TODO Proper formatting
 	if (attr->color != -1)
 		ft_dprintf(line->out_fd, "\033[38;2;%d;%d;%dm",
 				((attr->color >> 16) & 0xFF),

@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
-#include <stdio.h>
 
 t_eval_result
 	eval_if(t_shell *shell, t_ast_node *cmd)

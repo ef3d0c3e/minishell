@@ -91,6 +91,7 @@ static int
 	return (0);
 }
 
+// TODO: If no match, use globerr/globfail to determine what to do
 static int
 	expand(
 	t_shell *shell,
@@ -101,7 +102,6 @@ static int
 	t_string_buffer				s;
 	size_t						recurse;
 	struct s_filename_traversal	tr;
-	size_t						oldsz;
 
 	if (!needs_expansion(shell, start, end))
 	{
@@ -121,11 +121,8 @@ static int
 	if (recurse != (size_t)-1)
 		recurse += 1;
 	tr.list = list;
-	//regex_print(0, tr.regex.expr);
-	oldsz = list->size;
 	file_tree_walk(".", recurse, collect_files, &tr);
 	regex_free(tr.regex.expr);
-	// TODO: If no match, use globerr/globfail to determine what to do
 	return (1);
 }
 

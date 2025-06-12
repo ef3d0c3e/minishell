@@ -58,7 +58,6 @@ static t_regex_ast
 	{
 		++parser->pos;
 		node = regex_new(M_LITERAL);
-		// TODO: Unicode ?
 		ft_asprintf(&node->literal, "%c", parser->str[parser->pos++]);
 		return (node);
 	}

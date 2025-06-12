@@ -44,12 +44,6 @@ static t_eval_result
 	char	*err;
 
 	num = 1;
-	// TODO: Loop context...
-	//if (!shell->eval_stack.size)
-	//{
-	//	ft_asprintf(&err, "'return' is only valid inside functions", av[1]);
-	//	shell_error(shell, err, SRC_LOCATION);
-	//}
 	if (av[1] && !atoi_checked(av[1], &num))
 	{
 		ft_asprintf(&err, "break: numeric argument required, got: `%s` ",

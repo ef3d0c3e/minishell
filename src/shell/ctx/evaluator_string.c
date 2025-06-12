@@ -38,7 +38,9 @@ static void
 static void
 	evaluator_child(t_ctx *ctx, int *fds)
 {
-	t_eval_result	result;
+	t_eval_result		result;
+	static const char	*fmt = "%s: only meaningful in a 'for', 'while', or "
+		"'until' loop\n";
 
 	close(fds[0]);
 	if (dup2(fds[1], STDOUT_FILENO) == -1)
@@ -48,6 +50,10 @@ static void
 	ctx_free(ctx);
 	if (result.type == RES_STOP)
 		shell_exit(ctx->shell, 130);
+	else if (result.type == RES_CONTINUE)
+		ft_dprintf(2, fmt, "continue");
+	else if (result.type == RES_BREAK)
+		ft_dprintf(2, fmt, "break");
 	shell_exit(ctx->shell, ctx->shell->last_status);
 }
 

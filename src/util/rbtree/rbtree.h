@@ -133,7 +133,7 @@ void
  *
  * The tree is traversed in DFS order
  *
- * @param tree Tree to apply function TODO
+ * @param tree Tree to apply function
  * @param fn Function to apply on every node
  * @param depth Node's depth
  * @param node Node

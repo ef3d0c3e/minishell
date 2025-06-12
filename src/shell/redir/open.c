@@ -86,7 +86,6 @@ int
 	int			fd;
 	char		*err;
 
-	// TODO: Handle special filenames e.g /dev/std* and /dev/fd*
 	if (!filename)
 		return (-1);
 	if (option_value(shell, "noclobber") && redir_is_clobbering(redir))

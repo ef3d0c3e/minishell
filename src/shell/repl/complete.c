@@ -71,7 +71,6 @@ static char
 	}
 	stringbuf_init(&buf, 24);
 	token_wordcontent(&buf, &list.tokens[i]);
-	// TODO: Group tokens together...
 	*word_start = list.tokens[i].start;
 	*word_end = list.tokens[i].end;
 	token_list_free(&list);
