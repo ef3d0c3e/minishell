@@ -1,3 +1,4 @@
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 static int
@@ -74,11 +75,27 @@ static void
 }
 
 static void
+	print_version(void *ptr, const char **av)
+{
+	(void)ptr;
+	(void)av;
+
+	ft_dprintf(2, "Minishell -- A simple C shell\n"
+		"Copyright (c) 2025 Lino Gamba and Thomas Schneider\n"
+		"Minishell is licensed under the GNU General Public License version 3"
+		"(GPLv3),\nunder the terms of the Free Software Foundation "
+		"<https://www.gnu.org/licenses/agpl-3.0.en.html>.\n\n"
+		"Minishell Version: 0.1\n");
+	exit(0);
+}
+
+static void
 	*init(void *a)
 {
 	static char			use[] = "[OPTIONS...]";
 	static t_opt		opts[] = {
 		{"-c", "Evaluate argument in headless mode", headless, 1},
+		{"-v", "Displays version", print_version, 0},
 	};
 	const t_behavior	flags = GET_CALLER;
 
