@@ -72,6 +72,11 @@ void
 		recluster_precise(line, buf, prev, next);
 	}
 	else
+	{
+		int w = codepoint_width(u8_to_cp(it.codepoint));
+		if (w == -1)
+			w = 0;
 		buf->s_clusters.data[it.cp_pos].width
-			= codepoint_width(u8_to_cp(it.codepoint));
+			= w;
+	}
 }

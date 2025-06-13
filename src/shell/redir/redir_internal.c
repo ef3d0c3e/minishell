@@ -9,6 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "shell/fds/fds.h"
+#include <fcntl.h>
 #include <shell/shell.h>
 
 /** @brief Handles redirections to files */
@@ -58,7 +61,7 @@ static int
 	if (redir->redirectee.fd == redir->redirector.fd)
 		return (0);
 	err = NULL;
-	status = fd_check(shell, redir->redirectee.fd, O_RDONLY);
+	status = fd_check(shell, redir->redirectee.fd, O_RDWR);
 	if (status < 0)
 		ft_asprintf(&err, "Dest fd %d is not valid", redir->redirectee.fd);
 	else if (status > 0)
@@ -86,6 +89,50 @@ static int
 	}
 	if (redir->type == R_MOVE_INPUT || redir->type == R_MOVE_OUTPUT)
 		shell_close(shell, redir->redirectee.fd);
+	return (1);
+}
+
+/** @brief Handles move and duplicate redirections */
+static int
+	redir_internal_dup_word(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir)
+{
+	char	*err;
+	int		status;
+	int		redirectee;
+
+	redirectee = redir_open(shell, redir);
+	if (redirectee == redir->redirector.fd)
+		return (0);
+	err = NULL;
+	status = fd_check(shell, redirectee, O_RDWR);
+	if (status < 0)
+		ft_asprintf(&err, "Dest fd %d is not valid", redirectee);
+	else if (status > 0)
+		ft_asprintf(&err, "Dest fd %d is not writeable", redirectee);
+	if (err)
+	{
+		shell_error(shell, err, SRC_LOCATION);
+		return (0);
+	}
+	status = fd_check(shell, redir->redirector.fd, O_WRONLY);
+	if (status < 0)
+		ft_asprintf(&err, "Source fd %d is not valid", redir->redirector.fd);
+	else if (status > 0)
+		ft_asprintf(&err, "Source fd %d is not readeable", redirectee);
+	if (err)
+	{
+		shell_error(shell, err, SRC_LOCATION);
+		return (0);
+	}
+	if (redir_dup2(shell, stack, redirectee, redir->redirector.fd) < 0)
+	{
+		ft_asprintf(&err, "Failed to dup2: %m");
+		shell_error(shell, err, SRC_LOCATION);
+		return (0);
+	}
 	return (1);
 }
 
@@ -151,11 +198,14 @@ int
 	else if (redir->type == R_DUPLICATING_INPUT || redir->type == R_MOVE_INPUT
 		|| redir->type == R_DUPLICATING_OUTPUT || redir->type == R_MOVE_OUTPUT)
 		return (redir_internal_dup_move(shell, stack, redir));
-	else if (redir->type == R_CLOSE_THIS)
-		return (redir_internal_close(shell, stack, redir));
+	else if (redir->type == R_DUPLICATING_INPUT_WORD
+		|| redir->type == R_DUPLICATING_OUTPUT_WORD)
+		return (redir_internal_dup_word(shell, stack, redir));
 	else if (redir->type == R_DEBLANK_READING_UNTIL
 		|| redir->type == R_READING_UNTIL)
 		return (redir_internal_heredoc(shell, stack, redir));
+	else if (redir->type == R_CLOSE_THIS)
+		return (redir_internal_close(shell, stack, redir));
 	else
 		shell_error(shell, ft_strdup("Unhandled redirection type"),
 				SRC_LOCATION);

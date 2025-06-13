@@ -66,7 +66,7 @@ void
 	redir.heredoc.len = 0;
 	redir.heredoc.capacity = 0;
 	if (type == R_ERR_AND_OUT || type == R_OUTPUT_FORCE
-		|| type == R_OUTPUT_DIRECTION)
+		|| type == R_OUTPUT_DIRECTION || type == R_DUPLICATING_OUTPUT_WORD)
 		redir.flags = O_TRUNC | O_WRONLY | O_CREAT;
 	else if (type == R_APPEND_ERR_AND_OUT || type == R_APPENDING_TO)
 		redir.flags = O_APPEND | O_WRONLY | O_CREAT;

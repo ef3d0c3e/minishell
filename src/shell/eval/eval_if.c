@@ -29,8 +29,7 @@ t_eval_result
 			continue;
 		}
 		result = eval(shell, cmd->st_if.bodies[i]);
-		if (result.type != RES_NONE)
-			return (result);
+		return (result);
 		++i;
 	}
 	if (i < cmd->st_if.nbodies)

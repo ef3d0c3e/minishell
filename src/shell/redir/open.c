@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
-#include "shell/eval/eval.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Checks whether a redirection is clobbering */

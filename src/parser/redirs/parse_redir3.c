@@ -79,12 +79,13 @@ static int
 {
 	static const t_redir_tok_type	tokens[] = {
 	{">", R_OUTPUT_DIRECTION}, {">>", R_APPENDING_TO}, {">|", R_OUTPUT_FORCE},
-	{">&", R_DUPLICATING_OUTPUT_WORD}, {"<", R_INPUT_DIRECTION},
-	{"<>", R_INPUT_OUTPUT}, {"<<<", R_READING_STRING},
-	{"<&", R_DUPLICATING_INPUT_WORD}};
+	{">&", R_DUPLICATING_OUTPUT_WORD}, {"&>", R_DUPLICATING_OUTPUT_WORD},
+	{"<", R_INPUT_DIRECTION}, {"<>", R_INPUT_OUTPUT}, {"<<<", R_READING_STRING},
+	{"<&", R_DUPLICATING_INPUT_WORD}, {"&<", R_DUPLICATING_INPUT_WORD}
+	};
 	const t_redir_tok_type			*found;
 
-	found = redir_alternatives(tokens, 8,
+	found = redir_alternatives(tokens, 10,
 			parser->list.tokens[parser->pos + 1].reserved_word);
 	if (!found)
 		return (0);
