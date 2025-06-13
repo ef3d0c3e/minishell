@@ -132,6 +132,16 @@ DO_TEST(redir, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 		)
 	)
 
+	// R_DUPLICATING_OUTPUT
+	WITH_RANDOM_BYTES(32, ran1,
+		WITH_RANDOM_BYTES(32, ran2,
+			char *cat;
+			ft_asprintf(&cat, "%s%s", ran1, ran2);
+			CLEAN_BUFFER(cat);
+			SHELL_TEST("cat - 1&>2", ran1, "", ran1, 0);
+		)
+	)
+
 	// R_INPUT_OUTPUT (TODO)
 
 	// R_OUTPUT_FORCE (TODO enable noclobber)

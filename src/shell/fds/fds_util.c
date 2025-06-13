@@ -22,6 +22,7 @@ int
 
 	if (!data)
 		return (-1);
+	ft_dprintf(2, "fd=%d fl=%03o c = %03o\n", fd, data->flags, data->flags & mask);
 	return (data->flags & mask);
 }
 

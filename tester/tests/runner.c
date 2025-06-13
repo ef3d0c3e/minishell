@@ -21,7 +21,7 @@ static void
 static void
 	run_tests(const char *filter, size_t id_filter, uint32_t seed)
 {
-	static const t_unit_test	tests[] = {
+	const t_unit_test	tests[] = {
 		test_echo,
 		test_grammar,
 		test_param,

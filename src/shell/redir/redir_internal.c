@@ -61,20 +61,20 @@ static int
 	if (redir->redirectee.fd == redir->redirector.fd)
 		return (0);
 	err = NULL;
-	status = fd_check(shell, redir->redirectee.fd, O_RDWR);
+	status = fd_check(shell, redir->redirectee.fd, O_WRONLY);
 	if (status < 0)
 		ft_asprintf(&err, "Dest fd %d is not valid", redir->redirectee.fd);
-	else if (status > 0)
+	else if (status == 0)
 		ft_asprintf(&err, "Dest fd %d is not writeable", redir->redirectee.fd);
 	if (err)
 	{
 		shell_error(shell, err, SRC_LOCATION);
 		return (0);
 	}
-	status = fd_check(shell, redir->redirector.fd, O_WRONLY);
+	status = fd_check(shell, redir->redirector.fd, O_RDONLY);
 	if (status < 0)
 		ft_asprintf(&err, "Source fd %d is not valid", redir->redirector.fd);
-	else if (status > 0)
+	else if (status == 0)
 		ft_asprintf(&err, "Source fd %d is not readeable", redir->redirectee.fd);
 	if (err)
 	{
@@ -107,20 +107,21 @@ static int
 	if (redirectee == redir->redirector.fd)
 		return (0);
 	err = NULL;
-	status = fd_check(shell, redirectee, O_RDWR);
+	status = fd_check(shell, redirectee, O_WRONLY);
 	if (status < 0)
 		ft_asprintf(&err, "Dest fd %d is not valid", redirectee);
-	else if (status > 0)
+	else if (status == 0)
 		ft_asprintf(&err, "Dest fd %d is not writeable", redirectee);
 	if (err)
 	{
 		shell_error(shell, err, SRC_LOCATION);
 		return (0);
 	}
-	status = fd_check(shell, redir->redirector.fd, O_WRONLY);
+	ft_dprintf(2, "flags:%03o\n", redir->flags);
+	status = fd_check(shell, redir->redirector.fd, 001);
 	if (status < 0)
 		ft_asprintf(&err, "Source fd %d is not valid", redir->redirector.fd);
-	else if (status > 0)
+	else if (status == 0)
 		ft_asprintf(&err, "Source fd %d is not readeable", redirectee);
 	if (err)
 	{
