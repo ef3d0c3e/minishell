@@ -49,22 +49,23 @@ static void
 	apply_color(t_buffer *buf, int color, t_u8_iterator *it, size_t offset)
 {
 	static const int	map[] = {0x00000, 0xCD3131, 0x0DBC79, 0xE5E510,
-	0x2472C8, 0xBC3FBC, 0x11A8CD, 0xE5E5E5, 0x026666, 0xF14C4C,
-	0x23D18B, 0xF5F543, 0x3B8EEA, 0xD670D6, 0x29B8DB, 0xF2F2F0};
+	0x2472C8, 0xBC3FBC, 0x11A8CD, 0xE5E5E5,
+	0x026666, 0xF14C4C, 0x23D18B, 0xF5F543, 0x3B8EEA, 0xD670D6, 0x29B8DB,
+	0xF2F2F0};
 	int					rgb;
 
 	rgb = -1;
-	if (color >= 30 && color <= 39)
+	if (color >= 30 && color <= 37)
 		rgb = map[color - 30];
 	if (color >= 90 && color <= 97)
-		rgb = map[color - 90 + 10];
+		rgb = map[color - 90 + 8];
 	getline_highlight_add(buf, (t_buffer_attr){
 		.start = it->byte_pos - offset,
 		.end = it->byte_next - offset,
 		.color = rgb,
-		.bold = -1,
-		.italic = -1,
-		.underline = -1,
+		.bold = 0,
+		.italic = 0,
+		.underline = 0,
 	});
 }
 
