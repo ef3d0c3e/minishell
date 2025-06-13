@@ -168,7 +168,7 @@ t_rbnode
  *
  * @returns node Subtree to get the maximal value from
  *
- * @returns The maximal value of subtree designated by node. A.k.a the leftmost
+ * @returns The maximal value of subtree designated by node. A.k.a the rightmost
  * node
  */
 t_rbnode

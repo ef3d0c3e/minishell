@@ -76,13 +76,16 @@ typedef struct s_shell
 	/** @brief Current session errors */
 	struct s_error_list	errors;
 
-	/** @brief Stack of temporary values that need to be `free`d when the shell
+	/** @brief Tree of temporary values that need to be `free`d when the shell
 	 * exits. The purpose of this is to avoid leaks when forking. View it as
 	 * a per-process-unique pointers registry.
 	 *
+	 * It's similar to glibc's atexit, excepts that values can be specified and
+	 * removed any any given point.
+	 *
 	 * If the data member for a node is set, it will be used as the cleanup
 	 * function instead of `free`. */
-	t_rbtree			temporaries;
+	t_rbtree			atexit;
 
 	/** @brief Chain of active contexts */
 	t_ctx				*context;

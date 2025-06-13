@@ -20,7 +20,7 @@ void
 	if (!var)
 	{
 		var = xmalloc(sizeof(t_shell_var));
-		var->exported = 0;
+		var->exported = 1;
 		var->name = name;
 		var->value = value;
 		rb_insert(&shell->reg_env, ft_strdup(name), var);

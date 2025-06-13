@@ -29,7 +29,7 @@ static int
 void
 	temporaries_init(t_shell *shell)
 {
-	shell->temporaries = rb_new(ptr_cmp, NULL, NULL);
+	shell->atexit = rb_new(ptr_cmp, NULL, NULL);
 }
 
 static void
@@ -47,6 +47,6 @@ static void
 void
 	temporaries_cleanup(t_shell *shell)
 {
-	rb_apply(&shell->temporaries, cleanup_fn, NULL);
-	rb_free(&shell->temporaries);
+	rb_apply(&shell->atexit, cleanup_fn, NULL);
+	rb_free(&shell->atexit);
 }

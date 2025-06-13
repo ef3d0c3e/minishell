@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <fcntl.h>
 #include <shell/shell.h>
 
 /** @brief Saves the history */
@@ -50,7 +49,16 @@ t_history
 void
 	getline_history_free(t_getline *line)
 {
-	save_history(line, line->history.num_entries);
+	size_t	i;
+
+	if (!line->shell->is_child)
+		save_history(line, line->history.num_entries);
+	else
+	{
+		i = 0;
+		while (i < line->history.num_entries)
+			free(line->history.entries[i++].input);
+	}
 	free(line->history.entries);
 	free(line->history.histfile);
 }

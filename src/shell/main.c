@@ -23,7 +23,7 @@ static void
 	line = repl_setup(shell);
 	signal_install(shell, 0);
 	profile_source(shell);
-	rb_insert(&shell->temporaries, &line, (void *)getline_cleanup);
+	rb_insert(&shell->atexit, &line, (void *)getline_cleanup);
 	while (1)
 	{
 		if (g_signal == SIGINT)
@@ -46,7 +46,7 @@ static void
 			break ;
 		}
 	}
-	rb_delete(&shell->temporaries, &line);
+	rb_delete(&shell->atexit, &line);
 	getline_cleanup(&line);
 	signal_install(shell, 1);
 }

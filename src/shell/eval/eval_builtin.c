@@ -28,9 +28,9 @@ t_eval_result
 	if (do_redir(shell, &stack, &cmd->cmd.redirs))
 	{
 		prefix_stack_push(shell, cmd->cmd.assigns, cmd->cmd.nassigns);
-		rb_insert(&shell->temporaries, argv, (void *)args_free);
+		rb_insert(&shell->atexit, argv, (void *)args_free);
 		shell->last_status = builtin->run(shell, argc, argv);
-		rb_delete(&shell->temporaries, argv);
+		rb_delete(&shell->atexit, argv);
 		prefix_stack_pop(shell);
 	}
 	undo_redir(shell, &stack);
