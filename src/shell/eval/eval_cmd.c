@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   eval.c                                             :+:      :+:    :+:   */
+/*   eval_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/13 14:04:47 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "shell/env/env.h"
 #include "util/util.h"
 #include <shell/shell.h>
+#include <stddef.h>
 
 void
 	eval_install_var(t_shell *shell, t_ast_node *cmd)
@@ -59,6 +60,7 @@ t_eval_result
 	char	*err;
 	char	**argv;
 	char	*path;
+	size_t	cnt;
 
 	path = NULL;
 	argv = word_expansion(shell, &program->cmd.args);
@@ -70,6 +72,10 @@ t_eval_result
 	if (!argv[0])
 		return (free(argv), eval_empty(shell, program));
 	status = resolve_eval(shell, argv[0], &path);
+	cnt = 0;
+	while (argv[cnt])
+		cnt++;
+	set_env_variable(shell, "_", ft_strdup(argv[cnt - 1]));
 	if (status == 1)
 		return (eval_special(shell, program, argv));
 	else if (status == 2)

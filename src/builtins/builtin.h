@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/13 13:58:46 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef BUILTIN_H
@@ -67,5 +67,11 @@ const t_builtin
 /** @brief The `type` builtin */
 const t_builtin
 *builtin_type(void);
+/** @brief The `pwd` builtin */
+const t_builtin
+*builtin_pwd(void);
+/** @brief The `env` builtin */
+const t_builtin
+*builtin_env(void);
 
 #endif // BUILTIN_H

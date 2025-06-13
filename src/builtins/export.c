@@ -6,12 +6,9 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/13 13:53:44 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/env/env.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static void
@@ -23,7 +20,8 @@ static void
 	(void)cookie;
 	if (!var->exported)
 		return ;
-	ft_printf("%s=%s\n", var->name, var->value);
+	if (ft_strcmp(var->name, "_"))
+		ft_printf("declare -x %s=%s\n", var->name, var->value);
 }
 
 static int

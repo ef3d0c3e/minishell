@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/13 13:59:01 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "builtins/builtin.h"
@@ -33,6 +33,8 @@ void
 	insert_builtin(shell, builtin_export());
 	insert_builtin(shell, builtin_cd());
 	insert_builtin(shell, builtin_type());
+	insert_builtin(shell, builtin_pwd());
+	insert_builtin(shell, builtin_env());
 }
 
 /** @brief Calls the builtin's deinit function */
