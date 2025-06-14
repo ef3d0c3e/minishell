@@ -34,7 +34,7 @@ static int
 	(void)shell;
 	(void)argc;
 	(void)argv;
-	path = getcwd(NULL, NULL);
+	path = getcwd(NULL, 0);
 	if (!path)
 		ft_dprintf(2, "pwd: Alloc error");
 	else
