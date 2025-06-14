@@ -117,7 +117,6 @@ static int
 		shell_error(shell, err, SRC_LOCATION);
 		return (0);
 	}
-	ft_dprintf(2, "flags:%03o\n", redir->flags);
 	status = fd_check(shell, redir->redirector.fd, 1, 0);
 	if (status < 0)
 		ft_asprintf(&err, "Source fd %d is not valid", redir->redirector.fd);
