@@ -83,7 +83,7 @@ ctx_eval_stdout(t_shell *shell, char *prompt);
 struct s_eval_string_result
 {
 	t_eval_result	result;
-	t_string_buffer	stdout;
+	t_string_buffer	content;
 };
 
 /** @brief Evaluates to a string */

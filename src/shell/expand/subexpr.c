@@ -27,12 +27,12 @@ int
 	result = ctx_eval_string(shell, ft_strdup(stringbuf_cstr(&param->text)), info);
 	if (shell->last_status || result.result.type != RES_NONE)
 	{
-		stringbuf_free(&result.stdout);
+		stringbuf_free(&result.content);
 		return (0);
 	}
-	buf = &result.stdout;
+	buf = &result.content;
 	while (buf->len && buf->str[buf->len - 1] == '\n')
 		--buf->len;
-	fraglist_push(list, result.stdout, param->flags);
+	fraglist_push(list, result.content, param->flags);
 	return (1);
 }

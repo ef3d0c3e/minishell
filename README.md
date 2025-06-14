@@ -4,6 +4,23 @@
  - [ef3d0c3e](https://github.com/ef3d0c3e)
  - [Cheldux](https://github.com/Cheldux)
 
+# Building
+
+To build `minishell`, use the following:
+`make`
+
+To build the tests, use the following:
+`make tests` (built under ./tests)
+
+## Build options
+
+ - `DBG` build with debug flag `-ggdb`, *default: 0*
+ - `C` sets the C compiler to use, *default: gcc*
+ - `MUSL` build with musl libc, instead of the compiler's default. Additionally,
+ values `MUSL_LIBS`, `MUSL_INCS` and `MUSL_LD` can be specified to set where to
+ look for musl files. Possible values:
+    - `x86_64` build with musl for x86_64 architecture.
+
 # Documentation
 
 ## Profile

@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/ctx/ctx.h"
-#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 /** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
@@ -63,16 +60,16 @@ static void
 	int		status;
 	int		waitst;
 
-	stringbuf_init(&result->stdout, 1024);
+	stringbuf_init(&result->content, 1024);
 	waitst = 0;
 	while (waitst != pid)
 	{
-		read_incoming(shell, fds[0], &result->stdout);
+		read_incoming(shell, fds[0], &result->content);
 		waitst = waitpid(pid, &status, WNOHANG);
 		if (waitst == -1 && errno != EINTR)
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
-	read_incoming(shell, fds[0], &result->stdout);
+	read_incoming(shell, fds[0], &result->content);
 	if (waitst != pid && waitpid(pid, &status, 0) == -1)
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	shell->last_status = WEXITSTATUS(status);

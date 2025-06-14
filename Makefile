@@ -1,8 +1,30 @@
 NAME := minishell
-CC := clang
-CFLAGS := -Wall -Wextra -pedantic -ggdb
+CC := gcc
+CFLAGS := -Wall -Wextra -pedantic -O2
 IFLAGS := -I./src
 LFLAGS :=
+
+# Compiler
+ifdef C
+	CC := $(C)
+endif
+
+# Debug mode
+ifeq ($(DBG),1)
+	CFLAGS += -ggdb
+endif
+
+# Compile with musl for x86_64
+ifeq ($(MUSL),x86_64)
+	MUSL_LIBS ?= /usr/lib/x86_64-linux-musl/
+	MUSL_INCS ?= /usr/include/x86_64-linux-musl/
+	MUSL_LD ?= /lib/ld-musl-x86_64.so.1
+	CFLAGS += -static -nostdinc -isystem $(MUSL_INCS)
+	LDFLAGS += -nostdlib -L$(MUSL_LIBS) \
+		-Wl,--dynamic-linker=$(MUSL_LD) \
+		-Wl,-rpath,$(MUSL_LIBS) -lc
+endif
+
 
 # :^] `.!find src -name "*.c" -exec echo "{} \\" \;`
 SOURCES := $(wildcard src/*.c) \
