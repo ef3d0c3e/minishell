@@ -9,21 +9,24 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/fds/fds.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
 
 int
-	fd_check(t_shell *shell, int fd, int mask)
+	fd_check(t_shell *shell, int fd, int read, int write)
 {
 	const t_fd_data	*data = rb_find(&shell->reg_fds, (void *)(ptrdiff_t)fd);
+	int				val;
 
 	if (!data)
 		return (-1);
-	ft_dprintf(2, "fd=%d fl=%03o c = %03o\n", fd, data->flags, data->flags & mask);
-	return (data->flags & mask);
+	val = 1;
+	if (read)
+		val &= (data->flags & O_ACCMODE) == O_RDONLY
+			|| (data->flags & O_ACCMODE) == O_RDWR;
+	if (write)
+		val &= (data->flags & O_ACCMODE) == O_WRONLY
+			|| (data->flags & O_ACCMODE) == O_RDWR;
+	return (val);
 }
 
 char

@@ -61,7 +61,7 @@ static int
 	if (redir->redirectee.fd == redir->redirector.fd)
 		return (0);
 	err = NULL;
-	status = fd_check(shell, redir->redirectee.fd, O_WRONLY);
+	status = fd_check(shell, redir->redirectee.fd, 0, 1);
 	if (status < 0)
 		ft_asprintf(&err, "Dest fd %d is not valid", redir->redirectee.fd);
 	else if (status == 0)
@@ -71,7 +71,7 @@ static int
 		shell_error(shell, err, SRC_LOCATION);
 		return (0);
 	}
-	status = fd_check(shell, redir->redirector.fd, O_RDONLY);
+	status = fd_check(shell, redir->redirector.fd, 1, 0);
 	if (status < 0)
 		ft_asprintf(&err, "Source fd %d is not valid", redir->redirector.fd);
 	else if (status == 0)
@@ -107,7 +107,7 @@ static int
 	if (redirectee == redir->redirector.fd)
 		return (0);
 	err = NULL;
-	status = fd_check(shell, redirectee, O_WRONLY);
+	status = fd_check(shell, redirectee, 0, 1);
 	if (status < 0)
 		ft_asprintf(&err, "Dest fd %d is not valid", redirectee);
 	else if (status == 0)
@@ -118,7 +118,7 @@ static int
 		return (0);
 	}
 	ft_dprintf(2, "flags:%03o\n", redir->flags);
-	status = fd_check(shell, redir->redirector.fd, 001);
+	status = fd_check(shell, redir->redirector.fd, 1, 0);
 	if (status < 0)
 		ft_asprintf(&err, "Source fd %d is not valid", redir->redirector.fd);
 	else if (status == 0)

@@ -81,16 +81,18 @@ fd_data_from(enum e_fd_type type, char *filename, int flags, int mode);
 t_fd_data
 fd_data_clone(t_fd_data *data);
 /**
- * @brief Checks that a fd is open and that it supports the following mask
+ * @brief Checks that a fd is open and that it supports given operations
  *
+ * @param shell The shell session
  * @param fd Fd to check for
- * @param mask Mask to check against
+ * @param read Check if read is supported
+ * @param write Check if write is supported
  *
- * @returns `fd_data->flag & mask` (>0) if the check succeeds.
- * -1 If the file descriptor is not found, or 0 if the mask fails.
+ * @returns Returns -1 if the fd is not found, 0 if one of the operation is
+ * not supported, >0 if all operations are supported and the fd exists
  */
 int
-fd_check(t_shell *shell, int fd, int mask);
+fd_check(t_shell *shell, int fd, int read, int write);
 /**
  * @brief Prints fd data to string
  *

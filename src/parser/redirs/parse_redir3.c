@@ -31,7 +31,7 @@ static int
 		parser->pos += 3;
 	}
 	else if (!ft_strcmp(tok->reserved_word, ">&")
-			|| !ft_strcmp(tok->reserved_word, "&<"))
+			|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
 				R_DUPLICATING_OUTPUT);
