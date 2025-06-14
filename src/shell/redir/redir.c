@@ -9,18 +9,28 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/redir/redir.h"
+#include "ft_printf.h"
+#include "parser/redirs/redir_parser.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 int
 	do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs)
 {
+	char	*err;
 	size_t	i;
 
 	i = 0;
 	while (i < redirs->redirs_size)
 	{
 		if (!redir_internal(shell, stack, &redirs->redirs[i]))
+		{
+			undo_redir(shell, stack);
+			ft_asprintf(&err, "Failed to execute redirect #%zu", i);
+			shell_error(shell, err, SRC_LOCATION);
 			return (0);
+		}
 		++i;
 	}
 	return (1);

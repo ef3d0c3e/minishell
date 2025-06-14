@@ -44,7 +44,7 @@ DO_TEST(control, WITH_ENV(({"PATH=/bin:/usr/bin", NULL}),
 
 	// empty list yields zero iterations
 	SHELL_TEST("for i in; do echo never; done; echo done",
-			"", "", "", 0)
+			"", "done\n", "", 0)
 
 	// newline/semicolon tolerance
 	SHELL_TEST("for i in 1 2 3\ndo echo $i; done",

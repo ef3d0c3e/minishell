@@ -59,7 +59,7 @@ static int
 	int		status;
 
 	if (redir->redirectee.fd == redir->redirector.fd)
-		return (0);
+		return (1);
 	err = NULL;
 	status = fd_check(shell, redir->redirectee.fd, 0, 1);
 	if (status < 0)
@@ -105,7 +105,7 @@ static int
 
 	redirectee = redir_open(shell, redir);
 	if (redirectee == redir->redirector.fd)
-		return (0);
+		return (1);
 	err = NULL;
 	status = fd_check(shell, redirectee, 0, 1);
 	if (status < 0)
