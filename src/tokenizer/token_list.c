@@ -68,6 +68,9 @@ void
 		++i;
 	}
 	free(list->tokens);
+	list->tokens = NULL;
+	list->size = 0;
+	list->capacity = 0;
 }
 
 void

@@ -14,7 +14,7 @@
 void
 	ast_free(t_ast_node *node, int cleanup)
 {
-	static void(*cleaners[])(t_ast_node *) = {
+	static void	(*cleaners[])(t_ast_node *) = {
 	[NODE_BLOCK] = free_block_node,
 	[NODE_SUBSHELL] = free_subshell_node,
 	[NODE_COMMAND] = free_cmd_node,
@@ -40,7 +40,7 @@ void
 	size_t depth,
 	t_ast_node *node)
 {
-	static void(*printers[])(size_t, const t_ast_node *) = {
+	static void	(*printers[])(size_t, const t_ast_node *) = {
 	[NODE_BLOCK] = print_block_node,
 	[NODE_SUBSHELL] = print_subshell_node,
 	[NODE_COMMAND] = print_cmd_node,

@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/ast/ast.h"
-#include "parser/parser.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 /** @brief Parses a list of whitespace/newline delimited words */
@@ -75,17 +72,25 @@ static t_ast_node
 	return (stmt);
 }
 
+int
+	parse_for_check(t_parser *parser)
+{
+	if (!accept_tok(parser, 1, TOK_SPACE) && !accept(parser, 1, "\n"))
+	{
+		parser_error(parser, ft_strdup("Expected a space after `for`"),
+			parser->pos + 1, parser->pos + 2);
+		return (0);
+	}
+	return (1);
+}
+
 t_ast_node
 	*parse_for(t_parser *parser)
 {
 	t_ast_node		*stmt;
 
-	if (!accept_tok(parser, 1, TOK_SPACE) && !accept(parser, 1, "\n"))
-	{
-		parser_error(parser, ft_strdup("Expected a space after `for`"),
-			parser->pos + 1, parser->pos + 2);
+	if (!parse_for_check(parser))
 		return (NULL);
-	}
 	parser->pos += 2;
 	stmt = parse_for_word(parser);
 	if (!stmt)

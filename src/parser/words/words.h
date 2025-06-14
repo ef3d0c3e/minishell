@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   words.h                                             :+:      :+:    :+:   */
+/*   words.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef WORDS_H
-#define WORDS_H
+# define WORDS_H
 
 /**
  * @file Words definitions
@@ -22,11 +22,11 @@
  *  └─ Literal atom ──────────────── Word 1 ┘
  */
 
-#include "util/util.h"
+# include "util/util.h"
 # include <tokenizer/tokenizer.h>
 
 typedef struct s_ast_node	t_ast_node;
-typedef struct s_parser	t_parser;
+typedef struct s_parser		t_parser;
 
 /******************************************************************************/
 /* Atoms                                                                      */

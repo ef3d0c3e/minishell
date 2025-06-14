@@ -9,11 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/ast/ast.h"
-#include "parser/parser.h"
-#include "parser/words/words.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 t_atom
@@ -39,7 +34,7 @@ static size_t
 
 	sep = 0;
 	if (name[0] == '?' || name[0] == '#' || name[0] == '$' || name[0] == '@'
-			|| name[0] == '#')
+		|| name[0] == '#')
 		sep = 1;
 	else
 	{
@@ -73,7 +68,7 @@ int
 	if (sep != token->word.len)
 	{
 		parser_error(parser, ft_strdup("Param substitution is not implemented"),
-				parser->pos, parser->pos);
+			parser->pos, parser->pos);
 		return (0);
 	}
 	arg->param.name = ft_strdup(name);
@@ -94,7 +89,7 @@ int
 */
 
 void
-	atom_wordcontent(t_string_buffer *buf, const t_atom* atom)
+	atom_wordcontent(t_string_buffer *buf, const t_atom *atom)
 {
 	if (atom->type == W_LITERAL || atom->type == W_SUBEXPR)
 	{
@@ -104,7 +99,7 @@ void
 	if (atom->param.simple_param)
 	{
 		stringbuf_append(buf, (t_string){atom->param.name,
-				ft_strlen(atom->param.name)});
+			ft_strlen(atom->param.name)});
 		return ;
 	}
 }

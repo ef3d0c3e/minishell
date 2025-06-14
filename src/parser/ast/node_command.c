@@ -61,7 +61,7 @@ void
 		{
 			print_pad(" | ", depth);
 			ft_dprintf(2, "%.*s=", node->cmd.assigns[i].variable.len,
-					node->cmd.assigns[i].variable.str);
+				node->cmd.assigns[i].variable.str);
 			word_print(0, &node->cmd.assigns[i].value);
 			++i;
 		}

@@ -24,17 +24,17 @@ static int
 	if (!token_atoi(parser, parser->pos + 2, &num))
 		return (0);
 	if (!ft_strcmp(tok->reserved_word, "<&")
-			|| !ft_strcmp(tok->reserved_word, "&<"))
+		|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
-				R_MOVE_INPUT);
+			R_MOVE_INPUT);
 		parser->pos += 4;
 	}
 	else if (!ft_strcmp(tok->reserved_word, ">&")
-			|| !ft_strcmp(tok->reserved_word, "&>"))
+		|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
-				R_MOVE_OUTPUT);
+			R_MOVE_OUTPUT);
 		parser->pos += 4;
 	}
 	else
@@ -59,7 +59,7 @@ static int
 		return (0);
 	parser->pos += 2;
 	make_redirection(redirs, source,
-			(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
+		(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
 	parser->pos += 1;
 	return (1);
 }

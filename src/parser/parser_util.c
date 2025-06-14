@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 int
@@ -98,7 +97,8 @@ int
 	int				sign;
 
 	if (tok->type != TOK_DIGIT)
-		return (parser_error(parser, ft_strdup("Expected number"), start, start),
+		return (parser_error(parser, ft_strdup("Expected number"), start,
+				start),
 			0);
 	pos = 0;
 	sign = 1;
@@ -112,19 +112,9 @@ int
 	{
 		if (muladd_10s_overflow(*value, sign, tok->word.str[pos] - '0'))
 			return (parser_error(parser, ft_strdup("Integer has overflown"),
-				start, start), 0);
+					start, start), 0);
 		*value = *value * 10 + sign * (tok->word.str[pos] - '0');
 		++pos;
 	}
 	return (1);
-}
-
-void
-	print_pad(const char *pad, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	while (i++ < n)
-		ft_dprintf(2, "%s", pad);
 }

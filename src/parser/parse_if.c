@@ -24,7 +24,6 @@ static void
 		expects_delimiter(parser, "then");
 	}
 	body = parse_cmdlist(parser);
-
 	if (with_cond)
 	{
 		stmt->st_if.conds = ft_realloc(stmt->st_if.conds,
@@ -33,8 +32,8 @@ static void
 		stmt->st_if.conds[stmt->st_if.nconds++] = cond;
 	}
 	stmt->st_if.bodies = ft_realloc(stmt->st_if.bodies,
-		sizeof(t_ast_node **) * stmt->st_if.nbodies,
-		sizeof(t_ast_node **) * (stmt->st_if.nbodies + 1));
+			sizeof(t_ast_node **) * stmt->st_if.nbodies,
+			sizeof(t_ast_node **) * (stmt->st_if.nbodies + 1));
 	stmt->st_if.bodies[stmt->st_if.nbodies++] = body;
 }
 

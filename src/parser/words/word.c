@@ -19,7 +19,7 @@ void
 
 	status = 1;
 	arg->atoms = ft_realloc(arg->atoms, sizeof(arg->atoms[0]) * arg->natoms,
-		sizeof(arg->atoms[0]) * (arg->natoms + 1));
+			sizeof(arg->atoms[0]) * (arg->natoms + 1));
 	if (token->type == TOK_PARAM || token->type == TOK_PARAM_SIMPLE)
 		status = parse_param_atom(parser, &arg->atoms[arg->natoms]);
 	else if (token->type == TOK_CMD_SUB)
@@ -31,10 +31,8 @@ void
 		};
 	else
 	{
-		arg->atoms[arg->natoms] = (t_atom){
-			.flags = token->flags,
-			.type = W_LITERAL,
-		};
+		arg->atoms[arg->natoms] = (t_atom){.flags = token->flags,
+			.type = W_LITERAL};
 		stringbuf_init(&arg->atoms[arg->natoms].text, 64);
 		token_wordcontent(&arg->atoms[arg->natoms].text, token);
 	}
@@ -69,7 +67,7 @@ void
 	size_t	i;
 
 	i = 0;
-	while (arg->natoms && i++ < depth )
+	while (arg->natoms && i++ < depth)
 		ft_dprintf(2, " | ");
 	i = 0;
 	while (i < arg->natoms)
@@ -85,7 +83,6 @@ void
 		else if (arg->atoms[i].type == W_SUBEXPR)
 			ft_dprintf(2, "$(%.*s)",
 				(int)arg->atoms[i].text.len, arg->atoms[i].text.str);
-
 		++i;
 	}
 	ft_dprintf(2, "\n");

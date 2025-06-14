@@ -25,8 +25,8 @@ t_ast_node
 		++parser->pos;
 	start = parser->pos;
 	body = parse_compound_command(parser);
-	if (!body  || (body->type != NODE_BLOCK && body->type != NODE_SUBSHELL))
+	if (!body || (body->type != NODE_BLOCK && body->type != NODE_SUBSHELL))
 		parser_error(parser, ft_strdup("Expected a block or subshell"),
-		start, parser->pos);
+			start, parser->pos);
 	return (make_function_node(name, body));
 }

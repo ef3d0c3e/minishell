@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "parser/parser.h"
-#include "parser/redirs/redir_parser.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 const t_redir_tok_type
@@ -77,27 +75,28 @@ void
 	size_t depth)
 {
 	size_t				i;
+	size_t				j;
 	const t_redirection	*redir;
 
 	if (!redirs->redirs_size)
 		return ;
-	for (size_t i = 1; i < depth; ++i)
-		write(2, " | ", 3);
+	print_pad(" | ", depth);
 	ft_dprintf(2, "REDIRS:\n");
 	i = 0;
 	while (i < redirs->redirs_size)
 	{
-		for (size_t i = 0; i < depth; ++i)
-			write(2, " | ", 3);
+		print_pad(" | ", depth);
 		redir = &redirs->redirs[i];
 		if (redir_dest_word(redir))
 		{
-			ft_dprintf(2, "%s fl=%05o %d:", redir_name(redir->type), redir->flags, redir->redirector.fd);
+			ft_dprintf(2, "%s fl=%05o %d:", redir_name(redir->type),
+				redir->flags, redir->redirector.fd);
 			word_print(0, &redir->redirectee.filename);
 		}
 		else if (redir->type != R_READING_UNTIL
 			&& redir->type != R_DEBLANK_READING_UNTIL)
-			ft_dprintf(2, "%s fl=%05o %d:%d\n", redir_name(redir->type), redir->flags, redir->redirector.fd, redir->redirectee.fd);
+			ft_dprintf(2, "%s fl=%05o %d:%d\n", redir_name(redir->type),
+				redir->flags, redir->redirector.fd, redir->redirectee.fd);
 		++i;
 	}
 }

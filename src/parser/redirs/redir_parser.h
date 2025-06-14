@@ -19,7 +19,7 @@ typedef struct s_parser	t_parser;
 typedef struct s_shell	t_shell;
 
 /** @brief Maximum number of heredocuments to parse */
-#define HEREDOC_MAX 16
+# define HEREDOC_MAX 16
 
 /******************************************************************************/
 /* Redirection definitions and utilities                                      */
@@ -55,7 +55,7 @@ typedef union u_redirectee
 	/** @brief Redirect to/from file descriptor */
 	int					fd;
 	/** @brief Redirect to/from file */
-	struct s_word	filename;
+	struct s_word		filename;
 }	t_redirectee;
 
 /** @brief Stores a redirection */
@@ -468,6 +468,5 @@ push_heredoc(t_parser *parser, t_redirection *redir);
  */
 int
 read_heredocs(t_shell *shell, t_parser *parser);
-
 
 #endif // REDIR_PARSER_H

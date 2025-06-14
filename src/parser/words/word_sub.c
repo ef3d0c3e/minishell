@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   word_sub.c                                            :+:      :+:    :+:   */
+/*   word_sub.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 static void
@@ -21,21 +20,20 @@ static void
 	{
 		new->atoms[i - range[0]] = (struct s_atom){
 			.type = W_LITERAL,
-				.flags = word->atoms[i].flags,
+			.flags = word->atoms[i].flags,
 		};
 		if (i + 1 == range[2])
-			new->atoms[i - range[0]].text = stringbuf_from_range(current->str + range[1],
-					current->str + range[3]);
+			new->atoms[i - range[0]].text = stringbuf_from_range(current->str
+					+ range[1], current->str + range[3]);
 		else
-			new->atoms[i - range[0]].text = stringbuf_from_range(current->str + range[1],
-					current->str + current->len);
+			new->atoms[i - range[0]].text = stringbuf_from_range(current->str
+					+ range[1], current->str + current->len);
 	}
 	else if (i + 1 == range[2])
 		new->atoms[i - range[0]] = (struct s_atom){
 			.type = W_LITERAL,
-				.flags = word->atoms[i].flags,
-				.text = stringbuf_from_range(current->str,
-						current->str + range[3])
+			.flags = word->atoms[i].flags,
+			.text = stringbuf_from_range(current->str, current->str + range[3])
 		};
 	else
 		new->atoms[i - range[0]] = atom_copy(&word->atoms[i]);
@@ -46,7 +44,7 @@ t_word
 {
 	t_word				new;
 	size_t				i;
-	
+
 	new.natoms = (range[2] - range[0]);
 	new.atoms = xmalloc(sizeof(struct s_atom) * new.natoms);
 	i = range[0];

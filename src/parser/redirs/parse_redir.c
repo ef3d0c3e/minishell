@@ -18,23 +18,23 @@ int
 
 	i = parser->pos + offset;
 	while (i < parser->list.size && (token_isword(parser->list.tokens[i].type)
-		|| parser->list.tokens[i].type == TOK_CMD_SUB
-		|| parser->list.tokens[i].type == TOK_PARAM_SIMPLE
-		|| parser->list.tokens[i].type == TOK_PARAM))
+			|| parser->list.tokens[i].type == TOK_CMD_SUB
+			|| parser->list.tokens[i].type == TOK_PARAM_SIMPLE
+			|| parser->list.tokens[i].type == TOK_PARAM))
 		++i;
 	if (i == parser->list.size)
 		return (0);
 	return (parser->list.tokens[i].type == TOK_MINUS);
 }
 
-int
-	parse_redir(
+static int
+	parse_redir_num(
 	t_parser *parser,
-	t_redirections *redirs)
+	t_redirections *redirs,
+	size_t left,
+	const t_token *list)
 {
-	const size_t	left = parser->list.size - parser->pos;
-	const t_token	*list = parser->list.tokens + parser->pos;
-	int				status;
+	int	status;
 
 	status = 0;
 	if (left >= 2 && list[0].type == TOK_DIGIT && list[1].type == TOK_REDIR)
@@ -46,11 +46,25 @@ int
 		if (!status)
 		{
 			parser_error(parser, ft_strdup("Invalid redirections"),
-					parser->pos, parser->pos + 1);
+				parser->pos, parser->pos + 1);
 			parser->pos += 2;
 		}
+		return (status);
 	}
-	else if (list[0].type == TOK_REDIR)
+	return (0);
+}
+
+int
+	parse_redir(
+	t_parser *parser,
+	t_redirections *redirs)
+{
+	const size_t	left = parser->list.size - parser->pos;
+	const t_token	*list = parser->list.tokens + parser->pos;
+	int				status;
+
+	status = parse_redir_num(parser, redirs, left, list);
+	if (!status && list[0].type == TOK_REDIR)
 	{
 		if (left >= 3 && redir_has_minus(parser, 1))
 			status = redir_parser3_move(parser, redirs);
@@ -59,7 +73,7 @@ int
 		if (!status)
 		{
 			parser_error(parser, ft_strdup("Invalid redirections"),
-					parser->pos, parser->pos + 1);
+				parser->pos, parser->pos + 1);
 			parser->pos += 1;
 		}
 	}
@@ -71,7 +85,7 @@ void
 	t_parser *parser,
 	t_redirections *redirs)
 {
-	int	result;
+	int		result;
 	size_t	spaces;
 
 	parser->pos = parser->pos;

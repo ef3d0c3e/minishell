@@ -247,7 +247,8 @@ typedef struct s_ast_node
 	/** @brief Node type */
 	enum e_node_type			type;
 	/** @brief Node-specific data */
-	union {
+	union
+	{
 		/** @brief Block expression AST */
 		struct s_node_block		block;
 		/** @brief Sub expressions AST */
@@ -280,6 +281,5 @@ ast_free(t_ast_node *node, int cleanup);
 /** @brief Prints debug info for the AST */
 void
 ast_print(size_t depth, t_ast_node *node);
-
 
 #endif // AST_H

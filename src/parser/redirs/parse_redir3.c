@@ -24,17 +24,17 @@ static int
 	if (!token_atoi(parser, parser->pos + 2, &num))
 		return (0);
 	if (!ft_strcmp(tok->reserved_word, "<&")
-			|| !ft_strcmp(tok->reserved_word, "&<"))
+		|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
-				R_DUPLICATING_INPUT);
+			R_DUPLICATING_INPUT);
 		parser->pos += 3;
 	}
 	else if (!ft_strcmp(tok->reserved_word, ">&")
-			|| !ft_strcmp(tok->reserved_word, "&>"))
+		|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = num},
-				R_DUPLICATING_OUTPUT);
+			R_DUPLICATING_OUTPUT);
 		parser->pos += 3;
 	}
 	else
@@ -52,17 +52,17 @@ static int
 	const t_token	*tok = &parser->list.tokens[parser->pos + 1];
 
 	if (!ft_strcmp(tok->reserved_word, "<&")
-			|| !ft_strcmp(tok->reserved_word, "&<"))
+		|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = 1},
-				R_CLOSE_THIS);
+			R_CLOSE_THIS);
 		parser->pos += 3;
 	}
 	else if (!ft_strcmp(tok->reserved_word, ">&")
-			|| !ft_strcmp(tok->reserved_word, "&>"))
+		|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		make_redirection(redirs, source, (t_redirectee){.fd = 0},
-				R_CLOSE_THIS);
+			R_CLOSE_THIS);
 		parser->pos += 3;
 	}
 	else
@@ -91,7 +91,7 @@ static int
 		return (0);
 	parser->pos += 2;
 	make_redirection(redirs, source,
-			(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
+		(t_redirectee){.filename = parse_word(parser, 0)}, found->type);
 	return (1);
 }
 
@@ -112,7 +112,7 @@ static int
 		return (0);
 	parser->pos += 2;
 	make_redirection(redirs, (t_redirectee){.filename = parse_word(parser, 0)},
-			source, found->type);
+		source, found->type);
 	push_heredoc(parser, &redirs->redirs[redirs->redirs_size - 1]);
 	return (1);
 }

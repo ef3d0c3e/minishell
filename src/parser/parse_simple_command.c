@@ -18,8 +18,8 @@ static void
 	while (cmd->cmd.args.size <= arg_pos)
 	{
 		cmd->cmd.args.list = ft_realloc(cmd->cmd.args.list,
-			sizeof(t_word) * cmd->cmd.args.size,
-			sizeof(t_word) * (cmd->cmd.args.size + 1));
+				sizeof(t_word) * cmd->cmd.args.size,
+				sizeof(t_word) * (cmd->cmd.args.size + 1));
 		cmd->cmd.args.list[cmd->cmd.args.size].atoms = NULL;
 		cmd->cmd.args.list[cmd->cmd.args.size].natoms = 0;
 		++cmd->cmd.args.size;
@@ -35,48 +35,54 @@ static void
 	struct s_word arg)
 {
 	cmd->cmd.assigns = ft_realloc(cmd->cmd.assigns,
-		sizeof(struct s_assignment) * cmd->cmd.nassigns,
-		sizeof(struct s_assignment) * (cmd->cmd.nassigns + 1));
-	cmd->cmd.assigns[cmd->cmd.nassigns].variable =
-		stringbuf_from_range(ident.str, ident.str + ident.len);
+			sizeof(struct s_assignment) * cmd->cmd.nassigns,
+			sizeof(struct s_assignment) * (cmd->cmd.nassigns + 1));
+	cmd->cmd.assigns[cmd->cmd.nassigns].variable
+		= stringbuf_from_range(ident.str, ident.str + ident.len);
 	cmd->cmd.assigns[cmd->cmd.nassigns].value = arg;
 	++cmd->cmd.nassigns;
+}
+
+static int
+	parse_assignment_loop(t_parser *parser, t_ast_node *cmd)
+{
+	const t_token		*tok;
+	size_t				assign_ident;
+	t_word				arg;
+
+	parse_redir_repeat(parser, &cmd->cmd.redirs);
+	if (!accept_tok(parser, 0, TOK_ASSIGN))
+		return (0);
+	assign_ident = parser->pos++;
+	arg.atoms = NULL;
+	arg.natoms = 0;
+	tok = &parser->list.tokens[parser->pos];
+	while (parser->pos < parser->list.size
+		&& (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
+			|| tok->type == TOK_CMD_SUB
+			|| token_isword(tok->type)))
+	{
+		word_push(parser, &arg);
+		++parser->pos;
+		tok = &parser->list.tokens[parser->pos];
+	}
+	push_assign(cmd, parser->list.tokens[assign_ident].word, arg);
+	if (parser->pos < parser->list.size
+		&& parser->list.tokens[parser->pos].type == TOK_SPACE)
+		++parser->pos;
+	return (1);
 }
 
 /** @brief Parses a list of assignments */
 static void
 	parse_assignments(t_parser *parser, t_ast_node *cmd)
 {
-	const t_token		*tok;
-	size_t				assign_ident;
-	struct s_word	arg;
-
 	if (parser->pos < parser->list.size
 		&& parser->list.tokens[parser->pos].type == TOK_SPACE)
 		++parser->pos;
-	while (parser->pos < parser->list.size)
-	{
-		parse_redir_repeat(parser, &cmd->cmd.redirs);
-		if (!accept_tok(parser, 0, TOK_ASSIGN))
-			break ;
-		assign_ident = parser->pos++;
-		arg.atoms = NULL;
-		arg.natoms = 0;
-		tok = &parser->list.tokens[parser->pos];
-		while (parser->pos < parser->list.size
-			&& (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
-				|| tok->type == TOK_CMD_SUB
-				|| token_isword(tok->type)))
-		{
-			word_push(parser, &arg);
-			++parser->pos;
-			tok = &parser->list.tokens[parser->pos];
-		}
-		push_assign(cmd, parser->list.tokens[assign_ident].word, arg);
-		if (parser->pos < parser->list.size
-			&& parser->list.tokens[parser->pos].type == TOK_SPACE)
-			++parser->pos;
-	}
+	while (parser->pos < parser->list.size
+		&& parse_assignment_loop(parser, cmd))
+		;
 }
 
 t_ast_node
@@ -94,14 +100,12 @@ t_ast_node
 		if (parser->pos >= parser->list.size)
 			break ;
 		tok = &parser->list.tokens[parser->pos];
+		arg_pos += tok->type == TOK_SPACE;
 		if (tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
-			|| tok->type == TOK_CMD_SUB
-			|| (arg_pos != 0 && token_isword(tok->type))
-			|| accept_word(parser, 0))
+			|| tok->type == TOK_CMD_SUB || (arg_pos != 0
+				&& token_isword(tok->type)) || accept_word(parser, 0))
 			cmd_arg_push(parser, cmd, arg_pos);
-		else if (tok->type == TOK_SPACE)
-			++arg_pos;
-		else
+		else if (tok->type != TOK_SPACE)
 			break ;
 		++parser->pos;
 	}

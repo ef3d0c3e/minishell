@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_command.c                                        :+:      :+:    :+:   */
+/*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,40 +9,12 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/parser.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdio.h>
 
 t_ast_node
-	*parse_compound_command(t_parser *parser)
+	*parse_compound_command_stmt(t_parser *parser, size_t begin)
 {
-	const size_t	begin = parser->pos;
-	t_ast_node		*inner;
-	t_ast_node		*node;
-
-	node = NULL;
-	if (accept(parser, 0, "("))
-	{
-		++parser->pos;
-		inner = parse_cmdlist(parser);
-		expect(parser, 0, ")");
-		++parser->pos;
-		node = make_subshell_node(inner);
-		parse_redir_repeat(parser, &node->sub.redirs);
-	}
-	else if (accept(parser, 0, "{"))
-	{
-		++parser->pos;
-		if (parser->list.tokens[parser->pos].type == TOK_SPACE)
-			++parser->pos;
-		parser_delimiter_push(parser, "}");
-		inner = parse_cmdlist(parser);
-		expects_delimiter(parser, "}");
-		node = make_block_node(inner);
-	}
-	else if (accept(parser, 0, "if"))
+	if (accept(parser, 0, "if"))
 		return (parse_if(parser));
 	else if (accept(parser, 0, "while"))
 		return (parse_while(parser));
@@ -52,7 +24,37 @@ t_ast_node
 		return (parse_for(parser));
 	else
 		parser_error(parser, ft_strdup("Unexpected token"),
-				begin, parser->list.size);
+			begin, parser->list.size);
+	return (NULL);
+}
+
+t_ast_node
+	*parse_compound_command(t_parser *parser)
+{
+	const size_t	begin = parser->pos;
+	t_ast_node		*inner;
+	t_ast_node		*node;
+
+	node = NULL;
+	if (accept(parser, 0, "(") && ++parser->pos)
+	{
+		inner = parse_cmdlist(parser);
+		expect(parser, 0, ")");
+		++parser->pos;
+		node = make_subshell_node(inner);
+		parse_redir_repeat(parser, &node->sub.redirs);
+	}
+	else if (accept(parser, 0, "{") && ++parser->pos)
+	{
+		if (parser->list.tokens[parser->pos].type == TOK_SPACE)
+			++parser->pos;
+		parser_delimiter_push(parser, "}");
+		inner = parse_cmdlist(parser);
+		expects_delimiter(parser, "}");
+		node = make_block_node(inner);
+	}
+	else
+		return (parse_compound_command_stmt(parser, begin));
 	return (node);
 }
 
@@ -73,19 +75,16 @@ t_ast_node
 	{
 		sep = &parser->list.tokens[parser->pos];
 		++parser->pos;
-		if (parser->pos >= parser->list.size)
-			break ;
-		if (parser->list.tokens[parser->pos].type == TOK_GROUPING)
+		if (parser->pos >= parser->list.size
+			|| parser->list.tokens[parser->pos].type == TOK_GROUPING)
 			break ;
 		cmd = parse_and_or(parser);
 		if (cmd)
 			list_node_push(list, cmd, sep->reserved_word[0]);
 	}
 	if (list->list.ncmds == 0 && parser->list.size)
-	{
 		parser_error(parser, ft_strdup("Expected tokens near newline"),
-				parser->list.size - 1, parser->list.size);
-	}
+			parser->list.size - 1, parser->list.size);
 	return (list);
 }
 
@@ -97,7 +96,7 @@ t_ast_node
 	if (parser->pos >= parser->list.size)
 	{
 		parser_error(parser, ft_strdup("Expected tokens near newline"),
-				parser->list.size - 1, parser->list.size);
+			parser->list.size - 1, parser->list.size);
 		return (NULL);
 	}
 	if (token_isword(parser->list.tokens[parser->pos].type)

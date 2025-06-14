@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 void
@@ -24,10 +21,10 @@ void
 		stack->capacity = 4 * !stack->capacity
 			+ stack->capacity * 2;
 		stack->delimiters = ft_realloc(
-			stack->delimiters,
-			sizeof(char *) * stack->size,
-			sizeof(char *) * (stack->capacity)
-		);
+				stack->delimiters,
+				sizeof(char *) * stack->size,
+				sizeof(char *) * (stack->capacity)
+				);
 	}
 	stack->delimiters[stack->size++] = delim;
 }

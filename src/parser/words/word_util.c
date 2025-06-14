@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   word_util.c                                             :+:      :+:    :+:   */
+/*   word_util.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 t_word
@@ -56,7 +55,7 @@ t_word
 	arg.atoms = NULL;
 	arg.natoms = 0;
 	if (parser->pos < parser->list.size
-			&& parser->list.tokens[parser->pos].type == TOK_SPACE)
+		&& parser->list.tokens[parser->pos].type == TOK_SPACE)
 		++parser->pos;
 	while (parser->pos < parser->list.size)
 	{
@@ -64,7 +63,7 @@ t_word
 		if ((tok->type == TOK_PARAM || tok->type == TOK_PARAM_SIMPLE
 				|| tok->type == TOK_CMD_SUB
 				|| accept_word(parser, 0))
-				&& (!eat_minus || tok->type != TOK_MINUS))
+			&& (!eat_minus || tok->type != TOK_MINUS))
 			word_push(parser, &arg);
 		else
 			break ;

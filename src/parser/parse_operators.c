@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/parser.h"
 #include <shell/shell.h>
 
 t_ast_node
@@ -25,7 +24,7 @@ t_ast_node
 		if (!left)
 		{
 			parser_error(parser, ft_strdup("Expected token before operator"),
-					0, parser->pos);
+				0, parser->pos);
 			return (NULL);
 		}
 		op = parser->list.tokens[parser->pos];

@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/redirs/redir_parser.h"
 #include <shell/shell.h>
 
 /** @brief Parses [REDIR][NUMBER] */
@@ -24,17 +23,17 @@ static int
 	if (!token_atoi(parser, parser->pos + 1, &num))
 		return (0);
 	if (!ft_strcmp(tok->reserved_word, "<&")
-			|| !ft_strcmp(tok->reserved_word, "&<"))
+		|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, (t_redirectee){.fd = 0},
-				(t_redirectee){.fd = num}, R_DUPLICATING_INPUT);
+			(t_redirectee){.fd = num}, R_DUPLICATING_INPUT);
 		parser->pos += 2;
 	}
 	else if (!ft_strcmp(tok->reserved_word, ">&")
-			|| !ft_strcmp(tok->reserved_word, "&<"))
+		|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, (t_redirectee){.fd = 1},
-				(t_redirectee){.fd = num}, R_DUPLICATING_OUTPUT);
+			(t_redirectee){.fd = num}, R_DUPLICATING_OUTPUT);
 		parser->pos += 2;
 	}
 	else
@@ -51,17 +50,17 @@ static int
 	const t_token	*tok = &parser->list.tokens[parser->pos];
 
 	if (!ft_strcmp(tok->reserved_word, "<&")
-			|| !ft_strcmp(tok->reserved_word, "&<"))
+		|| !ft_strcmp(tok->reserved_word, "&<"))
 	{
 		make_redirection(redirs, (t_redirectee){.fd = 1},
-				(t_redirectee){.fd = 0}, R_CLOSE_THIS);
+			(t_redirectee){.fd = 0}, R_CLOSE_THIS);
 		parser->pos += 2;
 	}
 	else if (!ft_strcmp(tok->reserved_word, ">&")
-			|| !ft_strcmp(tok->reserved_word, "&>"))
+		|| !ft_strcmp(tok->reserved_word, "&>"))
 	{
 		make_redirection(redirs, (t_redirectee){.fd = 0},
-				(t_redirectee){.fd = 0}, R_CLOSE_THIS);
+			(t_redirectee){.fd = 0}, R_CLOSE_THIS);
 		parser->pos += 2;
 	}
 	else
@@ -115,7 +114,7 @@ static int
 		return (0);
 	++parser->pos;
 	make_redirection(redirs, (t_redirectee){.filename = parse_word(parser, 0)},
-			(t_redirectee){.fd = 0}, found->type);
+		(t_redirectee){.fd = 0}, found->type);
 	push_heredoc(parser, &redirs->redirs[redirs->redirs_size - 1]);
 	return (1);
 }

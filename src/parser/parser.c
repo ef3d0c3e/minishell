@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/redirs/redir_parser.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 t_parser
@@ -18,7 +16,7 @@ t_parser
 {
 	t_parser	parser;
 
-	parser = ((t_parser){
+	parser = (t_parser){
 		.input = input,
 		.list = list,
 		.errors = xmalloc(sizeof(t_string_buffer) * 16),
@@ -29,7 +27,7 @@ t_parser
 		.delim_stack.size = 0,
 		.delim_stack.capacity = 0,
 		.heredoc_count = 0,
-	});
+	};
 	ft_memset(parser.heredocs, 0, sizeof(t_redirection *) * HEREDOC_MAX);
 	return (parser);
 }
@@ -70,18 +68,11 @@ static char
 	indicator[i] = '^';
 	indicator[i + 1] = '\0';
 	ft_asprintf(&err, "[ Parse error ]\n%.*s%s%.*s%s%.*s\n%s %s\n",
-		(int)tok_start->start, parser->input.str,
-		"\033[0;31m",
-		(int)(end_pos - tok_start->start),
-		parser->input.str + tok_start->start,
-		"\033[0m",
-		(int)(parser->input.len - end_pos),
-		parser->input.str + end_pos,
-		indicator,
-		msg);
-	free(indicator);
-	free(msg);
-	return (err);
+		(int)tok_start->start, parser->input.str, "\033[0;31m",
+		(int)(end_pos - tok_start->start), parser->input.str + tok_start->start,
+		"\033[0m", (int)(parser->input.len - end_pos), parser->input.str
+		+ end_pos, indicator, msg);
+	return (free(indicator), free(msg), err);
 }
 
 void

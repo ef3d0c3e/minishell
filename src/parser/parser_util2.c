@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse.c                                      :+:      :+:    :+:   */
+/*   parser_util2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,14 +11,12 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-t_ast_node
-	*parse(t_parser *parser)
+void
+	print_pad(const char *pad, size_t n)
 {
-	t_ast_node	*list;
+	size_t	i;
 
-	list = parse_cmdlist(parser);
-	if (parser->pos != parser->list.size)
-		parser_error(parser, ft_strdup("Leftover tokens"), parser->pos,
-			parser->list.size);
-	return (list);
+	i = 0;
+	while (i++ < n)
+		ft_dprintf(2, "%s", pad);
 }

@@ -21,7 +21,6 @@ t_ast_node
 	parser_delimiter_push(parser, "do");
 	cond = parse_cmdlist(parser);
 	expects_delimiter(parser, "do");
-
 	parser_delimiter_push(parser, "done");
 	body = parse_cmdlist(parser);
 	expects_delimiter(parser, "done");
