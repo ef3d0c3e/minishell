@@ -9,10 +9,11 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
 #include <shell/shell.h>
 
 t_getline
-	getline_setup(t_shell *shell)
+	getline_setup(t_shell *shell, t_data_new_fn new_fn, t_data_free_fn free_fn)
 {
 	t_getline	line;
 
@@ -32,6 +33,10 @@ t_getline
 	getline_setup_modes(&line);
 	if (line.modes[line.mode].enable_mode_fn)
 		line.modes[line.mode].enable_mode_fn(&line);
+	line.data = NULL;
+	line.data_free_fn = free_fn;
+	if (new_fn)
+		line.data = new_fn(&line);
 	return (line);
 }
 
@@ -45,6 +50,8 @@ void
 	while (i < 3/*LINE_MODE_SIZE*/)
 		rb_free(&line->modes[i++].keybinds);
 	getline_history_free(line);
+	if (line->data_free_fn)
+		line->data_free_fn(line, line->data);
 }
 
 void

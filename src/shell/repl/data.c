@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   repl.c                                             :+:      :+:    :+:   */
+/*   data.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,22 +9,27 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
-t_getline
-	repl_setup(t_shell *shell)
+void
+	*repl_data_new(t_getline *line)
 {
-	const char	*home = get_variable_value(shell, "HOME");
-	char		*histfile;
-	t_getline	line;
+	t_repl_data	*data;
 
-	line = getline_setup(shell, repl_data_new, repl_data_free);
-	line.highlighter_fn = repl_highlighter;
-	line.comp_provider_fn = repl_completer;
-	if (home)
-	{
-		ft_asprintf(&histfile, "%s/.bash_history", home);
-		getline_history_set_file(&line, histfile, 1);
-	}
-	return (line);
+	(void)line;
+	data = xmalloc(sizeof(t_repl_data));
+	data->list = (t_token_list){NULL, 0, 0};
+	return (data);
+}
+
+/** @brief Frees REPL data for getline */
+void
+	repl_data_free(t_getline *line, void *data_)
+{
+	t_repl_data *const	data = data_;
+	
+	(void)line;
+	token_list_free(&data->list);
+	free(data);
 }

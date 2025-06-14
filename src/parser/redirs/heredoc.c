@@ -49,7 +49,7 @@ static int
 	char		*res;
 
 	stringbuf_init(&heredoc->heredoc, 24);
-	line = getline_setup(shell);
+	line = getline_setup(shell, NULL, NULL);
 	while (1)
 	{
 		res = getline_read(&line, "> ");

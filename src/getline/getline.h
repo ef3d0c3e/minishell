@@ -157,6 +157,15 @@ void
 getline_redraw(t_getline *line, int update);
 
 /******************************************************************************/
+/* User-defined data														  */
+/******************************************************************************/
+
+/** @brief Data create function */
+typedef	void	*(*t_data_new_fn)(t_getline *line);
+/** @brief Data delete function */
+typedef	void	(*t_data_free_fn)(t_getline *line, void *data);
+
+/******************************************************************************/
 /* Line state                                                                 */
 /******************************************************************************/
 
@@ -224,10 +233,16 @@ typedef struct s_getline
 	t_comp_draw_item_fn	comp_draw_item_fn;
 	/** @brief Returns a list of completion items */
 	t_comp_provider_fn	comp_provider_fn;
+
+	/*-- User-defined --*/
+	t_data_free_fn		data_free_fn;
+	void				*data;
 }	t_getline;
 
+/** @brief Sets up getline */
 t_getline
-getline_setup(t_shell *shell);
+getline_setup(t_shell *shell, t_data_new_fn new_fn, t_data_free_fn free_fn);
+/** @brief Cleans up getline */
 void
 getline_cleanup(t_getline *line);
 /** @brief Entry point function */

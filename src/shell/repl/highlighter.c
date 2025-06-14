@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
+#include "shell/repl/repl.h"
 #include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
@@ -45,17 +46,17 @@ static t_buffer_attr
 void
 	repl_highlighter(t_getline *line)
 {
-	t_token_list	list;
-	t_buffer_attr	hi;
+	t_repl_data *const	data = line->data;
+	t_buffer_attr		hi;
 
-	list = tokenizer_tokenize((t_string){line->input.buffer.str,
+	token_list_free(&data->list);
+	data->list = tokenizer_tokenize((t_string){line->input.buffer.str,
 			line->input.buffer.len});
-	for (size_t i = 0; i < list.size; ++i)
+	for (size_t i = 0; i < data->list.size; ++i)
 	{
-		hi = get_highlight(list.tokens[i].type);
-		hi.start = list.tokens[i].start;
-		hi.end = list.tokens[i].end;
+		hi = get_highlight(data->list.tokens[i].type);
+		hi.start = data->list.tokens[i].start;
+		hi.end = data->list.tokens[i].end;
 		getline_highlight_add(&line->input, hi);
 	}
-	token_list_free(&list);
 }

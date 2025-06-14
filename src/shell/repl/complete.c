@@ -9,6 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/repl/repl.h"
+#include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 static int
@@ -51,29 +54,23 @@ static void
 static char
 	*get_filter(t_getline *line, size_t *word_start, size_t *word_end)
 {
-	t_token_list	list;
-	size_t			i;
-	t_string_buffer	buf;
+	t_token_list *const	list = &((t_repl_data *)line->data)->list;
+	size_t				i;
+	t_string_buffer		buf;
 
-	list = tokenizer_tokenize((t_string){line->input.buffer.str,
-			line->input.buffer.len});
 	i = 0;
-	while (i < list.size)
+	while (i < list->size)
 	{
-		if (list.tokens[i].end >= line->cursor_index)
+		if (list->tokens[i].end >= line->cursor_index)
 			break ;
 		++i;
 	}
-	if (i >= list.size || !token_isword(list.tokens[i].type))
-	{
-		token_list_free(&list);
+	if (i >= list->size || !token_isword(list->tokens[i].type))
 		return (NULL);
-	}
 	stringbuf_init(&buf, 24);
-	token_wordcontent(&buf, &list.tokens[i]);
-	*word_start = list.tokens[i].start;
-	*word_end = list.tokens[i].end;
-	token_list_free(&list);
+	token_wordcontent(&buf, &list->tokens[i]);
+	*word_start = list->tokens[i].start;
+	*word_end = list->tokens[i].end;
 	if (!buf.len)
 	{
 		stringbuf_free(&buf);
