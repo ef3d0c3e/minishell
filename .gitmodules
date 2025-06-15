@@ -1,6 +1,7 @@
 [submodule "libs/ft_printf"]
 	path = libs/ft_printf
 	url = https://github.com/ef3d0c3e/printf
+	branch = no-stdio
 [submodule "libs/ft_gnl"]
 	path = libs/ft_gnl
 	url = https://github.com/ef3d0c3e/ft_getnextline
