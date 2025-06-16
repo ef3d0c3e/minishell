@@ -73,7 +73,8 @@ void
 	n = number;
 	while (i++ < len)
 	{
-		buf->str[buf->len + len - i] = (n % 10) + '0';
+		buf->str[buf->len + len - i] = (n >= 0) * ((n % 10) + '0') + (n < 0)
+			* (-(n % 10) + '0');
 		n /= 10;
 	}
 	buf->len += len + (n < 0);
