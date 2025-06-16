@@ -9,7 +9,9 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "shell/eval/eval.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 static int
@@ -47,8 +49,13 @@ t_eval_result
 	char			**argv;
 	
 	argv = word_expansion(shell, &cmd->st_for.args);
-	if (!argv)
+	if (!argv || !argv[0])
+	{
+		if (argv)
+			args_free(argv);
 		return ((t_eval_result){RES_NONE, 0});
+	}
+	rb_insert(&shell->atexit, argv, (void *)args_free);
 	i = 0;
 	while (argv[i])
 	{
@@ -58,6 +65,7 @@ t_eval_result
 			break ;
 		++i;
 	}
+	rb_delete(&shell->atexit, argv);
 	args_free(argv);
 	return (result);
 }
