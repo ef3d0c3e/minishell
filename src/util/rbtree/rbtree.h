@@ -173,7 +173,7 @@ t_rbnode
  */
 t_rbnode
 *rb_maximum(t_rbnode *node);
-/** 
+/**
  * @brief Replaces the subtree rooted at u with the subtree rooted at v.
  * If u->parent is NULL, then v becomes root; otherwise
  * v is attached to u->parent in place of u.
@@ -185,7 +185,7 @@ t_rbnode
 void
 rb_transplant(t_rbtree *tree, t_rbnode *u, t_rbnode *v);
 /**
- * @brief Rebalance after deleting a black node. We track x’s parent separately
+ * @brief Rebalance after deleting a black node. We track x's parent separately
  * because if x is NULL, x->parent would be invalid.
  *
  * @param tree The tree to rebalance

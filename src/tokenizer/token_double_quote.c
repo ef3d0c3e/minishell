@@ -80,8 +80,6 @@ static void
 	list_extend(list, &inner, offset);
 }
 
-// FIXME: Bar word splitting and filename exp from being performed inside double
-// quotes
 int
 	token_double_quote(t_token_list *list, t_u8_iterator *it)
 {
