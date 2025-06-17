@@ -51,6 +51,22 @@ t_string
 	return (it->codepoint);
 }
 
+static t_string
+	it_prev_return(t_u8_iterator *it, size_t pos, size_t len)
+{
+	it->byte_pos = pos;
+	it->codepoint.str = it->str.str + pos;
+	it->codepoint.len = len;
+	it->cp_pos--;
+	if (u8_to_cp(it->codepoint) == 0xFFFD)
+	{
+		it->byte_pos = it->byte_next;
+		it->codepoint.str = NULL;
+		it->codepoint.len = 0;
+	}
+	return (it->codepoint);
+}
+
 t_string
 	it_prev(t_u8_iterator *it)
 {
@@ -76,17 +92,7 @@ t_string
 		it->codepoint.len = 0;
 		return (it->codepoint);
 	}
-	it->byte_pos = pos;
-	it->codepoint.str = it->str.str + pos;
-	it->codepoint.len = len;
-	it->cp_pos--;
-	if (u8_to_cp(it->codepoint) == 0xFFFD)
-	{
-		it->byte_pos = it->byte_next;
-		it->codepoint.str = NULL;
-		it->codepoint.len = 0;
-	}
-	return (it->codepoint);
+	return (it_prev_return(it, pos, len));
 }
 
 void
@@ -98,18 +104,4 @@ void
 	cp.len = 1;
 	while (cp.len && it->byte_pos < start + num)
 		cp = it_next(it);
-}
-
-t_string
-	it_substr(const t_u8_iterator *it, size_t len)
-{
-	if (len == (size_t)-1 || it->byte_pos + len > it->str.len)
-		return ((t_string){
-			.str = it->str.str + it->byte_pos,
-			.len = it->str.len - it->byte_pos
-		});
-	return ((t_string){
-		.str = it->str.str + it->byte_pos,
-		.len = len,
-	});
 }

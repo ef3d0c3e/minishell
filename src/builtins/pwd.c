@@ -31,6 +31,7 @@ static int
 	pwd(t_shell *shell, int argc, char **argv)
 {
 	char	*path;
+
 	(void)shell;
 	(void)argc;
 	(void)argv;

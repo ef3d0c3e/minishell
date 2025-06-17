@@ -12,23 +12,34 @@
 #include <shell/shell.h>
 
 static int
+	source_check(t_shell *shell, int argc, char **argv)
+{
+	int	fd;
+
+	if (argc != 2)
+	{
+		ft_dprintf(2, "USAGE: source FILE\n");
+		return (-1);
+	}
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
+	{
+		ft_dprintf(2, "Failed to open '%s': %m\n", argv[1]);
+		return (-1);
+	}
+	return (fd);
+}
+
+static int
 	source(t_shell *shell, int argc, char **argv)
 {
 	t_string_buffer	buf;
 	ssize_t			nread;
 	int				fd;
 
-	if (argc != 2)
-	{
-		ft_dprintf(2, "USAGE: source FILE\n");
-		return (1);
-	}
-	fd = open(argv[1], O_RDONLY);
+	fd = source_check(shell, argc, argv);
 	if (fd < 0)
-	{
-		ft_dprintf(2, "Failed to open '%s': %m\n", argv[1]);
 		return (1);
-	}
 	stringbuf_init(&buf, 1024);
 	nread = read(fd, buf.str + buf.len, 1024);
 	buf.len += nread;
@@ -46,8 +57,7 @@ static int
 		return (1);
 	}
 	close(fd);
-	ctx_eval_stdout(shell, stringbuf_cstr(&buf));
-	return (0);
+	return (ctx_eval_stdout(shell, stringbuf_cstr(&buf)), 0);
 }
 
 const t_builtin

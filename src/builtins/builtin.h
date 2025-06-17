@@ -12,9 +12,9 @@
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-typedef struct s_shell t_shell;
-typedef int(*t_builtin_run)(t_shell *shell, int argc, char **argv);
-typedef void(*t_builtin_hook)(t_shell *shell);
+typedef struct s_shell	t_shell;
+typedef int				(*t_builtin_run)(t_shell *shell, int argc, char **argv);
+typedef void			(*t_builtin_hook)(t_shell *shell);
 
 /** @brief Represents a shell builtin */
 typedef struct s_builtin

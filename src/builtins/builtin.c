@@ -9,9 +9,7 @@
 /*   Updated: 2025/06/13 13:59:01 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/builtin.h"
 #include <shell/shell.h>
-
 
 static void
 	insert_builtin(t_shell *shell, const t_builtin *builtin)

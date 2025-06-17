@@ -45,11 +45,8 @@ static int
 	i = start;
 	while (i < argc)
 	{
-		if (i != start)
-		{
-			if (!write_msg(" "))
-				return (errno == EINTR);
-		}
+		if (i != start && !write_msg(" "))
+			return (errno == EINTR);
 		if (!write_msg(argv[i]))
 			return (errno == EINTR);
 		++i;

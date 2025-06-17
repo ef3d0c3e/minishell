@@ -49,7 +49,7 @@ static int
 	cd(t_shell *shell, int argc, char **argv)
 {
 	char	*path;
-	char 	*cwd;
+	char	*cwd;
 
 	if (argc > 2)
 	{
