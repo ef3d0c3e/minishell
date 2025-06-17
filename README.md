@@ -9,8 +9,20 @@
 To build `minishell`, use the following:
 `make`
 
+## Installing
+
+Once you have compiled `minishell`, move the executable within your `$PATH`.
+Then you can move the `default.sh` file to either `~/.hshrc` or `$XDG_CONFIG_HOME/hsh/profile.sh`.
+
+## Running tests
+
 To build the tests, use the following:
 `make tests` (built under ./tests)
+
+To run tests, use the following command: `./tests [CATEGORY [NUM]]`
+Where
+ * `CATEGORY` is the test's category name (for instance `pipe` for pipe tests)
+ * `NUM` is the test number
 
 ## Build options
 
@@ -79,6 +91,15 @@ The following special builtins for manipulating control flow are implemented:
 
 *NOTE: In cases where `N` is greater than the number of loops, an error is displayed,
 unlike bash which displays an error only if there are 0 active loops*
+
+# TODO List
+
+ * Add filename completion. The matching part is already handled by filename expansion
+ * `case` statements
+ * Implement parameter substitution completely
+ * Implement close redirections
+ * Implement aliases
+ * Implement the `shopt`/`set` builtin
 
 
 # License
