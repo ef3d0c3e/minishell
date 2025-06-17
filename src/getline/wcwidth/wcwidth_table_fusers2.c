@@ -14,6 +14,7 @@
 void
 	wcwidth_table_fusers6(struct s_codepoint_range *r)
 {
+	r[125] = (struct s_codepoint_range){0x17C6, 0x17C6};
 	r[126] = (struct s_codepoint_range){0x17C9, 0x17D3};
 	r[127] = (struct s_codepoint_range){0x17DD, 0x17DD};
 	r[128] = (struct s_codepoint_range){0x180B, 0x180F};
@@ -38,12 +39,12 @@ void
 	r[147] = (struct s_codepoint_range){0x1B36, 0x1B3A};
 	r[148] = (struct s_codepoint_range){0x1B3C, 0x1B3C};
 	r[149] = (struct s_codepoint_range){0x1B42, 0x1B42};
-	r[150] = (struct s_codepoint_range){0x1B6B, 0x1B73};
 }
 
 void
 	wcwidth_table_fusers7(struct s_codepoint_range *r)
 {
+	r[150] = (struct s_codepoint_range){0x1B6B, 0x1B73};
 	r[151] = (struct s_codepoint_range){0x1B80, 0x1B81};
 	r[152] = (struct s_codepoint_range){0x1BA2, 0x1BA5};
 	r[153] = (struct s_codepoint_range){0x1BA8, 0x1BA9};
@@ -68,12 +69,12 @@ void
 	r[172] = (struct s_codepoint_range){0x20D0, 0x20F0};
 	r[173] = (struct s_codepoint_range){0x2CEF, 0x2CF1};
 	r[174] = (struct s_codepoint_range){0x2D7F, 0x2D7F};
-	r[175] = (struct s_codepoint_range){0x2DE0, 0x2DFF};
 }
 
 void
 	wcwidth_table_fusers8(struct s_codepoint_range *r)
 {
+	r[175] = (struct s_codepoint_range){0x2DE0, 0x2DFF};
 	r[176] = (struct s_codepoint_range){0x302A, 0x302D};
 	r[177] = (struct s_codepoint_range){0x3099, 0x309A};
 	r[178] = (struct s_codepoint_range){0xA66F, 0xA672};

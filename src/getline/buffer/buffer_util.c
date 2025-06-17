@@ -49,7 +49,6 @@ void
 
 	buf[0] = c;
 	buf[1] = 0;
-
 	if (!line->input.cp_len)
 	{
 		if (line->input.cp_pos != SIZE_MAX)
@@ -58,7 +57,7 @@ void
 		line->input.cp_len = u8_length(c);
 	}
 	stringbuf_replace(&line->input.buffer, line->cursor_index,
-			line->cursor_index, buf);
+		line->cursor_index, buf);
 	line->cursor_index += 1;
 	--line->input.cp_len;
 }
@@ -82,7 +81,7 @@ void
 	{
 		stringbuf_append(&buf->buffer, it.codepoint);
 		it2 = it_new((t_string){buf->buffer.str,
-			buf->buffer.len});
+				buf->buffer.len});
 		it_next(&it2);
 		it_advance(&it2, it.byte_pos);
 		getline_recluster(line, buf, it2);

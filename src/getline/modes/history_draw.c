@@ -11,7 +11,9 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void getline_history_draw(t_getline *line, int update)
+void
+	getline_history_draw(t_getline *line, int update)
 {
+	(void)update;
 	line->modes[LINE_INPUT].draw_mode_fn(line, 0);
 }

@@ -43,12 +43,12 @@ static void
 	while (it.codepoint.len && it.byte_pos <= line->cursor_index)
 		it_next(&it);
 	while (it.cp_pos < line->input.s_clusters.size
-			&& !line->input.s_clusters.data[it.cp_pos].width)
+		&& !line->input.s_clusters.data[it.cp_pos].width)
 		it_next(&it);
 	while (--num)
 	{
 		while (it.cp_pos < line->input.s_clusters.size
-				&& !line->input.s_clusters.data[it.cp_pos].width)
+			&& !line->input.s_clusters.data[it.cp_pos].width)
 			it_next(&it);
 		if (num)
 			it_next(&it);

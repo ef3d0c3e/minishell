@@ -13,7 +13,11 @@
 
 /** @brief Performs expensive reclustering of all codepoints in [lo, hi-1] */
 static void
-	recluster_precise(t_getline *line, t_buffer *buf, t_u8_iterator lo, t_u8_iterator hi)
+	recluster_precise(
+	t_getline *line,
+	t_buffer *buf,
+	t_u8_iterator lo,
+	t_u8_iterator hi)
 {
 	const char	*str = buf->buffer.str;
 	size_t		i[3];
@@ -30,7 +34,7 @@ static void
 	{
 		c = &buf->s_clusters.data[i[0]++];
 		if (getline_text_width(line, str + i[2], i[1] + c->size
-					- i[2]) == w)
+				- i[2]) == w)
 			c->width = 0;
 		else
 		{
@@ -42,41 +46,54 @@ static void
 	}
 }
 
+/** @brief Check for potential ZWJ sequences that will need precise
+ * reclustering */
+static int
+	recluster_zwj(
+	t_buffer *buf,
+	t_u8_iterator *it,
+	t_u8_iterator *prev,
+	t_u8_iterator *next)
+{
+	size_t			i;
+
+	if (codepoint_width(u8_to_cp(prev->codepoint)) % 2
+		&& codepoint_width(u8_to_cp(next->codepoint)) % 2
+		&& codepoint_width(u8_to_cp(it->codepoint)) % 2
+		&& !codepoint_is_fuser(u8_to_cp(it->codepoint)))
+		return (0);
+	i = 0;
+	while (++i < LINE_CLUSTER_MAX)
+	{
+		if (prev->codepoint.len && !buf->s_clusters.data[prev->cp_pos].width)
+			it_prev(prev);
+		if (next->codepoint.len && !buf->s_clusters.data[next->cp_pos].width)
+			it_next(next);
+	}
+	return (1);
+}
+
 void
 	getline_recluster(t_getline *line, t_buffer *buf, t_u8_iterator it)
 {
 	t_u8_iterator	prev;
 	t_u8_iterator	next;
-	size_t			i;
+	int				w;
 
-    if (it.codepoint.len == 0 || it.cp_pos > buf->s_clusters.size)
-        return ;
-    getline_insert_cluster(buf, it.cp_pos, (t_cluster){it.codepoint.len, 0});
+	if (it.codepoint.len == 0 || it.cp_pos > buf->s_clusters.size)
+		return ;
+	getline_insert_cluster(buf, it.cp_pos, (t_cluster){it.codepoint.len, 0});
 	prev = it;
 	it_prev(&prev);
 	next = it;
 	it_next(&next);
-	if (!(codepoint_width(u8_to_cp(prev.codepoint)) % 2)
-		|| !(codepoint_width(u8_to_cp(next.codepoint)) % 2)
-		|| !(codepoint_width(u8_to_cp(it.codepoint)) % 2)
-		|| codepoint_is_fuser(u8_to_cp(it.codepoint)))
-	{
-		i = 0;
-		while (++i < LINE_CLUSTER_MAX)
-		{
-			if (prev.codepoint.len && !buf->s_clusters.data[prev.cp_pos].width)
-				it_prev(&prev);
-			if (next.codepoint.len && !buf->s_clusters.data[next.cp_pos].width)
-				it_next(&next);
-		}
+	if (recluster_zwj(buf, &it, &prev, &next))
 		recluster_precise(line, buf, prev, next);
-	}
 	else
 	{
-		int w = codepoint_width(u8_to_cp(it.codepoint));
+		w = codepoint_width(u8_to_cp(it.codepoint));
 		if (w == -1)
 			w = 0;
-		buf->s_clusters.data[it.cp_pos].width
-			= w;
+		buf->s_clusters.data[it.cp_pos].width = w;
 	}
 }

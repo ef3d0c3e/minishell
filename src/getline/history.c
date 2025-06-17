@@ -31,7 +31,7 @@ static void
 	if (fd >= 0)
 		close(fd);
 	ft_memmove(line->history.entries, line->history.entries + num,
-			(line->history.num_entries - num) * sizeof(t_history_ent));
+		(line->history.num_entries - num) * sizeof(t_history_ent));
 	line->history.num_entries -= num;
 }
 
@@ -103,7 +103,7 @@ void
 		++i;
 	}
 	if (line->history.num_entries && !ft_strcmp(entry,
-		line->history.entries[line->history.num_entries - 1].input))
+			line->history.entries[line->history.num_entries - 1].input))
 	{
 		free(entry);
 		return ;

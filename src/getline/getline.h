@@ -52,8 +52,9 @@ enum e_keyhandler_sig
 {
 	SIG_NONE = 0,	
 	SIGMASK_P0 = 0x3,
-
+	/** @brief `int` */
 	SIG_I = 0x1,	
+	/** @brief `size_t` */
 	SIG_Z = 0x2,	
 };
 
@@ -161,9 +162,9 @@ getline_redraw(t_getline *line, int update);
 /******************************************************************************/
 
 /** @brief Data create function */
-typedef	void	*(*t_data_new_fn)(t_getline *line);
+typedef void				*(*t_data_new_fn)(t_getline *line);
 /** @brief Data delete function */
-typedef	void	(*t_data_free_fn)(t_getline *line, void *data);
+typedef void				(*t_data_free_fn)(t_getline *line, void *data);
 
 /******************************************************************************/
 /* Line state                                                                 */

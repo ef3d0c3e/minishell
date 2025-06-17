@@ -23,7 +23,7 @@ int
 	if (n == 0)
 		return (EOF);
 	if (n == 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
-		return 0;
+		return (0);
 	if (errno == EINTR && g_signal != SIGQUIT)
 		return (-1);
 	return (EOF);

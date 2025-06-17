@@ -55,7 +55,6 @@ int
 		wcwidth_table_wide5(ranges);
 		init = 1;
 	}
-
 	return (bfind(cp, ranges, 121));
 }
 
@@ -100,6 +99,5 @@ int
 		wcwidth_table_fusers15(ranges);
 		init = 1;
 	}
-
 	return (bfind(cp, ranges, 367));
 }

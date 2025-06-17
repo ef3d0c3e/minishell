@@ -11,7 +11,8 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void getline_redraw(t_getline *l, int update)
+void
+	getline_redraw(t_getline *l, int update)
 {
 	struct winsize	ws;
 

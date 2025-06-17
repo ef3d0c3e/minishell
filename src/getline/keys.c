@@ -9,29 +9,28 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 /** @brief Calls key handler function */
 static int
 	exec_bind(t_getline *line)
-{	
-	const t_key_handler *bind;
+{
+	const t_key_handler	*bind;
 
 	bind = rb_find(&line->modes[line->mode].keybinds, line->sequence);
 	if (!bind && line->mode != LINE_INPUT)
 	{
 		getline_change_mode(line, LINE_INPUT);
-		return exec_bind(line);
+		return (exec_bind(line));
 	}
 	if (!bind)
 		return (0);
 	if (bind->sig == SIG_NONE)
-		((void(*)(t_getline *))bind->function)(line);
+		((void (*)(t_getline *))bind->function)(line);
 	else if (bind->sig == SIG_I)
-		((void(*)(t_getline *, int))bind->function)(line, bind->i0);
+		((void (*)(t_getline *, int))bind->function)(line, bind->i0);
 	else if (bind->sig == SIG_Z)
-		((void(*)(t_getline *, int))bind->function)(line, bind->z0);
+		((void (*)(t_getline *, int))bind->function)(line, bind->z0);
 	getline_redraw(line, 0);
 	return (1);
 }
@@ -61,6 +60,17 @@ static size_t
 	return (SIZE_MAX);
 }
 
+/* Snippet to debug keys:
+ft_dprintf(2, "\n\rKEYSEQ:");
+for (size_t i = 0; i < line->sequence_len; ++i)
+{
+	if (line->sequence[i] >= 32 && line->sequence[i] <= 126)
+		ft_dprintf(2, "'%c' ", (int)line->sequence[i]);
+	else
+		ft_dprintf(2, "%x ", (int)line->sequence[i]);
+}
+*/
+
 /** Returns 1 if `c` is part of a key sequence, thus not added to the line */
 int
 	getline_handle_key(t_getline *line, int c)
@@ -68,7 +78,7 @@ int
 	const void	*bind;
 	size_t		expect;
 
-	if ((c < 0 || (c >= 32 && c != 127)) && !line->sequence_len 
+	if ((c < 0 || (c >= 32 && c != 127)) && !line->sequence_len
 		&& line->mode == LINE_INPUT)
 		return (0);
 	line->sequence[line->sequence_len++] = c;
@@ -78,14 +88,6 @@ int
 		return (1);
 	if (!exec_bind(line))
 	{
-		//ft_dprintf(2, "\n\rKEYSEQ:");
-		//for (size_t i = 0; i < line->sequence_len; ++i)
-		//{
-		//	if (line->sequence[i] >= 32 && line->sequence[i] <= 126)
-		//		ft_dprintf(2, "'%c' ", (int)line->sequence[i]);
-		//	else
-		//		ft_dprintf(2, "%x ", (int)line->sequence[i]);
-		//}
 		line->sequence_len = 0;
 		return (1);
 	}

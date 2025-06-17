@@ -23,14 +23,14 @@ static int
 	{
 		ent = &line->history.entries[line->history.num_entries - sc - 1];
 		if (str_starts_with((t_string){ent->input, ft_strlen(ent->input)},
-				line->state.hist.filter))
+			line->state.hist.filter))
 			break ;
 	}
 	while (direction < 0 && --sc > 0)
 	{
 		ent = &line->history.entries[line->history.num_entries - sc - 1];
 		if (str_starts_with((t_string){ent->input, ft_strlen(ent->input)},
-				line->state.hist.filter))
+			line->state.hist.filter))
 			break ;
 	}
 	if (sc == (int)line->history.num_entries && saved == -1)

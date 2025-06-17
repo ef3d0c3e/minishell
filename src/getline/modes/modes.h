@@ -113,7 +113,7 @@ typedef struct s_complete_state
 	size_t			word_end;
 	/** @brief Whether to accept completion or restore saved input */
 	int				accept;
-	
+
 	/** @brief Buffer where completion will happen */
 	t_buffer		complete_buffer;
 
@@ -208,7 +208,7 @@ enum e_line_mode
 	/** @brief History scroll mode */
 	LINE_HISTSCROLL,
 	/** @brief Reverse-i-search mode */
-	LINE_RI_SEARCH,
+	//LINE_RI_SEARCH,
 	/** @brief Placeholder for the number of modes */
 	LINE_MODE_SIZE,
 };

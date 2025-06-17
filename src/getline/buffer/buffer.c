@@ -14,7 +14,7 @@
 t_buffer
 	getline_buffer_new(void)
 {
-	return (t_buffer){
+	return ((t_buffer){
 		.buffer.str = NULL,
 		.buffer.capacity = 0,
 		.buffer.len = 0,
@@ -26,7 +26,7 @@ t_buffer
 		.s_clusters.data = NULL,
 		.s_clusters.size = 0,
 		.s_clusters.capacity = 0,
-	};
+	});
 }
 
 t_buffer
@@ -36,13 +36,13 @@ t_buffer
 
 	buf = *orig;
 	buf.buffer = stringbuf_from_range(orig->buffer.str,
-		orig->buffer.str + orig->buffer.len);
+			orig->buffer.str + orig->buffer.len);
 	buf.s_attrs.data = xmalloc(sizeof(t_buffer_attr) * buf.s_attrs.capacity);
 	ft_memcpy(buf.s_attrs.data, orig->s_attrs.data,
-			sizeof(t_buffer_attr) * buf.s_attrs.size);
+		sizeof(t_buffer_attr) * buf.s_attrs.size);
 	buf.s_clusters.data = xmalloc(sizeof(t_cluster) * buf.s_clusters.capacity);
 	ft_memcpy(buf.s_clusters.data, orig->s_clusters.data,
-			sizeof(t_cluster) * buf.s_clusters.size);
+		sizeof(t_cluster) * buf.s_clusters.size);
 	return (buf);
 }
 

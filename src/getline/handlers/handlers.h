@@ -56,7 +56,10 @@ void
 getline_handler_overflow(t_getline *line, int right);
 /** @brief Finds word boundaries */
 t_u8_iterator
-getline_handler_word_boundaries(t_getline *line, t_u8_iterator it, int direction);
+getline_handler_word_boundaries(
+	t_getline *line,
+	t_u8_iterator it,
+	int direction);
 /** @brief Default completion item draw function */
 void
 getline_handler_comp_draw_item(

@@ -42,11 +42,15 @@ static size_t
 static size_t
 	bfind_insert(t_buffer *buf, size_t start)
 {
-	size_t lo = 0;
-	size_t hi = buf->s_attrs.size;
+	size_t	lo;
+	size_t	hi;
+	size_t	mid;
 
-	while (lo < hi) {
-		size_t mid = lo + (hi - lo) / 2;
+	lo = 0;
+	hi = buf->s_attrs.size;
+	while (lo < hi)
+	{
+		mid = lo + (hi - lo) / 2;
 		if (buf->s_attrs.data[mid].start < start)
 			lo = mid + 1;
 		else
@@ -54,7 +58,6 @@ static size_t
 	}
 	return (lo);
 }
-
 
 void
 	getline_highlight_add(t_buffer *buf, t_buffer_attr attr)
@@ -72,7 +75,7 @@ void
 	}
 	pos = bfind_insert(buf, attr.start);
 	ft_memmove(buf->s_attrs.data + pos + 1, buf->s_attrs.data + pos,
-			buf->s_attrs.size - pos);
+		buf->s_attrs.size - pos);
 	buf->s_attrs.data[pos] = attr;
 	++buf->s_attrs.size;
 }
@@ -97,7 +100,7 @@ void
 	}
 	if (attr->color != -1)
 		ft_dprintf(line->out_fd, "\033[38;2;%d;%d;%dm",
-				((attr->color >> 16) & 0xFF),
-				((attr->color >> 8) & 0xFF),
-				attr->color & 0xFF);
+			((attr->color >> 16) & 0xFF),
+			((attr->color >> 8) & 0xFF),
+			attr->color & 0xFF);
 }

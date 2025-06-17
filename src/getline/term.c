@@ -28,13 +28,12 @@ void
 		shell_perror(line->shell, "tcgetattr fail", SRC_LOCATION);
 		return ;
 	}
-
 	raw = line->tio;
-    raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-    raw.c_oflag &= ~(OPOST);
-    raw.c_cflag |= (CS8);
-    raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-	raw.c_cc[VMIN]  = 1;
+	raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+	raw.c_oflag &= ~(OPOST);
+	raw.c_cflag |= (CS8);
+	raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+	raw.c_cc[VMIN] = 1;
 	raw.c_cc[VTIME] = 0;
 	if (tcsetattr(line->in_fd, TCSANOW, &raw) == -1)
 	{
@@ -48,16 +47,10 @@ int
 	int	col0;
 	int	col1;
 
-	//write(line->out_fd, "\r\n", 2);
 	if (getline_cursor_pos(line, &col0, NULL) == -1)
 		return (-1);
-
 	write(line->out_fd, utf8, byte_len);
 	if (getline_cursor_pos(line, &col1, NULL) == -1)
 		return (-1);
-	//write(line->out_fd, "\x1b[1A\r", 5); 
-
-	// col0=1 col1=1
-	//ft_dprintf(2, "[%d %d]", col0, col1);
 	return (col1 - col0);
 }

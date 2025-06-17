@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/getline.h"
 #include <shell/shell.h>
 
 t_getline
@@ -47,7 +46,7 @@ void
 
 	stringbuf_free(&line->input_queue);
 	i = 0;
-	while (i < 3/*LINE_MODE_SIZE*/)
+	while (i < LINE_MODE_SIZE)
 		rb_free(&line->modes[i++].keybinds);
 	getline_history_free(line);
 	if (line->data_free_fn)
@@ -108,9 +107,7 @@ char
 		if (line->mode == LINE_INPUT && getline_process_action(line))
 			break ;
 		c = getline_read_char(line);
-		if (c == -1)
-			continue ;
-		if (getline_handle_key(line, c))
+		if (c == -1 || getline_handle_key(line, c))
 			continue ;
 		if (line->mode != LINE_INPUT)
 		{
@@ -121,6 +118,5 @@ char
 		getline_redraw(line, 1);
 	}
 	ft_dprintf(line->out_fd, "\n\r");
-	getline_raw_mode(line, 0);
-	return (get_input(line));
+	return (getline_raw_mode(line, 0), get_input(line));
 }

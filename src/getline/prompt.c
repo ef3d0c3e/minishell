@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static void
@@ -49,9 +47,9 @@ static void
 	apply_color(t_buffer *buf, int color, t_u8_iterator *it, size_t offset)
 {
 	static const int	map[] = {0x00000, 0xCD3131, 0x0DBC79, 0xE5E510,
-	0x2472C8, 0xBC3FBC, 0x11A8CD, 0xE5E5E5,
-	0x026666, 0xF14C4C, 0x23D18B, 0xF5F543, 0x3B8EEA, 0xD670D6, 0x29B8DB,
-	0xF2F2F0};
+		0x2472C8, 0xBC3FBC, 0x11A8CD, 0xE5E5E5,
+		0x026666, 0xF14C4C, 0x23D18B, 0xF5F543, 0x3B8EEA, 0xD670D6, 0x29B8DB,
+		0xF2F2F0};
 	int					rgb;
 
 	rgb = -1;
@@ -90,7 +88,7 @@ void
 			break ;
 		stringbuf_append(&line->prompt.buffer, it[0].codepoint);
 		it[1] = it_new((t_string){line->prompt.buffer.str,
-			line->prompt.buffer.len});
+				line->prompt.buffer.len});
 		it_next(&it[1]);
 		it_advance(&it[1], it[0].byte_pos - offset);
 		getline_recluster(line, &line->prompt, it[1]);

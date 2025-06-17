@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
 
 void
@@ -27,8 +26,8 @@ void
 		buf->s_clusters.capacity = new_cap;
 	}
 	ft_memmove(buf->s_clusters.data + at + 1,
-			buf->s_clusters.data + at,
-			sizeof(t_cluster) * (buf->s_clusters.size - at));
+		buf->s_clusters.data + at,
+		sizeof(t_cluster) * (buf->s_clusters.size - at));
 	buf->s_clusters.data[at] = cluster;
 	++buf->s_clusters.size;
 }
@@ -63,7 +62,7 @@ void
 		cp.len = cl->size;
 		if (codepoint_width(u8_to_cp(cp)))
 			ft_dprintf(2, "'%.*s'(%zu/%d) ", (int)cp.len, cp.str, cl->size,
-					cl->width);
+				cl->width);
 		else
 			ft_dprintf(2, "<%x>(%zu/%d) ", u8_to_cp(cp), cl->size, cl->width);
 		pos += cl->size;

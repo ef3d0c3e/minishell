@@ -9,29 +9,11 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
-void
-	getline_complete_enable(t_getline *line)
+static void
+	complete_enable_end(t_getline *line)
 {
-	getline_cursor_pos(line, &line->state.comp.cur_x,
-			&line->state.comp.cur_y);
-	line->state.comp.items = NULL;
-	line->state.comp.nitems = 0;
-	line->state.comp.accept = -1;
-	getline_complete_populate_items(line);
-	if (!line->state.comp.nitems)
-	{
-		getline_change_mode(line, LINE_INPUT);
-		return ;
-	}
-	if (line->display_height - line->state.comp.cur_y < 10)
-	{
-		line->state.comp.cur_y -= 10;
-		ft_dprintf(line->out_fd, "\x1b[%dS", 10);
-	}
 	line->state.comp.mini_mode = 1;
 	line->state.comp.sel = -1;
 	line->state.comp.start_row = line->state.comp.cur_y + 1;
@@ -60,6 +42,28 @@ void
 }
 
 void
+	getline_complete_enable(t_getline *line)
+{
+	getline_cursor_pos(line, &line->state.comp.cur_x,
+		&line->state.comp.cur_y);
+	line->state.comp.items = NULL;
+	line->state.comp.nitems = 0;
+	line->state.comp.accept = -1;
+	getline_complete_populate_items(line);
+	if (!line->state.comp.nitems)
+	{
+		getline_change_mode(line, LINE_INPUT);
+		return ;
+	}
+	if (line->display_height - line->state.comp.cur_y < 10)
+	{
+		line->state.comp.cur_y -= 10;
+		ft_dprintf(line->out_fd, "\x1b[%dS", 10);
+	}
+	complete_enable_end(line);
+}
+
+void
 	getline_complete_disable(t_getline *line)
 {
 	getline_complete_free_items(line);
@@ -84,21 +88,20 @@ static t_key_handler
 	*keybinds(void)
 {
 	static t_key_handler	keys[] = {
-		{"\x1b[C", (void *)getline_complete_move, SIG_I, { .i0 = +1 }},
-		{"\x06", (void *)getline_complete_move, SIG_I, { .i0 = +1 }},
-		{"\x09", (void *)getline_complete_move, SIG_I, { .i0 = +1 }},
-		{"\x1b[D", (void *)getline_complete_move, SIG_I, { .i0 = -1 }},
-		{"\x02", (void *)getline_complete_move, SIG_I, { .i0 = -1 }},
-		{"\x1b[Z", (void *)getline_complete_move, SIG_I, { .i0 = -1 }},
-		{"\x1b[A", (void *)getline_complete_move_row, SIG_I, { .i0 = +1 }},
-		{"\x1b[5~", (void *)getline_complete_move_page, SIG_I, { .i0 = +1 }},
-		{"\x0e", (void *)getline_complete_move_row, SIG_I, { .i0 = +1 }},
-		{"\x1b[B", (void *)getline_complete_move_row, SIG_I, { .i0 = -1 }},
-		{"\x10", (void *)getline_complete_move_row, SIG_I, { .i0 = -1 }},
-		{"\x1b[6~", (void *)getline_complete_move_page, SIG_I, { .i0 = -1 }},
-
-		{"\xd", (void *)getline_complete_select, SIG_NONE, { 0 }},
-		{NULL, NULL, 0, {0}}
+	{"\x1b[C", (void *)getline_complete_move, SIG_I, {.i0 = +1}},
+	{"\x06", (void *)getline_complete_move, SIG_I, {.i0 = +1}},
+	{"\x09", (void *)getline_complete_move, SIG_I, {.i0 = +1}},
+	{"\x1b[D", (void *)getline_complete_move, SIG_I, {.i0 = -1}},
+	{"\x02", (void *)getline_complete_move, SIG_I, {.i0 = -1}},
+	{"\x1b[Z", (void *)getline_complete_move, SIG_I, {.i0 = -1}},
+	{"\x1b[A", (void *)getline_complete_move_row, SIG_I, {.i0 = +1}},
+	{"\x1b[5~", (void *)getline_complete_move_page, SIG_I, {.i0 = +1}},
+	{"\x0e", (void *)getline_complete_move_row, SIG_I, {.i0 = +1}},
+	{"\x1b[B", (void *)getline_complete_move_row, SIG_I, {.i0 = -1}},
+	{"\x10", (void *)getline_complete_move_row, SIG_I, {.i0 = -1}},
+	{"\x1b[6~", (void *)getline_complete_move_page, SIG_I, {.i0 = -1}},
+	{"\xd", (void *)getline_complete_select, SIG_NONE, {0}},
+	{NULL, NULL, 0, {0}}
 	};
 
 	return (keys);
@@ -118,8 +121,8 @@ void
 	while (keybinds()[i].keyseq)
 	{
 		rb_insert(&mode->keybinds,
-				(void *)keybinds()[i].keyseq,
-				&keybinds()[i]);
+			(void *)keybinds()[i].keyseq,
+			&keybinds()[i]);
 		++i;
 	}
 }

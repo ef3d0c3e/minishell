@@ -15,10 +15,10 @@ void
 	getline_complete_update(t_getline *line)
 {
 	const t_complete_item	*item = &line->state.comp.items
-		[line->state.comp.sel];
+	[line->state.comp.sel];
 
 	getline_buffer_replace(&line->input, line->state.comp.word_start,
-			line->state.comp.word_end, item->name);
+		line->state.comp.word_end, item->name);
 	line->state.comp.word_end = line->state.comp.word_start
 		+ ft_strlen(item->name);
 }

@@ -47,12 +47,12 @@ static t_key_handler
 	*keybinds(void)
 {
 	static t_key_handler	keys[] = {
-		{"\x10", (void *)getline_history_move, SIG_I, { .i0 = +1 }},
-		{"\x1b[A", (void *)getline_history_move, SIG_I, { .i0 = +1 }},
-		{"\xe", (void *)getline_history_move, SIG_I, { .i0 = -1 }},
-		{"\x1b[B", (void *)getline_history_move, SIG_I, { .i0 = -1 }},
-		{"\x1b\x1b", (void *)getline_history_cancel, SIG_NONE, { 0 }},
-		{NULL, NULL, 0, {0}}
+	{"\x10", (void *)getline_history_move, SIG_I, {.i0 = +1}},
+	{"\x1b[A", (void *)getline_history_move, SIG_I, {.i0 = +1}},
+	{"\xe", (void *)getline_history_move, SIG_I, {.i0 = -1}},
+	{"\x1b[B", (void *)getline_history_move, SIG_I, {.i0 = -1}},
+	{"\x1b\x1b", (void *)getline_history_cancel, SIG_NONE, {0}},
+	{NULL, NULL, 0, {0}}
 	};
 
 	return (keys);
@@ -72,8 +72,8 @@ void
 	while (keybinds()[i].keyseq)
 	{
 		rb_insert(&mode->keybinds,
-				(void *)keybinds()[i].keyseq,
-				&keybinds()[i]);
+			(void *)keybinds()[i].keyseq,
+			&keybinds()[i]);
 		++i;
 	}
 }

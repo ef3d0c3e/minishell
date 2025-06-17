@@ -12,7 +12,7 @@
 #include <shell/shell.h>
 
 static int
-	source_check(t_shell *shell, int argc, char **argv)
+	source_check(int argc, char **argv)
 {
 	int	fd;
 
@@ -37,7 +37,7 @@ static int
 	ssize_t			nread;
 	int				fd;
 
-	fd = source_check(shell, argc, argv);
+	fd = source_check(argc, argv);
 	if (fd < 0)
 		return (1);
 	stringbuf_init(&buf, 1024);

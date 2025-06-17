@@ -19,6 +19,7 @@ t_u8_iterator
 {
 	static const char	*delims[] = {" ", "\t", "\n", NULL};
 
+	(void)line;
 	if (direction < 0)
 	{
 		it_prev(&it);
@@ -27,7 +28,7 @@ t_u8_iterator
 		while (it.codepoint.len && !str_alternatives(it.codepoint, delims, 0))
 			it_prev(&it);
 		if (it.codepoint.len)
-		it_next(&it);
+			it_next(&it);
 	}
 	else
 	{
