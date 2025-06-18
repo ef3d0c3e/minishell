@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/regex/regex.h"
 #include <shell/shell.h>
 
 static int
@@ -138,7 +136,7 @@ static int
 			r = match_seq(opts, groups + 1, ngroups - 1, s + i - 1);
 			if (r)
 				return (r);
-			if (!s[i - 1])
+			if (!s[i - 1] || (node->type == M_STAR && s[i - 1] == '/'))
 				break;
 		}
 		return (!s[i - 1] * 2);
@@ -149,7 +147,7 @@ static int
 	if (r <= 1)
 		return (r);
 	if (!*rest && ngroups > 1)
-		return (2);
+		return (groups[0]->type != M_LITERAL || groups[0]->literal[0] != '/');
 	return (match_seq(opts, groups + 1, ngroups - 1, rest));
 }
 

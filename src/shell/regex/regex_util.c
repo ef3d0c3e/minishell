@@ -12,7 +12,7 @@
 #include <shell/shell.h>
 
 /** @brief Recursively expand regex back to a string */
-static void
+static int
 	regex_path_expand(const t_regex_ast *node, t_string_buffer *buf)
 {
 	size_t	i;
@@ -20,11 +20,15 @@ static void
 	if (node->type == M_LITERAL)
 		stringbuf_append(buf, (t_string){node->literal,
 			ft_strlen(node->literal)});
-	if (node->type != M_SEQ)
-		return ;
+	else if (node->type != M_SEQ)
+		return (0);
 	i = 0;
 	while (i < node->compound.ngroups)
-		regex_path_expand(node->compound.groups[i++], buf);
+	{
+		if (!regex_path_expand(node->compound.groups[i++], buf))
+			break ;
+	}
+	return (1);
 }
 
 char

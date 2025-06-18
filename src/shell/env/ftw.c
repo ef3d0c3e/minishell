@@ -9,16 +9,23 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "shell/env/env.h"
 #include <shell/shell.h>
 
 static char
 	*get_path(const char *path, struct dirent *ent)
 {
 	t_pathbuf		buf;
+	const size_t	len = ft_strlen(path);
+	int				force_dir;
 
+	force_dir = 1;
+	if (len && path[len - 1] == '/')
+		force_dir = 0;
 	pathbuf_init(&buf, 24);
 	if (ft_strcmp(path, "."))
-		pathbuf_append(&buf, path, 0);
+		pathbuf_append(&buf, path, force_dir);
 	pathbuf_append(&buf, ent->d_name, 0);
 	return (pathbuf_cstr(&buf));
 }

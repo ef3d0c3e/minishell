@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/regex/regex.h"
 #include <shell/shell.h>
 
 /** @brief Checks if a fragment range needs filename expansion by scanning for
@@ -80,6 +79,7 @@ static int
 	struct s_filename_traversal *const	tr = ptr;
 	int									r;
 
+	(void)sb;
 	r = regex_match(&tr->opts, &tr->regex, path);
 	if (r == 0)
 		return (1);
