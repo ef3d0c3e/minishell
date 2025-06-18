@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:04:03 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
@@ -48,9 +48,9 @@ static int
 	if (c != '#' && c != '@' && c != '*' && c != '$' && c != '-' && c != '?')
 		return (0);
 	it_advance(it, 2);
-	token_list_push(list, TOK_PARAM_SIMPLE, start, it->byte_pos)->word
+	(token_list_push(list, TOK_PARAM_SIMPLE, start, it->byte_pos)->word)
 		= stringbuf_from_range(it->str.str + start + 1,
-		it->str.str + it->byte_pos);
+				it->str.str + it->byte_pos);
 	return (1);
 }
 
@@ -79,7 +79,6 @@ int
 		it_next(it);
 	}
 	token_list_push(list, TOK_PARAM_SIMPLE, start, it->byte_pos)->word
-		= buf;
+	= buf;
 	return (1);
 }
-

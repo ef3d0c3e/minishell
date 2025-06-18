@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 06:03:27 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef TOKENIZER_H
@@ -150,7 +150,6 @@ enum e_token_type
 	 * @brief Sequence separator tokens: `;` `\n`, `&` and EOF
 	 */
 	TOK_SEQUENCE,
-
 	/**
 	 * @brief Keyword token
 	 *
@@ -205,11 +204,9 @@ enum e_token_type
 	 * https://www.gnu.org/software/bash/manual/bash.html#Redirections
 	 */
 	TOK_REDIR,
-
 	TOK_COMMENT,
 	TOK_HEREDOC,
 	TOK_HERESTRING,
-
 	/** @brief Error message */
 	TOK_ERROR,
 };
@@ -231,7 +228,8 @@ typedef struct s_token
 	/** @brief Flag for the token */
 	enum e_token_flag	flags;
 
-	union {
+	union
+	{
 		/** @brief Reserved name for token, e.g keyword name, grouping char */
 		const char		*reserved_word;
 		/** @brief String content */
@@ -261,7 +259,8 @@ void
 token_error(t_token_list *list, size_t start, size_t end, const char *msg);
 
 /** @brief Tokenizer function, returns 1 and advances it on match */
-typedef int	(*t_tokenizer_fn)(t_token_list *list, t_u8_iterator *it);
+typedef int				(*t_tokenizer_fn)(t_token_list *list,
+		t_u8_iterator *it);
 
 /**
  * @brief Tokenize a prompt
@@ -367,24 +366,42 @@ token_precedence(const t_token *tok);
 void
 escape_filter(t_string_buffer *buf, const char **filter);
 
-int	token_comment(t_token_list *list, t_u8_iterator *it);
-int	token_space(t_token_list *list, t_u8_iterator *it);
-int	token_redir(t_token_list *list, t_u8_iterator *it);
-int	token_digit(t_token_list *list, t_u8_iterator *it);
-int	token_minus(t_token_list *list, t_u8_iterator *it);
-int	token_grouping(t_token_list *list, t_u8_iterator *it);
-int	token_sequence(t_token_list *list, t_u8_iterator *it);
-int	token_operator(t_token_list *list, t_u8_iterator *it);
-int	token_pipeline(t_token_list *list, t_u8_iterator *it);
-int	token_keyword(t_token_list *list, t_u8_iterator *it);
-int	token_double_quote(t_token_list *list, t_u8_iterator *it);
-int	token_single_quote(t_token_list *list, t_u8_iterator *it);
-int	token_word(t_token_list *list, t_u8_iterator *it);
-int	token_arith(t_token_list *list, t_u8_iterator *it);
-int	token_cmd_sub(t_token_list *list, t_u8_iterator *it);
-int	token_assign(t_token_list *list, t_u8_iterator *it);
-int	token_param_simple(t_token_list *list, t_u8_iterator *it);
-int	token_param(t_token_list *list, t_u8_iterator *it);
+int
+token_comment(t_token_list *list, t_u8_iterator *it);
+int
+token_space(t_token_list *list, t_u8_iterator *it);
+int
+token_redir(t_token_list *list, t_u8_iterator *it);
+int
+token_digit(t_token_list *list, t_u8_iterator *it);
+int
+token_minus(t_token_list *list, t_u8_iterator *it);
+int
+token_grouping(t_token_list *list, t_u8_iterator *it);
+int
+token_sequence(t_token_list *list, t_u8_iterator *it);
+int
+token_operator(t_token_list *list, t_u8_iterator *it);
+int
+token_pipeline(t_token_list *list, t_u8_iterator *it);
+int
+token_keyword(t_token_list *list, t_u8_iterator *it);
+int
+token_double_quote(t_token_list *list, t_u8_iterator *it);
+int
+token_single_quote(t_token_list *list, t_u8_iterator *it);
+int
+token_word(t_token_list *list, t_u8_iterator *it);
+int
+token_arith(t_token_list *list, t_u8_iterator *it);
+int
+token_cmd_sub(t_token_list *list, t_u8_iterator *it);
+int
+token_assign(t_token_list *list, t_u8_iterator *it);
+int
+token_param_simple(t_token_list *list, t_u8_iterator *it);
+int
+token_param(t_token_list *list, t_u8_iterator *it);
 
 /**
  * @brief Prints errors in token list

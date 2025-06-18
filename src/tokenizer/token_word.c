@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_word.c                               :+:      :+:    :+:   */
+/*   token_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 07:23:19 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
 
-int
-	token_word(t_token_list *list, t_u8_iterator *it)
+static void
+	token_word_loop(t_token_list *list, t_u8_iterator *it)
 {
 	t_string_buffer	buf;
 
@@ -28,6 +28,14 @@ int
 			it_next(it);
 		}
 	}
+}
+
+int
+	token_word(t_token_list *list, t_u8_iterator *it)
+{
+	t_string_buffer	buf;
+
+	token_word_loop(list, it);
 	if ((!list->size || list->tokens[list->size - 1].type != TOK_WORD)
 		&& it->codepoint.len)
 	{

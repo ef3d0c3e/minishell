@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:29:09 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
@@ -17,6 +17,7 @@ static int
 {
 	const t_token	*prev;
 	const t_token	*next;
+
 	if (list->tokens[*i].type != TOK_SPACE)
 		return (0);
 	if (*i + 1 >= list->size
@@ -28,26 +29,13 @@ static int
 	prev = &list->tokens[*i - 1];
 	next = &list->tokens[*i + 1];
 	if ((token_isword(next->type) || next->type == TOK_PARAM
-		|| next->type == TOK_PARAM_SIMPLE || next->type == TOK_CMD_SUB
-		|| next->type == TOK_REDIR)
+			|| next->type == TOK_PARAM_SIMPLE || next->type == TOK_CMD_SUB
+			|| next->type == TOK_REDIR)
 		&& (token_isword(prev->type) || prev->type == TOK_PARAM
-		|| prev->type == TOK_PARAM_SIMPLE || prev->type == TOK_CMD_SUB))
+			|| prev->type == TOK_PARAM_SIMPLE || prev->type == TOK_CMD_SUB))
 		return (0);
 	++*i;
 	return (1);
-	/*
-	if (list->tokens[*i].type == TOK_SPACE
-		&& ((*i && (token_precedence(&list->tokens[*i - 1]) >= 0
-		|| list->tokens[*i - 1].type == TOK_REDIR))
-		|| (*i + 1 < list->size
-		&& token_precedence(&list->tokens[*i + 1]) >= 0)
-		|| *i + 1 >= list->size))
-	{
-		++(*i);
-		return (1);
-	}
-	return (0);
-	*/
 }
 
 /** @brief Removes spaces before and after operators */
@@ -96,7 +84,8 @@ static t_token_list
 	while (i < list.size)
 	{
 		j = i + 1;
-		while (j < list.size && merge_subsequent(&list.tokens[i], &list.tokens[j]))
+		while (j < list.size
+			&& merge_subsequent(&list.tokens[i], &list.tokens[j]))
 		{
 			++j;
 		}

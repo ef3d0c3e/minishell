@@ -6,11 +6,12 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:37:27 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
-
+#include "util/util.h"
+#include <stddef.h>
 
 static inline const t_tokenizer_fn
 	*munchers(void)
@@ -36,28 +37,22 @@ static inline const t_tokenizer_fn
 		token_word,
 		NULL,
 	};
-	
+
 	return (munchers);
 }
 
-t_token_list
-	tokenizer_tokenize(t_string prompt)
+static void
+	tokenizer_tokenize_loop(t_string prompt, t_token_list *list,
+			t_u8_iterator *it)
 {
-	t_token_list	list;
-	t_u8_iterator	it;
-	size_t			i;
+	size_t	i;
 
-	list.tokens = xmalloc(16 * sizeof(t_token));
-	list.size = 0;
-	list.capacity = 16;
-	it = it_new(prompt);
-	it_next(&it);
-	while (it.codepoint.len)
+	while (it->codepoint.len)
 	{
 		i = 0;
 		while (munchers()[i])
 		{
-			if (munchers()[i](&list, &it))
+			if (munchers()[i](list, it))
 			{
 				i = 0;
 				break ;
@@ -67,9 +62,23 @@ t_token_list
 		if (i)
 		{
 			ft_dprintf(2, "Leftover tokens: `%.*s`\n",
-				(int)(prompt.len - it.byte_pos), prompt.str + it.byte_pos);
+				(int)(prompt.len - it->byte_pos), prompt.str + it->byte_pos);
 			break ;
 		}
 	}
+}
+
+t_token_list
+	tokenizer_tokenize(t_string prompt)
+{
+	t_token_list	list;
+	t_u8_iterator	it;
+
+	list.tokens = xmalloc(16 * sizeof(t_token));
+	list.size = 0;
+	list.capacity = 16;
+	it = it_new(prompt);
+	it_next(&it);
+	tokenizer_tokenize_loop(prompt, &list, &it);
 	return (list);
 }

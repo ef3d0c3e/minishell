@@ -6,12 +6,12 @@
 /*   By: thschnei <thschnei@student.42perpignan.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 11:10:01 by thschnei          #+#    #+#             */
-/*   Updated: 2025/05/05 11:16:15 by thschnei         ###   ########.fr       */
+/*   Updated: 2025/06/18 05:53:03 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CAPACITY_H
-#define CAPACITY_H
+# define CAPACITY_H
 
 typedef struct s_termcap
 {

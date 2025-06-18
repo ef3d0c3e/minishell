@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:39:18 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
@@ -26,7 +26,7 @@ int
 		{
 			stringbuf_init(&buf, it->byte_pos - start);
 			stringbuf_append(&buf, (t_string){.str = it->str.str + start + 1,
-					.len = it->byte_pos - start - 1});
+				.len = it->byte_pos - start - 1});
 			token_list_push(list,
 				TOK_SINGLE_QUOTE, start + 1, it->byte_pos)->word = buf;
 			list->tokens[list->size - 1].flags |= FL_SQUOTED;

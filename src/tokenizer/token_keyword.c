@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:09:55 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
@@ -15,19 +15,19 @@ int
 	token_keyword(t_token_list *list, t_u8_iterator *it)
 {
 	static const char	*keywords[] = {
-	//"[[", "]]", "[", "]", "((", "))",
-	"{", "}",
-	"done",
-	"if", "then", "elif", "else", "fi", "time",
-	"for", "in", "until", "while", "do",
-	"case", "esac", "coproc", "select", "function",
-	NULL};
+		//"[[", "]]", "[", "]", "((", "))",
+		"{", "}",
+		"done",
+		"if", "then", "elif", "else", "fi", "time",
+		"for", "in", "until", "while", "do",
+		"case", "esac", "coproc", "select", "function",
+		NULL};
 	const char			*keyword = str_alternatives(it_substr(it, 8), keywords,
-		0);
+			0);
 
 	if (list->size
-			&& list->tokens[list->size - 1].type != TOK_SPACE
-			&& list->tokens[list->size - 1].type != TOK_SEQUENCE)
+		&& list->tokens[list->size - 1].type != TOK_SPACE
+		&& list->tokens[list->size - 1].type != TOK_SEQUENCE)
 		return (0);
 	if (!keyword)
 		return (0);

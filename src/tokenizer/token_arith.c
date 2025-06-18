@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:54:34 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
@@ -22,7 +22,8 @@ int
 	end = find_matching(it_substr(it, -1), "((", "))", 1);
 	if (end == (size_t)-1)
 	{
-		token_error(list, it->byte_pos - 3, it->byte_pos, "Unterminated `$((` token");
+		token_error(list, it->byte_pos - 3, it->byte_pos,
+			"Unterminated `$((` token");
 		return (1);
 	}
 	token_list_push(list, TOK_ARITH, it->byte_pos,

@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:51:09 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
@@ -32,12 +32,11 @@ int
 	else
 		stringbuf_init(&digit, 16);
 	while (it->codepoint.len && it->codepoint.str[0] >= '0'
-			&& it->codepoint.str[0] <= '9')
+		&& it->codepoint.str[0] <= '9')
 	{
 		stringbuf_append(&digit, it->codepoint);
 		it_next(it);
 	}
-	token_list_push(list, TOK_DIGIT, start,
-		it->byte_pos)->word = digit;
+	token_list_push(list, TOK_DIGIT, start, it->byte_pos)->word = digit;
 	return (1);
 }

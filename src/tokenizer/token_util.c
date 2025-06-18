@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:38:53 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
@@ -30,13 +30,13 @@ int
 		|| tok->type == TOK_DIGIT)
 	{
 		stringbuf_append(buf, (t_string){.str = tok->word.str,
-				.len = tok->word.len });
+			.len = tok->word.len});
 		return (1);
 	}
 	else if (tok->type == TOK_KEYWORD || tok->type == TOK_MINUS)
 	{
 		stringbuf_append(buf, (t_string){.str = tok->reserved_word,
-				.len = ft_strlen(tok->reserved_word) });
+			.len = ft_strlen(tok->reserved_word)});
 		return (1);
 	}
 	else if (tok->type == TOK_ASSIGN)

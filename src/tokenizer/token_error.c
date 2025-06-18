@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 08:39:57 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
@@ -16,7 +16,7 @@ void
 {
 	token_list_push(list, TOK_ERROR, start,
 		end)->err = (t_string){
-		.str = msg,
-		.len = ft_strlen(msg)
-	};
+	.str = msg,
+	.len = ft_strlen(msg)
+};
 }
