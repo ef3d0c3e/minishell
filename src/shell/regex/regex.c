@@ -21,13 +21,14 @@ void
 		" directories and subdirectories.  If the pattern is followed by a '/',"
 		" only directories and subdirectories match.", 0);
 	option_insert(shell, "dotglob", "If set, includes filenames beginning with"
-			" a '.'  in the results of filename expansion.  The filenames '.'"
-			" and '..' must always be matched explicitly, even if 'dotglob' is"
-			" set.", 0);
+		" a '.'  in the results of filename expansion.  The filenames '.'"
+		" and '..' must always be matched explicitly, even if 'dotglob' is"
+		" set.", 0);
 	option_insert(shell, "nocaseglob", "If set, matches filenames in a"
 		" case-insensitive fashion when performing filename expansion.", 0);
 	option_insert(shell, "nullglob", "If set, allows filename patterns which "
-		"match no files to expand to a null string, rather than themselves.", 0);
+		"match no files to expand to a null string, rather than themselves.",
+		0);
 	option_insert(shell, "failglob", "If set, patterns which fail to match "
 		"filenames during filename expansion result in an expansion error.", 0);
 }
@@ -36,12 +37,12 @@ t_globopts
 	regex_shellopt_get(t_shell *shell)
 {
 	return ((t_globopts){
-			.extglob = option_value(shell, "extglob"),
-			.globstar = option_value(shell, "globstar"),
-			.dotglob = option_value(shell, "dotglob"),
-			.nocaseglob = option_value(shell, "nocaseglob"),
-			.nullglob = option_value(shell, "nullglob"),
-			.failglob = option_value(shell, "failglob"),
+		.extglob = option_value(shell, "extglob"),
+		.globstar = option_value(shell, "globstar"),
+		.dotglob = option_value(shell, "dotglob"),
+		.nocaseglob = option_value(shell, "nocaseglob"),
+		.nullglob = option_value(shell, "nullglob"),
+		.failglob = option_value(shell, "failglob"),
 	});
 }
 
@@ -70,44 +71,4 @@ int
 		ft_dprintf(2, "%s\n", parser->regex.errors[i++]);
 	parser->regex.errors_size = 0;
 	return (i == 0);
-}
-
-size_t
-	regex_recurse_depth(const t_regex_ast *node)
-{
-	size_t	total;
-	size_t	status;
-	size_t	i;
-
-	if (!node)
-		return (0);
-	total = 0;
-	i = 0;
-	if (node->type == M_LITERAL)
-	{
-		while (node->literal[i])
-			total += node->literal[i++] == '/';
-	}
-	else if (node->type == M_EXTGLOB)
-	{
-		while (i < node->glob.ngroups)
-		{
-			status = regex_recurse_depth(node->glob.groups[i++]);
-			if (status > total)
-				total = status;
-		}
-	}
-	else if (node->type == M_SEQ)
-	{
-		while (i < node->compound.ngroups)
-		{
-			status = regex_recurse_depth(node->compound.groups[i++]);
-			if (status == (size_t)-1)
-				return (-1);
-			total += status;
-		}
-	}
-	else if (node->type == M_GLOBSTAR)
-		return (-1);
-	return (total);
 }

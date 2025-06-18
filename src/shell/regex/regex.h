@@ -14,7 +14,7 @@
 
 # include <parser/parser.h>
 
-typedef struct s_shell	t_shell;
+typedef struct s_shell		t_shell;
 
 /******************************************************************************/
 /* Shell options for the regex                                                */
@@ -116,16 +116,6 @@ typedef struct s_regex_ast
 	};
 }	t_regex_ast;
 
-
-/**
- * @brief Appends to a @ref M_SEQ node
- *
- * @param seq @ref M_SEQ node
- * @param node Node to append
- */
-void
-regex_seq_append(t_regex_ast *seq, t_regex_ast *node);
-
 /**
  * @brief Frees a regex node
  *
@@ -222,18 +212,6 @@ regex_error(t_reg_parser *parser, const char *msg, size_t pos);
  */
 int
 regex_error_flush(t_reg_parser *parser);
-/**
- * @brief Checks if string `str` matches regex `reg`
- *
- * @param opts Matcher option
- * @param reg Regex
- * @param str String to check for match
- *
- * @returns 2 on match complete match, 1 on partial match (str not long enough)
- * and 0 if no match was found
- */
-int
-regex_match(const t_globopts *opts, const t_regex *reg, const char *str);
 
 /******************************************************************************/
 /* Regex builder                                                              */
@@ -289,5 +267,67 @@ regex_builder_literal(
 	const t_globopts *opts,
 	t_regex_builder *builder,
 	const char *literal);
+
+/******************************************************************************/
+/* Regex matchers                                                             */
+/******************************************************************************/
+
+/**
+ * @brief Checks if string `str` matches regex `reg`
+ *
+ * @param opts Matcher option
+ * @param reg Regex
+ * @param str String to check for match
+ *
+ * @returns 2 on match complete match, 1 on partial match (str not long enough)
+ * and 0 if no match was found
+ */
+int
+regex_match(const t_globopts *opts, const t_regex *reg, const char *str);
+/**
+ * @brief Matches a single node
+ *
+ * @param opts Regex options
+ * @param node Node to match
+ * @param s String
+ * @param s_next Pointer to the leftover from `s`
+ * @return Match status
+ */
+int
+regex_match_one(
+	const t_globopts *opts,
+	const t_regex_ast *node,
+	const char *s,
+	const char **s_next);
+/**
+ * @brief Matches against a @ref M_SEQ node
+ *
+ * @param opts Regex options
+ * @param groups Node group
+ * @param ngroups Number of nodes in node group
+ * @param s String
+ * @return Match status
+ */
+int
+regex_match_seq(
+	const t_globopts *opts,
+	t_regex_ast **groups,
+	size_t ngroups,
+	const char *s);
+/**
+ * @brief Matches against a @ref M_EXTGLOB node
+ *
+ * @param opts Regex options
+ * @param groups Node group
+ * @param ngroups Number of nodes in node group
+ * @param s String
+ * @return Match status
+ */
+int
+regex_match_extglob(
+	const t_globopts *opts,
+	t_regex_ast **groups,
+	size_t ngroups,
+	const char *s);
 
 #endif // REGEX_H

@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 t_regex_builder
@@ -34,9 +32,9 @@ static void
 	size_t	i;
 
 	seq->compound.groups = ft_realloc(seq->compound.groups,
-		sizeof(t_regex_ast *) * seq->compound.ngroups,
-		sizeof(t_regex_ast *) * (seq->compound.ngroups
-			+ other->compound.ngroups));
+			sizeof(t_regex_ast *) * seq->compound.ngroups,
+			sizeof(t_regex_ast *) * (seq->compound.ngroups
+				+ other->compound.ngroups));
 	i = 0;
 	while (i < other->compound.ngroups)
 		seq->compound.groups[seq->compound.ngroups++]
@@ -74,6 +72,12 @@ int
 	(void)opts;
 	node = regex_new(M_LITERAL);
 	node->literal = ft_strdup(literal);
-	regex_seq_append(builder->regex.expr, node);
+	builder->regex.expr->compound.groups = ft_realloc(
+			builder->regex.expr->compound.groups,
+			sizeof(t_regex_ast *) * (builder->regex.expr->compound.ngroups),
+			sizeof(t_regex_ast *) * (builder->regex.expr->compound.ngroups
+				+ 1));
+	builder->regex.expr->compound.groups
+	[builder->regex.expr->compound.ngroups++] = node;
 	return (1);
 }

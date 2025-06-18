@@ -14,15 +14,6 @@
 static t_regex_ast
 	*regex_parse_sequence(t_reg_parser *parser, const char *until);
 
-void
-	regex_seq_append(t_regex_ast *seq, t_regex_ast *node)
-{
-	seq->compound.groups = ft_realloc(seq->compound.groups, 
-			sizeof(t_regex_ast *) * (seq->compound.ngroups),
-			sizeof(t_regex_ast *) * (seq->compound.ngroups + 1));
-	seq->compound.groups[seq->compound.ngroups++] = node;
-}
-
 static t_regex_ast
 	*regex_parse_extglob(t_reg_parser *parser)
 {
@@ -46,11 +37,11 @@ static t_regex_ast
 	if (parser->str[parser->pos] != ')')
 		regex_error(parser, "Unmatched `(`", parser->pos);
 	++parser->pos;
-    return (node);
+	return (node);
 }
 
 static t_regex_ast
-	*regex_parse_element(t_reg_parser *parser)
+	*regex_parse_element_special(t_reg_parser *parser)
 {
 	t_regex_ast	*node;
 
@@ -62,9 +53,20 @@ static t_regex_ast
 		return (node);
 	}
 	else if (parser->opts->extglob && parser->str[parser->pos]
-			&& ft_strchr("?*+@!", parser->str[parser->pos])
-			&& parser->str[parser->pos + 1] == '(')
+		&& ft_strchr("?*+@!", parser->str[parser->pos])
+		&& parser->str[parser->pos + 1] == '(')
 		return (regex_parse_extglob(parser));
+	return (NULL);
+}
+
+static t_regex_ast
+	*regex_parse_element(t_reg_parser *parser)
+{
+	t_regex_ast	*node;
+
+	node = regex_parse_element_special(parser);
+	if (node)
+		return (node);
 	else if (parser->str[parser->pos] == '?' && ++parser->pos)
 		return (regex_new(M_ANY));
 	else if (parser->str[parser->pos] == '*' && ++parser->pos)
@@ -84,7 +86,7 @@ static t_regex_ast
 		ft_asprintf(&node->literal, "%c", parser->str[parser->pos++]);
 		return (node);
 	}
-    return (NULL);
+	return (NULL);
 }
 
 static t_regex_ast
@@ -102,7 +104,10 @@ static t_regex_ast
 		inner = regex_parse_element(parser);
 		if (!inner)
 			break ;
-		regex_seq_append(node, inner);
+		node->compound.groups = ft_realloc(node->compound.groups,
+				sizeof(t_regex_ast *) * (node->compound.ngroups),
+				sizeof(t_regex_ast *) * (node->compound.ngroups + 1));
+		node->compound.groups[node->compound.ngroups++] = inner;
 	}
 	return (node);
 }
