@@ -136,8 +136,9 @@ static int
 		while (++i)
 		{
 			r = match_seq(opts, groups + 1, ngroups - 1, s + i - 1);
-			if (r) return (r);
-			if (!s[i - 1] || (node->type == M_STAR && s[i - 1] == '/'))
+			if (r)
+				return (r);
+			if (!s[i - 1])
 				break;
 		}
 		return (!s[i - 1] * 2);
@@ -148,7 +149,7 @@ static int
 	if (r <= 1)
 		return (r);
 	if (!*rest && ngroups > 1)
-		return (1);
+		return (2);
 	return (match_seq(opts, groups + 1, ngroups - 1, rest));
 }
 

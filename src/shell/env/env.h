@@ -337,10 +337,15 @@ file_tree_walk(const char *path, size_t max_depth, t_ftw_fn fn, void *cookie);
 /** @brief Data for file tree walk */
 struct s_ftw
 {
+	/** @brief Max search depth */
 	size_t		max_depth;
+	/** @brief Entry full path */
 	char		*fullpath;
+	/** @brief Entry's lstat */
 	struct		stat sb;
+	/** @brief FTW callback function */
 	t_ftw_fn	fn;
+	/** @brief Cookie */
 	void		*cookie;
 };
 

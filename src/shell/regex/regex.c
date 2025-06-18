@@ -9,10 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/regex/regex.h"
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stddef.h>
 
 void
 	regex_shellopt_register(t_shell *shell)

@@ -15,7 +15,7 @@ t_getline
 	getline_setup(t_shell *shell, t_data_new_fn new_fn, t_data_free_fn free_fn)
 {
 	t_getline	line;
-
+	
 	line.shell = shell;
 	line.in_fd = STDIN_FILENO;
 	line.out_fd = STDOUT_FILENO;
@@ -95,8 +95,12 @@ char
 	*getline_read(t_getline *line, const char *prompt)
 {
 	int		c;
+	int		x;
 
 	getline_raw_mode(line, 1);
+	getline_cursor_pos(line, &x, NULL);
+	if (x != 1)
+		ft_dprintf(line->out_fd, "⏎\n\r");
 	line->mode = LINE_INPUT;
 	if (line->modes[line->mode].enable_mode_fn)
 		line->modes[line->mode].enable_mode_fn(line);

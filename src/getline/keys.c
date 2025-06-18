@@ -75,7 +75,6 @@ for (size_t i = 0; i < line->sequence_len; ++i)
 int
 	getline_handle_key(t_getline *line, int c)
 {
-	const void	*bind;
 	size_t		expect;
 
 	if ((c < 0 || (c >= 32 && c != 127)) && !line->sequence_len

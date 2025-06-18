@@ -25,7 +25,7 @@ static t_eval_result
 	}
 	if (av[1] && !atoi_checked(av[1], &num))
 	{
-		ft_asprintf(&err, "return: numeric argument required, got: `%s` ",
+		ft_asprintf(&err, "return: int argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
 	}
@@ -46,7 +46,7 @@ static t_eval_result
 	num = 1;
 	if (av[1] && !atoi_checked(av[1], &num))
 	{
-		ft_asprintf(&err, "break: numeric argument required, got: `%s` ",
+		ft_asprintf(&err, "break: int argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
 		num = 1;
@@ -74,7 +74,7 @@ static t_eval_result
 	//}
 	if (av[1] && !atoi_checked(av[1], &num))
 	{
-		ft_asprintf(&err, "continue: numeric argument required, got: `%s` ",
+		ft_asprintf(&err, "continue: int argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
 		num = 1;
@@ -96,7 +96,7 @@ static t_eval_result
 	num = 0;
 	if (av[1] && !atoi_checked(av[1], &num))
 	{
-		ft_asprintf(&err, "exit: numeric argument required, got: `%s` ",
+		ft_asprintf(&err, "exit: int argument required, got: `%s` ",
 			av[1]);
 		shell_error(shell, err, SRC_LOCATION);
 		num = 0;

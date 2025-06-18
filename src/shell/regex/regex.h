@@ -176,6 +176,19 @@ typedef struct s_regex
 	size_t				errors_capacity;
 }	t_regex;
 
+/** @brief Gets the regex initial path
+ *
+ * Gets the longest initial string terminated by a `/`.
+ * This corresponds to the regex's initial search directory (relative to the
+ * cwd)
+ *
+ * @param regex Regex to get the path of
+ *
+ * @returns The initial search path. "." If none is found.
+ * */
+char
+*regex_path(const t_regex *regex);
+
 /******************************************************************************/
 /* Regex parser                                                               */
 /******************************************************************************/
@@ -247,8 +260,10 @@ regex_builder_new(void);
 /**
  * @brief Adds a regex expression to the builder
  *
+ * @param opts Regex options
  * @param builder Regex builder
  * @param expr Expression string to add
+ * @param start Whether this is the start fragment of the regex
  *
  * @returns 1 on success, 0 on failure. On failure, an error message will be
  * printed to stderr and the regex will be freed.
@@ -261,8 +276,10 @@ regex_builder_expr(
 /**
  * @brief Adds a literal string to the builder
  *
+ * @param opts Regex options
  * @param builder Regex builder
  * @param literal String to add
+ * @param start Whether this is the start fragment of the regex
  *
  * @returns 1 on success, 0 on failure. On failure, an error message will be
  * printed to stderr and the regex will be freed.

@@ -36,9 +36,7 @@ void
 	raw.c_cc[VMIN] = 1;
 	raw.c_cc[VTIME] = 0;
 	if (tcsetattr(line->in_fd, TCSANOW, &raw) == -1)
-	{
 		shell_perror(line->shell, "tcsetattr fail", SRC_LOCATION);
-	}
 }
 
 int

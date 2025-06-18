@@ -9,28 +9,18 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/env/env.h"
-#include "util/util.h"
-#include <dirent.h>
 #include <shell/shell.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <sys/stat.h>
 
 static char
 	*get_path(const char *path, struct dirent *ent)
 {
-	char	*formatted;
-	int		len;
+	t_pathbuf		buf;
 
-	len = ft_strlen(path);
-	while (len > 0 && path[len - 1] == '/')
-		--len;
-	if (len == 1 && path[0] == '.')
-		len = 0;
-	ft_asprintf(&formatted, "%.*s%s%s", len, path, &"/"[len == 0], ent->d_name);
-	return (formatted);
+	pathbuf_init(&buf, 24);
+	if (ft_strcmp(path, "."))
+		pathbuf_append(&buf, path, 0);
+	pathbuf_append(&buf, ent->d_name, 0);
+	return (pathbuf_cstr(&buf));
 }
 
 static int
@@ -46,7 +36,7 @@ static int
 		return (0);
 	dir = opendir(path);
 	status = -1;
-	while (1)
+	while (dir)
 	{
 		errno = 0;
 		ent = readdir(dir);
@@ -63,13 +53,13 @@ static int
 		if (lstat(fullpath, &f->sb) == -1)
 		{
 			free(fullpath);
-			break ;
+			continue ;
 		}
 		fstatus = f->fn(fullpath, &f->sb, f->cookie);
 		if (fstatus == -1)
 		{
 			free(fullpath);
-			break ;
+			continue ;
 		}
 		if (fstatus != 1 && S_ISDIR(f->sb.st_mode))
 		{

@@ -49,4 +49,21 @@ DO_TEST(expand,
 	SHELL_TEST("echo {{x,y}{1..2},Z}",  "", "x1 x2 y1 y2 Z\n", "", 0)
 
 	SHELL_TEST("echo {a,\\{b,c}}",       "", "a} {b} c}\n", "", 0)
+
+	// Filename expansion
+	WITH_ENV(({"PATH=/usr/bin", NULL}),
+		SHELL_TEST("touch a aa ab ac .t", "", "", "", 0);
+		SHELL_TEST("mkdir -p b/ba b/bb b/bc b/.b", "", "", "", 0);
+
+		SHELL_TEST("ls -1 *", "", "a\naa\nab\nac\n\nb:\nba\nbb\nbc\n", "", 0);
+		SHELL_TEST("ls -1 ./*", "", "./a\n./aa\n./ab\n./ac\n\n./b:\nba\nbb\nbc\n", "", 0);
+		SHELL_TEST("ls -1 .*", "", ".t\n", "", 0);
+		SHELL_TEST("(cd b; ls -1 *)", "", "ba:\n\nbb:\n\nbc:\n", "", 0);
+		SHELL_TEST("(cd b; ls -1 ./*)", "", "./ba:\n\n./bb:\n\n./bc:\n", "", 0);
+		SHELL_TEST("(cd b; ls -1 .*)", "", "", "", 0);
+		SHELL_TEST("touch b/.h", "", "", "", 0);
+		SHELL_TEST("(cd b; ls -1 .*)", "", ".h\n\n.b:\n", "", 0);
+		SHELL_TEST("(cd b; ls -1 ../*)", "", "../a\n../aa\n../ab\n../ac\n\n../b:\nba\nbb\nbc\n", "", 0);
+		SHELL_TEST("ls c*", "", "", "ls: cannot access 'c*': No such file or directory\n", 2);
+	)
 )

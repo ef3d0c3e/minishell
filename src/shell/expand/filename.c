@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/regex/regex.h"
 #include <shell/shell.h>
 
 /** @brief Checks if a fragment range needs filename expansion by scanning for
@@ -19,8 +20,8 @@ static int
 	const t_fragment *start,
 	const t_fragment *end)
 {
-	static const char	*alts[] = {"*", "?", NULL};
-	static const char	*glob[] = {"@", "!", "+", NULL};
+	static const char		*alts[] = {"*", "?", NULL};
+	static const char		*glob[] = {"@", "!", "+", NULL};
 	const t_string_buffer	*word;
 
 	while (start != end)
@@ -46,8 +47,7 @@ static int
 	t_fragment *end,
 	t_regex *regex)
 {
-	t_regex_builder	builder;
-	size_t			recurse;
+	t_regex_builder		builder;
 
 	builder = regex_builder_new();
 	while (start != end)
@@ -91,6 +91,29 @@ static int
 	return (0);
 }
 
+/** @brief Expand by walking files using FTW. If no files are matched
+ * 0 is returned, and the caller must expand the regex's pattern literally */
+static int
+	expand_files(t_shell *shell, t_fragment_list *list, t_fragment *start, t_fragment *end)
+{
+	struct s_filename_traversal	tr;
+	size_t						recurse;
+	size_t						oldsz;
+	char 						*path;
+
+	tr.opts = regex_shellopt_get(shell);
+	if (!make_regex(&tr.opts, start, end, &tr.regex))
+		return (0);
+	recurse = regex_recurse_depth(tr.regex.expr);
+	tr.list = list;
+	oldsz = tr.list->size;
+	path = regex_path(&tr.regex);
+	file_tree_walk(path, recurse + (recurse != (size_t)-1), collect_files, &tr);
+	free(path);
+	regex_free(tr.regex.expr);
+	return (tr.list->size != oldsz);
+}
+
 // TODO: If no match, use globerr/globfail to determine what to do
 static int
 	expand(
@@ -99,11 +122,10 @@ static int
 	t_fragment *start,
 	t_fragment *end)
 {
-	t_string_buffer				s;
-	size_t						recurse;
-	struct s_filename_traversal	tr;
+	t_string_buffer	s;
 
-	if (!needs_expansion(shell, start, end))
+	if (!needs_expansion(shell, start, end)
+		|| !expand_files(shell, list, start, end))
 	{
 		stringbuf_init(&s, 16);
 		while (start != end)
@@ -112,17 +134,7 @@ static int
 			++start;
 		}
 		fraglist_push(list, s, 0);
-		return (1);
 	}
-	tr.opts = regex_shellopt_get(shell);
-	if (!make_regex(&tr.opts, start, end, &tr.regex))
-		return (0);
-	recurse = regex_recurse_depth(tr.regex.expr);
-	if (recurse != (size_t)-1)
-		recurse += 1;
-	tr.list = list;
-	file_tree_walk(".", recurse, collect_files, &tr);
-	regex_free(tr.regex.expr);
 	return (1);
 }
 

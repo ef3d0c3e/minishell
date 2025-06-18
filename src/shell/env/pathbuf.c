@@ -30,12 +30,6 @@ int
 	if (buf->buf.len && buf->buf.str[buf->buf.len - 1] == '/')
 		has_slash = 1;
 	len = ft_strlen(component);
-	while (len > 1 && component[len - 1] == '/')
-	{
-		if (force_dir && len > 2 && component[len - 2] != '/')
-			break ;
-		--len;
-	}
 	start = 0;
 	while (has_slash && start < len && component[start] == '/')
 		++start;
