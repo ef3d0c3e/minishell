@@ -263,6 +263,9 @@ getline_cursor_pos(t_getline *line, int *x, int *y);
 /** @brief Sets the cursor position */
 void
 getline_cursor_set(t_getline *line, int col, int row);
+/** @brief Sets the cursor's visibility */
+void
+getline_cursor_visible(t_getline *line, int visible);
 /** @brief Asks the terminal to measure the width of text */
 int
 getline_text_width(t_getline *line, const char *utf8, size_t byte_len);

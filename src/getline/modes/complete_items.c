@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 void
@@ -31,12 +32,14 @@ void
 void
 	getline_complete_populate_items(t_getline *line)
 {
+	ft_dprintf(2, "HERE\n\r");
 	if (!line->comp_provider_fn)
 		return ;
 	getline_complete_free_items(line);
 	line->state.comp.items = line->comp_provider_fn(line,
 			&line->state.comp.word_start,
 			&line->state.comp.word_end);
+	ft_dprintf(2, "ws=%zu, we=%zu\n\r", line->state.comp.word_start, line->state.comp.word_end);
 	line->state.comp.nitems = 0;
 	while (line->state.comp.items[line->state.comp.nitems].name)
 		++line->state.comp.nitems;

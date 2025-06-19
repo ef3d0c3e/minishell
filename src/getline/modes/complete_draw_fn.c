@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "getline/modes/modes.h"
 #include <shell/shell.h>
 
 static int
@@ -37,6 +39,19 @@ static int
 }
 
 void
+	item_kind_color(const t_getline *line, const t_complete_item *item)
+{
+	if (item->kind == COMPLETE_FILE_DIR)
+		ft_dprintf(line->out_fd, "\x1b[36m");
+	else if (item->kind == COMPLETE_FILE)
+		ft_dprintf(line->out_fd, "\x1b[90m");
+	else if (item->kind == COMPLETE_FILE_SPC)
+		ft_dprintf(line->out_fd, "\x1b[96m");
+	else
+		ft_dprintf(line->out_fd, "\x1b[37m");
+}
+
+void
 	getline_handler_comp_draw_item(
 	t_getline *line,
 	size_t i,
@@ -48,6 +63,7 @@ void
 	if ((size_t)line->state.comp.sel == i)
 		ft_dprintf(line->out_fd, "\x1b[7m");
 	ft_dprintf(line->out_fd, "\x1b[37m");
+	item_kind_color(line, item);
 	w = draw_bounded(line, item->name, line->state.comp.col_width - 4, "…");
 	while (desc_len + w++ < line->state.comp.col_width - 4)
 		ft_dprintf(line->out_fd, " ");

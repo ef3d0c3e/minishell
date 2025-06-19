@@ -84,3 +84,9 @@ void
 {
 	ft_dprintf(line->out_fd, "\x1b[%d;%dH", row, col);
 }
+
+void
+	getline_cursor_visible(t_getline *line, int visible)
+{
+	// TODO
+}

@@ -9,9 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
-#include <stdatomic.h>
 
 static int
 	match(const char *a, const char *b)
@@ -33,7 +31,7 @@ static int
 			return (0);
 		++i;
 	}
-	return (1);
+	return (!a[i] || b[i]);
 }
 
 static void

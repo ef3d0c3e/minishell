@@ -81,7 +81,6 @@ void
 
 	tr.items = items;
 	build_regex(filter, &tr);
-	regex_print(0, tr.re.expr);
 	recurse = regex_recurse_depth(tr.re.expr);
 	path = regex_path(&tr.re);
 	file_tree_walk(path, recurse + (recurse != (size_t)-1), collect_files, &tr);

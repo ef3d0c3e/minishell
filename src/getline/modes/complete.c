@@ -44,6 +44,7 @@ static void
 void
 	getline_complete_enable(t_getline *line)
 {
+	getline_cursor_visible(line, 0);
 	getline_cursor_pos(line, &line->state.comp.cur_x,
 		&line->state.comp.cur_y);
 	line->state.comp.items = NULL;
@@ -81,6 +82,7 @@ void
 		line->scrolled = 0;
 	}
 	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
+	getline_cursor_visible(line, 1);
 	ft_dprintf(line->out_fd, "\x1b[0J");
 }
 

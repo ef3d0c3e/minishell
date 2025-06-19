@@ -9,6 +9,9 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "shell/repl/repl.h"
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 void
@@ -28,7 +31,7 @@ void
 }
 
 static char
-	*get_filter(t_getline *line, size_t *word_start, size_t *word_end)
+	*get_filter(t_getline *line, size_t *word_start, size_t *word_end, int *cmd)
 {
 	t_token_list *const	list = &((t_repl_data *)line->data)->list;
 	size_t				i;
@@ -41,6 +44,14 @@ static char
 			break ;
 		++i;
 	}
+	ft_dprintf(2, "\n\r");
+	token_list_print((t_string){line->input.buffer.str, line->input.buffer.len}, list);
+	ft_dprintf(2, "\n\r");
+	ft_dprintf(2, "i=%d\n\r", i);
+	if (i)
+		*cmd = list->tokens[i - 1].type != TOK_SPACE;
+	if (list->size)
+		*cmd &= list->tokens[i].type != TOK_SPACE;
 	if (i >= list->size || !token_isword(list->tokens[i].type))
 		return (NULL);
 	stringbuf_init(&buf, 24);
@@ -60,14 +71,18 @@ t_complete_item
 {
 	char			*filter;
 	t_complete_buf	items;
+	int				cmd;
 
 	items.data = NULL;
 	items.capacity = 0;
 	items.size = 0;
 	*word_start = 0;
 	*word_end = line->cursor_index;
-	filter = get_filter(line, word_start, word_end);
-	repl_complete_cmd(line->shell, &items, filter);
+	cmd = 1;
+	filter = get_filter(line, word_start, word_end, &cmd);
+	ft_dprintf(2, "FILTER='%s'\n\r", filter);
+	if (cmd)
+		repl_complete_cmd(line->shell, &items, filter);
 	repl_complete_filename(&items, filter);
 	free(filter);
 	complete_buf_push(&items, (t_complete_item){0, NULL, NULL});
