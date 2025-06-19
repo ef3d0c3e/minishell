@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   repl.c                                             :+:      :+:    :+:   */
+/*   complete.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "shell/repl/repl.h"
@@ -20,7 +20,7 @@ static int
 	size_t	i;
 	char	x;
 	char	y;
-	
+
 	i = 0;
 	while (a[i] && b[i])
 	{
@@ -41,7 +41,7 @@ static void
 	path_traversal(size_t depth, t_rbnode *node, void *cookie)
 {
 	t_path_tr *const	tr = cookie;
-	
+
 	if (tr->filter && !match(tr->filter, node->key))
 		return ;
 	tr->items[tr->index++] = (t_complete_item){
@@ -95,4 +95,3 @@ t_complete_item
 	free(tr.filter);
 	return (tr.items);
 }
-

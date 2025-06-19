@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 06:48:20 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer/tokenizer.h"
@@ -28,7 +28,7 @@ void
 	repl_data_free(t_getline *line, void *data_)
 {
 	t_repl_data *const	data = data_;
-	
+
 	(void)line;
 	token_list_free(&data->list);
 	free(data);

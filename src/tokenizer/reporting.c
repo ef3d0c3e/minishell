@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/18 10:37:31 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <tokenizer/tokenizer.h>
@@ -22,7 +22,7 @@ static void
 		(int)(token->end - token->start), input.str + token->start,
 		"\033[0m",
 		(int)(input.len - token->end), input.str + token->end
-	);
+		);
 	i = 0;
 	while (i <= token->start)
 	{
@@ -40,7 +40,7 @@ int
 
 	i = 0;
 	has_error = 0;
-	while(i < list->size)
+	while (i < list->size)
 	{
 		if (list->tokens[i].type == TOK_ERROR)
 		{

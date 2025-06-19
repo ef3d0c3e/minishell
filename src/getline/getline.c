@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 06:41:15 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
@@ -15,7 +15,7 @@ t_getline
 	getline_setup(t_shell *shell, t_data_new_fn new_fn, t_data_free_fn free_fn)
 {
 	t_getline	line;
-	
+
 	line.shell = shell;
 	line.in_fd = STDIN_FILENO;
 	line.out_fd = STDOUT_FILENO;

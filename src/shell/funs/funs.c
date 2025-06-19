@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   envp.c                                             :+:      :+:    :+:   */
+/*   funs.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 07:21:06 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
@@ -15,7 +15,7 @@
 static void
 	fun_free(void *fun)
 {
-	t_ast_node *node;
+	t_ast_node	*node;
 
 	node = fun;
 	node->function.registered = 0;
@@ -28,9 +28,9 @@ void
 	shell->eval_stack.capacity = 1024;
 	shell->eval_stack.size = 0;
 	shell->eval_stack.frames = xmalloc(sizeof(t_stack_frame)
-		* shell->eval_stack.capacity);
-	shell->reg_fns = rb_new((int(*)(const void *, const void *))ft_strcmp,
-		free, fun_free);
+			* shell->eval_stack.capacity);
+	shell->reg_fns = rb_new((int (*)(const void *, const void *))ft_strcmp,
+			free, fun_free);
 }
 
 void
@@ -43,7 +43,7 @@ void
 }
 
 void
-funs_stack_push(t_shell *shell, t_ast_node *function, char **argv)
+	funs_stack_push(t_shell *shell, t_ast_node *function, char **argv)
 {
 	t_stack_frame	frame;
 
@@ -54,13 +54,13 @@ funs_stack_push(t_shell *shell, t_ast_node *function, char **argv)
 	while (frame.args[frame.nargs])
 		++frame.nargs;
 	frame.function = function;
-	frame.locals = rb_new((int(*)(const void *, const void *))ft_strcmp,
-		free, free);
+	frame.locals = rb_new((int (*)(const void *, const void *))ft_strcmp,
+			free, free);
 	shell->eval_stack.frames[shell->eval_stack.size++] = frame;
 }
 
 void
-funs_stack_pop(t_shell *shell)
+	funs_stack_pop(t_shell *shell)
 {
 	const size_t	i = shell->eval_stack.size - 1;
 	size_t			j;

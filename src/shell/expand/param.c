@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 07:36:08 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
@@ -56,7 +56,7 @@ static int
 	const char *ifs)
 {
 	const t_stack_frame	*frame = &shell->eval_stack.frames
-		[shell->eval_stack.size - 1];
+	[shell->eval_stack.size - 1];
 	t_string_buffer		buf;
 
 	if (!ft_strcmp(param->param.name, "?"))
@@ -85,8 +85,8 @@ static int
 	struct s_atom *param)
 {
 	const t_stack_frame	*frame = &shell->eval_stack.frames
-		[shell->eval_stack.size - 1];
-	int		num;
+	[shell->eval_stack.size - 1];
+	int					num;
 
 	if (shell->eval_stack.size == 0)
 		return (0);
@@ -129,7 +129,7 @@ static int
 }
 
 int
-expand_param(
+	expand_param(
 	t_shell *shell,
 	t_fragment_list *list,
 	struct s_atom *param,

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fraglist.c                                             :+:      :+:    :+:   */
+/*   fraglist.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 13:03:33 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "util/util.h"
@@ -41,8 +41,8 @@ void
 	{
 		list->capacity = list->capacity * 2 + !list->capacity * 4;
 		list->fragments = ft_realloc(list->fragments,
-			sizeof(t_fragment) * list->size,
-			sizeof(t_fragment) * list->capacity);
+				sizeof(t_fragment) * list->size,
+				sizeof(t_fragment) * list->capacity);
 	}
 	list->fragments[list->size++] = (t_fragment){
 		.word = word,
@@ -66,7 +66,7 @@ void
 char
 	**fraglist_to_argv(t_fragment_list *list)
 {
-	char 			**argv;
+	char			**argv;
 	t_string_buffer	buf;
 	size_t			size;
 	size_t			i;
@@ -83,7 +83,7 @@ char
 			stringbuf_init(&buf, 24);
 		}
 		stringbuf_append(&buf, (t_string){list->fragments[i].word.str,
-				list->fragments[i].word.len});
+			list->fragments[i].word.len});
 		++i;
 	}
 	if (i)

@@ -6,13 +6,14 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 12:51:49 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef EXPAND_H
 # define EXPAND_H
 
 # include <parser/parser.h>
+# include <shell/regex/regex.h>
 
 typedef struct s_shell	t_shell;
 
@@ -38,6 +39,13 @@ typedef struct s_fragment_list
 	/** @brief Capacity of this list */
 	size_t		capacity;
 }	t_fragment_list;
+
+struct s_filename_traversal
+{
+	t_fragment_list	*list;
+	t_globopts		opts;
+	t_regex			regex;
+};
 
 /** @brief Performs expansion over literals */
 void

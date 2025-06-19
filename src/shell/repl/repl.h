@@ -6,15 +6,15 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 06:41:53 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef REPL_H
 # define REPL_H
 
-#include "getline/buffer/buffer.h"
-#include "tokenizer/tokenizer.h"
-#include <getline/getline.h>
+# include "getline/buffer/buffer.h"
+# include "tokenizer/tokenizer.h"
+# include <getline/getline.h>
 
 /******************************************************************************/
 /* Completion                                                                 */

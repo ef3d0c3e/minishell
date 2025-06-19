@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 13:06:11 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
@@ -54,24 +54,17 @@ static int
 		if (start->flags & (FL_SQUOTED | FL_DQUOTED))
 		{
 			if (!regex_builder_literal(opts, &builder,
-						stringbuf_cstr(&start->word)))
+					stringbuf_cstr(&start->word)))
 				return (0);
 		}
 		else if (!regex_builder_expr(opts, &builder,
-					stringbuf_cstr(&start->word)))
+				stringbuf_cstr(&start->word)))
 			return (0);
 		++start;
 	}
 	*regex = builder.regex;
 	return (1);
 }
-
-struct s_filename_traversal
-{
-	t_fragment_list	*list;
-	t_globopts		opts;
-	t_regex			regex;
-};
 
 static int
 	collect_files(char *path, const struct stat *sb, void *ptr)
@@ -94,12 +87,17 @@ static int
 /** @brief Expand by walking files using FTW. If no files are matched
  * 0 is returned, and the caller must expand the regex's pattern literally */
 static int
-	expand_files(t_shell *shell, t_fragment_list *list, t_fragment *start, t_fragment *end)
+	expand_files(
+			t_shell *shell,
+			t_fragment_list *list,
+			t_fragment *start,
+			t_fragment *end
+			)
 {
 	struct s_filename_traversal	tr;
 	size_t						recurse;
 	size_t						oldsz;
-	char 						*path;
+	char						*path;
 
 	tr.opts = regex_shellopt_get(shell);
 	if (!make_regex(&tr.opts, start, end, &tr.regex))
@@ -141,7 +139,7 @@ static int
 t_fragment_list
 	expand_filename(t_shell *shell, t_fragment_list *list)
 {
-	t_fragment_list new;
+	t_fragment_list	new;
 	size_t			i;
 	size_t			start;
 
@@ -150,11 +148,12 @@ t_fragment_list
 	fraglist_init(&new);
 	while (i < list->size)
 	{
-		if (list->fragments[i].force_split)	
+		if (list->fragments[i].force_split)
 		{
 			if (start != i)
 			{
-				expand(shell, &new, &list->fragments[start], &list->fragments[i]);
+				expand(shell, &new, &list->fragments[start],
+					&list->fragments[i]);
 				new.fragments[new.size - 1].force_split = 1;
 				start = i;
 			}
