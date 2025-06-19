@@ -6,7 +6,7 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
+/*   Updated: 2025/06/19 15:07:11 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SHELL_H
@@ -29,6 +29,8 @@
 # include <ft_printf.h>
 # include <gnl.h>
 # include <libopts.h>
+
+#include <term/capability.h>
 
 # include <sys/stat.h>
 # include <sys/wait.h>
@@ -104,6 +106,8 @@ typedef struct s_shell
 	int					is_interactive;
 	/** @brief Last program's exit status (initialized to 0) */
 	int					last_status;
+	/** @brief Current terminal capabilities */
+	t_termcap			cap;
 }	t_shell;
 
 /******************************************************************************/
