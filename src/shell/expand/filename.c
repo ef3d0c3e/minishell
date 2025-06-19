@@ -6,10 +6,13 @@
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
-/*   Updated: 2025/06/19 13:06:11 by thschnei         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:31:37 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "builtins/builtin.h"
+#include "shell/expand/expand.h"
 #include <shell/shell.h>
+#include <stddef.h>
 
 /** @brief Checks if a fragment range needs filename expansion by scanning for
  * reserved words */
@@ -136,36 +139,48 @@ static int
 	return (1);
 }
 
-t_fragment_list
-	expand_filename(t_shell *shell, t_fragment_list *list)
+static void
+	expand_filename_(
+			t_shell *shell,
+			t_fragment_list *list,
+			t_fragment_list *new,
+			size_t *start
+			)
 {
-	t_fragment_list	new;
 	size_t			i;
-	size_t			start;
 
 	i = 0;
-	start = 0;
-	fraglist_init(&new);
 	while (i < list->size)
 	{
 		if (list->fragments[i].force_split)
 		{
-			if (start != i)
+			if (*start != i)
 			{
-				expand(shell, &new, &list->fragments[start],
+				expand(shell, new, &list->fragments[*start],
 					&list->fragments[i]);
-				new.fragments[new.size - 1].force_split = 1;
-				start = i;
+				new->fragments[new->size - 1].force_split = 1;
+				*start = i;
 			}
 		}
 		++i;
 	}
-	if (start != i)
+	if (*start != i)
 	{
-		expand(shell, &new, &list->fragments[start], &list->fragments[i]);
-		if (new.size)
-			new.fragments[new.size - 1].force_split = 1;
+		expand(shell, new, &list->fragments[*start], &list->fragments[i]);
+		if (new->size)
+			new->fragments[new->size - 1].force_split = 1;
 	}
+}
+
+t_fragment_list
+	expand_filename(t_shell *shell, t_fragment_list *list)
+{
+	t_fragment_list	new;
+	size_t			start;
+
+	start = 0;
+	fraglist_init(&new);
+	expand_filename_(shell, list, &new, &start);
 	fraglist_free(list);
 	return (new);
 }
