@@ -66,15 +66,15 @@ regex_shellopt_get(t_shell *shell);
 enum e_match_type
 {
 	M_LITERAL,
-	/* @brief '?' */
+	/** @brief '?' */
 	M_ANY,
-	/* @brief '*' */
+	/** @brief '*' */
 	M_STAR,
-	/* @brief ?(...), *(...), etc. */
+	/** @brief ?(...), *(...), etc. */
 	M_EXTGLOB,
-	/* @brief ** */
+	/** @brief ** */
 	M_GLOBSTAR,
-	/* @brief sequence of nodes */
+	/** @brief sequence of nodes */
 	M_SEQ,
 };
 
@@ -222,7 +222,7 @@ regex_error_flush(t_reg_parser *parser);
  *
  * The goal of the builder is to be able to concatenate multiple regexes
  * together. For instance the following wordlist: `"foo"*'bar'` can be seen as
- * `Literal(foo) Regex(*) Literal(bar)`
+ * `Literal(foo) Expr(*) Literal(bar)`
  */
 typedef struct s_regex_builder
 {

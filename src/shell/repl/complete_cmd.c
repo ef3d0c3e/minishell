@@ -1,0 +1,94 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   complete_cmd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 11:59:40 by lgamba            #+#    #+#             */
+/*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+#include "util/util.h"
+#include <shell/shell.h>
+#include <stdatomic.h>
+
+static int
+	match(const char *a, const char *b)
+{
+	size_t	i;
+	char	x;
+	char	y;
+
+	i = 0;
+	while (a[i] && b[i])
+	{
+		x = a[i];
+		y = b[i];
+		if (x >= 'a' && x <= 'z')
+			x -= 32;
+		if (y >= 'a' && y <= 'z')
+			y -= 32;
+		if (x != y)
+			return (0);
+		++i;
+	}
+	return (1);
+}
+
+static void
+	path_traversal(size_t depth, t_rbnode *node, void *cookie)
+{
+	t_comp_cmd_tr *const	tr = cookie;
+
+	(void)depth;
+	if (tr->filter && !match(tr->filter, node->key))
+		return ;
+	complete_buf_push(tr->items, (t_complete_item){
+		.kind = COMPLETE_WORD,
+		.name = ft_strdup(node->key),
+		.desc = ft_strdup("Executable"),
+	});
+}
+
+static void
+	fn_traversal(size_t depth, t_rbnode *node, void *cookie)
+{
+	t_comp_cmd_tr *const	tr = cookie;
+
+	(void)depth;
+	if (tr->filter && !match(tr->filter, node->key))
+		return ;
+	complete_buf_push(tr->items, (t_complete_item){
+		.kind = COMPLETE_WORD,
+		.name = ft_strdup(node->key),
+		.desc = ft_strdup("Function"),
+	});
+}
+
+static void
+	builtin_traversal(size_t depth, t_rbnode *node, void *cookie)
+{
+	t_comp_cmd_tr *const	tr = cookie;
+
+	(void)depth;
+	if (tr->filter && !match(tr->filter, node->key))
+		return ;
+	complete_buf_push(tr->items, (t_complete_item){
+		.kind = COMPLETE_WORD,
+		.name = ft_strdup(node->key),
+		.desc = ft_strdup("Builtin"),
+	});
+}
+
+void
+	repl_complete_cmd(t_shell *shell, t_complete_buf *items, const char *filter)
+{
+	t_comp_cmd_tr	tr;
+
+	tr.filter = filter;
+	tr.items = items;
+	rb_apply(&shell->path_cache, path_traversal, &tr);
+	rb_apply(&shell->reg_fns, fn_traversal, &tr);
+	rb_apply(&shell->reg_builtins, builtin_traversal, &tr);
+}

@@ -67,6 +67,8 @@ enum e_complete_item_kind
 {
 	COMPLETE_WORD,
 	COMPLETE_OPTION,
+	COMPLETE_FILE_DIR,
+	COMPLETE_FILE_SPC,
 	COMPLETE_FILE,
 };
 
