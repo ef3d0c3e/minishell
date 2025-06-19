@@ -6,14 +6,12 @@
 /*   By: thschnei <thschnei@student.42perpignan.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 11:10:01 by thschnei          #+#    #+#             */
-/*   Updated: 2025/05/12 17:57:05 by thschnei         ###   ########.fr       */
+/*   Updated: 2025/06/19 17:36:12 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CAPABILITY_H
 # define CAPABILITY_H
-# include <term.h>
-# include <curses.h>
 # include <util/util.h>
 
 /* Field names won't be described here.
