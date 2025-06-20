@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir.c                                            :+:      :+:    :+:   */
+/*   redir_internal_files.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,34 @@
 #include <shell/shell.h>
 
 int
-	do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs)
+	redir_internal_file(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir)
 {
+	int		fd;
 	char	*err;
-	size_t	i;
 
-	i = 0;
-	while (i < redirs->redirs_size)
+	fd = redir_open(shell, redir);
+	if (fd < 0)
+		return (0);
+	if (fd != redir->redirector.fd && redir_dup2(shell, stack, fd,
+			redir->redirector.fd) < 0)
 	{
-		if (!redir_internal(shell, stack, &redirs->redirs[i]))
+		shell_close(shell, fd);
+		ft_asprintf(&err, "Failed to dup2: %m");
+		return (shell_error(shell, err, SRC_LOCATION), 0);
+	}
+	if (fd != redir->redirector.fd)
+		shell_close(shell, fd);
+	if (redir->type == R_ERR_AND_OUT || redir->type == R_APPEND_ERR_AND_OUT)
+	{
+		if (redir_dup2(shell, stack, STDOUT_FILENO, STDERR_FILENO) < 0)
 		{
-			undo_redir(shell, stack);
-			ft_asprintf(&err, "Failed to execute redirect #%zu", i);
+			ft_asprintf(&err, "Failed to dup2: %m");
 			shell_error(shell, err, SRC_LOCATION);
 			return (0);
 		}
-		++i;
 	}
 	return (1);
-}
-
-void
-	undo_redir(t_shell *shell, t_redirs_stack *stack)
-{
-	t_redir_fd	*saved;
-	size_t		i;
-
-	i = 0;
-	while (i++ < stack->size)
-	{
-		saved = &stack->fds[stack->size - i];
-		if (saved->fd != saved->original_fd)
-			shell_dup2(shell, saved->fd, saved->original_fd);
-		shell_close(shell, saved->fd);
-	}
-	free(stack->fds);
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir.c                                            :+:      :+:    :+:   */
+/*   redir_internal_heredoc.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,24 @@
 #include <shell/shell.h>
 
 int
-	do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs)
+	redir_internal_heredoc(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir)
 {
-	char	*err;
-	size_t	i;
+	int			fds[2];
 
-	i = 0;
-	while (i < redirs->redirs_size)
+	if (shell_pipe(shell, fds) == -1)
+		shell_perror(shell, "pipe() failed", SRC_LOCATION);
+	if (redir_write_all(fds[1], redir->heredoc.str, redir->heredoc.len) < 0)
 	{
-		if (!redir_internal(shell, stack, &redirs->redirs[i]))
-		{
-			undo_redir(shell, stack);
-			ft_asprintf(&err, "Failed to execute redirect #%zu", i);
-			shell_error(shell, err, SRC_LOCATION);
-			return (0);
-		}
-		++i;
+		shell_close(shell, fds[0]);
+		shell_close(shell, fds[1]);
+		shell_perror(shell, "write() failed", SRC_LOCATION);
 	}
+	shell_close(shell, fds[1]);
+	if (redir_dup2(shell, stack, fds[0], STDIN_FILENO) == -1)
+		shell_perror(shell, "dup2() failed", SRC_LOCATION);
+	shell_close(shell, fds[0]);
 	return (1);
-}
-
-void
-	undo_redir(t_shell *shell, t_redirs_stack *stack)
-{
-	t_redir_fd	*saved;
-	size_t		i;
-
-	i = 0;
-	while (i++ < stack->size)
-	{
-		saved = &stack->fds[stack->size - i];
-		if (saved->fd != saved->original_fd)
-			shell_dup2(shell, saved->fd, saved->original_fd);
-		shell_close(shell, saved->fd);
-	}
-	free(stack->fds);
 }

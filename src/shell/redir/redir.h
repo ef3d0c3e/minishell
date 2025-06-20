@@ -25,7 +25,6 @@ typedef struct s_redir_fd
 	int	original_fd;
 }	t_redir_fd;
 
-
 /** @brief Stores data to unwind redirections */
 typedef struct s_redirs_stack
 {
@@ -41,7 +40,6 @@ typedef struct s_redirs_stack
  */
 void
 redir_stack_init(t_redirs_stack *stack);
-
 /**
  * @brief `dup2` wrapper for redirections
  *
@@ -70,16 +68,6 @@ redir_dup2(t_shell *shell, t_redirs_stack *stack, int fd1, int fd2);
 int
 redir_open(t_shell *shell, t_redirection *redir);
 /**
- * @brief Handles redirection internally
- *
- * @param shell The shell session
- * @param stack The redirection unwind stack
- * @param redir The redirection
- */
-int
-redir_internal(t_shell *shell, t_redirs_stack *stack, t_redirection *redir);
-
-/**
  * @brief Performs redirection from a redirection list
  *
  * @param shell The shell session
@@ -101,5 +89,105 @@ do_redir(t_shell *shell, t_redirs_stack *stack, t_redirections *redirs);
  */
 void
 undo_redir(t_shell *shell, t_redirs_stack *stack);
+
+/******************************************************************************/
+/* Internal functions                                                         */
+/******************************************************************************/
+
+/**
+ * @brief Handles redirection internally
+ *
+ * This functions dispatches to the correct redirection handler
+ *
+ * @param shell The shell session
+ * @param stack The redirection unwind stack
+ * @param redir The redirection to perform
+ *
+ * @return 0 on failure
+ */
+int
+redir_internal(t_shell *shell, t_redirs_stack *stack, t_redirection *redir);
+/**
+ * @brief Handles file redirection
+ *
+ * @param shell The shell session
+ * @param stack The redirection unwind stack
+ * @param redir The file redirection to perform
+ *
+ * @return 0 on failure
+ */
+int
+redir_internal_file(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir);
+/**
+ * @brief Handles close redirection
+ *
+ * @param shell The shell session
+ * @param stack The redirection unwind stack
+ * @param redir The close redirection to perform
+ *
+ * @return 0 on failure
+ */
+int
+redir_internal_close(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir);
+/**
+ * @brief Handles dup/move redirection
+ *
+ * @param shell The shell session
+ * @param stack The redirection unwind stack
+ * @param redir The dup/move redirection to perform
+ *
+ * @return 0 on failure
+ */
+int
+redir_internal_dup_move(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir);
+/**
+ * @brief Handles dup word redirection
+ *
+ * @param shell The shell session
+ * @param stack The redirection unwind stack
+ * @param redir The dup word redirection to perform
+ *
+ * @return 0 on failure
+ */
+int
+redir_internal_dup_word(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir);
+/**
+ * @brief Handles heredoc redirection
+ *
+ * @param shell The shell session
+ * @param stack The redirection unwind stack
+ * @param redir The heredoc redirection to perform
+ *
+ * @return 0 on failure
+ */
+int
+redir_internal_heredoc(
+	t_shell *shell,
+	t_redirs_stack *stack,
+	t_redirection *redir);
+/**
+ * @brief Writes the entore content of [buf, buf+len) to file descriptor `fd`
+ *
+ * @param fd File descriptor to write to
+ * @param buf Buffer to write
+ * @param len Length of buf
+ *
+ * @returns The first write error encountered, otherwise the number of written
+ * bytes
+ */
+ssize_t
+redir_write_all(int fd, const void *buf, size_t len);
 
 #endif // REDIR_H

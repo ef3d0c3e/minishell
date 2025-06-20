@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
 #include <shell/shell.h>
 
 /** @brief Checks whether a redirection is clobbering */
@@ -40,6 +39,21 @@ static char
 	return (filename);
 }
 
+/** @brief Open existing files in noclobber mode */
+static int
+	noclobber_open_exists(t_shell *shell, int flags, const char *file)
+{
+	char	*err;
+	int		fd;
+
+	fd = shell_open(shell, file, flags | O_EXCL, 0666);
+	if (fd < 0 || errno == EEXIST)
+		return (ft_asprintf(&err, "Failed to open `%s` for writing in "
+				"noclobber mode", file),
+			shell_error(shell, err, SRC_LOCATION), -1);
+	return (fd);
+}
+
 /** @brief Opens a file in noclobber moder, returns -1 and reports on failure */
 static int
 	noclobber_open(t_shell *shell, int flags, char *file)
@@ -52,29 +66,22 @@ static int
 	status = stat(file, &sb[0]);
 	if (!status && (S_ISREG(sb[0].st_mode)))
 		return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
-			" mode", file), shell_error(shell, err, SRC_LOCATION), -1);
+				" mode", file), shell_error(shell, err, SRC_LOCATION), -1);
 	flags &= ~O_TRUNC;
 	if (status != 0)
-	{
-		fd = shell_open(shell, file, flags | O_EXCL, 0666);
-		if (fd < 0 || errno == EEXIST)
-			return (ft_asprintf(&err, "Failed to open `%s` for writing in "
-				"noclobber mode", file),
-				shell_error(shell, err, SRC_LOCATION), -1);
-		return (fd);
-	}
+		return (noclobber_open_exists(shell, flags, file));
 	fd = shell_open(shell, file, flags, 0666);
 	if (fd < 0)
 		return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
-			" mode", file), shell_error(shell, err, SRC_LOCATION), -1);
+				" mode", file), shell_error(shell, err, SRC_LOCATION), -1);
 	if ((fstat(fd, &sb[1]) == 0) && (S_ISREG(sb[1].st_mode) == 0) && status == 0
-			&& (S_ISREG(sb[0].st_mode) == 0) &&
-			sb[0].st_dev == sb[1].st_dev && sb[0].st_ino == sb[1].st_ino)
+		&& (S_ISREG(sb[0].st_mode) == 0)
+		&& sb[0].st_dev == sb[1].st_dev && sb[0].st_ino == sb[1].st_ino)
 		return (fd);
 	shell_close(shell, fd);
 	errno = EEXIST;
 	return (ft_asprintf(&err, "Failed to open `%s` for writing in noclobber"
-		" mode", file), shell_error(shell, err, SRC_LOCATION), -1);
+			" mode", file), shell_error(shell, err, SRC_LOCATION), -1);
 }
 
 int
