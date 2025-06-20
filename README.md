@@ -94,12 +94,16 @@ unlike bash which displays an error only if there are 0 active loops*
 
 # TODO List
 
- * Add filename completion. The matching part is already handled by filename expansion
  * `case` statements
  * Implement parameter substitution completely
  * Implement close redirections
- * Implement aliases
+ * Implement aliases (currently functions can be used as a replacement)
  * Implement the `shopt`/`set` builtin
+ * Implement program-based completion
+ * Implement auto-completion (ala fish)
+ * Some way to debug the shell's evaluation (e.g bash -x)
+ * Arithmetic expansion `$((2+2))`
+ * Line wrapping for getline
 
 
 # License
