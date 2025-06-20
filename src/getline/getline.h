@@ -39,6 +39,9 @@ getline_read_char(t_getline *line);
 /** @brief Appends input to the input queue */
 void
 getline_recycle_input(t_getline *line, const char *input, size_t len);
+/** @brief Adds read input to the line */
+void
+getline_input_add(t_getline *line, int c);
 
 /******************************************************************************/
 /* Key handling                                                               */

@@ -30,3 +30,18 @@ int
 	}
 	return (line->getc_fn(line));
 }
+
+void
+	getline_input_add(t_getline *line, int c)
+{
+	t_u8_iterator	it;
+
+	getline_buffer_insert(line, c);
+	if (line->input.cp_len)
+		return ;
+	it = it_new((t_string){line->input.buffer.str, line->input.buffer.len});
+	it_next(&it);
+	while (it.byte_next < line->cursor_index)
+		it_next(&it);
+	getline_recluster(line, &line->input, it);
+}

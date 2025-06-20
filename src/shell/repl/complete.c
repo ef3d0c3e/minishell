@@ -96,7 +96,6 @@ t_complete_item
 	items.size = 0;
 	*word_start = 0;
 	*word_end = line->cursor_index;
-	ft_dprintf(2, "ws=%zu, we=%zu\n\r", *word_start, *word_end);
 	cmd = 1;
 	filter = get_filter(line, word_start, word_end, &cmd);
 	if (cmd)

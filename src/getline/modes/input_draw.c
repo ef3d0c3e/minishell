@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
-#include <unistd.h>
 
 void
 getline_input_draw_buffer(t_getline *l, t_buffer *buf, t_drawline *dr);
@@ -77,11 +76,28 @@ static void
 		l->highlighter_fn(l);
 }
 
+/** @brief Flushes output to the terminal screen */
+void
+	getline_input_flush(t_getline *l, t_drawline *dr)
+{
+	int	vis;
+
+	vis = dr->cursor_pos - l->scrolled + dr->left_indicator;
+	if (vis < 0)
+		vis = 0;
+	if (vis >= l->display_width)
+		vis = l->display_width - 1;
+	stringbuf_append_s(&dr->buf, "\x1b[");
+	stringbuf_append_i(&dr->buf, vis + 1);
+	stringbuf_append_s(&dr->buf, "G");
+	write(l->out_fd, dr->buf.str, dr->buf.len);
+	stringbuf_free(&dr->buf);
+}
+
 void
 	getline_input_draw(t_getline *l, int update)
 {
 	t_drawline	dr;
-	int			vis;
 
 	draw_update(l, update);
 	init_state(l, &dr);
@@ -99,14 +115,5 @@ void
 			stringbuf_append_s(&dr.buf, " ");
 		l->overflow_fn(l, &dr, 1);
 	}
-	vis = dr.cursor_pos - l->scrolled + dr.left_indicator;
-	if (vis < 0)
-		vis = 0;
-	if (vis >= l->display_width)
-		vis = l->display_width - 1;
-	stringbuf_append_s(&dr.buf, "\x1b[");
-	stringbuf_append_i(&dr.buf, vis + 1);
-	stringbuf_append_s(&dr.buf, "G");
-	write(l->out_fd, dr.buf.str, dr.buf.len);
-	stringbuf_free(&dr.buf);
+	getline_input_flush(l, &dr);
 }

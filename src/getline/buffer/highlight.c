@@ -91,13 +91,14 @@ t_buffer_attr*
 	return (&buf->s_attrs.data[p]);
 }
 
+// TODO: use termcap/colored
 void
 	getline_highlight_display(
 		t_getline *line,
 		t_string_buffer *buf,
 		const t_buffer_attr *attr)
 {
-	// TODO: use termcap/colored
+	(void)line;
 	if (!attr)
 	{
 		stringbuf_append_s(buf, "\x1b[m");

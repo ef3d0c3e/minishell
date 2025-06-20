@@ -30,7 +30,7 @@ static int
 static int
 	read_cursor_report(t_getline *line, char *buf, size_t *sep, size_t *pos)
 {
-	while (*pos < sizeof(buf))
+	while (*pos < 64)
 	{
 		if (read_byte(line->in_fd, buf + *pos) == -1)
 			return (0);
@@ -95,5 +95,4 @@ void
 		ft_dprintf(line->out_fd, "%s", line->shell->cap.strs.cnorm);
 	else
 		ft_dprintf(line->out_fd, "%s", line->shell->cap.strs.civis);
-	// TODO
 }

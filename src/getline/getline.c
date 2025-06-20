@@ -53,21 +53,6 @@ void
 		line->data_free_fn(line, line->data);
 }
 
-void
-	getline_input_add(t_getline *line, int c)
-{
-	t_u8_iterator	it;
-
-	getline_buffer_insert(line, c);
-	if (line->input.cp_len)
-		return ;
-	it = it_new((t_string){line->input.buffer.str, line->input.buffer.len});
-	it_next(&it);
-	while (it.byte_next < line->cursor_index)
-		it_next(&it);
-	getline_recluster(line, &line->input, it);
-}
-
 static char
 	*get_input(t_getline *line)
 {
@@ -91,10 +76,9 @@ static char
 	return (input);
 }
 
-char
-	*getline_read(t_getline *line, const char *prompt)
+static void
+	getline_startup(t_getline *line, const char *prompt)
 {
-	int		c;
 	int		x;
 
 	getline_raw_mode(line, 1);
@@ -106,6 +90,14 @@ char
 		line->modes[line->mode].enable_mode_fn(line);
 	getline_set_prompt(line, prompt);
 	getline_redraw(line, 1);
+}
+
+char
+	*getline_read(t_getline *line, const char *prompt)
+{
+	int		c;
+
+	getline_startup(line, prompt);
 	while (1)
 	{
 		if (line->mode == LINE_INPUT && getline_process_action(line))

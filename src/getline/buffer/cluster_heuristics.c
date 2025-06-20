@@ -87,9 +87,9 @@ void
 	it_prev(&prev);
 	next = it;
 	it_next(&next);
-	//if (recluster_zwj(buf, &it, &prev, &next))
-	//	recluster_precise(line, buf, prev, next);
-	//else
+	if (recluster_zwj(buf, &it, &prev, &next))
+		recluster_precise(line, buf, prev, next);
+	else
 	{
 		w = codepoint_width(u8_to_cp(it.codepoint));
 		if (w == -1)
