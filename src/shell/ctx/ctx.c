@@ -9,10 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "parser/parser.h"
-#include "parser/redirs/redir_parser.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 t_ctx
@@ -56,17 +52,49 @@ static void
 	shell->context = ctx;
 }
 
+static int
+	ctx_parse_eval(
+	t_ctx *ctx,
+	void (*evaluator)(t_ctx *, void *),
+	void *cookie,
+	t_string input)
+{
+	t_shell *const	shell = ctx->shell;
+	t_parser		parser;
+
+	if (option_value(shell, "dbg_parser"))
+	{
+		ft_dprintf(2, " -- Expanded tokens --\n");
+		token_list_print(input, ctx->list);
+	}
+	ctx->parser = &parser;
+	*ctx->parser = parser_init(input, *ctx->list);
+	ctx->program = parse(ctx->parser);
+	if (option_value(shell, "dbg_parser"))
+	{
+		ft_dprintf(2, " -- Parsing --\n");
+		ast_print(0, ctx->program);
+	}
+	if (!parser_error_flush(&parser) || !read_heredocs(shell, ctx->parser))
+	{
+		ast_free(ctx->program, 1);
+		ctx->program = NULL;
+		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
+	}
+	evaluator(ctx, cookie);
+	return (1);
+}
+
 int
 	ctx_eval(
 	t_ctx *ctx,
 	char *prompt,
-	void(*evaluator)(t_ctx *, void *),
+	void (*evaluator)(t_ctx *, void *),
 	void *cookie)
 {
 	t_shell *const	shell = ctx->shell;
 	t_string		input;
 	t_token_list	list;
-	t_parser		parser;
 
 	ctx_set(shell, ctx);
 	if (option_value(ctx->shell, "dbg_parser") && ctx->info)
@@ -86,25 +114,5 @@ int
 	*ctx->list = token_expand(shell, *ctx->list);
 	if (!report_tokens(input, ctx->list) || !shell_error_flush(shell))
 		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
-	if (option_value(shell, "dbg_parser"))
-	{
-		ft_dprintf(2, " -- Expanded tokens --\n");
-		token_list_print(input, &list);
-	}
-	ctx->parser = &parser;
-	*ctx->parser = parser_init(input, *ctx->list);
-	ctx->program = parse(ctx->parser);
-	if (option_value(shell, "dbg_parser"))
-	{
-		ft_dprintf(2, " -- Parsing --\n");
-		ast_print(0, ctx->program);
-	}
-	if (!parser_error_flush(&parser) || !read_heredocs(shell, ctx->parser))
-	{
-		ast_free(ctx->program, 1);
-		ctx->program = NULL;
-		return (shell->last_status = 2, evaluator(ctx, cookie), 0);
-	}
-	evaluator(ctx, cookie);
-	return (1);
+	return (ctx_parse_eval(ctx, evaluator, cookie, input));
 }

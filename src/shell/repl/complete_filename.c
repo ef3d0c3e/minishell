@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 /** @brief Builds regex using Literal(filter) + Expr(*) */
@@ -33,6 +34,8 @@ static void
 static t_complete_item
 	get_item(const char *path, const struct stat *sb)
 {
+	char	*buf;
+
 	if (S_ISCHR(sb->st_mode))
 		return ((t_complete_item){
 			COMPLETE_FILE_SPC, ft_strdup(path), ft_strdup("Character Device")});
@@ -49,8 +52,11 @@ static t_complete_item
 		return ((t_complete_item){
 			COMPLETE_FILE_SPC, ft_strdup(path), ft_strdup("Unix Socket")});
 	else if (S_ISDIR(sb->st_mode))
+	{
+		ft_asprintf(&buf, "%s/", path);
 		return ((t_complete_item){
-			COMPLETE_FILE_DIR, ft_strdup(path), ft_strdup("Directory")});
+				COMPLETE_FILE_DIR, buf, ft_strdup("Directory")});
+	}
 	else
 		return ((t_complete_item){
 			COMPLETE_FILE, ft_strdup(path), ft_strdup("File")});

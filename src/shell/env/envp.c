@@ -39,10 +39,11 @@ void
 static inline void
 	format_environ(size_t depth, t_rbnode *node, void *data)
 {
-	struct s_envp_traversal	*t = data;
+	struct s_envp_traversal	*t;
 	const t_shell_var		*var = node->data;
 
 	(void)depth;
+	t = data;
 	if (!var->exported)
 		return ;
 	ft_asprintf(&t->envp[t->index], "%s=%s",

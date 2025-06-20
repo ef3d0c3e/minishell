@@ -9,9 +9,6 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/modes/modes.h"
-#include "parser/words/words.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 void

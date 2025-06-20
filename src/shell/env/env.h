@@ -12,11 +12,10 @@
 #ifndef ENV_H
 # define ENV_H
 
-#include "util/util.h"
 # include <parser/parser.h>
 # include <sys/stat.h>
 
-typedef struct s_shell t_shell;
+typedef struct s_shell	t_shell;
 
 /******************************************************************************/
 /* Path buf utility                                                           */
@@ -316,8 +315,7 @@ prefix_stack_pop(t_shell *shell);
  *  * 1 to prevent searching recursively over this directory (only used if `sb`
  *  refers to a directory)
  */
-typedef int
-(*t_ftw_fn)(
+typedef int				(*t_ftw_fn)(
 	char *path,
 	const struct stat *sb,
 	void *cookie);
@@ -342,7 +340,7 @@ struct s_ftw
 	/** @brief Entry full path */
 	char		*fullpath;
 	/** @brief Entry's lstat */
-	struct		stat sb;
+	struct stat	sb;
 	/** @brief FTW callback function */
 	t_ftw_fn	fn;
 	/** @brief Cookie */

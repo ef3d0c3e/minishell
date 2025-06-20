@@ -11,29 +11,7 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-void
-	prefix_stack_init(t_shell *shell)
-{
-	shell->prefix_stack.variables = NULL;
-	shell->prefix_stack.capacity = 0;
-	shell->prefix_stack.size = 0;
-}
-void
-	prefix_stack_deinit(t_shell *shell)
-{
-	while (shell->prefix_stack.size)
-		prefix_stack_pop(shell);
-	free(shell->prefix_stack.variables);
-}
-
-static void
-	prefix_var_free(void *ptr)
-{
-	t_prefix_var	*var = ptr;
-
-	free(var);
-}
-
+/** @brief Installs a prefix variable */
 static void
 	install_var(t_shell *shell, t_rbtree *saved, const char *name, char *value)
 {
@@ -56,12 +34,15 @@ static void
 	rb_insert(saved, ft_strdup(name), var);
 }
 
+/** @brief Uninstalls a prefix variable */
 static void
 	uninstall_var(size_t depth, t_rbnode *node, void *cookie)
 {
 	t_shell *const	shell = cookie;
-	t_prefix_var	*var = node->data;
+	t_prefix_var	*var;
 
+	(void)depth;
+	var = node->data;
 	unset_variable(shell, node->key);
 	if (!var->saved_value)
 		return ;
@@ -75,8 +56,8 @@ void
 	size_t size)
 {
 	t_prefix_stack	*stack;
-	size_t	i;
-	char	*result;
+	size_t			i;
+	char			*result;
 
 	stack = &shell->prefix_stack;
 	if (shell->prefix_stack.size >= shell->prefix_stack.capacity)
@@ -87,14 +68,15 @@ void
 		stack->capacity = stack->capacity * 2 + !stack->capacity;
 	}
 	stack->variables[stack->size] = rb_new(
-		(int(*)(const void *, const void *))ft_strcmp, free, prefix_var_free);
+			(int (*)(const void *, const void *))ft_strcmp, free,
+			free);
 	i = 0;
 	while (i < size)
 	{
 		result = word_expansion_cat(shell, &assigns[i].value);
 		if (result)
 			install_var(shell, &stack->variables[stack->size],
-					stringbuf_cstr(&assigns[i].variable), result);
+				stringbuf_cstr(&assigns[i].variable), result);
 		++i;
 	}
 	++stack->size;
@@ -106,6 +88,6 @@ void
 	if (!shell->prefix_stack.size)
 		shell_fail(shell, "Attempted to pop empty prefix stack", SRC_LOCATION);
 	rb_apply(&shell->prefix_stack.variables[--shell->prefix_stack.size],
-			uninstall_var, shell);
+		uninstall_var, shell);
 	rb_free(&shell->prefix_stack.variables[shell->prefix_stack.size]);
 }

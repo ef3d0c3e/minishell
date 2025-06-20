@@ -55,7 +55,11 @@ static void
 }
 
 static void
-	evaluator_parent(t_shell *shell, pid_t pid, int *fds, struct s_eval_string_result *result)
+	evaluator_parent(
+	t_shell *shell,
+	pid_t pid,
+	int *fds,
+	struct s_eval_string_result *result)
 {
 	int		status;
 	int		waitst;
@@ -82,9 +86,9 @@ static void
 	evaluator(t_ctx *ctx, void *cookie)
 {
 	struct s_eval_string_result *const	result = cookie;
-	pid_t										pid;
-	int											fds[2];
-	char										*err;
+	pid_t								pid;
+	int									fds[2];
+	char								*err;
 
 	if (pipe(fds) == -1)
 	{

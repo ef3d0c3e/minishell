@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/env/env.h"
 #include <shell/shell.h>
 
 static char
@@ -31,48 +29,58 @@ static char
 }
 
 static int
+	file_tree_walk_impl(struct s_ftw *f, size_t depth, const char *path);
+
+static int
+	ftw_call(
+	struct s_ftw *f,
+	const char *path,
+	DIR *dir,
+	size_t depth)
+{
+	char			*fullpath;
+	struct dirent	*ent;
+	int				status;
+	int				fstatus;
+
+	errno = 0;
+	status = 0;
+	ent = readdir(dir);
+	if (errno)
+		return (-1);
+	if (!ent)
+		return (-2);
+	if (!ft_strcmp(ent->d_name, "..") || !ft_strcmp(ent->d_name, "."))
+		return (0);
+	fullpath = get_path(path, ent);
+	if (lstat(fullpath, &f->sb) == -1)
+		return (free(fullpath), 0);
+	fstatus = f->fn(fullpath, &f->sb, f->cookie);
+	if (fstatus == -1)
+		return (free(fullpath), 0);
+	if (fstatus != 1 && S_ISDIR(f->sb.st_mode))
+		status = file_tree_walk_impl(f, depth + 1, fullpath);
+	return (free(fullpath), status);
+}
+
+static int
 	file_tree_walk_impl(struct s_ftw *f, size_t depth, const char *path)
 {
 	DIR				*dir;
-	struct dirent	*ent;
-	char			*fullpath;
 	int				status;
-	int				fstatus;
 
 	if (depth >= f->max_depth)
 		return (0);
 	dir = opendir(path);
-	status = -1;
 	while (dir)
 	{
-		errno = 0;
-		ent = readdir(dir);
-		if (errno)
-			break ;
-		if (!ent)
+		status = ftw_call(f, path, dir, depth);
+		if (status < 0)
 		{
-			status = 0;
+			if (status == -2)
+				status = 0;
 			break ;
 		}
-		if (!ft_strcmp(ent->d_name, "..") || !ft_strcmp(ent->d_name, "."))
-			continue ;
-		fullpath = get_path(path, ent);
-		if (lstat(fullpath, &f->sb) == -1)
-		{
-			free(fullpath);
-			continue ;
-		}
-		fstatus = f->fn(fullpath, &f->sb, f->cookie);
-		if (fstatus == -1)
-		{
-			free(fullpath);
-			continue ;
-		}
-		if (fstatus != 1 && S_ISDIR(f->sb.st_mode))
-		{
-			status = file_tree_walk_impl(f, depth + 1, fullpath);
-		}
-		free(fullpath);
 	}
 	if (dir)
 		closedir(dir);

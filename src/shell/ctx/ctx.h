@@ -12,11 +12,10 @@
 #ifndef CTX_H
 # define CTX_H
 
-#include "shell/eval/eval.h"
-#include "util/util.h"
-typedef struct s_shell	t_shell;
-
 # include <parser/parser.h>
+# include <shell/eval/eval.h>
+
+typedef struct s_shell	t_shell;
 
 /** @brief Context in the shell's evaluation */
 typedef struct s_ctx
@@ -73,7 +72,7 @@ int
 ctx_eval(
 	t_ctx *context,
 	char *prompt,
-	void(*evaluator)(t_ctx *, void *),
+	void (*evaluator)(t_ctx *, void *),
 	void *cookie);
 
 /** @brief Evaluates to stdout */
