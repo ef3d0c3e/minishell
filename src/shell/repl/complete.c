@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
+#include "getline/buffer/buffer.h"
 #include "shell/repl/repl.h"
 #include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
@@ -30,6 +31,33 @@ void
 	buf->data[buf->size++] = item;
 }
 
+static int
+	is_cmd_start(t_getline *line, size_t i)
+{
+	t_token_list *const	list = &((t_repl_data *)line->data)->list;
+	size_t				j;
+
+	if (!i || !list->size)
+		return (1);
+	j = i;
+	if (j && list->tokens[j].type == TOK_SPACE)
+	{
+		--j;
+		if (token_isword(list->tokens[j].type))
+		{
+			return (0);
+		}
+		return (1);
+	}
+	while (j && token_isword(list->tokens[j].type))
+		--j;
+	if (j && list->tokens[j].type == TOK_SPACE)
+		--j;
+	if (token_isword(list->tokens[j].type))
+		return (0);
+	return (1);
+}
+
 static char
 	*get_filter(t_getline *line, size_t *word_start, size_t *word_end, int *cmd)
 {
@@ -44,16 +72,16 @@ static char
 			break ;
 		++i;
 	}
-	ft_dprintf(2, "\n\r");
-	token_list_print((t_string){line->input.buffer.str, line->input.buffer.len}, list);
-	ft_dprintf(2, "\n\r");
-	ft_dprintf(2, "i=%d\n\r", i);
-	if (i)
-		*cmd = list->tokens[i - 1].type != TOK_SPACE;
-	if (list->size)
-		*cmd &= list->tokens[i].type != TOK_SPACE;
+	*cmd = is_cmd_start(line, i);
 	if (i >= list->size || !token_isword(list->tokens[i].type))
+	{
+		if (i)
+		{
+			*word_start = list->tokens[i].end;
+			*word_end = list->tokens[i].end;
+		}
 		return (NULL);
+	}
 	stringbuf_init(&buf, 24);
 	token_wordcontent(&buf, &list->tokens[i]);
 	*word_start = list->tokens[i].start;
@@ -80,7 +108,6 @@ t_complete_item
 	*word_end = line->cursor_index;
 	cmd = 1;
 	filter = get_filter(line, word_start, word_end, &cmd);
-	ft_dprintf(2, "FILTER='%s'\n\r", filter);
 	if (cmd)
 		repl_complete_cmd(line->shell, &items, filter);
 	repl_complete_filename(&items, filter);

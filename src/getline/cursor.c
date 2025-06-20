@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 /** @brief Reads exactly one byte on `fd` */
@@ -88,5 +89,11 @@ void
 void
 	getline_cursor_visible(t_getline *line, int visible)
 {
+	if (!line->shell->cap->strs.civis || !line->shell->cap->strs.cnorm)
+		return ;
+	if (visible)
+		ft_dprintf(line->out_fd, "%s", line->shell->cap->strs.cnorm);
+	else
+		ft_dprintf(line->out_fd, "%s", line->shell->cap->strs.civis);
 	// TODO
 }

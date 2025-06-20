@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 /** @brief Replaces invalid codepoint with 0xFFFD, this still allow unmapped
@@ -20,6 +21,9 @@ static void
 
 	if (end - start == len)
 		return ;
+	asm("int $3");
+	ft_dprintf(2, "start=%zu end=%zu\n\r", start, end);
+	exit(1);
 	stringbuf_replace(&line->input.buffer, start, end, "\uFFFD");
 }
 

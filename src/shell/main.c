@@ -1,4 +1,3 @@
-#include "ft_printf.h"
 #include <shell/shell.h>
 
 static int
@@ -21,6 +20,7 @@ static void
 	t_getline		line;
 	char			*input;
 
+	shell->cap = fetch_capability(NULL);
 	line = repl_setup(shell);
 	signal_install(shell, 0);
 	profile_source(shell);
@@ -30,8 +30,8 @@ static void
 		if (g_signal == SIGINT)
 			shell->last_status = 130;
 		g_signal = 0;
-		//prompt = stringbuf_from(" \033[35m󰘧\033[0m ");
-		prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).content;
+		prompt = stringbuf_from(" \033[35m󰘧\033[0m ");
+		//prompt = ctx_eval_string(shell, ft_strdup("prompt_left"), ft_strdup("Prompt")).content;
 		input = getline_read(&line, stringbuf_cstr(&prompt));
 		stringbuf_free(&prompt);
 		if (!input && g_signal != SIGINT)

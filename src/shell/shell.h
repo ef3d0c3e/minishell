@@ -15,6 +15,7 @@
 # include <tokenizer/tokenizer.h>
 # include <parser/parser.h>
 # include <builtins/builtin.h>
+# include <term/capability.h>
 # include <shell/env/env.h>
 # include <shell/eval/eval.h>
 # include <shell/redir/redir.h>
@@ -30,7 +31,6 @@
 # include <gnl.h>
 # include <libopts.h>
 
-#include <term/capability.h>
 
 # include <sys/stat.h>
 # include <sys/wait.h>

@@ -81,6 +81,8 @@ void
 		line->cursor_index = line->state.comp.word_end;
 		line->scrolled = 0;
 	}
+	line->input.cp_pos = SIZE_MAX;
+	line->input.cp_len = 0;
 	getline_cursor_set(line, line->state.comp.cur_x, line->state.comp.cur_y);
 	getline_cursor_visible(line, 1);
 	ft_dprintf(line->out_fd, "\x1b[0J");
