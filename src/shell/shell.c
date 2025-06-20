@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "builtins/complete/complete.h"
 #include <shell/shell.h>
 
 static void
@@ -48,6 +49,8 @@ t_shell
 	funs_init(&shell);
 	prefix_stack_init(&shell);
 	path_populate(&shell);
+	shell.cmd_completion = rb_new((int (*)(const void *, const void *))ft_strcmp,
+			free, complete_free);
 	return (shell.context = NULL, shell);
 }
 
@@ -66,5 +69,6 @@ void
 	funs_deinit(shell);
 	prefix_stack_deinit(shell);
 	temporaries_cleanup(shell);
+	rb_free(&shell->cmd_completion);
 	free(shell->errors.errors);
 }

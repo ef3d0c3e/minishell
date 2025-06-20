@@ -63,7 +63,7 @@ static char
 	i = 0;
 	while (i < list->size)
 	{
-		if (list->tokens[i++].end >= line->cursor_index && --i)
+		if (list->tokens[i++].end >= line->cursor_index && (--i, 1))
 			break ;
 	}
 	*cmd = is_cmd_start(line, i);
@@ -83,6 +83,8 @@ static char
 	return (stringbuf_cstr(&buf));
 }
 
+/** @brief Sorts completion entry based on entry kind and name
+ * (case insensitive) */
 static int
 	complete_sort(const void *a, const void *b)
 {
@@ -127,6 +129,7 @@ t_complete_item
 	if (cmd)
 		repl_complete_cmd(line->shell, &items, filter);
 	repl_complete_filename(&items, filter);
+	repl_complete_opts(line, &items, filter);
 	quicksort(items.data, items.size, sizeof(t_complete_item), complete_sort);
 	free(filter);
 	complete_buf_push(&items, (t_complete_item){0, NULL, NULL});

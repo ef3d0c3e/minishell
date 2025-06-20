@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/modes/modes.h"
 #include "util/util.h"
 #include <shell/shell.h>
 
@@ -50,7 +51,9 @@ static void
 {
 	(void)line;
 	stringbuf_append_s(buf, "\x1b[");
-	if (item->kind == COMPLETE_FILE_DIR)
+	if (item->kind == COMPLETE_OPTION)
+		stringbuf_append_i(buf, 94);
+	else if (item->kind == COMPLETE_FILE_DIR)
 		stringbuf_append_i(buf, 36);
 	else if (item->kind == COMPLETE_FILE)
 		stringbuf_append_i(buf, 90);

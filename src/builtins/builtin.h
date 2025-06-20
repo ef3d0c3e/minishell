@@ -76,5 +76,8 @@ const t_builtin
 /** @brief The `shopt` builtin */
 const t_builtin
 *builtin_shopt(void);
+/** @brief The `complete` builtin */
+const t_builtin
+*builtin_complete(void);
 
 #endif // BUILTIN_H

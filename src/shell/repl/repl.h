@@ -112,5 +112,15 @@ typedef struct s_comp_cmd_tr
  */
 void
 repl_complete_cmd(t_shell *shell, t_complete_buf *items, const char *filter);
+/**
+ * @brief Populate completion items using the command's arguments (as defined
+ * via the `complete` builtin)
+ *
+ * @param line Getline instance
+ * @param items Items to populate
+ * @param filter Search filter
+ */
+void
+repl_complete_opts(t_getline *line, t_complete_buf *items, const char *filter);
 
 #endif // REPL_H

@@ -15,6 +15,7 @@
 # include <tokenizer/tokenizer.h>
 # include <parser/parser.h>
 # include <builtins/builtin.h>
+# include <builtins/complete/complete.h>
 # include <term/capability.h>
 # include <shell/env/env.h>
 # include <shell/eval/eval.h>
@@ -107,6 +108,9 @@ typedef struct s_shell
 	int					last_status;
 	/** @brief Current terminal capabilities */
 	t_termcap			cap;
+
+	/** @brief Command options completion tree */
+	t_rbtree			cmd_completion;
 }	t_shell;
 
 /******************************************************************************/
