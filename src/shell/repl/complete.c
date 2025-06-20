@@ -9,10 +9,6 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "getline/buffer/buffer.h"
-#include "shell/repl/repl.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 void
@@ -31,22 +27,21 @@ void
 	buf->data[buf->size++] = item;
 }
 
+/** @brief Checks if the current token position is a command start */
 static int
 	is_cmd_start(t_getline *line, size_t i)
 {
 	t_token_list *const	list = &((t_repl_data *)line->data)->list;
 	size_t				j;
 
-	if (!i || !list->size)
+	if (i == list->size || i == 0)
 		return (1);
 	j = i;
 	if (j && list->tokens[j].type == TOK_SPACE)
 	{
 		--j;
 		if (token_isword(list->tokens[j].type))
-		{
 			return (0);
-		}
 		return (1);
 	}
 	while (j && token_isword(list->tokens[j].type))
@@ -75,11 +70,9 @@ static char
 	*cmd = is_cmd_start(line, i);
 	if (i >= list->size || !token_isword(list->tokens[i].type))
 	{
-		if (i)
-		{
-			*word_start = list->tokens[i].end;
-			*word_end = list->tokens[i].end;
-		}
+		if (i && i < list->size)
+			return (*word_start = list->tokens[i].end,
+				*word_end = list->tokens[i].end, NULL);
 		return (NULL);
 	}
 	stringbuf_init(&buf, 24);
@@ -87,10 +80,7 @@ static char
 	*word_start = list->tokens[i].start;
 	*word_end = list->tokens[i].end;
 	if (!buf.len)
-	{
-		stringbuf_free(&buf);
-		return (NULL);
-	}
+		return (stringbuf_free(&buf), NULL);
 	return (stringbuf_cstr(&buf));
 }
 
@@ -106,6 +96,7 @@ t_complete_item
 	items.size = 0;
 	*word_start = 0;
 	*word_end = line->cursor_index;
+	ft_dprintf(2, "ws=%zu, we=%zu\n\r", *word_start, *word_end);
 	cmd = 1;
 	filter = get_filter(line, word_start, word_end, &cmd);
 	if (cmd)
