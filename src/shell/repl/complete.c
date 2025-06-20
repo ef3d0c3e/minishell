@@ -63,7 +63,7 @@ static char
 	i = 0;
 	while (i < list->size)
 	{
-		if (list->tokens[i++].end >= line->cursor_index)
+		if (list->tokens[i++].end >= line->cursor_index && --i)
 			break ;
 	}
 	*cmd = is_cmd_start(line, i);
