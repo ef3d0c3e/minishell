@@ -9,17 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/ctx/ctx.h"
-#include "shell/env/env.h"
-#include "term/capability.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static void
 	var_free(void *ptr)
 {
-	t_shell_var *var = ptr;
+	t_shell_var	*var;
 
+	var = ptr;
 	free(var->value);
 	free(var);
 }
@@ -28,7 +25,7 @@ t_shell
 	shell_new(const char **envp)
 {
 	const char	**e;
-	t_shell	shell;
+	t_shell		shell;
 
 	shell.reg_env = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			free, var_free);
@@ -51,8 +48,7 @@ t_shell
 	funs_init(&shell);
 	prefix_stack_init(&shell);
 	path_populate(&shell);
-	shell.context = NULL;
-	return (shell);
+	return (shell.context = NULL, shell);
 }
 
 void

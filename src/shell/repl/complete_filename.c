@@ -16,7 +16,7 @@
 static void
 	build_regex(const char *filter, t_comp_file_tr *tr)
 {
-	t_regex_builder builder;
+	t_regex_builder	builder;
 	t_globopts		opts;
 
 	ft_memset(&opts, 0, sizeof(t_globopts));
@@ -24,7 +24,7 @@ static void
 	opts.nocaseglob = 1;
 	builder = regex_builder_new();
 	if (filter && ft_strlen(filter))
-		regex_builder_literal(&opts, &builder, filter);	
+		regex_builder_literal(&opts, &builder, filter);
 	regex_builder_expr(&opts, &builder, "*");
 	tr->re = builder.regex;
 	tr->opts = opts;
@@ -36,7 +36,13 @@ static t_complete_item
 {
 	char	*buf;
 
-	if (S_ISCHR(sb->st_mode))
+	if (S_ISDIR(sb->st_mode))
+	{
+		ft_asprintf(&buf, "%s/", path);
+		return ((t_complete_item){
+			COMPLETE_FILE_DIR, buf, ft_strdup("Directory")});
+	}
+	else if (S_ISCHR(sb->st_mode))
 		return ((t_complete_item){
 			COMPLETE_FILE_SPC, ft_strdup(path), ft_strdup("Character Device")});
 	else if (S_ISBLK(sb->st_mode))
@@ -51,15 +57,8 @@ static t_complete_item
 	else if (S_ISSOCK(sb->st_mode))
 		return ((t_complete_item){
 			COMPLETE_FILE_SPC, ft_strdup(path), ft_strdup("Unix Socket")});
-	else if (S_ISDIR(sb->st_mode))
-	{
-		ft_asprintf(&buf, "%s/", path);
-		return ((t_complete_item){
-				COMPLETE_FILE_DIR, buf, ft_strdup("Directory")});
-	}
-	else
-		return ((t_complete_item){
-			COMPLETE_FILE, ft_strdup(path), ft_strdup("File")});
+	return ((t_complete_item){
+		COMPLETE_FILE, ft_strdup(path), ft_strdup("File")});
 }
 
 /** @brief Apply to directories recursively */

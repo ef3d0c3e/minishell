@@ -31,7 +31,6 @@
 # include <gnl.h>
 # include <libopts.h>
 
-
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <errno.h>

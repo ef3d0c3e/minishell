@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/fds/fds.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 int
@@ -19,7 +17,6 @@ int
 	int			fd;
 	t_fd_data	*data;
 	char		*err;
-
 
 	fd = open(filename, flags, mode);
 	if (fd < 0)
@@ -44,7 +41,7 @@ int
 	t_fd_data	*data;
 	char		*err;
 	int			status;
-	
+
 	data = rb_find(&shell->reg_fds, (void *)(ptrdiff_t)fd);
 	if (!data)
 	{
@@ -65,14 +62,11 @@ int
 	t_fd_data	*newdata;
 	int			newfd;
 	char		*err;
-	
+
 	data = rb_find(&shell->reg_fds, (void *)(ptrdiff_t)fd);
 	if (!data)
-	{
-		ft_asprintf(&err, "Attempt to dup unregistered fd: %d", fd);
-		shell_error(shell, err, SRC_LOCATION);
-		return (-1);
-	}
+		return (ft_asprintf(&err, "Attempt to dup unregistered fd: %d", fd),
+			shell_error(shell, err, SRC_LOCATION), -1);
 	newfd = dup(fd);
 	if (newfd == -1)
 		return (newfd);
@@ -80,8 +74,7 @@ int
 	{
 		close(newfd);
 		ft_asprintf(&err, "Attempt to dup to already existing fd: %d", newfd);
-		shell_error(shell, err, SRC_LOCATION);
-		return (-1);
+		return (shell_error(shell, err, SRC_LOCATION), -1);
 	}
 	newdata = xmalloc(sizeof(t_fd_data));
 	*newdata = fd_data_clone(data);
@@ -112,7 +105,7 @@ int
 	t_fd_data	*newdata;
 	int			status;
 	char		*err;
-	
+
 	olddata = rb_find(&shell->reg_fds, (void *)(ptrdiff_t)oldfd);
 	if (!olddata)
 	{

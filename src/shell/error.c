@@ -20,7 +20,8 @@ void
 	while (shell->errors.size + 1 >= new_capacity)
 		new_capacity *= 2;
 	shell->errors.errors = ft_realloc(shell->errors.errors,
-		shell->errors.size * sizeof(t_error), new_capacity * sizeof(t_error));
+			shell->errors.size * sizeof(t_error), new_capacity
+			* sizeof(t_error));
 	shell->errors.errors[shell->errors.size++] = (t_error){
 		.msg = msg,
 		.function = function,
@@ -30,9 +31,9 @@ void
 int
 	shell_error_flush(t_shell *shell)
 {
-	t_error	*errors = shell->errors.errors;
-	int		has_error;
-	size_t	i;
+	const t_error	*errors = shell->errors.errors;
+	int				has_error;
+	size_t			i;
 
 	has_error = 0;
 	i = 0;

@@ -31,8 +31,8 @@ void
 		sa.sa_handler = SIG_DFL;
 		if (sigaction(SIGINT, &sa, NULL) == -1
 			|| sigaction(SIGQUIT, &sa, NULL) == -1)
-				shell_perror(shell, "Failed to uninstall signal handlers",
-						SRC_LOCATION);
+			shell_perror(shell, "Failed to uninstall signal handlers",
+				SRC_LOCATION);
 		return ;
 	}
 	sa.sa_flags = SA_SIGINFO;

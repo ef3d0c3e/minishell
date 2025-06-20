@@ -39,7 +39,7 @@ char
 
 	stringbuf_init(&b, 24);
 	ft_asprintf(&s, "%s %s fl=%04o m=%04o", names[data->type], data->filename,
-			data->flags, data->mode);
+		data->flags, data->mode);
 	stringbuf_append(&b, (t_string){s, ft_strlen(s)});
 	free(s);
 	if (data->duped_from != -1)

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fds_wrappers2.c                                     :+:      :+:    :+:   */
+/*   fds_wrappers2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -16,7 +16,6 @@ int
 {
 	t_fd_data	*read;
 	t_fd_data	*write;
-	char		*err;
 
 	if (pipe(fds) == -1)
 		return (-1);
@@ -30,4 +29,3 @@ int
 	rb_insert(&shell->reg_fds, (void *)(ptrdiff_t)fds[1], write);
 	return (0);
 }
-

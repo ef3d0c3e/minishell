@@ -63,9 +63,8 @@ static char
 	i = 0;
 	while (i < list->size)
 	{
-		if (list->tokens[i].end >= line->cursor_index)
+		if (list->tokens[i++].end >= line->cursor_index)
 			break ;
-		++i;
 	}
 	*cmd = is_cmd_start(line, i);
 	if (i >= list->size || !token_isword(list->tokens[i].type))

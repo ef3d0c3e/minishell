@@ -35,7 +35,6 @@ static void
 {
 	(void)depth;
 	(void)cookie;
-
 	if (node->data)
 		((void (*)(void *))node->data)(node->key);
 	else

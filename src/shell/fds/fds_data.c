@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fds_data.c                                              :+:      :+:    :+:   */
+/*   fds_data.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgamba <linogamba@pundalik.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 void
@@ -63,7 +62,7 @@ t_fd_data
 	duped_to = NULL;
 	if (data->duped_to)
 		duped_to = ft_memcpy(xmalloc(sizeof(int) * to_len), data->duped_to,
-			sizeof(int) * to_len);
+				sizeof(int) * to_len);
 	return ((t_fd_data){
 		.type = data->type,
 		.filename = filename,

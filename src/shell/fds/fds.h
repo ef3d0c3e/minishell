@@ -12,7 +12,8 @@
 #ifndef FDS_H
 # define FDS_H
 
-#include "util/util.h"
+# include <util/util.h>
+
 typedef struct s_shell	t_shell;
 
 enum e_fd_type
