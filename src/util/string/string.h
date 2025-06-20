@@ -172,20 +172,6 @@ char
 void
 stringbuf_free(t_string_buffer *buf);
 
-/** @brief Appends to the string buffer */
-void
-stringbuf_append(t_string_buffer *buf, t_string str);
-
-/**
- * @brief Appends `n`-times to the string buffer
- *
- * @param s String buffer to append to
- * @param str String to append
- * @param n Number of times to repeat
- */
-void
-stringbuf_append_n(t_string_buffer *s, t_string str, size_t n);
-
 /**
  * @brief Creates a stringbuffer from a string
  *
@@ -224,6 +210,14 @@ stringbuf_replace(
 void
 stringbuf_reserve(t_string_buffer *buf, size_t new_capacity);
 
+/** @brief Appends to the string buffer */
+void
+stringbuf_append(t_string_buffer *buf, t_string str);
+
+/** @brief Appends to the string buffer */
+void
+stringbuf_append_s(t_string_buffer *buf, const char *str);
+
 /**
  * @brief Appends integer value (base 10) to the string buffer
  *
@@ -231,7 +225,17 @@ stringbuf_reserve(t_string_buffer *buf, size_t new_capacity);
  * @param number Integer to append to string buffer `buf`
  */
 void
-stringbuf_itoa(t_string_buffer *buf, int number);
+stringbuf_append_i(t_string_buffer *buf, int number);
+
+/**
+ * @brief Appends `n`-times to the string buffer
+ *
+ * @param s String buffer to append to
+ * @param str String to append
+ * @param n Number of times to repeat
+ */
+void
+stringbuf_append_n(t_string_buffer *s, t_string str, size_t n);
 
 /* ************************************************************************** */
 /* Unicode utilities                                                          */

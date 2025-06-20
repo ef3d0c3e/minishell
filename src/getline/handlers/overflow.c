@@ -12,10 +12,11 @@
 #include <shell/shell.h>
 
 void
-	getline_handler_overflow(t_getline *line, int right)
+	getline_handler_overflow(t_getline *line, t_drawline *dr, int right)
 {
+	(void)line;
 	if (right)
-		write(line->out_fd, ">", 1);
+		stringbuf_append_s(&dr->buf, ">");
 	else
-		write(line->out_fd, "<", 1);
+		stringbuf_append_s(&dr->buf, "<");
 }

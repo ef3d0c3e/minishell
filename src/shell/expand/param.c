@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 07:36:08 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 static int
@@ -62,14 +63,14 @@ static int
 	if (!ft_strcmp(param->param.name, "?"))
 	{
 		stringbuf_init(&buf, 64);
-		stringbuf_itoa(&buf, shell->last_status);
+		stringbuf_append_i(&buf, shell->last_status);
 		fraglist_push(list, buf, param->flags);
 		return (1);
 	}
 	else if (!ft_strcmp(param->param.name, "#") && shell->eval_stack.size)
 	{
 		stringbuf_init(&buf, 64);
-		stringbuf_itoa(&buf, frame->nargs);
+		stringbuf_append_i(&buf, frame->nargs);
 		fraglist_push(list, buf, param->flags);
 		return (1);
 	}

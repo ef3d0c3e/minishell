@@ -27,30 +27,6 @@ t_string_buffer
 	return (copy);
 }
 
-void
-	stringbuf_append(t_string_buffer *s, t_string str)
-{
-	size_t	new_cap;
-
-	new_cap = s->capacity + !s->capacity * 256;
-	while (new_cap < s->len + str.len)
-		new_cap *= 2;
-	s->str = ft_realloc(s->str, s->capacity, new_cap);
-	s->capacity = new_cap;
-	ft_memcpy(s->str + s->len, str.str, str.len);
-	s->len += str.len;
-}
-
-void
-	stringbuf_append_n(t_string_buffer *s, t_string str, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	while (i++ < n)
-		stringbuf_append(s, str);
-}
-
 t_string_buffer
 	stringbuf_substr(t_string str, size_t start, size_t end)
 {

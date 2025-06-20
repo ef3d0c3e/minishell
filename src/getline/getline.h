@@ -144,13 +144,14 @@ getline_history_add(t_getline *line, char *entry, int saved);
 /** @brief Render state for the line */
 typedef struct s_drawline
 {
-	int	cursor_pos;
-	int	column_pos;
-	int	input_w;
-	int	prompt_w;
-	int	left_indicator;
-	int	right_indicator;
-	int	printed;
+	t_string_buffer	buf;
+	int				cursor_pos;
+	int				column_pos;
+	int				input_w;
+	int				prompt_w;
+	int				left_indicator;
+	int				right_indicator;
+	int				printed;
 }	t_drawline;
 
 /** @brief Redraws ui */

@@ -108,7 +108,10 @@ t_buffer_attr
 *getline_highlight_get(t_buffer *buf, size_t pos);
 /** @brief Displays the given highlights, resets if `attr == NULL` */
 void
-getline_highlight_display(t_getline *line, const t_buffer_attr *attr);
+getline_highlight_display(
+	t_getline *line,
+	t_string_buffer *buf,
+	const t_buffer_attr *attr);
 
 typedef struct s_buffer
 {

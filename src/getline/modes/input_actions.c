@@ -16,8 +16,11 @@ void
 {
 	if (action == ACT_CLEAR_SCREEN)
 	{
-		ft_dprintf(line->out_fd, "\x1b[2J");
-		getline_cursor_set(line, 1, 1);
+		if (line->shell->cap.strs.clear)
+		{
+			ft_dprintf(line->out_fd, "%s", line->shell->cap.strs.clear);
+			getline_cursor_set(line, 1, 1);
+		}
 		return ;
 	}
 	line->state.action = action;

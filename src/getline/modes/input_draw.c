@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
+#include <unistd.h>
 
 void
 getline_input_draw_buffer(t_getline *l, t_buffer *buf, t_drawline *dr);
@@ -20,6 +21,7 @@ static void
 	size_t			idx;
 	t_u8_iterator	it;
 
+	stringbuf_init(&dr->buf, 1024);
 	idx = 0;
 	dr->prompt_w = 0;
 	while (idx++ < l->prompt.s_clusters.size)
@@ -82,25 +84,29 @@ void
 	int			vis;
 
 	draw_update(l, update);
-	ft_dprintf(l->out_fd, "\x1b[2K\r");
 	init_state(l, &dr);
+	stringbuf_append_s(&dr.buf, "\x1b[2K\r");
 	update_scroll(l, &dr);
 	dr.printed = 0;
 	dr.column_pos = 0;
 	if (dr.left_indicator && ++dr.printed)
-		l->overflow_fn(l, 0);
+		l->overflow_fn(l, &dr, 0);
 	getline_input_draw_buffer(l, &l->prompt, &dr);
 	getline_input_draw_buffer(l, &l->input, &dr);
 	if (dr.right_indicator && dr.printed < l->display_width)
 	{
 		while (dr.printed < l->display_width - 1 && ++dr.printed)
-			write(l->out_fd, " ", 1);
-		l->overflow_fn(l, 1);
+			stringbuf_append_s(&dr.buf, " ");
+		l->overflow_fn(l, &dr, 1);
 	}
 	vis = dr.cursor_pos - l->scrolled + dr.left_indicator;
 	if (vis < 0)
 		vis = 0;
 	if (vis >= l->display_width)
 		vis = l->display_width - 1;
-	ft_dprintf(l->out_fd, "\x1b[%dG", vis + 1);
+	stringbuf_append_s(&dr.buf, "\x1b[");
+	stringbuf_append_i(&dr.buf, vis + 1);
+	stringbuf_append_s(&dr.buf, "G");
+	write(l->out_fd, dr.buf.str, dr.buf.len);
+	stringbuf_free(&dr.buf);
 }

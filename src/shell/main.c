@@ -1,3 +1,4 @@
+#include "shell/env/env.h"
 #include <shell/shell.h>
 
 static int
@@ -20,7 +21,7 @@ static void
 	t_getline		line;
 	char			*input;
 
-	shell->cap = fetch_capability(NULL);
+	shell->cap = fetch_capability(get_variable_value(shell, "TERM"));
 	line = repl_setup(shell);
 	signal_install(shell, 0);
 	profile_source(shell);

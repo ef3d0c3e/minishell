@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 static size_t
@@ -91,16 +92,25 @@ t_buffer_attr*
 }
 
 void
-	getline_highlight_display(t_getline *line, const t_buffer_attr *attr)
+	getline_highlight_display(
+		t_getline *line,
+		t_string_buffer *buf,
+		const t_buffer_attr *attr)
 {
+	// TODO: use termcap/colored
 	if (!attr)
 	{
-		ft_dprintf(line->out_fd, "\033[m");
+		stringbuf_append_s(buf, "\x1b[m");
 		return ;
 	}
 	if (attr->color != -1)
-		ft_dprintf(line->out_fd, "\033[38;2;%d;%d;%dm",
-			((attr->color >> 16) & 0xFF),
-			((attr->color >> 8) & 0xFF),
-			attr->color & 0xFF);
+	{
+		stringbuf_append_s(buf, "\x1b[38;2;");
+		stringbuf_append_i(buf, (attr->color >> 16) & 0xFF);
+		stringbuf_append_s(buf, ";");
+		stringbuf_append_i(buf, (attr->color >> 8) & 0xFF);
+		stringbuf_append_s(buf, ";");
+		stringbuf_append_i(buf, attr->color & 0xFF);
+		stringbuf_append_s(buf, "m");
+	}
 }

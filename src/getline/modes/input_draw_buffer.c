@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "getline/getline.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Initializes data for drawing */
@@ -24,19 +26,17 @@ static void
 static void
 	update_highlight(
 	t_getline *l,
-	t_buffer *buf,
-	t_u8_iterator *it,
+	t_drawline *dr,
 	t_buffer_attr **hi)
 {
-	hi[1] = getline_highlight_get(buf, it->byte_pos);
 	if (hi[1] && hi[1] != hi[0])
 	{
-		getline_highlight_display(l, hi[1]);
+		getline_highlight_display(l, &dr->buf, hi[1]);
 		hi[0] = hi[1];
 	}
 	if (!hi[1] && hi[0])
 	{
-		getline_highlight_display(l, hi[1]);
+		getline_highlight_display(l, &dr->buf, hi[1]);
 		hi[0] = NULL;
 	}
 }
@@ -50,7 +50,7 @@ static int
 	while (dr->printed < start - l->scrolled - dr->left_indicator
 		&& dr->printed < l->display_width - dr->right_indicator)
 	{
-		write(l->out_fd, " ", 1);
+		stringbuf_append_s(&dr->buf, " ");
 		dr->printed++;
 	}
 	return (1);
@@ -88,11 +88,12 @@ void
 			continue ;
 		if (!print_padding(l, dr, start))
 			break ;
-		update_highlight(l, buf, &it, hi);
-		write(l->out_fd, it.codepoint.str, it.codepoint.len);
+		hi[1] = getline_highlight_get(buf, it.byte_pos);
+		update_highlight(l, dr, hi);
+		stringbuf_append(&dr->buf, it.codepoint);
 		dr->printed += buf->s_clusters.data[i - 1].width;
 		dr->column_pos = end;
 		it_next(&it);
 	}
-	(void)(hi[0] && (getline_highlight_display(l, NULL), 1));
+	(void)(hi[0] && (getline_highlight_display(l, &dr->buf, NULL), 1));
 }

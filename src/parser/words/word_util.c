@@ -34,7 +34,7 @@ t_word
 	t_string_buffer	buf;
 
 	stringbuf_init(&buf, 24);
-	stringbuf_itoa(&buf, value);
+	stringbuf_append_i(&buf, value);
 	word.natoms = 1;
 	word.atoms = xmalloc(sizeof(t_atom) * word.natoms);
 	word.atoms[0] = (t_atom){

@@ -12,6 +12,7 @@
 #include <util/util.h>
 
 typedef struct s_getline		t_getline;
+typedef struct s_drawline		t_drawline;
 typedef struct s_complete_item	t_complete_item;
 
 /******************************************************************************/
@@ -27,6 +28,7 @@ typedef void					(*t_highlighter_fn)(
 /** @brief Function to draw overflow indicator */
 typedef void					(*t_overflow_fn)(
 	t_getline *line,
+	t_drawline *dr,
 	int position);
 /** @brief Function to determine word boundaries */
 typedef t_u8_iterator			(*t_boundaries_fn)(
@@ -36,6 +38,7 @@ typedef t_u8_iterator			(*t_boundaries_fn)(
 /** @brief Function to draw completion items */
 typedef void					(*t_comp_draw_item_fn)(
 	t_getline *line,
+	t_string_buffer *buf,
 	size_t index,
 	const t_complete_item *item);
 /** @brief Function to provide completion items */
@@ -53,7 +56,7 @@ int
 getline_handlers_getc(t_getline *line);
 /** @brief `overflow_fn`, draws overflow indicators */
 void
-getline_handler_overflow(t_getline *line, int right);
+getline_handler_overflow(t_getline *line, t_drawline *dr, int right);
 /** @brief Finds word boundaries */
 t_u8_iterator
 getline_handler_word_boundaries(
@@ -64,6 +67,7 @@ getline_handler_word_boundaries(
 void
 getline_handler_comp_draw_item(
 	t_getline *line,
+	t_string_buffer *buf,
 	size_t i,
 	const t_complete_item *item);
 
