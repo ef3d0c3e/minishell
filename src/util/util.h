@@ -93,4 +93,12 @@ atoi_checked(const char *s, int *value);
 int
 atoi_range_checked(const char *s, const char *e, int *value);
 
+/* ************************************************************************** */
+/* Misc                                                                       */
+/* ************************************************************************** */
+
+void
+quicksort(void *base, size_t nmemb, size_t size,
+	int (*cmp)(const void *, const void *));
+
 #endif // UTIL_H
