@@ -27,12 +27,12 @@ void
 	shell->options = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			NULL, free);
 	option_insert(shell, "pipefail", "If set, the return value of a pipeline is"
-		"the value of the last (rightmost) command to exit with a non-zero"
+		" the value of the last (rightmost) command to exit with a non-zero"
 		" status, or zero if all commands in the pipeline exit successfully."
-		"This option is disabled by default.", 0);
+		" This option is disabled by default.", 0);
 	option_insert(shell, "noclobber", "If set, redirections will not be able to"
-		"overwrite existing files. To bypass noclobber mode, one can use `>|`"
-		"instead of `>`. This option is disabled by default ", 0);
+		" overwrite existing files. To bypass noclobber mode, one can use `>|`"
+		" instead of `>`. This option is disabled by default.", 0);
 	option_insert(shell, "experr", "Equivalent to bash's `set -u`", 0);
 	option_insert(shell, "dbg_parser", "Debugging option for parsing", 0);
 	regex_shellopt_register(shell);

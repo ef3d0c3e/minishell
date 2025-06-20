@@ -33,6 +33,7 @@ void
 	insert_builtin(shell, builtin_type());
 	insert_builtin(shell, builtin_pwd());
 	insert_builtin(shell, builtin_env());
+	insert_builtin(shell, builtin_shopt());
 }
 
 /** @brief Calls the builtin's deinit function */

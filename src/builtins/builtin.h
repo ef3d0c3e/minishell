@@ -73,5 +73,8 @@ const t_builtin
 /** @brief The `env` builtin */
 const t_builtin
 *builtin_env(void);
+/** @brief The `shopt` builtin */
+const t_builtin
+*builtin_shopt(void);
 
 #endif // BUILTIN_H

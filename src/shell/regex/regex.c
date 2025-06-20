@@ -14,14 +14,14 @@
 void
 	regex_shellopt_register(t_shell *shell)
 {
-	option_insert(shell, "extglob", "If set, the extended pattern matching "
-		"features are enabled", 0);
+	option_insert(shell, "extglob", "If set, the extended pattern matching"
+		" features are enabled", 0);
 	option_insert(shell, "globstar", "If set, the pattern '**' used in a"
 		" filename expansion context will match all files and zero or more"
-		" directories and subdirectories.  If the pattern is followed by a '/',"
+		" directories and subdirectories. If the pattern is followed by a '/',"
 		" only directories and subdirectories match.", 0);
 	option_insert(shell, "dotglob", "If set, includes filenames beginning with"
-		" a '.'  in the results of filename expansion.  The filenames '.'"
+		" a '.' in the results of filename expansion. The filenames '.'"
 		" and '..' must always be matched explicitly, even if 'dotglob' is"
 		" set.", 0);
 	option_insert(shell, "nocaseglob", "If set, matches filenames in a"
