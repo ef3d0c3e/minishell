@@ -2,7 +2,7 @@ NAME := minishell
 CC := gcc
 CFLAGS := -Wall -Wextra -pedantic -O2
 IFLAGS := -I./src
-LFLAGS :=
+LFLAGS := -lncurses -ltinfo
 
 # Compiler
 ifdef C
@@ -45,6 +45,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/shell/repl/*.c) \
 	$(wildcard src/shell/ctx/*.c) \
 	$(wildcard src/shell/regex/*.c) \
+	$(wildcard src/term/*.c) \
 	$(wildcard src/getline/*.c) \
 	$(wildcard src/getline/handlers/*.c) \
 	$(wildcard src/getline/wcwidth/*.c) \
