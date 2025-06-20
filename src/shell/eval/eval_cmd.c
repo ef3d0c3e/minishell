@@ -43,8 +43,6 @@ static t_eval_result
 	eval_empty(t_shell *shell, t_ast_node *cmd)
 {
 	t_redirs_stack	stack;
-	size_t			i;
-	char			*result;
 
 	redir_stack_init(&stack);
 	if (do_redir(shell, &stack, &cmd->cmd.redirs))

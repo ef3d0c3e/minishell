@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include <util/util.h>
 
+/*
 static void
 	swap(void *a, void *b, size_t size)
 {
@@ -26,6 +27,7 @@ static void
 		++i;
 	}
 }
+*/
 
 void 
 	quicksort(void *base, size_t nmemb, size_t size,

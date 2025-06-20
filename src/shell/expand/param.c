@@ -9,7 +9,6 @@
 /*   Updated: 2025/06/19 07:36:08 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 static int
@@ -108,21 +107,6 @@ static int
 	char	*found;
 
 	found = get_variable_value(shell, param->param.name);
-	if (!found)
-		return (0);
-	fraglist_push(list, stringbuf_from(found), param->flags);
-	return (1);
-}
-
-static int
-	param_env(
-	t_shell *shell,
-	t_fragment_list *list,
-	struct s_atom *param)
-{
-	const char				*found;
-
-	found = rb_find(&shell->reg_env, param->param.name);
 	if (!found)
 		return (0);
 	fraglist_push(list, stringbuf_from(found), param->flags);

@@ -16,6 +16,8 @@ volatile sig_atomic_t	g_signal;
 static void
 	sighandler(int signum, siginfo_t *info, void *data)
 {
+	(void)info;
+	(void)data;
 	g_signal = signum;
 }
 

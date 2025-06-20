@@ -27,6 +27,8 @@ static void
 static int
 	env(t_shell *shell, int argc, char **argv)
 {
+	(void)argc;
+	(void)argv;
 	return (rb_apply(&shell->reg_env, print_env, NULL), 0);
 }
 

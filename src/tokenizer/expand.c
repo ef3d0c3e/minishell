@@ -79,6 +79,7 @@ static t_token_list
 	size_t			i;
 	size_t			j;
 
+	(void)shell;
 	token_list_init(&new, list.size);
 	i = 0;
 	while (i < list.size)

@@ -52,6 +52,7 @@ t_fragment_list
 	t_fragment_list	new;
 	size_t			i;
 
+	(void)shell;
 	fraglist_init(&new);
 	i = 0;
 	while (i < list->size)

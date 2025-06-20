@@ -25,7 +25,7 @@ static int
 	if (expanded)
 	{
 		fraglist_push(list, stringbuf_from_range(expanded,
-			expanded + ft_strlen(expanded)), param->flags | FL_SQUOTED);
+				expanded + ft_strlen(expanded)), param->flags | FL_SQUOTED);
 		return (1);
 	}
 	if (option_value(shell, "experr"))
@@ -41,11 +41,12 @@ static int
 static struct s_atom
 	split_arg(struct s_atom *item, size_t start)
 {
-	struct s_atom new;
+	struct s_atom	new;
 
 	new.flags = item->flags;
 	new.type = item->type;
-	new.text = stringbuf_from_range(item->text.str + start, item->text.str + item->text.len);
+	new.text = stringbuf_from_range(item->text.str + start, item->text.str
+			+ item->text.len);
 	new.next = item->next;
 	return (new);
 }
@@ -67,7 +68,7 @@ static int
 	if (passwd_query(shell, stringbuf_cstr(&username), &ent))
 	{
 		fraglist_push(list, stringbuf_from_range(ent.homedir,
-			ent.homedir + ft_strlen(ent.homedir)), param->flags);
+				ent.homedir + ft_strlen(ent.homedir)), param->flags);
 		passwd_free(&ent);
 		stringbuf_free(&username);
 		return (1);
@@ -93,18 +94,16 @@ int
 {
 	t_string			str;
 	size_t				end;
-	struct s_atom	leftover;
+	struct s_atom		leftover;
 	int					status;
 
-	if (param->text.len == 0 || param->text.str[0] != '~') // Must be the start of a word
+	if (param->text.len == 0 || param->text.str[0] != '~')
 		return (0);
 	str = (t_string){.str = param->text.str, .len = param->text.len};
 	end = str_find(str, "/");
-	if (end == (size_t) - 1 && param->next
-		&& param->next->flags != param->flags)
+	if (end == (size_t)-1 && param->next && param->next->flags != param->flags)
 		return (0);
 	str.len = min_sz(end, str.len);
-	status = 0;
 	if (!str_cmp(str, "~-"))
 		status = expand_from_var(shell, list, param, "OLDPWD");
 	else if (!str_cmp(str, "~+"))

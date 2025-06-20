@@ -100,8 +100,10 @@ static void
 				&& !(inner->atoms[i[0] - 1].flags & (FL_SQUOTED | FL_DQUOTED)))
 			&& i[1]++ < inner->atoms[i[0] - 1].text.len)
 		{
-			((inner->atoms[i[0] - 1].text.str[i[1] - 1] == '{') && ++balance);
-			((inner->atoms[i[0] - 1].text.str[i[1] - 1] == '}') && --balance);
+			(void)((inner->atoms[i[0] - 1].text.str[i[1] - 1] == '{')
+				&& ++balance);
+			(void)((inner->atoms[i[0] - 1].text.str[i[1] - 1] == '}')
+				&& --balance);
 			if (inner->atoms[i[0] - 1].text.str[i[1] - 1] == ',' && !balance)
 			{
 				split_alternative(inner, group,

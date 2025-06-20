@@ -75,7 +75,6 @@ void
 	size_t depth)
 {
 	size_t				i;
-	size_t				j;
 	const t_redirection	*redir;
 
 	if (!redirs->redirs_size)

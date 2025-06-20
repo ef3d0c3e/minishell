@@ -72,6 +72,7 @@ static int
 	if (depth >= f->max_depth)
 		return (0);
 	dir = opendir(path);
+	status = 0;
 	while (dir)
 	{
 		status = ftw_call(f, path, dir, depth);

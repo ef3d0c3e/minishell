@@ -9,13 +9,11 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 /** @brief Closes fds and waits for pipes execution */
 static void
-	pipe_wait(t_shell *shell, int *fds, pid_t *pids, int redir_stderr)
+	pipe_wait(t_shell *shell, int *fds, pid_t *pids)
 {
 	int	status[2];
 
@@ -67,7 +65,7 @@ static void
 		eval(shell, pipeline->logic.right);
 		shell_exit(shell, shell->last_status);
 	}
-	pipe_wait(shell, fds, pids, 0);
+	pipe_wait(shell, fds, pids);
 }
 
 /** @brief Runs pipe with stdout and stderr redirected */
@@ -100,7 +98,7 @@ static void
 		eval(shell, pipeline->logic.right);
 		shell_exit(shell, shell->last_status);
 	}
-	pipe_wait(shell, fds, pids, 0);
+	pipe_wait(shell, fds, pids);
 }
 
 t_eval_result

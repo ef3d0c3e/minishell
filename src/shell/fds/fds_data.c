@@ -49,7 +49,6 @@ t_fd_data
 	fd_data_clone(t_fd_data *data)
 {
 	char	*filename;
-	size_t	len;
 	size_t	to_len;
 	int		*duped_to;
 

@@ -96,7 +96,7 @@ void
 	if (!line->history.num_entries)
 		return ;
 	sc = next_hist_index(line, offset);
-	if (line->history.num_entries - sc < 0)
+	if ((int)line->history.num_entries - sc < 0)
 		sc = 0;
 	else if (sc < 0)
 	{

@@ -158,7 +158,6 @@ char
 	**word_expansion_single(t_shell *shell, t_word *word)
 {
 	t_fragment_list	list;
-	size_t			i;
 	char			**argv;
 	const char		*ifs;
 

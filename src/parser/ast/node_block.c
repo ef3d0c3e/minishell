@@ -31,8 +31,6 @@ void
 void
 	print_block_node(size_t depth, const t_ast_node *node)
 {
-	size_t	i;
-
 	print_pad(" | ", depth);
 	ft_dprintf(2, "BLOCK\n");
 	ast_print(depth + 1, node->block.inner);
