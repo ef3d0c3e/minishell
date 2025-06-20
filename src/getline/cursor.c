@@ -89,11 +89,11 @@ void
 void
 	getline_cursor_visible(t_getline *line, int visible)
 {
-	if (!line->shell->cap->strs.civis || !line->shell->cap->strs.cnorm)
+	if (!line->shell->cap.strs.civis || !line->shell->cap.strs.cnorm)
 		return ;
 	if (visible)
-		ft_dprintf(line->out_fd, "%s", line->shell->cap->strs.cnorm);
+		ft_dprintf(line->out_fd, "%s", line->shell->cap.strs.cnorm);
 	else
-		ft_dprintf(line->out_fd, "%s", line->shell->cap->strs.civis);
+		ft_dprintf(line->out_fd, "%s", line->shell->cap.strs.civis);
 	// TODO
 }

@@ -530,6 +530,6 @@ typedef struct s_termcap
 
 /* In case of an unknown TERM will fallback to "dumb" termtype */
 t_termcap
-*fetch_capability(char *term);
+fetch_capability(char *term);
 
 #endif

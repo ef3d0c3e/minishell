@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "shell/ctx/ctx.h"
 #include "shell/env/env.h"
+#include "term/capability.h"
 #include "util/util.h"
 #include <shell/shell.h>
 

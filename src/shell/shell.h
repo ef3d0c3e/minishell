@@ -107,7 +107,7 @@ typedef struct s_shell
 	/** @brief Last program's exit status (initialized to 0) */
 	int					last_status;
 	/** @brief Current terminal capabilities */
-	t_termcap			*cap;
+	t_termcap			cap;
 }	t_shell;
 
 /******************************************************************************/

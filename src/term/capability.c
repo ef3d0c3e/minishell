@@ -107,9 +107,9 @@ static void
 }
 
 t_termcap
-	*fetch_capability(char *term)
+	fetch_capability(char *term)
 {
-	static t_termcap	cap;
+	t_termcap	cap;
 
 	ft_memset(&cap, 0, sizeof(t_termcap));
 	cap.success = tgetent(NULL, term);
@@ -122,5 +122,5 @@ t_termcap
 		fetch_num(&cap.nums);
 		fetch_flag(&cap.flags);
 	}
-	return (&cap);
+	return (cap);
 }
