@@ -123,4 +123,14 @@ repl_complete_cmd(t_shell *shell, t_complete_buf *items, const char *filter);
 void
 repl_complete_opts(t_getline *line, t_complete_buf *items, const char *filter);
 
+/**
+ * @brief Checks if `name` matches against `filter`
+ *
+ * @param filter Filter to match against
+ * @param name Name to match
+ * @return 1 if name starts with `filter` (case insesitive)
+ */
+int
+complete_match(const char *filter, const char *name);
+
 #endif // REPL_H

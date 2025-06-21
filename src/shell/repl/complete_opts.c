@@ -10,9 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
-#include "tokenizer/tokenizer.h"
-#include "util/util.h"
+#include "shell/ctx/ctx.h"
+#include "shell/env/env.h"
 #include <shell/shell.h>
+#include <sys/stat.h>
 
 /** @brief Gets the command's name */
 static char
@@ -33,7 +34,6 @@ static char
 		j = i;
 		while (i && token_isword(list->tokens[i - 1].type))
 			--i;
-		ft_dprintf(2, "I=%zu, J=%zu\n\r\n\r", i, j);
 		if (i < 2 || list->tokens[i - 1].type != TOK_SPACE)
 			break ;
 		i -= 2;
@@ -52,29 +52,6 @@ static char
 	return (stringbuf_cstr(&cmd));
 }
 
-static int
-	match(const char *a, const char *b)
-{
-	size_t	i;
-	char	x;
-	char	y;
-
-	i = 0;
-	while (a[i] && b[i])
-	{
-		x = a[i];
-		y = b[i];
-		if (x >= 'a' && x <= 'z')
-			x -= 32;
-		if (y >= 'a' && y <= 'z')
-			y -= 32;
-		if (x != y)
-			return (0);
-		++i;
-	}
-	return (!a[i] || b[i]);
-}
-
 static void
 	add_options(
 	t_complete_buf *items,
@@ -91,15 +68,15 @@ static void
 	while (i < comp->opts_size)
 	{
 		opt = &comp->opts[i];
-		if (opt->shortname
-			&& (!filter || !filter[0] || match(filter + 1, opt->shortname)))
+		if (opt->shortname && (!filter || !filter[0]
+			|| complete_match(filter + 1, opt->shortname)))
 		{
 			ft_asprintf(&fmt, "-%s", opt->shortname);
 			complete_buf_push(items, (t_complete_item){
 					COMPLETE_OPTION, fmt, ft_strdup(opt->description) });
 		}
-		if (opt->longname && (!filter || !filter[0]
-			|| !filter[1] || match(filter + 2, opt->longname)))
+		if (opt->longname && (!filter || !filter[0] || !filter[1]
+			|| complete_match(filter + 2, opt->longname)))
 		{
 			ft_asprintf(&fmt, "--%s", opt->longname);
 			complete_buf_push(items, (t_complete_item){
@@ -107,6 +84,31 @@ static void
 		}
 		++i;
 	}
+}
+
+/** @brief Sources completion file from `SHELL_COMPLETION` variable */
+static void
+	source_completion(t_shell *shell, const char *cmd)
+{
+	const char	*dir = get_variable_value(shell, "SHELL_COMPLETION");
+	t_pathbuf	path;
+	char		*source;
+	struct stat	sb;
+	
+	if (!dir)
+		return ;
+	pathbuf_init(&path, 64);
+	pathbuf_append(&path, dir, 1);
+	pathbuf_append(&path, cmd, 0);
+	pathbuf_append(&path, ".sh", 0);
+	if (stat(pathbuf_cstr(&path), &sb) == -1 || !S_ISREG(sb.st_mode))
+	{
+		pathbuf_free(&path);
+		return ;
+	}
+	ft_asprintf(&source, "source %s", pathbuf_cstr(&path));
+	pathbuf_free(&path);
+	ctx_eval_stdout(shell, source);
 }
 
 void
@@ -117,6 +119,7 @@ void
 	cmd = cmd_name(line);
 	if (!cmd)
 		return ;
+	source_completion(line->shell, cmd);
 	add_options(items, rb_find(&line->shell->cmd_completion, cmd), filter);
 	free(cmd);
 }
