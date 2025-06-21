@@ -22,13 +22,13 @@ static void
 	while (waitpid(pids[0], &status[0], 0) == -1)
 	{
 		if (errno == EINTR)
-			continue;
+			continue ;
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
 	while (waitpid(pids[1], &status[1], 0) == -1)
 	{
 		if (errno == EINTR)
-			continue;
+			continue ;
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
 	if (!status[1] && option_value(shell, "pipefail"))
@@ -38,7 +38,7 @@ static void
 
 /** @brief Runs pipe with stdout */
 static void
-	pipe_stdout(t_shell *shell, t_ast_node* pipeline)
+	pipe_stdout(t_shell *shell, t_ast_node *pipeline)
 {
 	int		fds[2];
 	pid_t	pids[2];
@@ -48,8 +48,7 @@ static void
 	pids[0] = shell_fork(shell, SRC_LOCATION);
 	if (pids[0] == 0)
 	{
-		close(fds[0]);
-		if (dup2(fds[1], STDOUT_FILENO) == -1)
+		if ((close(fds[0]), 1) && dup2(fds[1], STDOUT_FILENO) == -1)
 			shell_perror(shell, "dup2() failed", SRC_LOCATION);
 		close(fds[1]);
 		eval(shell, pipeline->logic.left);
@@ -58,8 +57,7 @@ static void
 	pids[1] = shell_fork(shell, SRC_LOCATION);
 	if (pids[1] == 0)
 	{
-		close(fds[1]);
-		if (dup2(fds[0], STDIN_FILENO) == -1)
+		if ((close(fds[1]), 1) && dup2(fds[0], STDIN_FILENO) == -1)
 			shell_perror(shell, "dup2() failed", SRC_LOCATION);
 		close(fds[0]);
 		eval(shell, pipeline->logic.right);
@@ -70,7 +68,7 @@ static void
 
 /** @brief Runs pipe with stdout and stderr redirected */
 static void
-	pipe_stdout_stderr(t_shell *shell, t_ast_node* pipeline)
+	pipe_stdout_stderr(t_shell *shell, t_ast_node *pipeline)
 {
 	int		fds[2];
 	pid_t	pids[2];
@@ -80,9 +78,8 @@ static void
 	pids[0] = shell_fork(shell, SRC_LOCATION);
 	if (pids[0] == 0)
 	{
-		close(fds[0]);
-		if (dup2(fds[1], STDOUT_FILENO) == -1
-			|| dup2(fds[1], STDERR_FILENO) == -1)
+		if ((close(fds[0]), 1) && (dup2(fds[1], STDOUT_FILENO) == -1
+				|| dup2(fds[1], STDERR_FILENO) == -1))
 			shell_perror(shell, "dup2() failed", SRC_LOCATION);
 		close(fds[1]);
 		eval(shell, pipeline->logic.left);
@@ -91,8 +88,7 @@ static void
 	pids[1] = shell_fork(shell, SRC_LOCATION);
 	if (pids[1] == 0)
 	{
-		close(fds[1]);
-		if (dup2(fds[0], STDIN_FILENO) == -1)
+		if ((close(fds[1]), 1) && dup2(fds[0], STDIN_FILENO) == -1)
 			shell_perror(shell, "dup2() failed", SRC_LOCATION);
 		close(fds[0]);
 		eval(shell, pipeline->logic.right);
@@ -102,7 +98,7 @@ static void
 }
 
 t_eval_result
-	eval_pipeline(t_shell *shell, t_ast_node* pipeline)
+	eval_pipeline(t_shell *shell, t_ast_node *pipeline)
 {
 	const int		r_stderr = pipeline->logic.token.reserved_word[1] == '&';
 	int				status;
@@ -116,17 +112,14 @@ t_eval_result
 		shell_error(shell, err, SRC_LOCATION);
 		return ((t_eval_result){RES_NONE, 0});
 	}
-	if (!pid)
-	{
-		if (r_stderr)
-			pipe_stdout_stderr(shell, pipeline);
-		else
-			pipe_stdout(shell, pipeline);
-	}
+	if (!pid && r_stderr)
+		pipe_stdout_stderr(shell, pipeline);
+	else if (!pid)
+		pipe_stdout(shell, pipeline);
 	while (waitpid(pid, &status, 0) == -1)
 	{
 		if (errno == EINTR)
-			continue;
+			continue ;
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
 	shell->last_status = WEXITSTATUS(status);

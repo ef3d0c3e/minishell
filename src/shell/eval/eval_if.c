@@ -16,7 +16,7 @@ t_eval_result
 {
 	size_t			i;
 	t_eval_result	result;
-	
+
 	i = 0;
 	while (i < cmd->st_if.nconds)
 	{
@@ -26,7 +26,7 @@ t_eval_result
 		if (shell->last_status)
 		{
 			++i;
-			continue;
+			continue ;
 		}
 		result = eval(shell, cmd->st_if.bodies[i]);
 		return (result);

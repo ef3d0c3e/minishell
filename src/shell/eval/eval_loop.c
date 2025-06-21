@@ -15,7 +15,7 @@ t_eval_result
 	eval_loop(t_shell *shell, t_ast_node *cmd)
 {
 	t_eval_result	result;
-	
+
 	while (1)
 	{
 		result = eval(shell, cmd->st_loop.cond);
@@ -28,7 +28,7 @@ t_eval_result
 		}
 		if ((cmd->st_loop.until && !shell->last_status)
 			|| (!cmd->st_loop.until && shell->last_status))
-			break;
+			break ;
 		result = eval(shell, cmd->st_loop.body);
 		if ((result.type == RES_BREAK && result.param > 0)
 			|| result.type == RES_RETURN || result.type == RES_STOP)

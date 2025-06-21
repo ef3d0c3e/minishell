@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/eval/eval.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static int
@@ -21,9 +18,9 @@ static int
 
 	cont = 1;
 	if ((result->type == RES_BREAK && result->param >= 1)
-			|| (result->type == RES_CONTINUE && result->param >= 1)
-			|| result->type == RES_RETURN || result->type == RES_EXIT
-			|| result->type == RES_STOP)
+		|| (result->type == RES_CONTINUE && result->param >= 1)
+		|| result->type == RES_RETURN || result->type == RES_EXIT
+		|| result->type == RES_STOP)
 	{
 		if (result->type == RES_BREAK || result->type == RES_CONTINUE)
 		{
@@ -40,14 +37,13 @@ static int
 	return (cont);
 }
 
-
 t_eval_result
 	eval_for(t_shell *shell, t_ast_node *cmd)
 {
 	size_t			i;
 	t_eval_result	result;
 	char			**argv;
-	
+
 	argv = word_expansion(shell, &cmd->st_for.args);
 	if (!argv || !argv[0])
 	{

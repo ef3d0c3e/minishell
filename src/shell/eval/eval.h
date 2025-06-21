@@ -12,9 +12,9 @@
 #ifndef EVAL_H
 # define EVAL_H
 
-typedef struct s_shell	t_shell;
-
 # include <parser/parser.h>
+
+typedef struct s_shell	t_shell;
 
 /******************************************************************************/
 /* Results for control flow                                                   */
@@ -64,7 +64,7 @@ typedef struct s_eval_result
  * @param program The ast node to evaluate
  */
 t_eval_result
-eval(t_shell *shell, t_ast_node* program);
+eval(t_shell *shell, t_ast_node *program);
 /**
  * @brief Evaluates a list of commands, separated by `;` `\n` and `&`
  *
@@ -72,7 +72,7 @@ eval(t_shell *shell, t_ast_node* program);
  * @param The command list node
  */
 t_eval_result
-eval_list(t_shell *shell, t_ast_node* cmd);
+eval_list(t_shell *shell, t_ast_node *cmd);
 /**
  * @brief Evaluates command node
  *
@@ -80,7 +80,7 @@ eval_list(t_shell *shell, t_ast_node* cmd);
  * @param The command node
  */
 t_eval_result
-eval_cmd(t_shell *shell, t_ast_node* cmd);
+eval_cmd(t_shell *shell, t_ast_node *cmd);
 /**
  * @brief Evaluates a function definition
  *
@@ -93,37 +93,37 @@ eval_function_definition(t_shell *shell, t_ast_node *definition);
  * @brief Evaluates a pipeline operator `|` or `|&`
  */
 t_eval_result
-eval_pipeline(t_shell *shell, t_ast_node* pipeline);
+eval_pipeline(t_shell *shell, t_ast_node *pipeline);
 /**
  * @brief Evaluates a binary operator `||` or `&&`
  */
 t_eval_result
-eval_binary(t_shell *shell, t_ast_node* pipeline);
+eval_binary(t_shell *shell, t_ast_node *pipeline);
 /**
  * @brief Evaluates a subshell `(...)`
  */
 t_eval_result
-eval_subshell(t_shell *shell, t_ast_node* subshell);
+eval_subshell(t_shell *shell, t_ast_node *subshell);
 /**
  * @brief Evaluates subexpressions `$(...)`
  */
 t_eval_result
-eval_subexpr(t_shell *shell, t_ast_node* subexpr);
+eval_subexpr(t_shell *shell, t_ast_node *subexpr);
 /**
  * @brief Evaluates if cmd_list then cmd_list [elif cmd_list then cmd_list]* fi
  */
 t_eval_result
-eval_if(t_shell *shell, t_ast_node* node_if);
+eval_if(t_shell *shell, t_ast_node *node_if);
 /**
  * @brief Evaluates a while or until loopp
  */
 t_eval_result
-eval_loop(t_shell *shell, t_ast_node* node_loop);
+eval_loop(t_shell *shell, t_ast_node *node_loop);
 /**
  * @brief Evaluates if word in wordlist do cmd_list done 
  */
 t_eval_result
-eval_for(t_shell *shell, t_ast_node* node_if);
+eval_for(t_shell *shell, t_ast_node *node_if);
 
 /******************************************************************************/
 /* Commands evaluators                                                        */

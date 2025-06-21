@@ -18,9 +18,9 @@ static t_eval_result
 }
 
 t_eval_result
-	eval(t_shell *shell, t_ast_node* program)
+	eval(t_shell *shell, t_ast_node *program)
 {
-	static t_eval_result(*const evaluators[])(t_shell *, t_ast_node *) = {
+	static t_eval_result(*const	evaluators[])(t_shell *, t_ast_node *) = {
 	[NODE_LIST] = eval_list,
 	[NODE_BLOCK] = eval_block,
 	[NODE_COMMAND] = eval_cmd,

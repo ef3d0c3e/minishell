@@ -11,10 +11,23 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+static void
+	subshell_child(t_shell *shell, t_ast_node *program, t_redirs_stack *stack)
+{
+	t_eval_result	result;
+
+	redir_stack_init(stack);
+	do_redir(shell, stack, &program->sub.redirs);
+	result = eval(shell, program->sub.head);
+	undo_redir(shell, stack);
+	if (result.type == RES_EXIT)
+		shell->last_status = result.param;
+	shell_exit(shell, shell->last_status);
+}
+
 t_eval_result
 	eval_subshell(t_shell *shell, t_ast_node *program)
 {
-	t_eval_result	result;
 	pid_t			pid;
 	int				status;
 	t_redirs_stack	stack;
@@ -27,20 +40,12 @@ t_eval_result
 		while (waitpid(pid, &status, 0) == -1)
 		{
 			if (errno == EINTR)
-				continue;
+				continue ;
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 		}
 		shell->last_status = WEXITSTATUS(status);
 	}
 	else
-	{
-		redir_stack_init(&stack);
-		do_redir(shell, &stack, &program->sub.redirs);
-		result = eval(shell, program->sub.head);
-		undo_redir(shell, &stack);
-		if (result.type == RES_EXIT)
-			shell->last_status = result.param;
-		shell_exit(shell, shell->last_status);
-	}
+		subshell_child(shell, program, &stack);
 	return ((t_eval_result){RES_NONE, 0});
 }

@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 t_eval_result
@@ -19,7 +18,7 @@ t_eval_result
 	int						argc;
 	t_redirs_stack			stack;
 	t_eval_result			result;
-	
+
 	argc = 0;
 	while (argv[argc])
 		++argc;

@@ -9,10 +9,9 @@
 /*   Updated: 2025/06/19 17:39:22 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/env/env.h"
-#include "util/util.h"
+#include "parser/ast/ast.h"
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
-#include <stddef.h>
 
 void
 	eval_install_var(t_shell *shell, t_ast_node *cmd)
@@ -52,23 +51,13 @@ static t_eval_result
 }
 
 t_eval_result
-	eval_cmd(t_shell *shell, t_ast_node *program)
+	dispatch(t_shell *shell, t_ast_node *program, char **argv)
 {
-	int		status;
-	char	*err;
-	char	**argv;
-	char	*path;
 	size_t	cnt;
+	int		status;
+	char	*path;
+	char	*err;
 
-	path = NULL;
-	argv = word_expansion(shell, &program->cmd.args);
-	if (g_signal)
-		return (args_free(argv), (t_eval_result){RES_STOP, 0});
-	if (!argv)
-		return ((t_eval_result){RES_NONE, 0});
-	status = 0;
-	if (!argv[0])
-		return (free(argv), eval_empty(shell, program));
 	status = resolve_eval(shell, argv[0], &path);
 	cnt = 0;
 	while (argv[cnt])
@@ -89,4 +78,19 @@ t_eval_result
 	}
 	args_free(argv);
 	return ((t_eval_result){RES_NONE, 0});
+}
+
+t_eval_result
+	eval_cmd(t_shell *shell, t_ast_node *program)
+{
+	char	**argv;
+
+	argv = word_expansion(shell, &program->cmd.args);
+	if (g_signal)
+		return (args_free(argv), (t_eval_result){RES_STOP, 0});
+	if (!argv)
+		return ((t_eval_result){RES_NONE, 0});
+	if (!argv[0])
+		return (free(argv), eval_empty(shell, program));
+	return (dispatch(shell, program, argv));
 }

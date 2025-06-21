@@ -33,7 +33,7 @@ static void
 	char					**shellp;
 	char					*err;
 	t_redirs_stack			stack;
-	
+
 	if (argv[0] && !path)
 		shell_exit(shell, 127);
 	eval_install_var(shell, cmd);
@@ -62,28 +62,24 @@ static int
 	pid = shell_fork(shell, SRC_LOCATION);
 	if (pid == -1)
 		shell_perror(shell, "fork() failed", SRC_LOCATION);
-	if (pid)
-	{
-		while (waitpid(pid, &status, 0) != pid)
-		{
-			if (errno == EINTR)
-				continue;
-			if (errno == ECHILD)
-			{
-				status = 2;
-				break ;
-			}
-			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
-		}
-		shell->last_status = WEXITSTATUS(status);
-		if (argv[0])
-			free(path);
-	}
-	else
+	if (!pid)
 		eval_exec_child(shell, cmd, path, argv);
+	while (waitpid(pid, &status, 0) != pid)
+	{
+		if (errno == EINTR)
+			continue ;
+		if (errno == ECHILD)
+		{
+			status = 2;
+			break ;
+		}
+		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
+	}
+	shell->last_status = WEXITSTATUS(status);
+	if (argv[0])
+		free(path);
 	return (WIFEXITED(status));
 }
-
 
 t_eval_result
 	eval_exec(t_shell *shell, t_ast_node *cmd, char *path, char **argv)

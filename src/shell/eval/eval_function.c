@@ -28,7 +28,7 @@ t_eval_result
 	t_eval_result		result;
 	t_ast_node *const	function = rb_find(&shell->reg_fns, argv[0]);
 	t_redirs_stack		stack;
-	
+
 	redir_stack_init(&stack);
 	if (do_redir(shell, &stack, &cmd->cmd.redirs))
 	{
