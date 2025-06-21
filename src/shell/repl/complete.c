@@ -9,6 +9,8 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 void
@@ -58,15 +60,16 @@ static char
 {
 	t_token_list *const	list = &((t_repl_data *)line->data)->list;
 	size_t				i;
+	size_t				j;
 	t_string_buffer		buf;
 
 	i = 0;
-	while (i < list->size)
-	{
-		if (list->tokens[i++].end >= line->cursor_index && (--i, 1))
-			break ;
-	}
-	*cmd = is_cmd_start(line, i);
+	while (i < list->size && list->tokens[i].end < line->cursor_index)
+		++i;
+	j = i;
+	while (j && token_isword(list->tokens[j - 1].type))
+		--j;
+	*cmd = is_cmd_start(line, j + 1);
 	if (i >= list->size || !token_isword(list->tokens[i].type))
 	{
 		if (i && i < list->size)
@@ -75,8 +78,9 @@ static char
 		return (NULL);
 	}
 	stringbuf_init(&buf, 24);
-	token_wordcontent(&buf, &list->tokens[i]);
-	*word_start = list->tokens[i].start;
+	*word_start = list->tokens[j].start;
+	while (j <= i)
+		token_wordcontent(&buf, &list->tokens[j++]);
 	*word_end = list->tokens[i].end;
 	if (!buf.len)
 		return (stringbuf_free(&buf), NULL);

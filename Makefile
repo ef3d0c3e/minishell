@@ -1,6 +1,6 @@
 NAME := minishell
 CC := gcc
-CFLAGS := -Wall -Wextra -pedantic -O2
+CFLAGS := -Wall -Wextra -O2
 IFLAGS := -I./src
 LFLAGS := -lncurses -ltinfo
 
@@ -35,6 +35,7 @@ SOURCES := $(wildcard src/*.c) \
 	$(wildcard src/tokenizer/*.c) \
 	$(wildcard src/expansion/*.c) \
 	$(wildcard src/builtins/*.c) \
+	$(wildcard src/builtins/complete/*.c) \
 	$(wildcard src/shell/*.c) \
 	$(wildcard src/shell/redir/*.c) \
 	$(wildcard src/shell/eval/*.c) \

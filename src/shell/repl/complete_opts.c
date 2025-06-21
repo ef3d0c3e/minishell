@@ -9,6 +9,9 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "tokenizer/tokenizer.h"
+#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Gets the command's name */
@@ -26,10 +29,12 @@ static char
 	j = 0;
 	while (i)
 	{
+
 		j = i;
 		while (i && token_isword(list->tokens[i - 1].type))
 			--i;
-		if (i <= 2 || (i >= 2 && !token_isword(list->tokens[i - 2].type)))
+		ft_dprintf(2, "I=%zu, J=%zu\n\r\n\r", i, j);
+		if (i < 2 || list->tokens[i - 1].type != TOK_SPACE)
 			break ;
 		i -= 2;
 		if (i && list->tokens[i - 1].type == TOK_SPACE)
@@ -47,8 +52,34 @@ static char
 	return (stringbuf_cstr(&cmd));
 }
 
+static int
+	match(const char *a, const char *b)
+{
+	size_t	i;
+	char	x;
+	char	y;
+
+	i = 0;
+	while (a[i] && b[i])
+	{
+		x = a[i];
+		y = b[i];
+		if (x >= 'a' && x <= 'z')
+			x -= 32;
+		if (y >= 'a' && y <= 'z')
+			y -= 32;
+		if (x != y)
+			return (0);
+		++i;
+	}
+	return (!a[i] || b[i]);
+}
+
 static void
-	add_options(t_complete_buf *items, const t_cmd_completion *comp)
+	add_options(
+	t_complete_buf *items,
+	const t_cmd_completion *comp,
+	const char *filter)
 {
 	size_t					i;
 	const t_cmd_comp_opt	*opt;
@@ -60,13 +91,15 @@ static void
 	while (i < comp->opts_size)
 	{
 		opt = &comp->opts[i];
-		if (opt->shortname)
+		if (opt->shortname
+			&& (!filter || !filter[0] || match(filter + 1, opt->shortname)))
 		{
 			ft_asprintf(&fmt, "-%s", opt->shortname);
 			complete_buf_push(items, (t_complete_item){
 					COMPLETE_OPTION, fmt, ft_strdup(opt->description) });
 		}
-		if (opt->longname)
+		if (opt->longname && (!filter || !filter[0]
+			|| !filter[1] || match(filter + 2, opt->longname)))
 		{
 			ft_asprintf(&fmt, "--%s", opt->longname);
 			complete_buf_push(items, (t_complete_item){
@@ -84,6 +117,6 @@ void
 	cmd = cmd_name(line);
 	if (!cmd)
 		return ;
-	add_options(items, rb_find(&line->shell->cmd_completion, cmd));
+	add_options(items, rb_find(&line->shell->cmd_completion, cmd), filter);
 	free(cmd);
 }

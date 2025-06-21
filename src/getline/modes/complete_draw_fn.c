@@ -79,7 +79,7 @@ void
 	stringbuf_append_s(buf, "\x1b[37m");
 	item_kind_color(line, buf, item);
 	w = draw_bounded(buf, item->name, line->state.comp.col_width - 4, "…");
-	while (desc_len + w++ < line->state.comp.col_width - 4)
+	while (desc_len + w++ < line->state.comp.col_width - 3)
 		stringbuf_append_s(buf, " ");
 	if (item->desc)
 	{
