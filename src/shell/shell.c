@@ -9,7 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/complete/complete.h"
 #include <shell/shell.h>
 
 static void
@@ -22,6 +21,19 @@ static void
 	free(var);
 }
 
+static void
+	shell_init(t_shell *shell)
+{
+	temporaries_init(shell);
+	options_init(shell);
+	fd_data_init(shell);
+	shell_error_flush(shell);
+	builtin_init(shell);
+	funs_init(shell);
+	prefix_stack_init(shell);
+	path_populate(shell);
+}
+
 t_shell
 	shell_new(const char **envp)
 {
@@ -32,6 +44,8 @@ t_shell
 			free, var_free);
 	shell.path_cache = rb_new((int (*)(const void *, const void *))ft_strcmp,
 			free, free);
+	shell.cmd_completion = rb_new((int (*)(const void *, const void *))
+			ft_strcmp, free, complete_free);
 	shell.errors.capacity = 0;
 	shell.errors.size = 0;
 	shell.errors.errors = NULL;
@@ -41,16 +55,7 @@ t_shell
 	e = envp;
 	while (*e)
 		envp_populate(&shell, *(e++));
-	temporaries_init(&shell);
-	options_init(&shell);
-	fd_data_init(&shell);
-	shell_error_flush(&shell);
-	builtin_init(&shell);
-	funs_init(&shell);
-	prefix_stack_init(&shell);
-	path_populate(&shell);
-	shell.cmd_completion = rb_new((int (*)(const void *, const void *))ft_strcmp,
-			free, complete_free);
+	shell_init(&shell);
 	return (shell.context = NULL, shell);
 }
 

@@ -9,8 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "tokenizer.h"
-#include "util/util.h"
+#include <tokenizer/tokenizer.h>
 
 size_t
 	find_unescaped(t_string input, const char *token)

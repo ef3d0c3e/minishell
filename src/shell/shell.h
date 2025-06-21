@@ -303,4 +303,27 @@ option_set(t_shell *shell, const char *name, int value);
 void
 signal_install(t_shell *shell, int uninstall);
 
+/******************************************************************************/
+/* Command line options                                                       */
+/******************************************************************************/
+
+/** @brief Command line options for the shell */
+typedef struct s_program_opts
+{
+	/** @brief Libopts handle */
+	void		*opts;
+	/** @brief Command to run in headless mode */
+	const char	*headless;
+	/** @brief Run in clean mode (do not source profile) */
+	int			clean_mode;
+}	t_program_opts;
+
+/**
+ * @brief Initializes the command line argument parser
+ *
+ * @param handle t_program_opts pointer
+ */
+void
+*shell_args_init(void *handle);
+
 #endif // SHELL_H
