@@ -105,7 +105,7 @@ static char
 		size += list->fragments[i++].word.len;
 	}
 	fraglist_free(list);
-	rb_delete(&shell->atexit, &list);
+	rb_delete(&shell->atexit, list);
 	return (result[size] = 0, result);
 }
 
