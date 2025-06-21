@@ -122,7 +122,6 @@ repl_complete_cmd(t_shell *shell, t_complete_buf *items, const char *filter);
  */
 void
 repl_complete_opts(t_getline *line, t_complete_buf *items, const char *filter);
-
 /**
  * @brief Checks if `name` matches against `filter`
  *
@@ -132,5 +131,15 @@ repl_complete_opts(t_getline *line, t_complete_buf *items, const char *filter);
  */
 int
 complete_match(const char *filter, const char *name);
+/**
+ * @brief Gets the content between two tokens
+ *
+ * @param list The token list
+ * @param start Start token
+ * @param end End token
+ * @return The content between [start, end)
+ */
+char
+*complete_token_content(const t_token_list *list, size_t start, size_t end);
 
 #endif // REPL_H

@@ -9,11 +9,8 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "shell/ctx/ctx.h"
-#include "shell/env/env.h"
+#include "shell/repl/repl.h"
 #include <shell/shell.h>
-#include <sys/stat.h>
 
 /** @brief Gets the command's name */
 static char
@@ -22,7 +19,6 @@ static char
 	t_token_list *const	list = &((t_repl_data *)line->data)->list;
 	size_t				i;
 	size_t				j;
-	t_string_buffer		cmd;
 
 	i = 0;
 	while (i < list->size && list->tokens[i].end < line->cursor_index)
@@ -30,7 +26,6 @@ static char
 	j = 0;
 	while (i)
 	{
-
 		j = i;
 		while (i && token_isword(list->tokens[i - 1].type))
 			--i;
@@ -42,14 +37,7 @@ static char
 	}
 	if (i == j)
 		return (NULL);
-	stringbuf_init(&cmd, 24);
-	while (i < j)
-	{
-		if (!token_isword(list->tokens[i].type))
-			break ;
-		token_wordcontent(&cmd, &list->tokens[i++]);
-	}
-	return (stringbuf_cstr(&cmd));
+	return (complete_token_content(list, i, j));
 }
 
 static void
@@ -65,24 +53,23 @@ static void
 	if (!comp)
 		return ;
 	i = 0;
-	while (i < comp->opts_size)
+	while (i++ < comp->opts_size)
 	{
-		opt = &comp->opts[i];
+		opt = &comp->opts[i - 1];
 		if (opt->shortname && (!filter || !filter[0]
-			|| complete_match(filter + 1, opt->shortname)))
+				|| complete_match(filter + 1, opt->shortname)))
 		{
 			ft_asprintf(&fmt, "-%s", opt->shortname);
 			complete_buf_push(items, (t_complete_item){
-					COMPLETE_OPTION, fmt, ft_strdup(opt->description) });
+				COMPLETE_OPTION, fmt, ft_strdup(opt->description)});
 		}
 		if (opt->longname && (!filter || !filter[0] || !filter[1]
-			|| complete_match(filter + 2, opt->longname)))
+				|| complete_match(filter + 2, opt->longname)))
 		{
 			ft_asprintf(&fmt, "--%s", opt->longname);
 			complete_buf_push(items, (t_complete_item){
-					COMPLETE_OPTION, fmt, ft_strdup(opt->description) });
+				COMPLETE_OPTION, fmt, ft_strdup(opt->description)});
 		}
-		++i;
 	}
 }
 
@@ -94,7 +81,7 @@ static void
 	t_pathbuf	path;
 	char		*source;
 	struct stat	sb;
-	
+
 	if (!dir)
 		return ;
 	pathbuf_init(&path, 64);
@@ -112,7 +99,10 @@ static void
 }
 
 void
-	repl_complete_opts(t_getline *line, t_complete_buf *items, const char *filter)
+	repl_complete_opts(
+	t_getline *line,
+	t_complete_buf *items,
+	const char *filter)
 {
 	char				*cmd;
 

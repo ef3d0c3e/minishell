@@ -9,35 +9,18 @@
 /*   Updated: 2025/06/13 13:58:46 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/complete/complete.h"
-#include "ft_printf.h"
-#include "util/util.h"
 #include <shell/shell.h>
-
-typedef struct s_complete_args
-{
-	void		*opts;
-	t_shell		*shell;
-	int			fail;
-	const char	*cmd;
-	const char	*shortname;
-	const char	*longname;
-	const char	*desc;
-}	t_complete_args;
-
-static void
-	set_cmd(void *ptr, const char **av)
-{
-	t_complete_args *const args = ptr;
-	
-	args->cmd = av[1];
-}
 
 static void
 	set_property(void *ptr, const char **av)
 {
-	t_complete_args *const args = ptr;
-	
+	t_complete_args *const	args = ptr;
+
+	if (!ft_strcmp(av[0], "-c"))
+	{
+		args->cmd = av[1];
+		return ;
+	}
 	if (!args->cmd)
 	{
 		args->fail = 1;
@@ -46,7 +29,7 @@ static void
 	}
 	if (!ft_strcmp(av[0], "-s"))
 		args->shortname = av[1];
-	if (!ft_strcmp(av[0], "-l"))
+	else if (!ft_strcmp(av[0], "-l"))
 		args->longname = av[1];
 	else
 		args->desc = av[1];
@@ -57,10 +40,10 @@ static void
 {
 	static char			use[] = "complete [OPTIONS...]";
 	static t_opt		opts[] = {
-		{"-c", "NAME Command name", set_cmd, 1},
-		{"-s", "SHORTNAME Argument shortname", set_property, 1},
-		{"-l", "LONGMAME Argument longname", set_property, 1},
-		{"-d", "Description Description", set_property, 1},
+	{"-c", "NAME Command name", set_property, 1},
+	{"-s", "SHORTNAME Argument shortname", set_property, 1},
+	{"-l", "LONGMAME Argument longname", set_property, 1},
+	{"-d", "Description Description", set_property, 1},
 	};
 	const t_behavior	flags = GET_CALLER | NO_EXIT;
 

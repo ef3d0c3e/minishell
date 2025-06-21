@@ -11,36 +11,13 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-static int
-	match(const char *a, const char *b)
-{
-	size_t	i;
-	char	x;
-	char	y;
-
-	i = 0;
-	while (a[i] && b[i])
-	{
-		x = a[i];
-		y = b[i];
-		if (x >= 'a' && x <= 'z')
-			x -= 32;
-		if (y >= 'a' && y <= 'z')
-			y -= 32;
-		if (x != y)
-			return (0);
-		++i;
-	}
-	return (!a[i] || b[i]);
-}
-
 static void
 	path_traversal(size_t depth, t_rbnode *node, void *cookie)
 {
 	t_comp_cmd_tr *const	tr = cookie;
 
 	(void)depth;
-	if (tr->filter && !match(tr->filter, node->key))
+	if (tr->filter && !complete_match(tr->filter, node->key))
 		return ;
 	complete_buf_push(tr->items, (t_complete_item){
 		.kind = COMPLETE_WORD,
@@ -55,7 +32,7 @@ static void
 	t_comp_cmd_tr *const	tr = cookie;
 
 	(void)depth;
-	if (tr->filter && !match(tr->filter, node->key))
+	if (tr->filter && !complete_match(tr->filter, node->key))
 		return ;
 	complete_buf_push(tr->items, (t_complete_item){
 		.kind = COMPLETE_WORD,
@@ -70,7 +47,7 @@ static void
 	t_comp_cmd_tr *const	tr = cookie;
 
 	(void)depth;
-	if (tr->filter && !match(tr->filter, node->key))
+	if (tr->filter && !complete_match(tr->filter, node->key))
 		return ;
 	complete_buf_push(tr->items, (t_complete_item){
 		.kind = COMPLETE_WORD,

@@ -67,4 +67,16 @@ complete_free(void *ptr);
 void
 complete_add(t_shell *shell, const char *cmd, t_cmd_comp_opt opt);
 
+/** @brief Arguments for the complete builtin */
+typedef struct s_complete_args
+{
+	void		*opts;
+	t_shell		*shell;
+	int			fail;
+	const char	*cmd;
+	const char	*shortname;
+	const char	*longname;
+	const char	*desc;
+}	t_complete_args;
+
 #endif // COMPLETE_H

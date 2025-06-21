@@ -33,8 +33,8 @@ void
 	{
 		new_cap = (comp->opts_cap + !comp->opts_cap) * 2;
 		comp->opts = ft_realloc(comp->opts,
-			sizeof(t_cmd_comp_opt) * comp->opts_size,
-			sizeof(t_cmd_comp_opt) * new_cap);
+				sizeof(t_cmd_comp_opt) * comp->opts_size,
+				sizeof(t_cmd_comp_opt) * new_cap);
 		comp->opts_cap = new_cap;
 	}
 	comp->opts[comp->opts_size++] = opt;
@@ -44,7 +44,7 @@ void
 	complete_free(void *ptr)
 {
 	t_cmd_completion *const	comp = ptr;
-	size_t				i;
+	size_t					i;
 
 	i = 0;
 	while (i < comp->opts_size)
@@ -61,5 +61,3 @@ void
 	free(comp->source_from);
 	free(comp);
 }
-
-

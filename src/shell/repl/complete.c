@@ -9,25 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
-
-void
-	complete_buf_push(t_complete_buf *buf, t_complete_item item)
-{
-	size_t	new_cap;
-
-	if (buf->capacity <= buf->size)
-	{
-		new_cap = (buf->capacity * 2) + !buf->capacity * 16;
-		buf->data = ft_realloc(buf->data,
-				sizeof(t_complete_item) * buf->capacity,
-				sizeof(t_complete_item) * new_cap);
-		buf->capacity = new_cap;
-	}
-	buf->data[buf->size++] = item;
-}
 
 /** @brief Checks if the current token position is a command start */
 static int
@@ -36,7 +18,7 @@ static int
 	t_token_list *const	list = &((t_repl_data *)line->data)->list;
 	size_t				j;
 
-	if (i == list->size || i == 0)
+	if (i >= list->size || i == 0)
 		return (1);
 	j = i;
 	if (j && list->tokens[j].type == TOK_SPACE)
@@ -55,13 +37,13 @@ static int
 	return (1);
 }
 
+/** @brief Gets the completion filter text */
 static char
-	*get_filter(t_getline *line, size_t *word_start, size_t *word_end, int *cmd)
+	*get_filter(t_getline *line, size_t *ws, size_t *we, int *cmd)
 {
 	t_token_list *const	list = &((t_repl_data *)line->data)->list;
 	size_t				i;
 	size_t				j;
-	t_string_buffer		buf;
 
 	i = 0;
 	while (i < list->size && list->tokens[i].end < line->cursor_index)
@@ -73,18 +55,12 @@ static char
 	if (i >= list->size || !token_isword(list->tokens[i].type))
 	{
 		if (i && i < list->size)
-			return (*word_start = list->tokens[i].end,
-				*word_end = list->tokens[i].end, NULL);
+			return (*ws = list->tokens[i].end, *we = list->tokens[i].end, NULL);
 		return (NULL);
 	}
-	stringbuf_init(&buf, 24);
-	*word_start = list->tokens[j].start;
-	while (j <= i)
-		token_wordcontent(&buf, &list->tokens[j++]);
-	*word_end = list->tokens[i].end;
-	if (!buf.len)
-		return (stringbuf_free(&buf), NULL);
-	return (stringbuf_cstr(&buf));
+	*ws = list->tokens[j].start;
+	*we = list->tokens[i].end;
+	return (complete_token_content(list, i, j));
 }
 
 /** @brief Sorts completion entry based on entry kind and name
