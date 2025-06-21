@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "tokenizer.h"
+#include "util/util.h"
 
 size_t
 	find_unescaped(t_string input, const char *token)
@@ -39,6 +40,36 @@ size_t
 	return ((size_t)-1);
 }
 
+static int
+	find_matching_loop(
+	int match_open,
+	int match_close,
+	size_t *escape,
+	size_t *balance)
+{
+	if (match_open)
+	{
+		if (*escape % 2 == 1)
+			*escape = 0;
+		else
+			++*balance;
+		return (1);
+	}
+	else if (match_close)
+	{
+		if (*escape % 2 == 1)
+			*escape = 0;
+		else
+		{
+			--*balance;
+			if (!*balance)
+				return (-1);
+		}
+		return (1);
+	}
+	return (0);
+}
+
 size_t
 	find_matching(
 	t_string input,
@@ -48,8 +79,9 @@ size_t
 {
 	const size_t	lens[2] = {ft_strlen(opening), ft_strlen(closing)};
 	size_t			escape;
-	t_u8_iterator	it;
 	size_t			balance;
+	t_u8_iterator	it;
+	int				status;
 
 	escape = 0;
 	it = it_new(input);
@@ -57,27 +89,13 @@ size_t
 	balance = 1;
 	while (it.codepoint.len)
 	{
-		if (!str_cmp(it_substr(&it, lens[0]), opening))
-		{
-			if (escape % 2 == 1)
-				escape = 0;
-			else
-				++balance;
-		}
-		else if (!str_cmp(it_substr(&it, lens[1]), closing))
-		{
-			if (escape % 2 == 1)
-				escape = 0;
-			else
-			{
-				--balance;
-				if (!balance)
-					return (it.byte_pos);
-			}
-		}
-		else if (escaped && it.codepoint.str[0] == '\\')
+		status = find_matching_loop(!str_cmp(it_substr(&it, lens[0]), opening),
+				!str_cmp(it_substr(&it, lens[1]), closing), &escape, &balance);
+		if (status == -1)
+			return (it.byte_pos);
+		if (status == 0 && escaped && it.codepoint.str[0] == '\\')
 			++escape;
-		else
+		else if (status == 0)
 			escape = 0;
 		it_next(&it);
 	}
