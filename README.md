@@ -14,6 +14,8 @@ To build `minishell`, use the following:
 Once you have compiled `minishell`, move the executable within your `$PATH`.
 Then you can move the `default.sh` file to either `~/.hshrc` or `$XDG_CONFIG_HOME/hsh/profile.sh`.
 
+If you want to enable completion, then set the `SHELL_COMPLETION` variable to the locaiton of the `completion` folder.
+
 ## Running tests
 
 To build the tests, use the following:
@@ -99,12 +101,13 @@ unlike bash which displays an error only if there are 0 active loops*
  * Implement close redirections
  * Implement aliases (currently functions can be used as a replacement)
  * Implement the `shopt`/`set` builtin
- * Implement program-based completion
+ * Better program-based completion
  * Implement auto-completion (ala fish)
  * Some way to debug the shell's evaluation (e.g bash -x)
  * Arithmetic expansion `$((2+2))`
  * Line wrapping for getline
-
+ * Implement job control
+ * Implement the time keyword
 
 # License
 

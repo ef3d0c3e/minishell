@@ -1,0 +1,8 @@
+complete -c cmd -d 'Modify the treatment of string after /c or /k'
+complete -c cmd -d 'Turn the echo off'
+complete -c cmd -d 'Disable execution of AutoRun commands'
+complete -c cmd -d 'Set the background and foreground color'
+complete -c cmd -d 'Manage command extensions'
+complete -c cmd -d 'Manage file and directory name completion'
+complete -c cmd -d 'Manage delayed environment variable expansion'
+complete -c cmd -d 'Show help'

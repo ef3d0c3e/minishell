@@ -1,0 +1,6 @@
+complete -c micro -d 'Cleans the configuration directory'
+complete -c micro -d 'Custom location for the configuration directory'
+complete -c micro -d 'Show all option help'
+complete -c micro -d 'Enable debug mode'
+complete -c micro -d 'Show version information'
+complete -c micro -d 'Show help message'

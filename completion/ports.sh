@@ -1,0 +1,5 @@
+complete -c ports -s 'u' -l 'update' -d 'Update ports'
+complete -c ports -s 'l' -l 'list' -d 'List ports'
+complete -c ports -s 'd' -l 'diff' -d 'List version diffs between local and installed ports'
+complete -c ports -s 'v' -l 'version' -d 'Print version'
+complete -c ports -s 'h' -l 'help' -d 'Print help'

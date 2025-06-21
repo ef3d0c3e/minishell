@@ -1,0 +1,6 @@
+complete -c cleanmgr -d 'Specify the drive'
+complete -c cleanmgr -d 'Run the specified tasks that are assigned to the n value'
+complete -c cleanmgr -d 'Run /sageset and /sagerun for the same n'
+complete -c cleanmgr -d 'Run with the default settings'
+complete -c cleanmgr -d 'Run with the default settings, no user prompts'
+complete -c cleanmgr -d 'Show help'

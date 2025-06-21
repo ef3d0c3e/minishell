@@ -1,0 +1,6 @@
+complete -c lua -s 'e' -d 'Execute string'
+complete -c lua -s 'l' -d 'Require library'
+complete -c lua -s 'i' -d 'Enter interactive mode after executing script'
+complete -c lua -s 'v' -d 'Show version'
+complete -c lua -s 'h' -l 'help' -d 'Print help and exit'
+complete -c lua -d 'Execute stdin and stop handling options'

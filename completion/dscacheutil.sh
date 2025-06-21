@@ -1,0 +1,8 @@
+complete -c dscacheutil -d 'Directory Service cache utility'
+complete -c dscacheutil -s 'h' -d 'lists options'
+complete -c dscacheutil -s 'a' -d '-q: specific key & value'
+complete -c dscacheutil -d 'dump cache overview'
+complete -c dscacheutil -d 'show hash buckets'
+complete -c dscacheutil -d 'print current config'
+complete -c dscacheutil -d 'prints cache stats'
+complete -c dscacheutil -d 'reset cache (DNS	)'

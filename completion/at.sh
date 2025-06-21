@@ -1,0 +1,8 @@
+complete -c at -s 'V' -d 'Display version and exit'
+complete -c at -s 'q' -d 'Use specified queue'
+complete -c at -s 'm' -d 'Send mail to user'
+complete -c at -s 'f' -d 'Read job from file'
+complete -c at -s 'l' -d 'Alias for atq'
+complete -c at -s 'd' -d 'Alias for atrm'
+complete -c at -s 'v' -d 'Show the time'
+complete -c at -s 'c' -d 'Print the jobs listed'

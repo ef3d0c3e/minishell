@@ -1,0 +1,8 @@
+complete -c trash-empty -s 'h' -l 'help' -d 'show help message'
+complete -c trash-empty -l 'print-completion' -d 'print shell completion script'
+complete -c trash-empty -l 'version' -d 'show version number'
+complete -c trash-empty -s 'v' -l 'verbose' -d 'list files that will be deleted'
+complete -c trash-empty -l 'trash-dir' -d 'specify trash directory'
+complete -c trash-empty -l 'all-users' -d 'empty trashcan of all users'
+complete -c trash-empty -s 'i' -l 'interactive' -d 'prompt before emptying'
+complete -c trash-empty -l 'dry-run' -d 'show which files would have been removed'

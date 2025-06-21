@@ -1,0 +1,7 @@
+complete -c caffeinate -s 'd' -d 'Create an assertion to prevent the display from sleeping'
+complete -c caffeinate -s 'i' -d 'Create an assertion to prevent the system from idle sleeping'
+complete -c caffeinate -s 'm' -d 'Create an assertion to prevent the disk from idle sleeping'
+complete -c caffeinate -s 's' -d 'Create an assertion to prevent the system from sleeping (AC power)'
+complete -c caffeinate -s 'u' -d 'Create an assertion to declare that user is active'
+complete -c caffeinate -s 't' -d 'Specifies the timeout value in seconds'
+complete -c caffeinate -s 'w' -d 'Waits for the process with the specified PID to exit'

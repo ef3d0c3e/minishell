@@ -1,0 +1,8 @@
+complete -c conjure -d 'Monitor progress'
+complete -c conjure -d 'Suppress all warning messages'
+complete -c conjure -d 'Pay attention to warning messages'
+complete -c conjure -d 'Seed a new sequence of pseudo-random numbers [value]'
+complete -c conjure -d 'Print detailed information about the image'
+complete -c conjure -d 'Display copious debugging information [events]'
+complete -c conjure -d 'Print program options'
+complete -c conjure -d 'Format of debugging information [format]'

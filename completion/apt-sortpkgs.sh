@@ -1,0 +1,5 @@
+complete -c apt-sortpkgs -s 'h' -l 'help' -d 'Display help and exit'
+complete -c apt-sortpkgs -s 's' -l 'source' -d 'Use source index field'
+complete -c apt-sortpkgs -s 'v' -l 'version' -d 'Display version and exit'
+complete -c apt-sortpkgs -s 'c' -l 'conf-file' -d 'Specify conffile'
+complete -c apt-sortpkgs -s 'o' -l 'option' -d 'Set config options'

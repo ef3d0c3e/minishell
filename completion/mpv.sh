@@ -1,0 +1,7 @@
+complete -c mpv -l 'start' -d 'Seek to given position (%, s, hh:mm:ss)'
+complete -c mpv -l 'no-audio' -d 'Disable audio'
+complete -c mpv -l 'no-audio-display' -d 'Hide attached picture for audio'
+complete -c mpv -l 'no-video' -d 'Disable video'
+complete -c mpv -l 'fs' -d 'Fullscreen playback'
+complete -c mpv -l 'sub-file' -d 'Specify subtitle file'
+complete -c mpv -l 'playlist' -d 'Specify playlist file'

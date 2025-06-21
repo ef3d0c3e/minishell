@@ -1,0 +1,8 @@
+complete -c zabbix_proxy -s 'c' -l 'config' -d 'Use an alternate config-file.'
+complete -c zabbix_proxy -s 'f' -l 'foreground' -d 'Run Zabbix agent in foreground.'
+complete -c zabbix_proxy -s 'R' -l 'runtime-control' -d 'Perform administrative functions.'
+complete -c zabbix_proxy -s 'h' -l 'help' -d 'Display this help and exit.'
+complete -c zabbix_proxy -s 'V' -l 'version' -d 'Output version information and exit.'
+complete -c zabbix_proxy -s 'R' -l 'runtime-control'
+complete -c zabbix_proxy -s 'R' -l 'runtime-control'
+complete -c zabbix_proxy -s 'R' -l 'runtime-control'

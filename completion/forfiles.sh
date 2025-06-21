@@ -1,0 +1,5 @@
+complete -c forfiles -d 'Specify the path from which to start the search'
+complete -c forfiles -d 'Search files according to the specified search mask'
+complete -c forfiles -d 'Instruct the forfiles command to search in subdirectories recursively'
+complete -c forfiles -d 'Run the specified command on each file'
+complete -c forfiles -d 'Show help'

@@ -1,0 +1,8 @@
+complete -c openocd -s 'h' -l 'help' -d 'display help'
+complete -c openocd -s 'v' -l 'version' -d 'display version info'
+complete -c openocd -s 'f' -l 'file'
+complete -c openocd -s 'd' -l 'debug' -d 'run under debug level 3'
+complete -c openocd -s 'd' -l 'debug' -d 'run under debug level n'
+complete -c openocd -s 'l' -l 'log_output' -d 'redirect output to file'
+complete -c openocd -s 'c' -l 'command' -d 'run command'
+complete -c openocd -s 's' -l 'search' -d 'search path for config files and scripts'

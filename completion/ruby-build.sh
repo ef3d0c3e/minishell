@@ -1,0 +1,5 @@
+complete -c ruby-build -d 'Definition'
+complete -c ruby-build -l 'keep' -s 'k' -d 'Do not remove source tree after installation'
+complete -c ruby-build -l 'verbose' -s 'v' -d 'Verbose mode: print compilation status to stdout'
+complete -c ruby-build -l 'definitions' -d 'List all built-in definitions'
+complete -c ruby-build -l 'help' -s 'h' -d 'Display help information'

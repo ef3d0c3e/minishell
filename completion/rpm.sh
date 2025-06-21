@@ -1,0 +1,6 @@
+complete -c rpm -s '?' -l 'help' -d 'Display help and exit'
+complete -c rpm -l 'version' -d 'Display version and exit'
+complete -c rpm -l 'quiet' -d 'Quiet mode'
+complete -c rpm -s 'v' -d 'Verbose mode'
+complete -c rpm -l 'rcfile' -d 'List of rpm configuration files'
+complete -c rpm -l 'pipe' -d 'Pipe output through specified command'

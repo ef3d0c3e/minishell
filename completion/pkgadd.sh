@@ -1,0 +1,5 @@
+complete -c pkgadd -l 'upgrade' -d 'Upgrade'
+complete -c pkgadd -l 'force' -d 'Force installation, overwriting'
+complete -c pkgadd -l 'root' -d 'Alternative installation root'
+complete -c pkgadd -l 'version' -d 'Print version'
+complete -c pkgadd -l 'help' -d 'Print help'

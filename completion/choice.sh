@@ -1,0 +1,7 @@
+complete -c choice -d 'Specify the list of choices to be created'
+complete -c choice -d 'Hide the list of choices'
+complete -c choice -d 'Specify that the choices are case-sensitive'
+complete -c choice -d 'Specify the number of seconds'
+complete -c choice -d 'Specify the default choice'
+complete -c choice -d 'Specify a message'
+complete -c choice -d 'Show help'

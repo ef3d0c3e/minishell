@@ -1,0 +1,6 @@
+complete -c csi -d 'Display this usage message'
+complete -c csi -d 'Display the version and exit'
+complete -c csi -s 'i' -d 'Drop to REPL after executing the specified script'
+complete -c csi -d 'Reference metadata from the specified assembly file(s)'
+complete -c csi -d 'List of directories where to look for libraries specified by #r directive'
+complete -c csi -d 'Define global namespace using'

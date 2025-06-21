@@ -1,0 +1,7 @@
+complete -c rc-service -s 'e' -l 'exists' -d 'Tests if the service exists or not'
+complete -c rc-service -s 'l' -l 'list' -d 'List all available services'
+complete -c rc-service -s 'h' -l 'help' -d 'Display the help output'
+complete -c rc-service -s 'C' -l 'nocolor' -d 'Disable color output'
+complete -c rc-service -s 'V' -l 'version' -d 'Display software version'
+complete -c rc-service -s 'v' -l 'verbose' -d 'Run verbosely'
+complete -c rc-service -s 'q' -l 'quiet' -d 'Run quietly (Does not affect errors)'

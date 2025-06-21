@@ -1,0 +1,6 @@
+complete -c trash-list -s 'h' -l 'help' -d 'show help message'
+complete -c trash-list -l 'print-completion' -d 'print completion script'
+complete -c trash-list -l 'version' -d 'show version number'
+complete -c trash-list -l 'trash-dirs' -d 'list trash dirs'
+complete -c trash-list -l 'trash-dir' -d 'specify trash directory'
+complete -c trash-list -l 'all-users' -d 'list trashcans of all users'

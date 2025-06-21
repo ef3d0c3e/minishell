@@ -1,0 +1,8 @@
+complete -c avifdec -s 'h' -l 'help' -d 'Show syntax help'
+complete -c avifdec -s 'V' -l 'version' -d 'Show the version number'
+complete -c avifdec -s 'j' -l 'jobs' -d 'Number of jobs'
+complete -c avifdec -s 'd' -l 'depth' -d 'Output depth'
+complete -c avifdec -s 'q' -l 'quality' -d 'Output quality'
+complete -c avifdec -s 'u' -l 'upsampling' -d 'Chroma upsampling'
+complete -c avifdec -s 'i' -l 'info' -d 'Display all image information'
+complete -c avifdec -l 'ignore-icc' -d 'Ignore an embedded ICC profile'

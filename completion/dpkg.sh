@@ -1,0 +1,7 @@
+complete -c dpkg -s 'i' -l 'install' -d 'Install .deb package'
+complete -c dpkg -l 'unpack' -d 'Unpack .deb package'
+complete -c dpkg -l 'force-all' -d 'Continue on all problems'
+complete -c dpkg -s 'b' -l 'build' -d 'Build package from directory'
+complete -c dpkg -s 'c' -l 'contents' -d 'List contents of .deb'
+complete -c dpkg -s 'I' -l 'info' -d 'Show .deb information'
+complete -c dpkg -s 'S' -l 'search' -d 'Search for packages containing file'

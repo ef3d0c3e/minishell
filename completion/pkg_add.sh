@@ -1,0 +1,6 @@
+complete -c pkg_add -d 'failsafe to overwrite'
+complete -c pkg_add -d 'Turn on stats'
+complete -c pkg_add -d 'Automated package installation'
+complete -c pkg_add -d 'Print help'
+complete -c pkg_add -d 'Update packages'
+complete -c pkg_add -d 'Fuzzy match'

@@ -1,0 +1,5 @@
+complete -c setsid -d 'Command to run'
+complete -c setsid -l 'ctty' -s 'c' -d 'Set controlling terminal to current one'
+complete -c setsid -l 'wait' -s 'w' -d 'Wait until program ends and return its exit value'
+complete -c setsid -l 'version' -s 'V' -d 'Display version and exit'
+complete -c setsid -l 'help' -s 'h' -d 'Display help and exit'

@@ -1,0 +1,5 @@
+complete -c fish_delta -s 'c' -l 'no-completions' -d 'Ignore completions'
+complete -c fish_delta -s 'f' -l 'no-functions' -d 'Ignore function files'
+complete -c fish_delta -s 'C' -l 'no-config' -d 'Ignore config files'
+complete -c fish_delta -s 'n' -l 'new' -d 'Include new files'
+complete -c fish_delta -s 'V' -l 'vendor' -d 'Choose how to count vendor files'

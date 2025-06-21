@@ -1,0 +1,6 @@
+complete -c iw -l 'debug' -d 'Enable netlink message debugging'
+complete -c iw -l 'version' -d 'Print the version'
+complete -c iw -s 't' -d 'Print timestamp'
+complete -c iw -s 'r' -d 'Print relative timestamp'
+complete -c iw -s 'f' -d 'Print full frame for auth/assoc'
+complete -c iw -d 'Notify the kernel about the current regulatory domain'

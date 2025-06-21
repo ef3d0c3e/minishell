@@ -1,0 +1,8 @@
+complete -c rfkill -d 'device group'
+complete -c rfkill -s 'V' -l 'version' -d 'Print version'
+complete -c rfkill -s 'h' -l 'help' -d 'Print help'
+complete -c rfkill -s 'J' -l 'json' -d 'JSON output'
+complete -c rfkill -s 'r' -l 'raw' -d 'Raw output'
+complete -c rfkill -s 'n' -l 'noheadings' -d 'Don'"'"'t print headings'
+complete -c rfkill -s 'o' -l 'output' -d 'Columns to output'
+complete -c rfkill -l 'output-all' -d 'Output all columns'

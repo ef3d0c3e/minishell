@@ -1,0 +1,5 @@
+complete -c date -d 'display or set date and time'
+complete -c date -s 'a' -d 'Change clock slowly with adjtime'
+complete -c date -s 'r' -d 'Show date given seconds since epoch'
+complete -c date -s 'z' -d 'Specify timezone for output'
+complete -c date -s 'f' -d 'Use format string to parse date'

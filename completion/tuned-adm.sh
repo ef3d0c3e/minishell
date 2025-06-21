@@ -1,0 +1,6 @@
+complete -c tuned-adm -s 'h' -l 'help' -d 'show this help message and exit'
+complete -c tuned-adm -s 'v' -l 'version' -d 'show program'"'"'s version number and exit'
+complete -c tuned-adm -s 'd' -l 'debug' -d 'show debug messages'
+complete -c tuned-adm -s 'a' -l 'async' -d 'with dbus do not wait on commands completion and return immediately'
+complete -c tuned-adm -s 't' -l 'timeout' -d 'with sync operation use specific timeout instead of the default 600 second(s)'
+complete -c tuned-adm -s 'l' -l 'loglevel' -d 'level of log messages to capture'

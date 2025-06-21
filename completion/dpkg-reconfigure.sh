@@ -1,0 +1,8 @@
+complete -c dpkg-reconfigure -d 'Package'
+complete -c dpkg-reconfigure -s 'h' -l 'help' -d 'Display help'
+complete -c dpkg-reconfigure -s 'f' -l 'frontend' -d 'Set configuration frontend'
+complete -c dpkg-reconfigure -s 'p' -l 'priority' -d 'Set priority threshold'
+complete -c dpkg-reconfigure -l 'default-priority' -d 'Use current default priority threshold'
+complete -c dpkg-reconfigure -s 'u' -l 'unseen-only' -d 'Show only unseen question'
+complete -c dpkg-reconfigure -l 'force' -d 'Reconfigure also inconsistent packages'
+complete -c dpkg-reconfigure -l 'no-reload' -d 'Prevent reloading templates'

@@ -1,0 +1,6 @@
+complete -c mkpasswd -s 'S' -l 'salt' -d 'Use given string as salt'
+complete -c mkpasswd -s 'R' -l 'rounds' -d 'Use given number of rounds'
+complete -c mkpasswd -s 'm' -l 'method' -d 'Compute the password using the given method'
+complete -c mkpasswd -s '5' -d 'Like --method=md5crypt'
+complete -c mkpasswd -s 'P' -l 'password-fd' -d 'Read the password from the given file descriptor'
+complete -c mkpasswd -s 's' -l 'stdin' -d 'Read the password from stdin'

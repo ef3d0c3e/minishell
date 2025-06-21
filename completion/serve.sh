@@ -1,0 +1,7 @@
+complete -c serve -l 'help' -s 'h' -d 'Shows help message'
+complete -c serve -l 'version' -s 'v' -d 'Displays the current version of serve'
+complete -c serve -l 'listen' -s 'l' -d 'Specify a URI endpoint on which to listen'
+complete -c serve -l 'debug' -s 'd' -d 'Show debugging information'
+complete -c serve -l 'single' -s 's' -d 'Rewrite all not-found requests to `index.html`'
+complete -c serve -l 'config' -s 'c' -d 'Specify custom path to `serve.json`'
+complete -c serve -l 'no-clipboard' -s 'n' -d 'Do not copy the local address to the clipboard'

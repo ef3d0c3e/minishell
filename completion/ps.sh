@@ -1,0 +1,8 @@
+complete -c ps -s 'O' -d 'User defined format'
+complete -c ps -s 'w' -d 'Wide output'
+complete -c ps -s 'o' -d 'User defined format'
+complete -c ps -s 'Z' -d 'Include security info'
+complete -c ps -s 't' -d 'Select by tty'
+complete -c ps -s 'G' -d 'Select by group'
+complete -c ps -s 'U' -d 'Select by user'
+complete -c ps -s 'p' -d 'Select by PID'

@@ -1,0 +1,5 @@
+complete -c xbps-fetch -s 'd' -d 'Enables debug messages on stderr.'
+complete -c xbps-fetch -s 'h' -d 'Show the help message.'
+complete -c xbps-fetch -s 'o' -d 'Rename file from specified URL to output.'
+complete -c xbps-fetch -s 'v' -d 'Enables verbose messages.'
+complete -c xbps-fetch -s 'V' -d 'Show the version information.'

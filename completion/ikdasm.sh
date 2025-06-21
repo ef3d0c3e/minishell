@@ -1,0 +1,7 @@
+complete -c ikdasm -d 'Show help'
+complete -c ikdasm -d 'Redirect stdout to file'
+complete -c ikdasm -d 'Include Assembly table contents'
+complete -c ikdasm -d 'Include AssemblyRef table contents'
+complete -c ikdasm -d 'Include ModuleRef table contents'
+complete -c ikdasm -d 'Include ExportedType table contents'
+complete -c ikdasm -d 'Include CustomAttribute table contents'

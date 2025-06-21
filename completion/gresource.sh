@@ -1,0 +1,7 @@
+complete -c gresource -l 'section' -d 'Select which section to operate on'
+complete -c gresource -d 'List resource sections'
+complete -c gresource -d 'List resources with details'
+complete -c gresource -d 'Extract a resource'
+complete -c gresource -d 'List resource sections'
+complete -c gresource -d 'Prints help'
+complete -c gresource -d 'Command'

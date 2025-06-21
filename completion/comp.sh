@@ -1,0 +1,8 @@
+complete -c comp -d 'Display differences in decimal format'
+complete -c comp -d 'Display differences as characters'
+complete -c comp -d 'Displays the number of the line where a difference occurs'
+complete -c comp -d 'Compare only the number of lines that are specified for each file'
+complete -c comp -d 'Perform a comparison that is not case-sensitive'
+complete -c comp -d 'Process files with the offline attribute set'
+complete -c comp -d 'Process files with the offline attribute set'
+complete -c comp -d 'Show help'

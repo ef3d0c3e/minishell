@@ -1,0 +1,5 @@
+complete -c cmdkey -d 'Specify the password'
+complete -c cmdkey -d 'Specify the user or account name'
+complete -c cmdkey -d 'Specify the user or account name'
+complete -c cmdkey -d 'Display the list of stored user names and credentials'
+complete -c cmdkey -d 'Show help'

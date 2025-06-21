@@ -1,0 +1,5 @@
+complete -c tig -l 'stdin' -d 'Read git commit IDs from stdin'
+complete -c tig -l 'pretty=raw' -d 'Read git log output from stdin'
+complete -c tig -s 'C' -d 'Run as if Tig was started in this directory'
+complete -c tig -s 'v' -l 'version' -d 'Show version and exit'
+complete -c tig -s 'h' -l 'help' -d 'Show help message and exit'

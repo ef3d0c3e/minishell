@@ -1,0 +1,8 @@
+complete -c gvim -s 'g' -d 'Run using GUI'
+complete -c gvim -d 'Use <font> for normal text'
+complete -c gvim -d 'Use <geom> for initial geometry'
+complete -c gvim -d 'Use reverse video'
+complete -c gvim -l 'display' -d 'Run vim on <display>'
+complete -c gvim -l 'role' -d 'Set role for identifying the window in X11'
+complete -c gvim -l 'socketid' -d 'Open Vim inside another GTK widget'
+complete -c gvim -l 'echo-wid' -d 'Echo the Window ID on stdout'

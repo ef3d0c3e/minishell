@@ -1,0 +1,6 @@
+complete -c gpasswd -s 'a' -l 'add' -d 'Add user to group'
+complete -c gpasswd -s 'd' -l 'delete' -d 'Remove user from group'
+complete -c gpasswd -s 'h' -l 'help' -d 'Print help'
+complete -c gpasswd -s 'R' -l 'restrict' -d 'Restrict access to GROUP to its members'
+complete -c gpasswd -s 'M' -l 'members' -d 'Set the list of members of GROUP'
+complete -c gpasswd -s 'A' -l 'administrators' -d 'set the list of administrators for GROUP'

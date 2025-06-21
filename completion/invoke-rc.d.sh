@@ -1,0 +1,6 @@
+complete -c invoke-rc.d -d 'Start the service'
+complete -c invoke-rc.d -d 'Stop the service'
+complete -c invoke-rc.d -d 'Restart the service'
+complete -c invoke-rc.d -d 'Reload Configuration'
+complete -c invoke-rc.d -d 'Force reloading configuration'
+complete -c invoke-rc.d -d 'Print the status of the service'

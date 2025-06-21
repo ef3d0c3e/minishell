@@ -1,0 +1,7 @@
+complete -c gapplication -d 'Print help'
+complete -c gapplication -d 'Print version'
+complete -c gapplication -d 'List applications'
+complete -c gapplication -d 'Launch an application'
+complete -c gapplication -d 'List available actions'
+complete -c gapplication -d 'Activate an action'
+complete -c gapplication -d 'Command'

@@ -1,0 +1,8 @@
+complete -c time -d 'Command'
+complete -c time -s 'f' -l 'format' -d 'Specify output format'
+complete -c time -s 'p' -l 'portable' -d 'Use the portable output format'
+complete -c time -s 'o' -l 'output' -d 'Do not send the results to stderr, but overwrite the specified file'
+complete -c time -s 'a' -l 'append' -d '(Used together with -o) Do not overwrite but append'
+complete -c time -s 'v' -l 'verbose' -d 'Verbose mode'
+complete -c time -l 'help' -d 'Display help and exit'
+complete -c time -s 'V' -l 'version' -d 'Display version and exit'

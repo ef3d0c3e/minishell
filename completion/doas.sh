@@ -1,0 +1,6 @@
+complete -c doas -s 'a' -d 'Choose auth method on systems using /etc/login.conf'
+complete -c doas -s 'C' -d 'validate given config file and test it against given command'
+complete -c doas -s 'L' -d 'Clear persisted authorizations, then exit'
+complete -c doas -s 'n' -d 'Fail if doas would prompt for password'
+complete -c doas -s 's' -d 'Execute the shell from SHELL or /etc/passwd'
+complete -c doas -s 'u' -d 'Execute the command as user. The default is root.'

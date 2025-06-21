@@ -1,0 +1,7 @@
+complete -c whatis -s 'd' -l 'debug' -d 'Debug'
+complete -c whatis -s 'v' -l 'verbose' -d 'Verbose'
+complete -c whatis -s 'r' -l 'regex' -d 'Interpret each keyword as a regex'
+complete -c whatis -s 'w' -l 'wildcard' -d 'Allow wildcards'
+complete -c whatis -s 'l' -l 'long' -d 'Do not trim output to terminal width'
+complete -c whatis -s '?' -l 'help' -l 'usage' -d 'Display help and exit'
+complete -c whatis -s 'V' -l 'version' -d 'Print program version'
