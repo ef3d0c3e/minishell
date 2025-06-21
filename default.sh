@@ -15,7 +15,7 @@ prompt_left()
 		STATUS=" $(colored 1)[CODE: $ERR]"
 	fi
 	GIT="$(git branch --show-current 2&>/dev/null)"
-	if [ $? == 0 ]
+	if [ $? == 0 ] && [ ! -z "$GIT" ]
 	then
 		GIT=" $(colored 2)($GIT)"
 	else
