@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 /** @brief Checks if the current token position is a command start */
@@ -51,7 +52,7 @@ static char
 	j = i;
 	while (j && token_isword(list->tokens[j - 1].type))
 		--j;
-	*cmd = is_cmd_start(line, j + 1);
+	*cmd = is_cmd_start(line, i);
 	if (i >= list->size || !token_isword(list->tokens[i].type))
 	{
 		if (i && i < list->size)
@@ -60,7 +61,7 @@ static char
 	}
 	*ws = list->tokens[j].start;
 	*we = list->tokens[i].end;
-	return (complete_token_content(list, i, j));
+	return (complete_token_content(list, i, j + 1));
 }
 
 /** @brief Sorts completion entry based on entry kind and name

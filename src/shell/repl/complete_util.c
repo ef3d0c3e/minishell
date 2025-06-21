@@ -56,7 +56,7 @@ char
 	t_string_buffer		buf;
 
 	stringbuf_init(&buf, 24);
-	while (start <= end)
+	while (start < end)
 		token_wordcontent(&buf, &list->tokens[start++]);
 	if (!buf.len)
 		return (stringbuf_free(&buf), NULL);

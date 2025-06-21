@@ -84,8 +84,8 @@ static void
 	ft_dprintf(2, "Minishell -- A simple C shell\n"
 		"Copyright (c) 2025 Lino Gamba and Thomas Schneider\n"
 		"Minishell is licensed under the GNU General Public License version 3"
-		"(GPLv3),\nunder the terms of the Free Software Foundation "
-		"<https://www.gnu.org/licenses/agpl-3.0.en.html>.\n\n"
+		" (GPLv3),\nunder the terms of the Free Software Foundation"
+		" <https://www.gnu.org/licenses/agpl-3.0.en.html>.\n\n"
 		"Minishell Version: 0.1\n");
 	exit(0);
 }
