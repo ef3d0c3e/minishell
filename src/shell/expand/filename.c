@@ -9,65 +9,7 @@
 /*   Updated: 2025/06/19 14:31:37 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "builtins/builtin.h"
-#include "shell/expand/expand.h"
 #include <shell/shell.h>
-#include <stddef.h>
-
-/** @brief Checks if a fragment range needs filename expansion by scanning for
- * reserved words */
-static int
-	needs_expansion(
-	t_shell *shell,
-	const t_fragment *start,
-	const t_fragment *end)
-{
-	static const char		*alts[] = {"*", "?", NULL};
-	static const char		*glob[] = {"@", "!", "+", NULL};
-	const t_string_buffer	*word;
-
-	while (start != end)
-	{
-		if (start->flags & (FL_SQUOTED | FL_DQUOTED) && ++start)
-			continue ;
-		word = &start->word;
-		if (str_find_alternatives((t_string){word->str, word->len}, alts))
-			return (1);
-		else if (option_value(shell, "extglob")
-			&& str_find_alternatives((t_string){word->str, word->len}, glob))
-			return (1);
-		++start;
-	}
-	return (0);
-}
-
-// TODO: Error handling for failglob
-static int
-	make_regex(
-	const t_globopts *opts,
-	t_fragment *start,
-	t_fragment *end,
-	t_regex *regex)
-{
-	t_regex_builder		builder;
-
-	builder = regex_builder_new();
-	while (start != end)
-	{
-		if (start->flags & (FL_SQUOTED | FL_DQUOTED))
-		{
-			if (!regex_builder_literal(opts, &builder,
-					stringbuf_cstr(&start->word)))
-				return (0);
-		}
-		else if (!regex_builder_expr(opts, &builder,
-				stringbuf_cstr(&start->word)))
-			return (0);
-		++start;
-	}
-	*regex = builder.regex;
-	return (1);
-}
 
 static int
 	collect_files(char *path, const struct stat *sb, void *ptr)
@@ -103,7 +45,7 @@ static int
 	char						*path;
 
 	tr.opts = regex_shellopt_get(shell);
-	if (!make_regex(&tr.opts, start, end, &tr.regex))
+	if (!filename_make_regex(&tr.opts, start, end, &tr.regex))
 		return (0);
 	recurse = regex_recurse_depth(tr.regex.expr);
 	tr.list = list;
@@ -125,7 +67,7 @@ static int
 {
 	t_string_buffer	s;
 
-	if (!needs_expansion(shell, start, end)
+	if (!filename_needs_expansion(shell, start, end)
 		|| !expand_files(shell, list, start, end))
 	{
 		stringbuf_init(&s, 16);

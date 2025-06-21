@@ -15,14 +15,12 @@ int
 	expand_subexpr(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_atom *param,
-	const char *ifs)
+	struct s_atom *param)
 {
 	char						*info;
 	t_string_buffer				*buf;
 	struct s_eval_string_result	result;
 
-	(void)ifs;
 	ft_asprintf(&info, "$(%s)", stringbuf_cstr(&param->text));
 	result
 		= ctx_eval_string(shell, ft_strdup(stringbuf_cstr(&param->text)), info);

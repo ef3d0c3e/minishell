@@ -54,6 +54,13 @@ expand_literal(
 	t_fragment_list *list,
 	struct s_atom *param,
 	const char *ifs);
+/** @brief Performs expansion of a single argument */
+int
+expand_arg(
+	t_shell *shell,
+	t_fragment_list *list,
+	t_word *arg,
+	const char *ifs);
 /**
  * @brief Initializes an empty fragment list
  *
@@ -98,7 +105,7 @@ char
 **fraglist_to_argv(t_fragment_list *list);
 
 /******************************************************************************/
-/* Word expansion                                                              */
+/* Word expansion                                                             */
 /******************************************************************************/
 
 /**
@@ -281,8 +288,7 @@ int
 expand_subexpr(
 	t_shell *shell,
 	t_fragment_list *list,
-	struct s_atom *param,
-	const char *ifs);
+	struct s_atom *param);
 /**
  * @brief Performs word splitting
  *
@@ -305,5 +311,36 @@ word_split(t_shell *shell, t_fragment_list *list, const char *ifs);
  */
 t_fragment_list
 expand_filename(t_shell *shell, t_fragment_list *list);
+
+/**
+ * @brief Checks if argument needs filename expansion
+ *
+ * @param shell The shell session
+ * @param start Argument start
+ * @param end Argument end
+ *
+ * @retruns 1 If argument [start, end) needs expansion]
+ */
+int
+filename_needs_expansion(
+	t_shell *shell,
+	const t_fragment *start,
+	const t_fragment *end);
+/**
+ * @brief Build filename expansion regex for argument
+ *
+ * @param shell The shell session
+ * @param start Argument start
+ * @param end Argument end
+ * @param regex Resulting regex
+ *
+ * @retruns 1 on success, 0 on failure
+ */
+int
+filename_make_regex(
+	const t_globopts *opts,
+	t_fragment *start,
+	t_fragment *end,
+	t_regex *regex);
 
 #endif // EXPAND_H

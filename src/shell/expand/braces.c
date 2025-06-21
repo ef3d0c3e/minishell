@@ -9,9 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/words/words.h"
-#include "shell/expand/expand.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 /** @brief Merge parameter (result) with a @ref W_LITERAL @ref t_atom */

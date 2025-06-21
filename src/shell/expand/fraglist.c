@@ -9,7 +9,6 @@
 /*   Updated: 2025/06/19 13:03:33 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 void
@@ -90,7 +89,5 @@ char
 		argv[size++] = stringbuf_cstr(&buf);
 	else
 		stringbuf_free(&buf);
-	argv[size] = NULL;
-	fraglist_free(list);
-	return (argv);
+	return (argv[size] = NULL, fraglist_free(list), argv);
 }

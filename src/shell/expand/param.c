@@ -25,16 +25,14 @@ static int
 	if (!ft_strcmp(param->param.name, "*"))
 	{
 		stringbuf_init(&buf, 64);
-		while (i < frame->nargs)
+		while (i++ < frame->nargs)
 		{
-			if (i > 1)
+			if (i - 1 > 1)
 				stringbuf_append(&buf, (t_string){ifs, 1});
-			stringbuf_append(&buf, (t_string){frame->args[i],
-				ft_strlen(frame->args[i])});
-			++i;
+			stringbuf_append(&buf, (t_string){frame->args[i - 1],
+				ft_strlen(frame->args[i - 1])});
 		}
-		fraglist_push(list, buf, param->flags);
-		return (1);
+		return (fraglist_push(list, buf, param->flags), 1);
 	}
 	else if (ft_strcmp(param->param.name, "@"))
 		return (0);
@@ -42,8 +40,7 @@ static int
 	{
 		fraglist_push(list, stringbuf_from_range(frame->args[i],
 				frame->args[i] + ft_strlen(frame->args[i])), param->flags);
-		if (i++ > 1)
-			list->fragments[list->size - 1].force_split = 1;
+		list->fragments[list->size - 1].force_split |= (i++ > 1);
 	}
 	return (1);
 }
