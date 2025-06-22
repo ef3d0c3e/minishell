@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
@@ -50,9 +51,9 @@ static char
 	while (i < list->size && list->tokens[i].end < line->cursor_index)
 		++i;
 	j = i;
-	while (j && token_isword(list->tokens[j - 1].type))
+	while (j && token_isword(list->tokens[j].type))
 		--j;
-	*cmd = is_cmd_start(line, i);
+	*cmd = is_cmd_start(line, j);
 	if (i >= list->size || !token_isword(list->tokens[i].type))
 	{
 		if (i && i < list->size)
