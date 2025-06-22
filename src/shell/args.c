@@ -50,7 +50,7 @@ void
 {
 	static char			use[] = "minishell [OPTIONS...]";
 	static t_opt		opts[] = {
-	{"-c", "Evaluate argument in headless mode", headless_mode, 1},
+	{"-c", "COMMAND Evaluate argument in headless mode", headless_mode, 1},
 	{"-z", "Start in clean mode (no profile)", clean_mode, 0},
 	{"-v", "Displays version", print_version, 0},
 	};

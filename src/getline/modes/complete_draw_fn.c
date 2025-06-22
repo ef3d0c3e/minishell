@@ -9,8 +9,6 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "getline/modes/modes.h"
-#include "util/util.h"
 #include <shell/shell.h>
 
 static int
@@ -79,12 +77,12 @@ void
 	stringbuf_append_s(buf, "\x1b[37m");
 	item_kind_color(line, buf, item);
 	w = draw_bounded(buf, item->name, line->state.comp.col_width - 4, "…");
-	while (desc_len + w++ < line->state.comp.col_width - 3)
+	while (desc_len + w++ < line->state.comp.col_width - 4)
 		stringbuf_append_s(buf, " ");
 	if (item->desc)
 	{
 		stringbuf_append_s(buf, "\x1b[33m(");
-		w += 3;
+		w += 3 + (desc_len + w > line->state.comp.col_width - 3);
 		draw_bounded(buf, item->desc, line->state.comp.col_width - w, "…");
 		stringbuf_append_s(buf, ")");
 	}

@@ -78,7 +78,8 @@ int
 	opts.headless = NULL;
 	opts.clean_mode = 0;
 	opts.opts = shell_args_init(&opts);
-	_parse_args(opts.opts, ac, av);
+	if (_parse_args(opts.opts, ac, av) != ac)
+		exit(ft_dprintf(2, "USAGE: %s [OPTIONS...]\n", av[0]) * 0);
 	shell = shell_new(envp);
 	if (opts.headless)
 		ctx_eval_stdout(&shell, ft_strdup(opts.headless));
