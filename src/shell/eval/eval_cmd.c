@@ -9,8 +9,6 @@
 /*   Updated: 2025/06/19 17:39:22 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "parser/ast/ast.h"
-#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 void

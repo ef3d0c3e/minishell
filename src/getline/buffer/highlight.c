@@ -9,15 +9,14 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
 #include <shell/shell.h>
 
 static size_t
 	bfind(t_buffer *buf, size_t start)
 {
-	size_t									lo;
-	size_t									hi;
-	size_t									mid;
+	size_t	lo;
+	size_t	hi;
+	size_t	mid;
 
 	lo = 0;
 	if (!buf->s_attrs.size)

@@ -9,10 +9,7 @@
 /*   Updated: 2025/06/19 06:46:29 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/repl/repl.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
-#include <stddef.h>
 
 static t_buffer_attr
 	get_highlight(enum e_token_type type)

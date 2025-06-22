@@ -9,8 +9,6 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
-#include "tokenizer/tokenizer.h"
 #include <shell/shell.h>
 
 /** @brief Checks if the current token position is a command start */
