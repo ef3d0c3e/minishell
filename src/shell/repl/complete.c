@@ -28,7 +28,8 @@ static void
 		if (tok->type == TOK_PARAM_SIMPLE)
 		{
 			data->kind |= COMP_PARAM;
-			stringbuf_append(&buf, (t_string){tok->word.str, tok->word.len});}
+			stringbuf_append(&buf, (t_string){tok->word.str, tok->word.len});
+		}
 		else
 			token_wordcontent(&buf, tok);
 		++i;
