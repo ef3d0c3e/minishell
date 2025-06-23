@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 void
@@ -61,4 +62,31 @@ char
 	if (!buf.len)
 		return (stringbuf_free(&buf), NULL);
 	return (stringbuf_cstr(&buf));
+}
+
+int
+	complete_sort(const void *a, const void *b)
+{
+	const t_complete_item	*left = a;
+	const t_complete_item	*right = b;
+	size_t					i;
+	char					x;
+	char					y;
+
+	if (left->kind != right->kind)
+		return (left->kind - right->kind);
+	i = 0;
+	while (left->name[i] && right->name[i])
+	{
+		x = left->name[i];
+		y = right->name[i];
+		if (x >= 'a' && x <= 'z')
+			x -= 32;
+		if (y >= 'a' && y <= 'z')
+			y -= 32;
+		if (x != y)
+			return (x - y);
+		++i;
+	}
+	return (left->name[i] - right->name[i]);
 }

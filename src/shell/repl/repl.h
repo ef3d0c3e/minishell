@@ -40,11 +40,38 @@ typedef struct s_complete_buf
 void
 complete_buf_push(t_complete_buf *buf, t_complete_item item);
 
+/**
+ * @brief The kind of completion items wanted
+ */
+enum e_completion_kind
+{
+	/** @brief Wants command completion (execs, functions, builtins) */
+	COMP_CMD = (1<<0),
+	/** @brief Wants files completion */
+	COMP_FILES = (1<<1),
+	/** @brief Wants options completion */
+	COMP_OPTS = (1<<2),
+	/** @brief Wants parameters completion */
+	COMP_PARAM = (1<<3),
+};
+
 /** @brief Repl data stored by getline */
 typedef struct s_repl_data
 {
 	/** @brief Current tokens */
-	t_token_list	list;
+	t_token_list			list;
+	/** @brief Kind of completion wanted */
+	enum e_completion_kind	kind;
+	/** @brief Current command (NULL for none) */
+	char					*cmd;
+	/** @brief Whether the current word is the sequence's start */
+	int						sequence_start;
+	/** @brief Start token of the current word */
+	size_t					tok_start;
+	/** @brief End token of the current word */
+	size_t					tok_end;
+	/** @brief Completion filter (NULL for none) */
+	char					*filter;
 }	t_repl_data;
 
 /** @brief Initializes empty REPL data for getline */
@@ -73,7 +100,7 @@ repl_setup(t_shell *shell);
 t_complete_item
 *repl_completer(t_getline *line, size_t *word_start, size_t *word_end);
 
-/** @brief Data for path traversal */
+/** @brief Data for filename traversal */
 typedef struct s_comp_file_tr
 {
 	/** @brief Completion items */
@@ -87,11 +114,15 @@ typedef struct s_comp_file_tr
 /**
  * @brief Populate completion items using filenames
  *
+ * @param shell The shell session
+ * @param data REPL data
  * @param items Items to populate
- * @param filter Search filter
  */
 void
-repl_complete_filename(t_complete_buf *items, const char *filter);
+repl_complete_filename(
+	t_shell *shell,
+	const t_repl_data *data,
+	t_complete_buf *items);
 
 /** @brief Data for path traversal */
 typedef struct s_comp_cmd_tr
@@ -107,21 +138,39 @@ typedef struct s_comp_cmd_tr
  * and functions)
  *
  * @param shell The shell session
+ * @param data REPL data
  * @param items Items to populate
- * @param filter Search filter
  */
 void
-repl_complete_cmd(t_shell *shell, t_complete_buf *items, const char *filter);
+repl_complete_cmd(
+	t_shell *shell,
+	const t_repl_data *data,
+	t_complete_buf *items);
 /**
  * @brief Populate completion items using the command's arguments (as defined
  * via the `complete` builtin)
  *
- * @param line Getline instance
+ * @param shell The shell session
+ * @param data REPL data
  * @param items Items to populate
- * @param filter Search filter
  */
 void
-repl_complete_opts(t_getline *line, t_complete_buf *items, const char *filter);
+repl_complete_opts(
+	t_shell *shell,
+	const t_repl_data *data,
+	t_complete_buf *items);
+/**
+ * @brief Populate completion items using shell variables
+ *
+ * @param shell The shell session
+ * @param data REPL data
+ * @param items Items to populate
+ */
+void
+repl_complete_params(
+	t_shell *shell,
+	const t_repl_data *data,
+	t_complete_buf *items);
 /**
  * @brief Checks if `name` matches against `filter`
  *
@@ -141,5 +190,15 @@ complete_match(const char *filter, const char *name);
  */
 char
 *complete_token_content(const t_token_list *list, size_t start, size_t end);
+/**
+ * @brief Comparison function used to sort completion entries
+ *
+ * Entries are sorted by kind, then by name (case-insensitive)
+ *
+ * @param a First entry
+ * @param b Second entry
+ */
+int
+complete_sort(const void *a, const void *b);
 
 #endif // REPL_H

@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/repl/repl.h"
 #include <shell/shell.h>
 
 static void
@@ -57,11 +58,16 @@ static void
 }
 
 void
-	repl_complete_cmd(t_shell *shell, t_complete_buf *items, const char *filter)
+	repl_complete_cmd(
+	t_shell *shell,
+	const t_repl_data *data,
+	t_complete_buf *items)
 {
 	t_comp_cmd_tr	tr;
 
-	tr.filter = filter;
+	if (!(data->kind & COMP_CMD))
+		return ;
+	tr.filter = data->filter;
 	tr.items = items;
 	rb_apply(&shell->path_cache, path_traversal, &tr);
 	rb_apply(&shell->reg_fns, fn_traversal, &tr);

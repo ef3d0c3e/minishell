@@ -397,5 +397,15 @@ char
  */
 char
 *ft_strdup(const char *s);
+/**
+ * @brief Searches for needle in haystack
+ *
+ * @brief haystack String to search in
+ * @param needle String to find in haystack
+ *
+ * @returns The first occurence of `needle` in `haystack`, or NULL if not found
+ */
+char
+*ft_strstr(const char *haystack, const char *needle);
 
 #endif // STRING_H

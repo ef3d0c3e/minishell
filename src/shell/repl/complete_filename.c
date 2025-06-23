@@ -77,14 +77,20 @@ static int
 }
 
 void
-	repl_complete_filename(t_complete_buf *items, const char *filter)
+	repl_complete_filename(
+	t_shell *shell,
+	const t_repl_data *data,
+	t_complete_buf *items)
 {
 	t_comp_file_tr	tr;
 	char			*path;
 	size_t			recurse;
 
+	(void)shell;
+	if (!(data->kind & COMP_FILES))
+		return ;
 	tr.items = items;
-	build_regex(filter, &tr);
+	build_regex(data->filter, &tr);
 	recurse = regex_recurse_depth(tr.re.expr);
 	path = regex_path(&tr.re);
 	file_tree_walk(path, recurse + (recurse != (size_t)-1), collect_files, &tr);

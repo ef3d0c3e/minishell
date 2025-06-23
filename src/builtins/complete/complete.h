@@ -66,6 +66,14 @@ complete_free(void *ptr);
  */
 void
 complete_add(t_shell *shell, const char *cmd, t_cmd_comp_opt opt);
+/**
+ * @brief Removes all completion entries for `cmd`
+ *
+ * @param shell The shell session
+ * @param cmd The completion option to remove
+ */
+void
+complete_remove(t_shell *shell, const char *cmd);
 
 /** @brief Arguments for the complete builtin */
 typedef struct s_complete_args

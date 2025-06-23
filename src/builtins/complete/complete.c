@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/13 13:58:46 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 t_cmd_completion
@@ -60,4 +61,10 @@ void
 		free(comp->source_from[i++]);
 	free(comp->source_from);
 	free(comp);
+}
+
+void
+	complete_remove(t_shell *shell, const char *cmd)
+{
+	rb_delete(&shell->cmd_completion, cmd);
 }

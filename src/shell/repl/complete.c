@@ -9,109 +9,138 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/repl/repl.h"
 #include <shell/shell.h>
 
-/** @brief Checks if the current token position is a command start */
-static int
-	is_cmd_start(t_getline *line, size_t i)
+static void
+	get_filter(t_repl_data *data)
 {
-	t_token_list *const	list = &((t_repl_data *)line->data)->list;
-	size_t				j;
+	size_t			i;
+	t_string_buffer	buf;
+	const t_token	*tok;
 
-	if (i >= list->size || i == 0)
-		return (1);
-	j = i;
-	if (j && list->tokens[j].type == TOK_SPACE)
-	{
-		--j;
-		if (token_isword(list->tokens[j].type))
-			return (0);
-		return (1);
-	}
-	while (j && token_isword(list->tokens[j].type))
-		--j;
-	if (j && list->tokens[j].type == TOK_SPACE)
-		--j;
-	if (token_isword(list->tokens[j].type))
-		return (0);
-	return (1);
-}
-
-/** @brief Gets the completion filter text */
-static char
-	*get_filter(t_getline *line, size_t *ws, size_t *we, int *cmd)
-{
-	t_token_list *const	list = &((t_repl_data *)line->data)->list;
-	size_t				i;
-	size_t				j;
-
+	if (data->tok_start >= data->list.size)
+		return ;
 	i = 0;
-	while (i < list->size && list->tokens[i].end < line->cursor_index)
-		++i;
-	j = i;
-	while (j && token_isword(list->tokens[j].type))
-		--j;
-	*cmd = is_cmd_start(line, j);
-	if (i >= list->size || !token_isword(list->tokens[i].type))
+	stringbuf_init(&buf, 24);
+	while (data->tok_start + i <= data->tok_end)
 	{
-		if (i && i < list->size)
-			return (*ws = list->tokens[i].end, *we = list->tokens[i].end, NULL);
-		return (NULL);
-	}
-	*ws = list->tokens[j].start;
-	*we = list->tokens[i].end;
-	return (complete_token_content(list, i, j + 1));
-}
-
-/** @brief Sorts completion entry based on entry kind and name
- * (case insensitive) */
-static int
-	complete_sort(const void *a, const void *b)
-{
-	const t_complete_item	*left = a;
-	const t_complete_item	*right = b;
-	size_t					i;
-	char					x;
-	char					y;
-
-	if (left->kind != right->kind)
-		return (left->kind - right->kind);
-	i = 0;
-	while (left->name[i] && right->name[i])
-	{
-		x = left->name[i];
-		y = right->name[i];
-		if (x >= 'a' && x <= 'z')
-			x -= 32;
-		if (y >= 'a' && y <= 'z')
-			y -= 32;
-		if (x != y)
-			return (x - y);
+		tok = &data->list.tokens[data->tok_start + i];
+		if (tok->type == TOK_PARAM_SIMPLE)
+		{
+			data->kind |= COMP_PARAM;
+			stringbuf_append(&buf, (t_string){tok->word.str, tok->word.len});
+		}
+		else
+			token_wordcontent(&buf, tok);
 		++i;
 	}
-	return (left->name[i] - right->name[i]);
+	if (buf.len)
+		data->filter = stringbuf_cstr(&buf);
+	else
+		stringbuf_free(&buf);
+}
+
+static void
+	get_command(t_repl_data *data, size_t sequence_start)
+{
+	const t_token	*tok;
+	t_string_buffer	buf;
+	size_t			i;
+
+	data->sequence_start = data->tok_start == sequence_start;
+	if (data->tok_start == sequence_start)
+		data->kind |= COMP_CMD;
+	else
+		data->kind |= COMP_OPTS;
+	i = 0;
+	stringbuf_init(&buf, 24);
+	while (sequence_start + i < data->list.size)
+	{
+		tok = &data->list.tokens[sequence_start + i];
+		if (tok->type == TOK_SPACE || !token_isword(tok->type))
+			break ;
+		token_wordcontent(&buf, tok);
+		++i;
+	}
+	if (buf.len)
+		data->cmd = stringbuf_cstr(&buf);
+	else
+		stringbuf_free(&buf);
+}
+
+static int
+	completion_get_populate(
+	t_repl_data *data,
+	size_t *start,
+	size_t *end,
+	size_t sequence_start)
+{
+	const t_token	*tok;
+
+	tok = &data->list.tokens[data->tok_end];
+	*start = data->list.tokens[data->tok_start].start;
+	*end = data->list.tokens[data->tok_end].end;
+	if (tok->type == TOK_SPACE)
+	{
+		data->tok_start = ++data->tok_end;
+		*start = data->list.tokens[data->list.size - 1].end;
+		*end = data->list.tokens[data->list.size - 1].end;
+	}
+	get_filter(data);
+	get_command(data, sequence_start);
+}
+
+static int
+	completion_get(t_repl_data *data, size_t *start, size_t *end, size_t cursor)
+{
+	size_t			seq_start;
+	const t_token	*tok;
+
+	if (!data->list.size)
+		return (data->kind |= COMP_CMD, data->sequence_start = 1, 0);
+	seq_start = 0;
+	while (data->list.tokens[data->tok_end].end < cursor)
+	{
+		tok = &data->list.tokens[data->tok_end];
+		if (tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE)
+		{
+			seq_start = data->tok_end + 1;
+			data->tok_start = data->tok_end + 1;
+		}
+		if (tok->type == TOK_SPACE)
+		{
+			if (seq_start == data->tok_end)
+				++seq_start;
+			data->tok_start = data->tok_end + 1;
+		}
+		++data->tok_end;
+	}
+	return (completion_get_populate(data, start, end, seq_start));
 }
 
 t_complete_item
-	*repl_completer(t_getline *line, size_t *word_start, size_t *word_end)
+	*repl_completer(t_getline *line, size_t *start, size_t *end)
 {
-	char			*filter;
-	t_complete_buf	items;
-	int				cmd;
+	t_repl_data *const	data = line->data;
+	t_complete_buf		items;
 
-	items.data = NULL;
-	items.capacity = 0;
-	items.size = 0;
-	*word_start = 0;
-	*word_end = line->cursor_index;
-	cmd = 1;
-	filter = get_filter(line, word_start, word_end, &cmd);
-	if (cmd)
-		repl_complete_cmd(line->shell, &items, filter);
-	repl_complete_filename(&items, filter);
-	repl_complete_opts(line, &items, filter);
+	data->filter = NULL;
+	data->cmd = NULL;
+	data->kind = COMP_FILES;
+	data->tok_start = 0;
+	data->tok_end = 0;
+	ft_memset(&items, 0, sizeof(t_complete_buf));
+	*start = 0;
+	*end = line->cursor_index;
+	completion_get(data, start, end, line->cursor_index);
+	repl_complete_opts(line->shell, data, &items);
+	repl_complete_cmd(line->shell, data, &items);
+	repl_complete_filename(line->shell, data, &items);
+	repl_complete_params(line->shell, data, &items);
+	free(data->filter);
+	free(data->cmd);
 	quicksort(items.data, items.size, sizeof(t_complete_item), complete_sort);
-	free(filter);
 	complete_buf_push(&items, (t_complete_item){0, NULL, NULL});
 	return (items.data);
 }

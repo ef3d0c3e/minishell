@@ -9,35 +9,8 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "builtins/complete/complete.h"
 #include <shell/shell.h>
-
-/** @brief Gets the command's name */
-static char
-	*cmd_name(t_getline *line)
-{
-	t_token_list *const	list = &((t_repl_data *)line->data)->list;
-	size_t				i;
-	size_t				j;
-
-	i = 0;
-	while (i < list->size && list->tokens[i].end < line->cursor_index)
-		++i;
-	j = 0;
-	while (i)
-	{
-		j = i;
-		while (i && token_isword(list->tokens[i - 1].type))
-			--i;
-		if (i < 2 || list->tokens[i - 1].type != TOK_SPACE)
-			break ;
-		i -= 2;
-		if (i && list->tokens[i - 1].type == TOK_SPACE)
-			--i;
-	}
-	if (i == j)
-		return (NULL);
-	return (complete_token_content(list, i, j));
-}
 
 static void
 	add_options(
@@ -99,16 +72,16 @@ static void
 
 void
 	repl_complete_opts(
-	t_getline *line,
-	t_complete_buf *items,
-	const char *filter)
+	t_shell *shell,
+	const t_repl_data *data,
+	t_complete_buf *items)
 {
-	char				*cmd;
-
-	cmd = cmd_name(line);
-	if (!cmd)
+	if (!data->cmd || !(data->kind & COMP_OPTS))
 		return ;
-	source_completion(line->shell, cmd);
-	add_options(items, rb_find(&line->shell->cmd_completion, cmd), filter);
-	free(cmd);
+	if (data->filter && data->filter[0] != '-')
+		return ;
+	source_completion(shell, data->cmd);
+	add_options(items, rb_find(&shell->cmd_completion, data->cmd),
+		data->filter);
+	complete_remove(shell, data->cmd);
 }
