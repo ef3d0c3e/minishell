@@ -22,33 +22,25 @@ static void
 	run_tests(const char *filter, size_t id_filter, uint32_t seed)
 {
 	const t_unit_test	tests[] = {
-		test_echo,
-		test_grammar,
-		test_param,
-		test_pipe,
-		test_sub,
-		test_redir,
-		test_expand,
-		test_regex,
-		test_control,
+		test_echo, test_grammar, test_param, test_pipe, test_sub, test_redir,
+		test_expand, test_regex, test_control,
 	};
-	size_t						i;
-	t_evaluator_data			eval;
-	t_runner_data				runner;
+	size_t				i;
+	t_evaluator_data	eval;
+	t_runner_data		runner;
 
 	runner.total = 0;
 	runner.passed = 0;
 	runner.test_id = 1;
 	runner.id_filter = id_filter;
 	i = 0;
-	while (i < sizeof(tests) / sizeof(tests[0]))
+	while (i++ < sizeof(tests) / sizeof(tests[0]))
 	{
 		eval.seed = seed;
-		eval.test = &tests[i];
+		eval.test = &tests[i - 1];
 		eval.runner = &runner;
-		if (ft_strstr(tests[i].name, filter))
-			eval_in_tempdir(tests[i].name, evaluator, &eval);
-		++i;
+		if (ft_strstr(tests[i - 1].name, filter))
+			eval_in_tempdir(tests[i - 1].name, evaluator, &eval);
 	}
 	if (!runner.total)
 		return ;

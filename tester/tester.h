@@ -25,10 +25,9 @@ enum e_eval_flags
 	FLAG_NO_STDERR = (1<<1),
 };
 
-
 typedef struct s_option_value
 {
-	const char *name;
+	const char	*name;
 	int			value;
 }	t_option_value;
 
@@ -157,8 +156,6 @@ random_int(uint32_t *seed);
 void
 eval_in_tempdir(const char *name, void (*fn)(void *), void *cookie);
 
-char
-*ft_strstr(const char *haystack, const char *needle);
 size_t
 atosz(const char *s);
 void

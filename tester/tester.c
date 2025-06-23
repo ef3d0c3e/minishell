@@ -19,7 +19,7 @@ void
 {
 	t_shell	shell;
 	size_t	i;
-	char 	*input;
+	char	*input;
 
 	close(fds[1]);
 	close(fds[2]);
