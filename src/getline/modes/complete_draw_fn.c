@@ -86,5 +86,7 @@ void
 		draw_bounded(buf, item->desc, line->state.comp.col_width - w, "…");
 		stringbuf_append_s(buf, ")");
 	}
+	else
+		stringbuf_append_s(buf, "  ");
 	stringbuf_append_s(buf, "\x1b[m");
 }
