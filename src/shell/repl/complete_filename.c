@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 /** @brief Builds regex using Literal(filter) + Expr(*) */
@@ -69,9 +70,10 @@ static int
 
 	(void)sb;
 	r = regex_match(&tr->opts, &tr->re, path);
+	ft_dprintf(2, "%s : %d\n\r", path, r);
 	if (r == 0)
 		return (1);
-	if (r == 2)
+	if (r >= 1)
 		complete_buf_push(tr->items, get_item(path, sb));
 	return (0);
 }
