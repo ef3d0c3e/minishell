@@ -29,7 +29,7 @@ void
 		name = ft_strdup(stringbuf_cstr(&cmd->cmd.assigns[i].variable));
 		var->name = name;
 		var->value = value;
-		var->exported = 1;
+		var->exported = 0;
 		rb_insert(&shell->reg_env, name, var);
 		++i;
 	}
