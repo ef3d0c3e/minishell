@@ -25,3 +25,9 @@ prompt_left()
 	echo -n "$(colored 3)${USER}$(colored 2)@$(colored 12)${PWD}${STATUS}${GIT}$(colored 13) 󰘧$(colored 7) "
 	return $ERR
 }
+
+[ ! -z "${SHELL_FORTUNES}" ] &&
+	[ -f "${SHELL_FORTUNES}" ] &&
+	type shuf 2&>/dev/null 1&>/dev/null &&
+	type head 2&>/dev/null 1&>/dev/null &&
+	shuf "${SHELL_FORTUNES}" | head -n 1 | cowsay
