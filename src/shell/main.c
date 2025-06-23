@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "shell/env/env.h"
 #include <shell/shell.h>
 
 static int
@@ -81,6 +82,7 @@ int
 	if (_parse_args(opts.opts, ac, av) != ac)
 		exit(ft_dprintf(2, "USAGE: %s [OPTIONS...]\n", av[0]) * 0);
 	shell = shell_new(envp);
+	set_env_variable(&shell, "SHELL", ft_strdup(av[0]));
 	if (opts.headless)
 		ctx_eval_stdout(&shell, ft_strdup(opts.headless));
 	else
@@ -94,6 +96,5 @@ int
 		getline_cleanup(&line);
 		signal_install(&shell, 1);
 	}
-	shell_free(&shell);
-	return (shell.last_status);
+	return (shell_free(&shell), shell.last_status);
 }

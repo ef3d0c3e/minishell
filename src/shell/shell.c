@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "util/util.h"
 #include <shell/shell.h>
 
 static void
@@ -24,6 +25,10 @@ static void
 static void
 	shell_init(t_shell *shell)
 {
+	const char		*lvl;
+	int				lvl_i;
+	t_string_buffer	buf;
+
 	temporaries_init(shell);
 	options_init(shell);
 	fd_data_init(shell);
@@ -32,6 +37,16 @@ static void
 	funs_init(shell);
 	prefix_stack_init(shell);
 	path_populate(shell);
+	lvl = get_variable_value(shell, "SHLVL");
+	if (!lvl || !atoi_checked(lvl, &lvl_i))
+	{
+		set_env_variable(shell, "SHLVL", ft_strdup("1"));
+		return ;
+	}
+	++lvl_i;
+	stringbuf_init(&buf, 24);
+	stringbuf_append_i(&buf, lvl_i);
+	set_env_variable(shell, "SHLVL", stringbuf_cstr(&buf));
 }
 
 t_shell

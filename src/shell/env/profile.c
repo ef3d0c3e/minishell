@@ -52,7 +52,6 @@ void
 		if (status)
 			return ;
 	}
-	pathbuf_init(&buf, 24);
 	if (pathbuf_append(&buf, get_variable_value(shell, "XDG_CONFIG_HOME"), 1))
 	{
 		pathbuf_append(&buf, "/hsh/profile.sh", 0);
@@ -61,4 +60,5 @@ void
 		if (status)
 			return ;
 	}
+	pathbuf_free(&buf);
 }
