@@ -9,7 +9,6 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/repl/repl.h"
 #include <shell/shell.h>
 
 static void
@@ -29,8 +28,7 @@ static void
 		if (tok->type == TOK_PARAM_SIMPLE)
 		{
 			data->kind |= COMP_PARAM;
-			stringbuf_append(&buf, (t_string){tok->word.str, tok->word.len});
-		}
+			stringbuf_append(&buf, (t_string){tok->word.str, tok->word.len});}
 		else
 			token_wordcontent(&buf, tok);
 		++i;
@@ -89,6 +87,7 @@ static int
 	}
 	get_filter(data);
 	get_command(data, sequence_start);
+	return (1);
 }
 
 static int
@@ -119,6 +118,16 @@ static int
 	return (completion_get_populate(data, start, end, seq_start));
 }
 
+//token_list_print((t_string){line->input.buffer.str, line->input.buffer.len},
+//&data->list);
+//ft_dprintf(2, "\n\r");
+//ft_dprintf(2, "s/e= %zu %zu\n\r", *start, *end);
+//ft_dprintf(2, "toks= %zu %zu\n\r", data->tok_start, data->tok_end);
+//ft_dprintf(2, "filter='%s'\n\r", data->filter);
+//ft_dprintf(2, "cmd='%s'\n\r", data->cmd);
+//ft_dprintf(2, "is_start=%d\n\r", data->sequence_start);
+//ft_dprintf(2, "kind=%x\n\r", data->kind);
+//exit(1);
 t_complete_item
 	*repl_completer(t_getline *line, size_t *start, size_t *end)
 {

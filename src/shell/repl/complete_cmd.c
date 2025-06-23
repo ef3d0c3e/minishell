@@ -9,7 +9,6 @@
 /*   Updated: 2025/06/19 06:48:54 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "shell/repl/repl.h"
 #include <shell/shell.h>
 
 static void

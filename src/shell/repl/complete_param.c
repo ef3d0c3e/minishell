@@ -17,13 +17,17 @@ static void
 	const char				*filter = ((char **)cookie)[0];
 	t_complete_buf *const	buf = ((t_complete_buf **)cookie)[1];
 	const t_shell_var		*var = node->data;
+	char					*fmt;
 
 	(void)depth;
+	if (filter && filter[0] == '$')
+		++filter;
 	if (!ft_strstr(var->name, filter))
 		return ;
+	ft_asprintf(&fmt, "$%s", var->name);
 	complete_buf_push(buf, (t_complete_item){
 		.kind = COMPLETE_VARIABLE,
-		.name = ft_strdup(var->name),
+		.name = fmt,
 		.desc = ft_strdup("Environment Variable"),
 	});
 }
@@ -34,7 +38,7 @@ void
 	const t_repl_data *data,
 	t_complete_buf *items)
 {
-	if (!(data->kind & COMP_PARAM))
+	if ((!data->filter || data->filter[0] != '$') && !(data->kind & COMP_PARAM))
 		return ;
 	rb_apply(&shell->reg_env, var_traverse,
 		(const void *[2]){data->filter, items});
