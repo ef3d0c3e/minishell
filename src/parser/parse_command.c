@@ -9,6 +9,7 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 t_ast_node
@@ -75,8 +76,7 @@ t_ast_node
 	{
 		sep = &parser->list.tokens[parser->pos];
 		++parser->pos;
-		if (parser->pos >= parser->list.size
-			|| parser->list.tokens[parser->pos].type == TOK_GROUPING)
+		if (parser->pos >= parser->list.size)
 			break ;
 		cmd = parse_and_or(parser);
 		if (cmd)

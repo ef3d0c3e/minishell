@@ -22,15 +22,15 @@ static int
 	resolved = NULL;
 	result = resolve_eval(shell, argv[1], &resolved);
 	if (result == 0)
-		printf("%s is %s\n", argv[1], resolved);
+		ft_printf("%s is %s\n", argv[1], resolved);
 	else if (result == 1 || result == 3)
-		printf("%s is a shell builtin\n", argv[1]);
+		ft_printf("%s is a shell builtin\n", argv[1]);
 	else if (result == 2)
-		printf("%s is a function\n", argv[1]);
+		ft_printf("%s is a function\n", argv[1]);
 	else
 		ft_dprintf(2, "type: %s not found\n", argv[1]);
 	free(resolved);
-	return (0);
+	return (result < 0);
 }
 
 const t_builtin

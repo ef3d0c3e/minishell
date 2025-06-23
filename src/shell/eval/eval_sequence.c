@@ -20,10 +20,10 @@ t_eval_result
 	if (result.type != RES_NONE)
 		return (result);
 	if (!ft_strcmp(program->logic.token.reserved_word, "&&")
-		&& !shell->last_status)
+		&& shell->last_status == 0)
 		result = eval(shell, program->logic.right);
 	else if (!ft_strcmp(program->logic.token.reserved_word, "||")
-		&& shell->last_status)
+		&& shell->last_status != 0)
 		result = eval(shell, program->logic.right);
 	return (result);
 }

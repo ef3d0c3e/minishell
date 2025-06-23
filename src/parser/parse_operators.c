@@ -49,7 +49,9 @@ t_ast_node
 	{
 		op = parser->list.tokens[parser->pos];
 		++parser->pos;
-		right = parse_command(parser);
+		while (accept(parser, 0, "\n"))
+			++parser->pos;
+		right = parse_pipeline(parser);
 		left = make_logic_node(op, left, right);
 	}
 	return (left);
