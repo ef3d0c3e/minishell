@@ -79,7 +79,7 @@ void
 
 	stringbuf_init(&out, 256);
 	append_message(&out, msg, msg_width);
-	append_cow_top(&out, args, msg_width)	;
+	append_cow_top(&out, args, msg_width);
 	append_cow_bot(&out, args, msg_width);
 	write(STDOUT_FILENO, out.str, out.len);
 	stringbuf_free(&out);

@@ -12,6 +12,16 @@ DO_TEST(grammar,
 		SHELL_TEST("false && true; echo $?", "", "1\n", "", 0)
 		SHELL_TEST("false && true; echo $?", "", "1\n", "", 0)
 
+		SHELL_TEST("true && true && true; echo $?", "", "0\n", "", 0)
+		SHELL_TEST("false && true && true; echo $?", "", "1\n", "", 0)
+		SHELL_TEST("true && false && true; echo $?", "", "1\n", "", 0)
+		SHELL_TEST("true && true && false; echo $?", "", "1\n", "", 0)
+
+		SHELL_TEST("false || false || false; echo $?", "", "1\n", "", 0)
+		SHELL_TEST("false || false || true; echo $?", "", "0\n", "", 0)
+		SHELL_TEST("false || true || false; echo $?", "", "0\n", "", 0)
+		SHELL_TEST("true || false || false; echo $?", "", "0\n", "", 0)
+
 		SHELL_TEST("true || false\necho $?", "", "0\n", "", 0)
 		SHELL_TEST("true || false\necho $?", "", "0\n", "", 0)
 		SHELL_TEST("false || true\necho $?", "", "0\n", "", 0)
@@ -52,4 +62,14 @@ DO_TEST(grammar,
 	SHELL_TEST("echo -n \\\"", "", "\"", "",  0)
 	SHELL_TEST("echo -n \\'", "", "'", "",  0)
 	SHELL_TEST("echo -n \\`", "", "`", "",  0)
+
+	SHELL_TEST("echo foo; echo bar", "", "foo\nbar\n", "",  0)
+	SHELL_TEST("echo foo; (echo bar)", "", "foo\nbar\n", "",  0)
+	SHELL_TEST("(echo foo); (echo bar)", "", "foo\nbar\n", "",  0)
+	SHELL_TEST("(echo foo); echo bar", "", "foo\nbar\n", "",  0)
+
+	SHELL_TEST("echo foo; echo bar; echo baz", "", "foo\nbar\nbaz\n", "",  0)
+	SHELL_TEST("(echo foo); echo bar; echo baz", "", "foo\nbar\nbaz\n", "",  0)
+	SHELL_TEST("echo foo; (echo bar); echo baz", "", "foo\nbar\nbaz\n", "",  0)
+	SHELL_TEST("echo foo; echo bar; (echo baz)", "", "foo\nbar\nbaz\n", "",  0)
 )
