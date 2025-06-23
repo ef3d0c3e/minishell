@@ -18,11 +18,9 @@ static void
 	t_string_buffer	buf;
 	const t_token	*tok;
 
-	if (data->tok_start >= data->list.size)
-		return ;
 	i = 0;
 	stringbuf_init(&buf, 24);
-	while (data->tok_start + i <= data->tok_end)
+	while (data->tok_start + i < data->tok_end)
 	{
 		tok = &data->list.tokens[data->tok_start + i];
 		if (tok->type == TOK_PARAM_SIMPLE)
@@ -43,11 +41,13 @@ static void
 static void
 	get_command(t_repl_data *data, size_t sequence_start)
 {
-	const t_token	*tok;
 	t_string_buffer	buf;
 	size_t			i;
 
 	data->sequence_start = data->tok_start == sequence_start;
+	if (data->tok_start < data->list.size
+		&& data->list.tokens[data->tok_start].type == TOK_SPACE)
+		data->sequence_start = data->tok_start == sequence_start + 1;
 	if (data->tok_start == sequence_start)
 		data->kind |= COMP_CMD;
 	else
@@ -56,10 +56,10 @@ static void
 	stringbuf_init(&buf, 24);
 	while (sequence_start + i < data->list.size)
 	{
-		tok = &data->list.tokens[sequence_start + i];
-		if (tok->type == TOK_SPACE || !token_isword(tok->type))
+		if (data->list.tokens[sequence_start + i].type == TOK_SPACE
+			|| !token_isword(data->list.tokens[sequence_start + i].type))
 			break ;
-		token_wordcontent(&buf, tok);
+		token_wordcontent(&buf, &data->list.tokens[sequence_start + i]);
 		++i;
 	}
 	if (buf.len)
@@ -75,19 +75,14 @@ static int
 	size_t *end,
 	size_t sequence_start)
 {
-	const t_token	*tok;
-
-	tok = &data->list.tokens[data->tok_end];
-	*start = data->list.tokens[data->tok_start].start;
-	*end = data->list.tokens[data->tok_end].end;
-	if (tok->type == TOK_SPACE)
-	{
-		data->tok_start = ++data->tok_end;
-		*start = data->list.tokens[data->list.size - 1].end;
-		*end = data->list.tokens[data->list.size - 1].end;
-	}
-	get_filter(data);
+	if (data->tok_start < data->list.size)
+		*start = data->list.tokens[data->tok_start].start;
+	else
+		*start = *end;
+	if (data->tok_end < data->list.size)
+		*end = data->list.tokens[data->tok_end].end;
 	get_command(data, sequence_start);
+	get_filter(data);
 	return (1);
 }
 
@@ -100,7 +95,8 @@ static int
 	if (!data->list.size)
 		return (data->kind |= COMP_CMD, data->sequence_start = 1, 0);
 	seq_start = 0;
-	while (data->list.tokens[data->tok_end].end < cursor)
+	while (data->tok_end < data->list.size
+		&& data->list.tokens[data->tok_end].end <= cursor)
 	{
 		tok = &data->list.tokens[data->tok_end];
 		if (tok->type == TOK_PIPELINE || tok->type == TOK_SEQUENCE)
