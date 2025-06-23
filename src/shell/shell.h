@@ -326,4 +326,18 @@ typedef struct s_program_opts
 void
 *shell_args_init(void *handle);
 
+/******************************************************************************/
+/* Misc utilities                                                             */
+/******************************************************************************/
+
+/**
+ * @brief Reads incoming data from file descriptor `fd` to string `buf`
+ *
+ * @param shell The shell session
+ * @param fd File descriptor to read from
+ * @param buf Buffer to write to (must be initialized with capacity >= 1024)
+ */
+void
+read_fd_to_string(t_shell *shell, int fd, t_string_buffer *buf);
+
 #endif // SHELL_H

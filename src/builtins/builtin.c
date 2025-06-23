@@ -35,6 +35,7 @@ void
 	insert_builtin(shell, builtin_env());
 	insert_builtin(shell, builtin_shopt());
 	insert_builtin(shell, builtin_complete());
+	insert_builtin(shell, builtin_cowsay());
 }
 
 /** @brief Calls the builtin's deinit function */

@@ -79,5 +79,8 @@ const t_builtin
 /** @brief The `complete` builtin */
 const t_builtin
 *builtin_complete(void);
+/** @brief The `cowsay` builtin */
+const t_builtin
+*builtin_cowsay(void);
 
 #endif // BUILTIN_H

@@ -11,27 +11,6 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-/** @brief Reads incoming data on file descriptor `fd` to buffer `buf` */
-static void
-	read_incoming(t_shell *shell, int fd, t_string_buffer *buf)
-{
-	ssize_t	sz;
-
-	sz = 1;
-	while (sz > 0)
-	{
-		sz = read(fd, buf->str + buf->len, 1024);
-		if (sz < 0)
-		{
-			if (errno == EINTR)
-				break ;
-			shell_perror(shell, "read() failed", SRC_LOCATION);
-		}
-		buf->len += sz;
-		stringbuf_reserve(buf, buf->len + 1024);
-	}
-}
-
 static void
 	evaluator_child(t_ctx *ctx, int *fds)
 {
@@ -68,12 +47,12 @@ static void
 	waitst = 0;
 	while (waitst != pid)
 	{
-		read_incoming(shell, fds[0], &result->content);
+		read_fd_to_string(shell, fds[0], &result->content);
 		waitst = waitpid(pid, &status, WNOHANG);
 		if (waitst == -1 && errno != EINTR)
 			shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
-	read_incoming(shell, fds[0], &result->content);
+	read_fd_to_string(shell, fds[0], &result->content);
 	if (waitst != pid && waitpid(pid, &status, 0) == -1)
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	shell->last_status = WEXITSTATUS(status);

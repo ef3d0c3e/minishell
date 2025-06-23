@@ -10,87 +10,72 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include <shell/shell.h>
+#include <builtins/cowsay/cowsay.h>
 
 static void
 	set_property(void *ptr, const char **av)
 {
-	t_complete_args *const	args = ptr;
+	t_cowsay_args *const	args = ptr;
 
-	if (!ft_strcmp(av[0], "-c"))
-	{
-		args->cmd = av[1];
-		return ;
-	}
-	if (!args->cmd)
-	{
-		args->fail = 1;
-		ft_dprintf(2, "Expected command name");
-		return ;
-	}
-	if (!ft_strcmp(av[0], "-s"))
-		args->shortname = av[1];
-	else if (!ft_strcmp(av[0], "-l"))
-		args->longname = av[1];
-	else
-		args->desc = av[1];
+	if (!ft_strcmp(av[0], "-e"))
+		args->eyes = av[1];
+	else if (!ft_strcmp(av[0], "-m"))
+		args->mouth = av[1];
+	else if (!ft_strcmp(av[0], "-t"))
+		args->tongue = av[1];
+	else if (!ft_strcmp(av[0], "-u"))
+		args->udder = av[1];
 }
 
 static void
 	*init(void *a)
 {
-	static char			use[] = "complete [OPTIONS...]";
+	static char			use[] = "cowsay [OPTIONS...] MESSAGE";
 	static t_opt		opts[] = {
-	{"-c", "NAME Command name", set_property, 1},
-	{"-s", "SHORTNAME Argument shortname", set_property, 1},
-	{"-l", "LONGMAME Argument longname", set_property, 1},
-	{"-d", "Description Description", set_property, 1},
+	{"-e", "TEXT Eyes string", set_property, 1},
+	{"-m", "TEXT Mouth string", set_property, 1},
+	{"-t", "TEXT Tongue string", set_property, 1},
+	{"-u", "TEXT Udder string", set_property, 1},
 	};
 	const t_behavior	flags = GET_CALLER | NO_EXIT;
 
 	return (_set_behavior(_init_opt(use, opts, *(&opts + 1) - opts, a), flags));
 }
 
-t_cmd_comp_opt
-	get_comp(t_complete_args *args)
-{
-	t_cmd_comp_opt	opt;
-
-	ft_memset(&opt, 0, sizeof(t_cmd_comp_opt));
-	if (args->desc)
-		opt.description = ft_strdup(args->desc);
-	if (args->shortname)
-		opt.shortname = ft_strdup(args->shortname);
-	if (args->longname)
-		opt.longname = ft_strdup(args->longname);
-	return (opt);
-}
-
 static int
-	complete(t_shell *shell, int ac, char **av)
+	cowsay(t_shell *shell, int ac, char **av)
 {
 	int				ret;
-	t_complete_args	args;
+	t_cowsay_args	args;
+	t_string_buffer	msg;
 
-	ft_memset(&args, 0, sizeof(t_complete_args));
-	args.shell = shell;
+	args.eyes = "oo";
+	args.mouth = "__";
+	args.tongue = "  ";
+	args.udder = "w ";
 	args.opts = init(&args);
 	ret = _parse_args(args.opts, ac, (const char **)av);
-	if (!ret)
+	if (ret == ac - 1)
+		msg = stringbuf_from(av[ac - 1]);
+	else if (ret == ac)
+	{
+		stringbuf_init(&msg, 1024);
+		read_fd_to_string(shell, STDIN_FILENO, &msg);
+	}
+	else
 		return (1);
-	else if (args.fail || !args.cmd
-		|| (!args.desc && !args.longname && !args.shortname))
-		return (1);
-	complete_add(shell, args.cmd, get_comp(&args));
+	cowsay_print(&args, stringbuf_cstr(&msg));
+	stringbuf_free(&msg);
 	return (0);
 }
 
 const t_builtin
-	*builtin_complete(void)
+	*builtin_cowsay(void)
 {
 	static const t_builtin	builtin = (t_builtin){
-		.name = "complete",
-		.desc = "The complete builtin",
-		.run = complete,
+		.name = "cowsay",
+		.desc = "The cowsay builtin",
+		.run = cowsay,
 		.init = NULL,
 		.deinit = NULL,
 	};
