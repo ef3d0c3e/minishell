@@ -9,8 +9,6 @@
 /*   Updated: 2025/06/18 08:26:37 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "util/util.h"
-#include <stddef.h>
 #include <tokenizer/tokenizer.h>
 
 /** @brief Token munchers for the content of a double quoted string */
