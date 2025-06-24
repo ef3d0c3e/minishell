@@ -9,6 +9,8 @@
 /*   Updated: 2025/06/24 10:24:15 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "getline/modes/modes.h"
 #include <stddef.h>
 #include <util/util.h>
 
@@ -41,13 +43,13 @@ static void
 	{
 		if (p->cmp(b1, b2) <= 0)
 		{
-			tmp = (char *)ft_memcpy(tmp, b1, p->s);
+			tmp = (char *)ft_memcpy(tmp, b1, p->s) + p->s;
 			b1 += p->s;
 			--n1;
 		}
 		else
 		{
-			tmp = (char *)ft_memcpy(tmp, b2, p->s);
+			tmp = (char *)ft_memcpy(tmp, b2, p->s) + p->s;
 			b2 += p->s;
 			--n2;
 		}
