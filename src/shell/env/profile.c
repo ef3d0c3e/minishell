@@ -44,13 +44,15 @@ void
 	status = 0;
 	default_profile(shell);
 	pathbuf_init(&buf, 24);
-	if (pathbuf_append(&buf, get_variable_value(shell, "HOME"), 1))
+	if (pathbuf_append(&buf, get_variable_value(shell, "SHELL_PROFILE"), 0))
+		status = try_source(shell, pathbuf_cstr(&buf));
+	if (!status && pathbuf_append(&buf, get_variable_value(shell, "HOME"), 1))
 	{
 		pathbuf_append(&buf, ".hshrc", 0);
 		status = try_source(shell, pathbuf_cstr(&buf));
 	}
-	if (!status
-		&& pathbuf_append(&buf, get_variable_value(shell, "XDG_CONFIG_HOME"), 1))
+	if (!status && pathbuf_append(&buf, get_variable_value(shell,
+				"XDG_CONFIG_HOME"), 1))
 	{
 		pathbuf_append(&buf, "/hsh/profile.sh", 0);
 		status = try_source(shell, pathbuf_cstr(&buf));

@@ -5,7 +5,6 @@ colored()
 	printf "%s" $(tput setaf $1)
 }
 
-# set -o experr
 prompt_left()
 {
 	ERR=$?
@@ -26,8 +25,14 @@ prompt_left()
 	return $ERR
 }
 
+fortune()
+{
+	shuf "${SHELL_FORTUNES}" | head -n 1 | cowsay
+}
+
+# Fortunes, set $SHELL_FORTUNES to the fortune file (one fortune per lines)
 [ ! -z "${SHELL_FORTUNES}" ] &&
 	[ -f "${SHELL_FORTUNES}" ] &&
 	type shuf 2&>/dev/null 1&>/dev/null &&
 	type head 2&>/dev/null 1&>/dev/null &&
-	shuf "${SHELL_FORTUNES}" | head -n 1 | cowsay
+	fortune
