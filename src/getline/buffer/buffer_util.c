@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
-/** @brief Replaces invalid codepoint with 0xFFFD, this still allow unmapped
+/** @brief Replaces invalid codepoint with 0xFFFD, this still allows unmapped
  * codepoints, but prevents unicode of malformed length */
 static void
 	check_utf8(t_getline *line, size_t start, size_t end)
@@ -20,7 +20,7 @@ static void
 
 	if (end - start == len)
 		return ;
-	stringbuf_replace(&line->input.buffer, start, end, "\uFFFD");
+	stringbuf_replace(&line->input.buffer, start, end, "\xef\xbf\xbd");
 }
 
 void

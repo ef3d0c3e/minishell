@@ -13,17 +13,6 @@
 #include "shell/env/env.h"
 #include <shell/shell.h>
 
-typedef enum e_styleflag
-{
-	SET_BOLD = 1 << 0,
-	SET_ITALIC = 1 << 1,
-	SET_UNDERLINE = 1 << 2,
-	SET_FG = 1 << 3,
-	SET_BG = 1 << 4,
-	VGACOLOR = 1 << 5,
-	COLOR256 = 1 << 6,
-}	t_styleflag;
-
 void
 	chk_truecolor(t_shell *shell)
 {
