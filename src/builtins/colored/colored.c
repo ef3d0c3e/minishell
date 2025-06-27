@@ -13,20 +13,20 @@
 #include "colored.h"
 #include "libopts.h"
 
-void set_color(void *data, const char **av);
-void set_style(void *data, const char **av);
+void	set_color(void *data, const char **av);
+void	set_style(void *data, const char **av);
 
 void
 	*init(t_app *a)
 {
 	static char			use[] = "colored [flags]";
 	static t_opt		opts[] = {
-		{"--bg", "Set background color", set_color, 1},
-		{"--fg", "Set foreground color", set_color, 1},
-		{"--bo", "Set bold", set_style, 0},
-		{"--it", "Set italic", set_style, 0},
-		{"--ul", "Set underline", set_style, 0},
-		{"--os", "Set overstrike", set_style, 0},
+	{"--bg", "Set background color", set_color, 1},
+	{"--fg", "Set foreground color", set_color, 1},
+	{"--bo", "Set bold", set_style, 0},
+	{"--it", "Set italic", set_style, 0},
+	{"--ul", "Set underline", set_style, 0},
+	{"--os", "Set overstrike", set_style, 0},
 	};
 	const t_behavior	flags = NO_EXIT | NO_RESERVE_HELP | GET_CALLER;
 

@@ -23,12 +23,8 @@
 /* ************************************************************************** */
 
 /**
- * @brief Source location function
+ * @brief Source location macro
  */
-# define __STRINGIFY(__x) #__x
-# define STRINGIFY(__x) __STRINGIFY(__x)
-# define SRC_LOCATION __FILE__ "#" STRINGIFY(__LINE__)
-
 # ifndef SRC_LOCATION
 #  define SRC_LOCATION __func__
 # endif // SRC_LOCATION
@@ -96,6 +92,13 @@ atoi_range_checked(const char *s, const char *e, int *value);
 /* ************************************************************************** */
 /* Misc                                                                       */
 /* ************************************************************************** */
+
+struct s_qsort_param
+{
+	size_t		s;
+	int			(*cmp)(const void *, const void *);
+	char		*t;
+};
 
 void
 quicksort(void *base, size_t nmemb, size_t size,
