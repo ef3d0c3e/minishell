@@ -76,6 +76,8 @@ static int
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
 	shell->last_status = WEXITSTATUS(status);
+	if (WIFSIGNALED(status))
+		shell->last_status = 128 + WTERMSIG(status);
 	if (argv[0])
 		free(path);
 	return (WIFEXITED(status));

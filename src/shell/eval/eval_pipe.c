@@ -123,5 +123,7 @@ t_eval_result
 		shell_perror(shell, "waitpid() failed", SRC_LOCATION);
 	}
 	shell->last_status = WEXITSTATUS(status);
+	if (WIFSIGNALED(status))
+		shell->last_status = 128 + WTERMSIG(status);
 	return ((t_eval_result){RES_NONE, 0});
 }
