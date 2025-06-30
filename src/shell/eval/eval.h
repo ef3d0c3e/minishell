@@ -177,5 +177,8 @@ args_free(char **cmd);
 /** @brief Installs variables from the command's prefix assisgnments */
 void
 eval_install_var(t_shell *shell, t_ast_node *cmd);
+/** @brief Gets name of signal */
+const char
+*eval_signal_name(int sig);
 
 #endif // EVAL_H

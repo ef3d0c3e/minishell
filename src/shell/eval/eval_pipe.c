@@ -124,6 +124,10 @@ t_eval_result
 	}
 	shell->last_status = WEXITSTATUS(status);
 	if (WIFSIGNALED(status))
-		shell->last_status = 128 + WTERMSIG(status);
+	{
+		const int	sig = WTERMSIG(status);
+		ft_dprintf(2, "Process %d terminated with signal %s (%d)\n", pid, eval_signal_name(sig), sig);
+		shell->last_status = 128 + sig;
+	}
 	return ((t_eval_result){RES_NONE, 0});
 }

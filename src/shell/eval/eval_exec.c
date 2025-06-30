@@ -9,6 +9,8 @@
 /*   Updated: 2025/03/17 11:59:41 by lgamba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "shell/eval/eval.h"
 #include <shell/shell.h>
 
 void
@@ -77,7 +79,11 @@ static int
 	}
 	shell->last_status = WEXITSTATUS(status);
 	if (WIFSIGNALED(status))
-		shell->last_status = 128 + WTERMSIG(status);
+	{
+		const int	sig = WTERMSIG(status);
+		ft_dprintf(2, "Process %d terminated with signal %s (%d)\n", pid, eval_signal_name(sig), sig);
+		shell->last_status = 128 + sig;
+	}
 	if (argv[0])
 		free(path);
 	return (WIFEXITED(status));

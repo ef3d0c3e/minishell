@@ -175,6 +175,7 @@ src/shell/redir/redir.c \
 src/shell/redir/open.c \
 src/shell/redir/redir_internal_heredoc.c \
 src/shell/eval/eval_for.c \
+src/shell/eval/eval_util.c \
 src/shell/eval/eval_function.c \
 src/shell/eval/eval_cmd.c \
 src/shell/eval/eval_builtin.c \

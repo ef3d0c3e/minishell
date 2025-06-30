@@ -37,8 +37,12 @@ static int
 	(void)shell;
 	newline = 1;
 	start = 1;
-	if (start < argc && !ft_strcmp(argv[start], "-n"))
+	while (start < argc && argv[start][0] == '-')
 	{
+		for (i = 1; argv[start][i] == 'n'; ++i)
+			;
+		if (argv[start][i])
+			break ;
 		newline = 0;
 		++start;
 	}
