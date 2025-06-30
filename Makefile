@@ -323,6 +323,9 @@ docs:
 	doxygen doxygen
 
 .PHONY: all
+bonus: $(NAME)
+
+.PHONY: all
 all: $(NAME)
 
 .PHONY: clean
