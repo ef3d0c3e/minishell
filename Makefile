@@ -1,5 +1,5 @@
 NAME := minishell
-CC := gcc
+CC := clang
 CFLAGS := -Wall -Wextra -Werror -O2
 IFLAGS := -I./src
 LFLAGS := -lncurses -ltinfo
