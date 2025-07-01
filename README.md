@@ -1,5 +1,7 @@
 # Minishell -- A simple C shell
 
+![Shell picture](./shell.png)
+
 # Authors:
  - [ef3d0c3e](https://github.com/ef3d0c3e)
  - [Cheldux](https://github.com/Cheldux)
