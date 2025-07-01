@@ -9,6 +9,8 @@
 /*   Updated: 2025/06/19 07:33:17 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
+#include "parser/words/words.h"
 #include <shell/shell.h>
 
 static void
@@ -37,7 +39,7 @@ static void
 		++i;
 		last = i;
 	}
-	if (last != word->len)
+	//if (last != word->len)
 	{
 		fraglist_push(list, stringbuf_from_range(word->str + last,
 				word->str + word->len), 0);

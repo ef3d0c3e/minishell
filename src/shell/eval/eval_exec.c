@@ -81,8 +81,13 @@ static int
 	if (WIFSIGNALED(status))
 	{
 		const int	sig = WTERMSIG(status);
-		ft_dprintf(2, "Process %d terminated with signal %s (%d)\n", pid, eval_signal_name(sig), sig);
-		shell->last_status = 128 + sig;
+
+		shell->last_status = 0;
+		if (sig != SIGPIPE)
+		{
+			ft_dprintf(2, "Process %d terminated with signal %s (%d)\n", pid, eval_signal_name(sig), sig);
+			shell->last_status = 128 + sig;
+		}
 	}
 	if (argv[0])
 		free(path);

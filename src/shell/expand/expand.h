@@ -103,6 +103,13 @@ fraglist_append(t_fragment_list *list, t_string_buffer word);
  */
 char
 **fraglist_to_argv(t_fragment_list *list);
+/**
+ * @brief Prints fragment list to stderr for debugging
+ *
+ * @param list List to print
+ */
+void
+fraglist_print(const t_fragment_list *list);
 
 /******************************************************************************/
 /* Word expansion                                                             */

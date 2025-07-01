@@ -11,6 +11,23 @@
 /* ************************************************************************** */
 #include <shell/shell.h>
 
+/** @brief Trim the result of a subexpr using the shell's IFS */
+static void
+trim_subexpr(t_string_buffer *buf)
+{
+	const char *ifs = " \t\n";
+	size_t start, end;
+
+	for (start = 0; start < buf->len && ft_strchr(ifs, buf->str[start]);
+		++start)
+		;
+	for (end = buf->len; end > start && ft_strchr(ifs, buf->str[end - 1]);
+		--end)
+		;
+	ft_memmove(buf->str, buf->str + start, end - start);
+	buf->len = end - start;
+}
+
 int
 	expand_subexpr(
 	t_shell *shell,
@@ -30,8 +47,10 @@ int
 		return (0);
 	}
 	buf = &result.content;
-	while (buf->len && buf->str[buf->len - 1] == '\n')
-		--buf->len;
-	fraglist_push(list, result.content, param->flags);
+	trim_subexpr(buf);
+	if (buf->len)
+		fraglist_push(list, result.content, param->flags);
+	else
+		stringbuf_free(buf);
 	return (1);
 }

@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/19 13:03:33 by thschnei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 #include <shell/shell.h>
 
 void
@@ -90,4 +91,13 @@ char
 	else
 		stringbuf_free(&buf);
 	return (argv[size] = NULL, fraglist_free(list), argv);
+}
+
+void
+	fraglist_print(const t_fragment_list *list)
+{
+	for (size_t i = 0; i < list->size; ++i)
+	{
+		ft_dprintf(2, "word[%zu] = '%.*s' fs:%d fl=%d\n", i, (int)list->fragments[i].word.len, list->fragments[i].word.str, list->fragments[i].force_split, list->fragments[i].flags & (FL_SQUOTED | FL_DQUOTED));
+	}
 }
