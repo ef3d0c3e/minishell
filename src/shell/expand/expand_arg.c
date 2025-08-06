@@ -47,7 +47,7 @@ static int
 		status = expand_subexpr(shell, list, &expanded->list[i[0]].atoms[i[1]]);
 		rb_delete(&shell->atexit, expanded);
 		if (!status)
-			return (wordlist_free(expanded), 0);
+			return (fraglist_free(list), wordlist_free(expanded), 0);
 	}
 	else if (expanded->list[i[0]].atoms[i[1]].type == W_PARAMETER)
 		status = expand_param(shell, list, &expanded->list[i[0]].atoms[i[1]],

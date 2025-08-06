@@ -37,7 +37,7 @@ void
 				SRC_LOCATION);
 		return ;
 	}
-	sa.sa_flags = SA_SIGINFO;
+	sa.sa_flags = SA_SIGINFO | SA_RESTART;
 	sa.sa_sigaction = &sighandler;
 	if (sigaction(SIGINT, &sa, NULL) == -1
 		|| sigaction(SIGQUIT, &sa, NULL) == -1)
