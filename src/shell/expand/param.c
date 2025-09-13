@@ -104,7 +104,7 @@ static int
 	char	*found;
 
 	found = get_variable_value(shell, param->param.name);
-	if (!found)
+	if (!found || !found[0])
 		return (0);
 	fraglist_push(list, stringbuf_from(found), param->flags);
 	return (1);
